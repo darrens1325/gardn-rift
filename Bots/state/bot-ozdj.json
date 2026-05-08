@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "name": "bot-ozdj",
+  "first_seen": 1778213411.869576,
+  "last_seen": 1778213411.869576,
+  "episodes": 1,
+  "score_total": 13,
+  "score_best": 13,
+  "best_loadout": [
+    1,
+    1,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "0": 1,
+    "1": 1
+  }
+}

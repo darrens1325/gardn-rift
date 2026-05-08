@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-dvpp",
+  "first_seen": 1778196217.374547,
+  "last_seen": 1778196623.4146528,
+  "episodes": 14,
+  "score_total": 421,
+  "score_best": 82,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 9,
+    "Bee": 2,
+    "Centipede": 1,
+    "blossom": 1,
+    "Cactus": 1
+  },
+  "loadout_history": {
+    "0": 10,
+    "9": 1,
+    "1": 10,
+    "35": 1
+  }
+}

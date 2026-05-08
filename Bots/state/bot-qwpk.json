@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-qwpk",
+  "first_seen": 1778117952.2374558,
+  "last_seen": 1778118408.073814,
+  "episodes": 8,
+  "score_total": 353,
+  "score_best": 56,
+  "best_loadout": [
+    41,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Centipede": 2,
+    "bot-zvvd": 1,
+    "bot-lqau": 1,
+    "Desert Centipede": 1,
+    "anther": 1,
+    "stamen": 1,
+    "rhizome": 1
+  },
+  "loadout_history": {
+    "1": 6,
+    "14": 1,
+    "40": 3,
+    "34": 1,
+    "5": 1,
+    "18": 4,
+    "23": 2,
+    "7": 1,
+    "9": 3,
+    "48": 1,
+    "41": 1
+  }
+}

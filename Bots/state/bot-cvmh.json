@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-cvmh",
+  "first_seen": 1778196124.4801111,
+  "last_seen": 1778196136.7448509,
+  "episodes": 2,
+  "score_total": 29,
+  "score_best": 25,
+  "best_loadout": [
+    1,
+    0,
+    0,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 1
+  }
+}

@@ -75,6 +75,7 @@ void draw_static_flower(Renderer &ctx, FlowerRenderAttributes attributes) {
     ctx.move_to(-6, 10);
     ctx.qcurve_to(0, attributes.mouth, 6, 10);
     ctx.stroke();
+    RenderContext g(&ctx);
     if (!BIT_AT(attributes.flags, 1) && attributes.mouth <= 8 && BIT_AT(attributes.face_flags, FaceFlags::kAttacking))
     {
         RenderContext context(&ctx);

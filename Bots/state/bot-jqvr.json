@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-jqvr",
+  "first_seen": 1778126991.816036,
+  "last_seen": 1778127107.6895301,
+  "episodes": 5,
+  "score_total": 170,
+  "score_best": 52,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 4
+  },
+  "loadout_history": {
+    "0": 5,
+    "1": 2
+  }
+}

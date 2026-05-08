@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "name": "bot-nnmz",
+  "first_seen": 1778194098.665191,
+  "last_seen": 1778194647.868195,
+  "episodes": 22,
+  "score_total": 2491,
+  "score_best": 1028,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    10,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 9,
+    "aa": 1,
+    "bot-csbq": 1,
+    "sussy": 1,
+    "thorn": 1,
+    "bot-qkve": 1,
+    "bot-plzl": 1,
+    "Centipede": 1,
+    "root": 2,
+    "rosie": 1,
+    "bot-wnln": 1,
+    "bot-dduv": 1
+  },
+  "loadout_history": {
+    "24": 2,
+    "1": 16,
+    "14": 1,
+    "0": 22,
+    "23": 1,
+    "46": 1,
+    "10": 1,
+    "18": 1,
+    "5": 1
+  }
+}

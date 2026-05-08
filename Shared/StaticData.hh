@@ -6,7 +6,16 @@
 #include <cstdint>
 
 extern uint32_t const MAX_LEVEL;
+// Wall-clock tick rate. Configurable via -DTPS=N at build time. Bumping this
+// makes the server schedule more `tick()` calls per real-second — useful for
+// bot training. It is *not* the rate gameplay timing is calibrated against.
 extern uint32_t const TPS;
+// Game-time tick rate. ALL gameplay constants (AI durations, petal reloads,
+// despawn timers, per-tick accelerations, spawn-rate frand probabilities) are
+// calibrated against this. Fixed at 20 to preserve original game balance. Use
+// SIM_RATE — not TPS — for anything that should be the same per game-second
+// regardless of build-time TPS. The wall-clock speedup factor is TPS/SIM_RATE.
+extern uint32_t const SIM_RATE;
 
 extern float const PETAL_DISABLE_DELAY;
 extern float const PLAYER_ACCELERATION;
@@ -33,16 +42,19 @@ std::array const MAP = std::to_array<struct ZoneDefinition>({
         .density = 1,
         .drop_multiplier = 0.3,
         .spawns = {
-            { MobID::kRock, 500000 },
+            { MobID::kRock, 200000 },
+            { MobID::kSpider, 100000 },
+            { MobID::kHornet, 100000 },
             { MobID::kLadybug, 100000 },
             { MobID::kBee, 100000 },
             { MobID::kBabyAnt, 25000 },
             { MobID::kCentipede, 10000 },
             { MobID::kBoulder, 10000 },
             { MobID::kMassiveLadybug, 200 },
-            { MobID::kSquare, 1 }
+            { MobID::kSquare, 1 },
+            { MobID::kSoldierAnt, 50000}
         },
-        .difficulty = 0,
+        .difficulty = 3,
         .color = 0xff1ea761,
         .name = "Easy"
     },
@@ -65,7 +77,7 @@ std::array const MAP = std::to_array<struct ZoneDefinition>({
             { MobID::kShinyLadybug, 1000 },
             { MobID::kSquare, 1 }
         },
-        .difficulty = 1,
+        .difficulty = 3,
         .color = 0xffdecf7c,
         .name = "Medium"
     },
@@ -89,7 +101,7 @@ std::array const MAP = std::to_array<struct ZoneDefinition>({
             { MobID::kAntHole, 2000 },
             { MobID::kSquare, 1 }
         },
-        .difficulty = 2,
+        .difficulty = 3,
         .color = 0xffb06655,
         .name = "Hard"
     },

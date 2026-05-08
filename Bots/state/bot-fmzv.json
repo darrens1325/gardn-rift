@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-fmzv",
+  "first_seen": 1778127878.229459,
+  "last_seen": 1778128514.398579,
+  "episodes": 18,
+  "score_total": 436,
+  "score_best": 61,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "blossom": 1,
+    "bot-lokg": 1,
+    "Hornet": 14,
+    "a": 1
+  },
+  "loadout_history": {
+    "0": 18,
+    "1": 8
+  }
+}

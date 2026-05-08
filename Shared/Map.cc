@@ -56,7 +56,7 @@ void Map::spawn_random_mob(Simulation *sim) {
         if (sum <= 0) {
             Entity &ent = alloc_mob(sim, s.id, x, y, NULL_ENTITY);
             ent.zone = zone_id;
-            ent.immunity_ticks = TPS;
+            ent.immunity_ticks = SIM_RATE;
             BIT_SET(ent.flags, EntityFlags::kSpawnedFromZone);
             sim->zone_mob_counts[zone_id]++;
             return;

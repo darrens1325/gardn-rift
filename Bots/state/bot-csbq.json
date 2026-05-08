@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "bot-csbq",
+  "first_seen": 1778194130.34845,
+  "last_seen": 1778194654.1774158,
+  "episodes": 13,
+  "score_total": 22045,
+  "score_best": 7606,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-dduv": 1,
+    "Hornet": 5,
+    "blossom": 2,
+    "Rock": 1,
+    "bot-plzl": 1,
+    "bot-znjj": 1,
+    "sussy": 1
+  },
+  "loadout_history": {
+    "0": 12,
+    "1": 9,
+    "18": 2,
+    "43": 1,
+    "47": 1,
+    "34": 1,
+    "10": 1
+  }
+}

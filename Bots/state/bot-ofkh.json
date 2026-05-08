@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "name": "bot-ofkh",
+  "first_seen": 1778127177.9240918,
+  "last_seen": 1778127231.706948,
+  "episodes": 27,
+  "score_total": 0,
+  "score_best": 0,
+  "best_loadout": [],
+  "killed_by": {},
+  "loadout_history": {
+    "1": 27,
+    "0": 1
+  }
+}

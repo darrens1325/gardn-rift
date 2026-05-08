@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "name": "bot-wulb",
+  "first_seen": 1778127038.824949,
+  "last_seen": 1778127157.59037,
+  "episodes": 5,
+  "score_total": 15,
+  "score_best": 8,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 5
+  }
+}

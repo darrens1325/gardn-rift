@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-iuly",
+  "first_seen": 1778127039.8666801,
+  "last_seen": 1778127131.996994,
+  "episodes": 5,
+  "score_total": 158,
+  "score_best": 59,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 3,
+    "Centipede": 1
+  },
+  "loadout_history": {
+    "0": 5,
+    "5": 1,
+    "1": 1
+  }
+}

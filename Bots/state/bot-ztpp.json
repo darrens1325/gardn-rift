@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-ztpp",
+  "first_seen": 1778193710.5796978,
+  "last_seen": 1778194063.989847,
+  "episodes": 14,
+  "score_total": 762,
+  "score_best": 220,
+  "best_loadout": [
+    0,
+    1,
+    0,
+    1,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 9,
+    "Centipede": 1,
+    "bot-bizv": 2
+  },
+  "loadout_history": {
+    "0": 14,
+    "1": 10,
+    "19": 1,
+    "5": 1
+  }
+}

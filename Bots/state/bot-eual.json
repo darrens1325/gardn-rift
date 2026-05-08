@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "bot-eual",
+  "first_seen": 1778200016.670861,
+  "last_seen": 1778200906.340287,
+  "episodes": 28,
+  "score_total": 1076,
+  "score_best": 169,
+  "best_loadout": [
+    6,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 22,
+    "sussy": 1,
+    "bot-fney": 1,
+    "bot-vxpg": 1,
+    "leafy": 1,
+    "aa": 1
+  },
+  "loadout_history": {
+    "0": 26,
+    "1": 18,
+    "14": 1,
+    "9": 1,
+    "40": 1,
+    "18": 2,
+    "24": 2,
+    "6": 2,
+    "37": 1,
+    "38": 1,
+    "33": 1
+  }
+}

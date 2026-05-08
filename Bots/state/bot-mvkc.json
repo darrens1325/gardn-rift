@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-mvkc",
+  "first_seen": 1778210976.5712771,
+  "last_seen": 1778211778.028139,
+  "episodes": 26,
+  "score_total": 1888,
+  "score_best": 235,
+  "best_loadout": [
+    1,
+    0,
+    0,
+    0,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Centipede": 1,
+    "Hornet": 18,
+    "Bee": 4,
+    "bot-gqsp": 1,
+    "root": 1
+  },
+  "loadout_history": {
+    "0": 22,
+    "1": 21,
+    "5": 6,
+    "29": 1,
+    "9": 1,
+    "28": 1,
+    "6": 1,
+    "39": 1,
+    "10": 1
+  }
+}

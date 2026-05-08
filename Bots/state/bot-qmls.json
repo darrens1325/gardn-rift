@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-qmls",
+  "first_seen": 1778196082.111066,
+  "last_seen": 1778196170.311415,
+  "episodes": 3,
+  "score_total": 95,
+  "score_best": 57,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 2
+  }
+}

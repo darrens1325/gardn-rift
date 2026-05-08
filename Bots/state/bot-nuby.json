@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-nuby",
+  "first_seen": 1778193437.215012,
+  "last_seen": 1778193618.6564841,
+  "episodes": 9,
+  "score_total": 85,
+  "score_best": 16,
+  "best_loadout": [
+    1,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 6,
+    "Spider": 1,
+    "thorn": 1
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 7,
+    "14": 1
+  }
+}

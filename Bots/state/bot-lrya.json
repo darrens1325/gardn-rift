@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-lrya",
+  "first_seen": 1778118887.126288,
+  "last_seen": 1778119572.537117,
+  "episodes": 6,
+  "score_total": 357,
+  "score_best": 91,
+  "best_loadout": [
+    34,
+    25,
+    34,
+    24,
+    19
+  ],
+  "killed_by": {
+    "rootkit": 2,
+    "bot-xfbq": 1,
+    "bot-iwbd": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "48": 1,
+    "41": 1,
+    "18": 4,
+    "23": 1,
+    "9": 1,
+    "34": 4,
+    "1": 1,
+    "24": 2,
+    "25": 2,
+    "19": 1,
+    "14": 1
+  }
+}

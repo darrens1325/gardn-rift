@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "name": "bot-uwhr",
+  "first_seen": 1778194697.7049549,
+  "last_seen": 1778195204.862894,
+  "episodes": 16,
+  "score_total": 326,
+  "score_best": 33,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Cactus": 3,
+    "Hornet": 8,
+    "Centipede": 2,
+    "bot": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "40": 2,
+    "1": 11,
+    "23": 1,
+    "0": 14,
+    "5": 2,
+    "14": 1,
+    "24": 1,
+    "16": 1,
+    "7": 1
+  }
+}

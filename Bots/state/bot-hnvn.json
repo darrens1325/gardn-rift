@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "bot-hnvn",
+  "first_seen": 1778127340.9684448,
+  "last_seen": 1778127791.5537028,
+  "episodes": 14,
+  "score_total": 257,
+  "score_best": 36,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "sussy": 1,
+    "Hornet": 10
+  },
+  "loadout_history": {
+    "0": 14,
+    "1": 5
+  }
+}

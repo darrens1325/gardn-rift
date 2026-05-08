@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-cjtd",
+  "first_seen": 1778200021.985346,
+  "last_seen": 1778200911.5153348,
+  "episodes": 29,
+  "score_total": 798,
+  "score_best": 63,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 13,
+    "bot-hvde": 2,
+    "Beetle": 1,
+    "bot-gixi": 2,
+    "Soldier Ant": 1,
+    "bot": 2,
+    "bot-hyww": 1,
+    "gardn": 1,
+    "a": 1
+  },
+  "loadout_history": {
+    "0": 26,
+    "1": 22,
+    "23": 1,
+    "8": 1,
+    "9": 1,
+    "28": 1,
+    "5": 1,
+    "14": 1,
+    "7": 1
+  }
+}

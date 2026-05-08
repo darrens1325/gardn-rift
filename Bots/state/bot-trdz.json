@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "name": "bot-trdz",
+  "first_seen": 1778123269.115245,
+  "last_seen": 1778124005.0359411,
+  "episodes": 6,
+  "score_total": 399,
+  "score_best": 154,
+  "best_loadout": [
+    24,
+    17,
+    16,
+    1,
+    1
+  ],
+  "killed_by": {
+    "bot-mayu": 1,
+    "root": 1,
+    "sussy": 1,
+    "bot-syfr": 1,
+    "bot-asxe": 1
+  },
+  "loadout_history": {
+    "24": 3,
+    "1": 5,
+    "40": 3,
+    "19": 1,
+    "9": 3,
+    "18": 1,
+    "5": 3,
+    "14": 1,
+    "16": 2,
+    "10": 1,
+    "17": 1
+  }
+}

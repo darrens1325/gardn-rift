@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-jehk",
+  "first_seen": 1778192809.150524,
+  "last_seen": 1778192849.0524778,
+  "episodes": 7,
+  "score_total": 139,
+  "score_best": 72,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 5
+  },
+  "loadout_history": {
+    "0": 1,
+    "1": 6
+  }
+}

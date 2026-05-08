@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "name": "bot-mrij",
+  "first_seen": 1778127252.872819,
+  "last_seen": 1778127301.909201,
+  "episodes": 3,
+  "score_total": 8,
+  "score_best": 8,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "0": 3,
+    "1": 2
+  }
+}

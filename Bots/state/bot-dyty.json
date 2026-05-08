@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "name": "bot-dyty",
+  "first_seen": 1778118741.651619,
+  "last_seen": 1778119292.4847639,
+  "episodes": 9,
+  "score_total": 248,
+  "score_best": 54,
+  "best_loadout": [
+    40,
+    18,
+    19,
+    5,
+    24
+  ],
+  "killed_by": {
+    "chompchomp": 1,
+    "Rock": 1,
+    "rhizome": 1,
+    "florabot": 1,
+    "bot-sxfj": 1,
+    "bot-qexb": 1,
+    "Bee": 1,
+    "Centipede": 1
+  },
+  "loadout_history": {
+    "40": 5,
+    "1": 6,
+    "34": 1,
+    "10": 1,
+    "18": 3,
+    "5": 4,
+    "19": 1,
+    "24": 1,
+    "9": 1,
+    "16": 1,
+    "48": 1
+  }
+}

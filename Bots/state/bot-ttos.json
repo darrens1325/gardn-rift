@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "name": "bot-ttos",
+  "first_seen": 1778193702.8162591,
+  "last_seen": 1778194056.610243,
+  "episodes": 13,
+  "score_total": 750,
+  "score_best": 249,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 7,
+    "bot-otus": 1,
+    "bot-vnuk": 1,
+    "Bee": 1,
+    "Soldier Ant": 1,
+    "bot": 1
+  },
+  "loadout_history": {
+    "0": 13,
+    "1": 9,
+    "14": 1,
+    "23": 1,
+    "34": 1
+  }
+}

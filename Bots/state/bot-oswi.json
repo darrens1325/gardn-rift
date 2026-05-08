@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "name": "bot-oswi",
+  "first_seen": 1778119857.903956,
+  "last_seen": 1778119857.903956,
+  "episodes": 1,
+  "score_total": 13,
+  "score_best": 13,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "1": 1
+  }
+}

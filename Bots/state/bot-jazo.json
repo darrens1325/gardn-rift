@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-jazo",
+  "first_seen": 1778115229.317887,
+  "last_seen": 1778115794.691156,
+  "episodes": 8,
+  "score_total": 363,
+  "score_best": 109,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "scion": 1,
+    "rhizome": 1,
+    "buddy": 2,
+    "rootkit": 1,
+    "bot-kbxq": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "1": 8,
+    "7": 1
+  }
+}

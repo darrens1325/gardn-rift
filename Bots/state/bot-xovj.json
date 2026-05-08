@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-xovj",
+  "first_seen": 1778196242.7089689,
+  "last_seen": 1778196619.464975,
+  "episodes": 13,
+  "score_total": 406,
+  "score_best": 91,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 8,
+    "Cactus": 1,
+    "Bee": 2,
+    "Beetle": 1
+  },
+  "loadout_history": {
+    "0": 10,
+    "1": 7,
+    "9": 1,
+    "40": 1
+  }
+}

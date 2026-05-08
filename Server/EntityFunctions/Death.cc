@@ -70,7 +70,8 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
             std::vector<PetalID::T> success_drops = {};
             StaticArray<float, MAX_DROPS_PER_MOB> const &drop_chances = MOB_DROP_CHANCES[ent.mob_id];
             for (uint32_t i = 0; i < mob_data.drops.size(); ++i) 
-                if (frand() < drop_chances[i]) success_drops.push_back(mob_data.drops[i]);
+                if (frand() < drop_chances[i])
+                 success_drops.push_back(mob_data.drops[i]);
             _alloc_drops(sim, success_drops, ent.x, ent.y);
         }
         if (ent.mob_id == MobID::kAntHole && ent.team == NULL_ENTITY && frand() < DIGGER_SPAWN_CHANCE) { 

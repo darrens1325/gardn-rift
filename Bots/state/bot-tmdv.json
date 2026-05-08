@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "bot-tmdv",
+  "first_seen": 1778193115.101065,
+  "last_seen": 1778193311.0985432,
+  "episodes": 10,
+  "score_total": 198,
+  "score_best": 33,
+  "best_loadout": [
+    1,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-ohdw": 1,
+    "Hornet": 7
+  },
+  "loadout_history": {
+    "1": 7,
+    "0": 6
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "bot-lxtj",
+  "first_seen": 1778194093.4810839,
+  "last_seen": 1778194639.38446,
+  "episodes": 10,
+  "score_total": 8338,
+  "score_best": 5061,
+  "best_loadout": [
+    35,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-nnmz": 1,
+    "bot-ymmn": 3,
+    "bot-plzl": 1,
+    "bot-wnln": 2,
+    "Hornet": 2
+  },
+  "loadout_history": {
+    "0": 10,
+    "9": 1,
+    "1": 8,
+    "18": 1,
+    "35": 1,
+    "14": 1
+  }
+}

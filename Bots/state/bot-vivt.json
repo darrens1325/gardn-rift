@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "name": "bot-vivt",
+  "first_seen": 1778200030.5903502,
+  "last_seen": 1778200911.400033,
+  "episodes": 26,
+  "score_total": 1523,
+  "score_best": 268,
+  "best_loadout": [
+    28,
+    1,
+    39,
+    47,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 17,
+    "bot-gkan": 2,
+    "bot-ymtq": 1,
+    "Bee": 2,
+    "bot-gixi": 1,
+    "bot-hyww": 1,
+    "rosie": 1
+  },
+  "loadout_history": {
+    "0": 21,
+    "1": 17,
+    "34": 1,
+    "6": 1,
+    "10": 1,
+    "39": 1,
+    "47": 2,
+    "28": 1,
+    "14": 2,
+    "18": 1,
+    "5": 1,
+    "42": 1,
+    "48": 1,
+    "24": 1
+  }
+}

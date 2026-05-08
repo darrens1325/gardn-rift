@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "bot-cpzg",
+  "first_seen": 1778194697.039117,
+  "last_seen": 1778195238.202168,
+  "episodes": 18,
+  "score_total": 727,
+  "score_best": 122,
+  "best_loadout": [
+    1,
+    19,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 6,
+    "Bee": 1,
+    "Cactus": 4,
+    "Sandstorm": 1,
+    "Centipede": 1,
+    "Beetle": 1,
+    "Soldier Ant": 1,
+    "bot-qfue": 1,
+    "a": 1
+  },
+  "loadout_history": {
+    "0": 17,
+    "1": 12,
+    "40": 1,
+    "35": 1,
+    "10": 1,
+    "19": 1,
+    "18": 1,
+    "52": 1
+  }
+}

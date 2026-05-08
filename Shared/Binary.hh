@@ -9,7 +9,9 @@
 enum Clientbound {
     kDisconnect,
     kClientUpdate,
-    kOutdated
+    kOutdated,
+    // Broadcast: { u8: kChat, string: sender_name, u8: sender_color, string: text }
+    kChat,
 };
 
 enum Serverbound {
@@ -17,7 +19,11 @@ enum Serverbound {
     kClientInput,
     kClientSpawn,
     kPetalSwap,
-    kPetalDelete
+    kPetalDelete,
+    // { u8: kClientChat, string: text } — server stamps the sender from the
+    // camera's active player and rebroadcasts as Clientbound::kChat. Rejected
+    // if the player isn't alive or the rate-limit hasn't elapsed.
+    kClientChat,
 };
 
 class Writer {

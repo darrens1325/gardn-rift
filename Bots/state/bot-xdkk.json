@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-xdkk",
+  "first_seen": 1778192571.1303082,
+  "last_seen": 1778192843.667115,
+  "episodes": 8,
+  "score_total": 126,
+  "score_best": 33,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 6
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 6
+  }
+}

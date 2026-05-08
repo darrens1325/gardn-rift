@@ -13,15 +13,15 @@ void tick_camera_behavior(Simulation *sim, Entity &ent) {
         player.set_loadout_count(loadout_slots_at_level(score_to_level(player.score)));
         ent.last_damaged_by = player.last_damaged_by;
         struct ZoneDefinition const &zone = MAP[Map::get_zone_from_pos(player.x, player.y)];
-        if (zone.difficulty < Map::difficulty_at_level(score_to_level(player.score))) {
-            if (player.overlevel_timer < PETAL_DISABLE_DELAY * TPS)
-                player.set_overlevel_timer(player.overlevel_timer + 1);
-            else player.set_overlevel_timer(PETAL_DISABLE_DELAY * TPS);
-        } else {
-            if (player.overlevel_timer > 0)
-                player.set_overlevel_timer(player.overlevel_timer - 0.1);
-            else player.set_overlevel_timer(0);
-        }
+        // if (zone.difficulty < Map::difficulty_at_level(score_to_level(player.score))) {
+        //     if (player.overlevel_timer < PETAL_DISABLE_DELAY * SIM_RATE)
+        //         player.set_overlevel_timer(player.overlevel_timer + 1);
+        //     else player.set_overlevel_timer(PETAL_DISABLE_DELAY * SIM_RATE);
+        // } else {
+        //     if (player.overlevel_timer > 0)
+        //         player.set_overlevel_timer(player.overlevel_timer - 0.1);
+        //     else player.set_overlevel_timer(0);
+        // }
     } else {
         ent.set_fov(BASE_FOV * 0.9);
         if (sim->ent_exists(ent.last_damaged_by)){

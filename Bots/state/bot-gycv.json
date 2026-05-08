@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-gycv",
+  "first_seen": 1778118730.745295,
+  "last_seen": 1778119283.983732,
+  "episodes": 4,
+  "score_total": 148,
+  "score_best": 64,
+  "best_loadout": [
+    34,
+    14,
+    18,
+    24,
+    9
+  ],
+  "killed_by": {
+    "Boulder": 1,
+    "florabot": 1,
+    "bot-nxfp": 1
+  },
+  "loadout_history": {
+    "35": 1,
+    "14": 2,
+    "18": 4,
+    "20": 1,
+    "24": 4,
+    "34": 3,
+    "9": 2
+  }
+}

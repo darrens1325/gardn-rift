@@ -24,6 +24,10 @@ public:
     WebSocket *ws;
     uint8_t verified = 0;
     uint8_t seen_arena = 0;
+    // Lifetime tick (game ticks since GameInstance start) at which this
+    // client most recently sent a chat message. Used for per-client rate
+    // limiting; 0 means "never sent before".
+    uint64_t last_chat_tick = 0;
     Client();
     void init();
     void remove();

@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-oksu",
+  "first_seen": 1778196253.793813,
+  "last_seen": 1778196631.119803,
+  "episodes": 13,
+  "score_total": 335,
+  "score_best": 85,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    1,
+    0
+  ],
+  "killed_by": {
+    "bot-axnb": 1,
+    "gardn": 1,
+    "Hornet": 9,
+    "a": 1
+  },
+  "loadout_history": {
+    "0": 10,
+    "1": 7,
+    "6": 2,
+    "9": 1,
+    "5": 1
+  }
+}

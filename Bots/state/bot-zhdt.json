@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-zhdt",
+  "first_seen": 1778192654.8167,
+  "last_seen": 1778192840.66787,
+  "episodes": 5,
+  "score_total": 57,
+  "score_best": 22,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 2
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 3
+  }
+}

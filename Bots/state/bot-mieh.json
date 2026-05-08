@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-mieh",
+  "first_seen": 1778128593.557994,
+  "last_seen": 1778128670.6595452,
+  "episodes": 4,
+  "score_total": 28,
+  "score_best": 12,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 2
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 1
+  }
+}

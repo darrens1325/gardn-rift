@@ -58,7 +58,7 @@ void LoadoutSlot::update_id(Simulation *sim, PetalID::T petal_id) {
 void LoadoutSlot::force_reload() {
     already_spawned = 1;
     for (uint32_t j = 0; j < size(); ++j)
-        petals[j].reload = PETAL_DATA[id].reload * TPS;
+        petals[j].reload = PETAL_DATA[id].reload * SIM_RATE;
 }
 
 uint32_t LoadoutSlot::size() const {

@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-lhlt",
+  "first_seen": 1778123162.317343,
+  "last_seen": 1778123983.328896,
+  "episodes": 10,
+  "score_total": 427,
+  "score_best": 96,
+  "best_loadout": [
+    18,
+    14,
+    14,
+    16,
+    18
+  ],
+  "killed_by": {
+    "67": 1,
+    "bot-asxe": 1,
+    "blossom": 1,
+    "hello": 3,
+    "sussy": 1,
+    "bot-qmpy": 1,
+    "rosie": 1
+  },
+  "loadout_history": {
+    "1": 7,
+    "5": 2,
+    "10": 1,
+    "18": 5,
+    "24": 3,
+    "14": 3,
+    "48": 1,
+    "41": 2,
+    "40": 2,
+    "6": 2,
+    "16": 1
+  }
+}

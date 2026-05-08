@@ -1,4 +1,46 @@
-set(CMAKE_SYSTEM_NAME Generic)
+# Pre-`project()` setup. CMAKE_TOOLCHAIN_FILE and CMAKE_SYSTEM_NAME must be
+# resolved here, before project() runs the compiler-detection probe.
+#
+# For WASM builds, auto-load Emscripten's toolchain file so plain
+# `cmake -DWASM_SERVER=1 ..` works equivalently to `emcmake cmake ..`. We
+# search $EMSDK first, then fall back to `em-config EMSCRIPTEN_ROOT`. Without
+# this, Apple Clang gets picked up before line 74 has a chance to switch the
+# compiler to em++, and configuration fails with "library 'System' not found"
+# (because we set CMAKE_SYSTEM_NAME=Generic to skip platform detection).
+if (WASM_SERVER AND NOT CMAKE_TOOLCHAIN_FILE)
+    set(_em_root "")
+    if (DEFINED ENV{EMSDK})
+        set(_em_root "$ENV{EMSDK}/upstream/emscripten")
+    endif()
+    if (NOT _em_root OR NOT EXISTS "${_em_root}/cmake/Modules/Platform/Emscripten.cmake")
+        execute_process(COMMAND em-config EMSCRIPTEN_ROOT
+                        OUTPUT_VARIABLE _em_root
+                        OUTPUT_STRIP_TRAILING_WHITESPACE
+                        RESULT_VARIABLE _em_res
+                        ERROR_QUIET)
+        if (NOT _em_res EQUAL 0)
+            set(_em_root "")
+        endif()
+    endif()
+    if (_em_root AND EXISTS "${_em_root}/cmake/Modules/Platform/Emscripten.cmake")
+        set(CMAKE_TOOLCHAIN_FILE "${_em_root}/cmake/Modules/Platform/Emscripten.cmake"
+            CACHE FILEPATH "Emscripten toolchain (auto-detected from WASM_SERVER=1)" FORCE)
+        message(STATUS "WASM_SERVER=1 auto-loaded Emscripten toolchain: ${CMAKE_TOOLCHAIN_FILE}")
+    else()
+        message(FATAL_ERROR
+            "WASM_SERVER=1 requires the Emscripten toolchain, which could not be "
+            "auto-located. Either run `emcmake cmake -DWASM_SERVER=1 ..` or set "
+            "EMSDK in your environment so this CMakeLists can find Emscripten.cmake.")
+    endif()
+endif()
+
+# Native builds on macOS need real platform detection so the linker can find
+# libSystem. Only flag the build as a Generic cross-compile for WASM; the
+# Emscripten toolchain (loaded above or by emcmake) overrides the system name
+# to Emscripten anyway, so this is just defensive.
+if (WASM_SERVER)
+    set(CMAKE_SYSTEM_NAME Generic)
+endif()
 
 cmake_minimum_required(VERSION 3.16)
 project(gardn-server)
@@ -58,6 +100,9 @@ endif()
 if (TDM)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -DGAMEMODE_TDM=1")
 endif()
+if (TPS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGARDN_TPS=${TPS}")
+endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -DSERVERSIDE=1")
 
 if(WASM_SERVER)
@@ -75,8 +120,23 @@ else()
     target_include_directories(gardn-server PRIVATE ${CMAKE_SOURCE_DIR}/uWebSockets/src)
     target_include_directories(gardn-server PRIVATE ${CMAKE_SOURCE_DIR}/uWebSockets/uSockets/src)
     target_link_directories(gardn-server PRIVATE ${CMAKE_SOURCE_DIR}/uWebSockets/uSockets)
+    # Homebrew installs libuv outside Apple Clang's default search path. Probe
+    # for `brew --prefix` and add its include/lib dirs so -luv resolves.
+    if(APPLE)
+        execute_process(COMMAND brew --prefix
+                        OUTPUT_VARIABLE HOMEBREW_PREFIX
+                        OUTPUT_STRIP_TRAILING_WHITESPACE
+                        ERROR_QUIET)
+        if(HOMEBREW_PREFIX)
+            target_include_directories(gardn-server PRIVATE ${HOMEBREW_PREFIX}/include)
+            target_link_directories(gardn-server PRIVATE ${HOMEBREW_PREFIX}/lib)
+        endif()
+    endif()
     target_link_libraries(gardn-server uv z)
-    target_link_libraries(gardn-server -l:uSockets.a)
+    # The uSockets archive is named `uSockets.a` (no `lib` prefix), and Apple's
+    # ld doesn't accept GNU's `-l:filename` extension. Pass the full path so
+    # both Apple and GNU linkers resolve it.
+    target_link_libraries(gardn-server ${CMAKE_SOURCE_DIR}/uWebSockets/uSockets/uSockets.a)
     if(CMAKE_HOST_WIN32)
         target_link_libraries(gardn-server ws2_32)
     endif()

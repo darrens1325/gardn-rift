@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "name": "bot-hmnm",
+  "first_seen": 1778126997.196088,
+  "last_seen": 1778127163.996475,
+  "episodes": 3,
+  "score_total": 26,
+  "score_best": 13,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 2
+  },
+  "loadout_history": {
+    "0": 3
+  }
+}

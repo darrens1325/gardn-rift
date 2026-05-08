@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "name": "bot-pxdj",
+  "first_seen": 1778127254.777169,
+  "last_seen": 1778127315.779219,
+  "episodes": 4,
+  "score_total": 8,
+  "score_best": 8,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "0": 4,
+    "1": 2
+  }
+}

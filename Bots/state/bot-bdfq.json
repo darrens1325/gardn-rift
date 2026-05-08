@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "name": "bot-bdfq",
+  "first_seen": 1778196283.909707,
+  "last_seen": 1778196632.6803892,
+  "episodes": 14,
+  "score_total": 301,
+  "score_best": 39,
+  "best_loadout": [
+    0,
+    1,
+    0,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 11,
+    "Bee": 1,
+    "Spider": 1
+  },
+  "loadout_history": {
+    "0": 8,
+    "1": 10,
+    "34": 1,
+    "10": 1
+  }
+}

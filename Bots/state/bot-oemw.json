@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "bot-oemw",
+  "first_seen": 1778192651.2866611,
+  "last_seen": 1778192849.052886,
+  "episodes": 6,
+  "score_total": 126,
+  "score_best": 56,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Centipede": 1,
+    "Hornet": 4
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 4
+  }
+}

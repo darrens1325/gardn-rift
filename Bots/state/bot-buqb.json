@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "name": "bot-buqb",
+  "first_seen": 1778124050.708361,
+  "last_seen": 1778126315.323936,
+  "episodes": 22,
+  "score_total": 1141,
+  "score_best": 362,
+  "best_loadout": [
+    7,
+    17,
+    55,
+    55,
+    7,
+    10
+  ],
+  "killed_by": {
+    "leafy": 2,
+    "florrio": 1,
+    "Beetle": 1,
+    "blossom": 1,
+    "bot-bcrt": 1,
+    "bot-qusm": 2,
+    "hello": 1,
+    "bot-fvhg": 1,
+    "thorn": 1,
+    "Hornet": 8
+  },
+  "loadout_history": {
+    "41": 3,
+    "10": 2,
+    "1": 21,
+    "14": 1,
+    "48": 1,
+    "6": 2,
+    "16": 1,
+    "42": 3,
+    "40": 3,
+    "5": 1,
+    "23": 2,
+    "78": 1,
+    "17": 1,
+    "55": 1,
+    "7": 1,
+    "32": 1,
+    "9": 1,
+    "20": 1
+  }
+}

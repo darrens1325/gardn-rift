@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "name": "bot-zdav",
+  "first_seen": 1778194092.764071,
+  "last_seen": 1778194602.0300171,
+  "episodes": 21,
+  "score_total": 9543,
+  "score_best": 5149,
+  "best_loadout": [
+    7,
+    33,
+    0,
+    6,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "a": 1,
+    "bot": 1,
+    "Beetle": 1,
+    "bot-wnln": 1,
+    "Hornet": 12,
+    "thorn": 1,
+    "root": 1,
+    "Centipede": 1,
+    "blossom": 1
+  },
+  "loadout_history": {
+    "0": 18,
+    "1": 15,
+    "14": 1,
+    "24": 1,
+    "7": 2,
+    "72": 1,
+    "16": 1,
+    "28": 2,
+    "33": 1,
+    "6": 1,
+    "40": 1,
+    "18": 2
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-asxe",
+  "first_seen": 1778123126.213221,
+  "last_seen": 1778123460.6409972,
+  "episodes": 3,
+  "score_total": 94,
+  "score_best": 55,
+  "best_loadout": [
+    10,
+    24,
+    24,
+    18,
+    14
+  ],
+  "killed_by": {
+    "bot-egno": 1,
+    "bot-pimn": 1
+  },
+  "loadout_history": {
+    "24": 3,
+    "1": 1,
+    "10": 1,
+    "18": 2,
+    "14": 2,
+    "5": 1
+  }
+}

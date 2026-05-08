@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-xkmq",
+  "first_seen": 1778196064.083485,
+  "last_seen": 1778196175.8356009,
+  "episodes": 4,
+  "score_total": 61,
+  "score_best": 35,
+  "best_loadout": [
+    1,
+    1,
+    0,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 3
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 2
+  }
+}

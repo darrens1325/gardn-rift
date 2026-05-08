@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "name": "bot-szhv",
+  "first_seen": 1778200144.25386,
+  "last_seen": 1778200911.5160162,
+  "episodes": 26,
+  "score_total": 2145,
+  "score_best": 1066,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 14,
+    "Beetle": 1,
+    "bot-tbrp": 1,
+    "Bee": 2,
+    "bot-wdbk": 1,
+    "bot-vxpg": 1,
+    "bot-ymtq": 1,
+    "sussy": 1,
+    "Rock": 1,
+    "root": 1,
+    "aa": 1
+  },
+  "loadout_history": {
+    "0": 22,
+    "1": 20,
+    "36": 1,
+    "6": 2,
+    "73": 1,
+    "28": 1,
+    "34": 1,
+    "9": 1,
+    "5": 2,
+    "14": 1,
+    "10": 1,
+    "11": 1
+  }
+}

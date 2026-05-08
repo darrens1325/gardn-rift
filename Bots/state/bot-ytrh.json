@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-ytrh",
+  "first_seen": 1778118076.575166,
+  "last_seen": 1778118446.9889548,
+  "episodes": 4,
+  "score_total": 147,
+  "score_best": 69,
+  "best_loadout": [
+    24,
+    18,
+    24,
+    40,
+    9
+  ],
+  "killed_by": {
+    "Rock": 1,
+    "florabot": 1,
+    "dewdrop": 1
+  },
+  "loadout_history": {
+    "1": 2,
+    "34": 1,
+    "40": 2,
+    "24": 2,
+    "9": 2,
+    "18": 2,
+    "5": 1
+  }
+}

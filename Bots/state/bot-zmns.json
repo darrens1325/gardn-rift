@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "name": "bot-zmns",
+  "first_seen": 1778122227.003597,
+  "last_seen": 1778123020.086076,
+  "episodes": 7,
+  "score_total": 329,
+  "score_best": 89,
+  "best_loadout": [
+    40,
+    40,
+    40,
+    40,
+    34
+  ],
+  "killed_by": {
+    "aa": 1,
+    "bot-odfd": 2,
+    "Bee": 1,
+    "bot-qbok": 1,
+    "67": 1
+  },
+  "loadout_history": {
+    "40": 7,
+    "9": 1,
+    "43": 1,
+    "14": 1,
+    "18": 3,
+    "24": 2,
+    "34": 6
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "bot-vzik",
+  "first_seen": 1778122032.243832,
+  "last_seen": 1778123048.861303,
+  "episodes": 7,
+  "score_total": 214,
+  "score_best": 67,
+  "best_loadout": [
+    40,
+    24,
+    24,
+    41,
+    24
+  ],
+  "killed_by": {
+    "bot-gces": 1,
+    "hello": 2,
+    "bot-pihg": 2,
+    "Centipede": 1
+  },
+  "loadout_history": {
+    "1": 3,
+    "7": 1,
+    "24": 4,
+    "18": 3,
+    "19": 2,
+    "23": 1,
+    "41": 3,
+    "48": 1,
+    "40": 1
+  }
+}

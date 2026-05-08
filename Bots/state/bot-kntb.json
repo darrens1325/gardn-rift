@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "bot-kntb",
+  "first_seen": 1778118678.714348,
+  "last_seen": 1778119279.568788,
+  "episodes": 3,
+  "score_total": 302,
+  "score_best": 286,
+  "best_loadout": [
+    41,
+    23,
+    24,
+    24,
+    42,
+    9
+  ],
+  "killed_by": {
+    "pollen-x": 1,
+    "wildvine": 1
+  },
+  "loadout_history": {
+    "1": 2,
+    "5": 1,
+    "15": 1,
+    "41": 1,
+    "42": 1,
+    "9": 1,
+    "23": 1,
+    "24": 1
+  }
+}

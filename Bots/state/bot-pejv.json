@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-pejv",
+  "first_seen": 1778194732.162287,
+  "last_seen": 1778195238.34483,
+  "episodes": 13,
+  "score_total": 679,
+  "score_best": 81,
+  "best_loadout": [
+    1,
+    1,
+    24,
+    1,
+    46
+  ],
+  "killed_by": {
+    "Sandstorm": 1,
+    "Rock": 1,
+    "Hornet": 7,
+    "a": 1,
+    "aa": 1,
+    "bot-dpqj": 1
+  },
+  "loadout_history": {
+    "0": 11,
+    "9": 1,
+    "1": 8,
+    "42": 1,
+    "5": 1,
+    "18": 1,
+    "7": 1,
+    "24": 1,
+    "46": 1,
+    "40": 1,
+    "20": 1,
+    "23": 1
+  }
+}

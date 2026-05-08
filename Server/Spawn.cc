@@ -24,8 +24,8 @@ Entity &alloc_drop(Simulation *sim, PetalID::T drop_id) {
 
     drop.add_component(kDrop);
     drop.set_drop_id(drop_id);
-    entity_set_despawn_tick(drop, 10 * (2 + PETAL_DATA[drop_id].rarity) * TPS);
-    drop.immunity_ticks = TPS / 3;
+    entity_set_despawn_tick(drop, 10 * (2 + PETAL_DATA[drop_id].rarity) * SIM_RATE);
+    drop.immunity_ticks = SIM_RATE / 3;
     return drop;
 }
 
@@ -127,7 +127,7 @@ Entity &alloc_player(Simulation *sim, EntityID const team) {
     player.health = player.max_health = BASE_HEALTH;
     player.set_health_ratio(1);
     player.damage = BASE_BODY_DAMAGE;
-    player.immunity_ticks = 1.0 * TPS;
+    player.immunity_ticks = 1.0 * SIM_RATE;
 
     player.add_component(kScore);
 
@@ -160,7 +160,7 @@ Entity &alloc_petal(Simulation *sim, PetalID::T petal_id, Entity const &parent) 
     petal.damage = petal_data.damage;
     petal.set_health_ratio(1);
     petal.poison_damage = petal_data.attributes.poison_damage;
-    if (petal_id == PetalID::kPincer) petal.slow_inflict = TPS * 1.5;
+    if (petal_id == PetalID::kPincer) petal.slow_inflict = SIM_RATE * 1.5;
     if (petal_id == PetalID::kBone) petal.armor = 4;
 
     if (parent.id == NULL_ENTITY) petal.base_entity = petal.id;
@@ -181,7 +181,7 @@ Entity &alloc_web(Simulation *sim, float radius, Entity const &parent) {
     web.set_team(parent.team);
     web.set_parent(parent.id);
     web.add_component(kWeb);
-    entity_set_despawn_tick(web, 10 * TPS);
+    entity_set_despawn_tick(web, 10 * SIM_RATE);
     return web;
 }
 

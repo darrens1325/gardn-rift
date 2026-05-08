@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "name": "bot-wnln",
+  "first_seen": 1778194079.778216,
+  "last_seen": 1778194615.012755,
+  "episodes": 16,
+  "score_total": 14165,
+  "score_best": 5927,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 9,
+    "blossom": 1,
+    "bot-zdav": 1,
+    "a": 1,
+    "bot-qkve": 1,
+    "Centipede": 1,
+    "Ladybug": 1
+  },
+  "loadout_history": {
+    "0": 13,
+    "1": 11,
+    "34": 1,
+    "32": 2,
+    "61": 1,
+    "6": 2,
+    "9": 2,
+    "5": 3,
+    "16": 1,
+    "40": 2,
+    "14": 1,
+    "18": 1,
+    "24": 1
+  }
+}

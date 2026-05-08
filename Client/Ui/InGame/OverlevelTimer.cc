@@ -12,7 +12,7 @@ using namespace Ui;
 OverlevelTimer::OverlevelTimer(float w) : Element(w,w,{}) {}
 
 void OverlevelTimer::on_render(Renderer &ctx) {
-    float ratio = Game::overlevel_timer / (PETAL_DISABLE_DELAY * TPS);
+    float ratio = Game::overlevel_timer / (PETAL_DISABLE_DELAY * SIM_RATE);
     ctx.set_fill(0x80000000);
     ctx.begin_path();
     ctx.arc(0,0,width/2);

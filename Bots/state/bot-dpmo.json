@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-dpmo",
+  "first_seen": 1778127897.295455,
+  "last_seen": 1778128453.043176,
+  "episodes": 15,
+  "score_total": 342,
+  "score_best": 51,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 13,
+    "florrio": 1
+  },
+  "loadout_history": {
+    "0": 15,
+    "1": 4,
+    "23": 1
+  }
+}

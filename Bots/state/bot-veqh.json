@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-veqh",
+  "first_seen": 1778193700.958944,
+  "last_seen": 1778194029.329632,
+  "episodes": 10,
+  "score_total": 344,
+  "score_best": 73,
+  "best_loadout": [
+    1,
+    39,
+    15,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 5,
+    "Soldier Ant": 2
+  },
+  "loadout_history": {
+    "0": 10,
+    "1": 7,
+    "15": 1,
+    "39": 1,
+    "28": 1,
+    "14": 1,
+    "29": 1
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-qfue",
+  "first_seen": 1778194727.3652108,
+  "last_seen": 1778195256.019477,
+  "episodes": 16,
+  "score_total": 9233,
+  "score_best": 5162,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 9,
+    "Bee": 1,
+    "Cactus": 2,
+    "Scorpion": 1,
+    "hello": 1,
+    "Spider": 1,
+    "bot-cpzg": 1
+  },
+  "loadout_history": {
+    "16": 1,
+    "0": 16,
+    "1": 7,
+    "9": 1,
+    "14": 1,
+    "35": 1
+  }
+}

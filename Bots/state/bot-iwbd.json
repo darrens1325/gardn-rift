@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "bot-iwbd",
+  "first_seen": 1778118737.628368,
+  "last_seen": 1778119507.904465,
+  "episodes": 8,
+  "score_total": 498,
+  "score_best": 168,
+  "best_loadout": [
+    41,
+    40,
+    23,
+    41,
+    40
+  ],
+  "killed_by": {
+    "calyx": 1,
+    "Cactus": 1,
+    "blossom_v2": 1,
+    "bot-xfbq": 1,
+    "florabot": 1,
+    "trampler": 1,
+    "rootkit": 1
+  },
+  "loadout_history": {
+    "1": 4,
+    "40": 4,
+    "5": 1,
+    "6": 2,
+    "23": 4,
+    "18": 1,
+    "34": 1,
+    "9": 3,
+    "14": 2,
+    "41": 3
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-yqwd",
+  "first_seen": 1778193469.220005,
+  "last_seen": 1778193617.866349,
+  "episodes": 9,
+  "score_total": 64,
+  "score_best": 16,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 7
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 7
+  }
+}

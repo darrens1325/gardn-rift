@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-tcbo",
+  "first_seen": 1778194707.4252548,
+  "last_seen": 1778195209.770379,
+  "episodes": 13,
+  "score_total": 502,
+  "score_best": 84,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Beetle": 1,
+    "Hornet": 5,
+    "Sandstorm": 2,
+    "bot": 1,
+    "bot-evce": 1,
+    "aa": 1,
+    "root": 1
+  },
+  "loadout_history": {
+    "0": 13,
+    "1": 6,
+    "25": 1,
+    "9": 1,
+    "5": 2,
+    "34": 1,
+    "24": 1,
+    "35": 1
+  }
+}

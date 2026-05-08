@@ -152,6 +152,36 @@ void Client::on_message(WebSocket *ws, std::string_view message, uint64_t code) 
             player.set_loadout_ids(pos2, tmp);
             break;
         }
+        case Serverbound::kClientChat: {
+            // Sender identity comes from the player attached to the camera —
+            // dropping chat from spectators avoids unauthenticated/anonymous
+            // spam.
+            if (!client->alive()) break;
+            Simulation *simulation = &client->game->simulation;
+            Entity &camera = simulation->get_ent(client->camera);
+            Entity &player = simulation->get_ent(camera.player);
+            VALIDATE(validator.validate_string(MAX_CHAT_LENGTH));
+            std::string text;
+            reader.read<std::string>(text);
+            VALIDATE(UTF8Parser::is_valid_utf8(text));
+            text = UTF8Parser::trunc_string(text, MAX_CHAT_LENGTH);
+            if (text.empty()) break;
+            // Per-client rate limit. tick_count is monotonic game-time on the
+            // GameInstance, so the cooldown stays in game-time at any TPS.
+            uint64_t now = client->game->tick_count;
+            if (client->last_chat_tick != 0
+                    && now - client->last_chat_tick < CHAT_COOLDOWN_TICKS)
+                break;
+            client->last_chat_tick = now;
+            // Broadcast: { kChat, sender_name, sender_color, text }
+            Writer writer(Server::OUTGOING_PACKET);
+            writer.write<uint8_t>(Clientbound::kChat);
+            writer.write<std::string>(player.name);
+            writer.write<uint8_t>(player.color);
+            writer.write<std::string>(text);
+            client->game->broadcast(writer.packet, writer.at - writer.packet);
+            break;
+        }
     }
 }
 

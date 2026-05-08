@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-hfmp",
+  "first_seen": 1778118722.053919,
+  "last_seen": 1778119507.957149,
+  "episodes": 4,
+  "score_total": 199,
+  "score_best": 91,
+  "best_loadout": [
+    9,
+    9,
+    40,
+    10,
+    23
+  ],
+  "killed_by": {
+    "bot-xfbq": 1,
+    "buddy": 1,
+    "bot-nxfp": 1
+  },
+  "loadout_history": {
+    "40": 3,
+    "1": 2,
+    "9": 3,
+    "5": 1,
+    "14": 2,
+    "10": 1,
+    "23": 1
+  }
+}

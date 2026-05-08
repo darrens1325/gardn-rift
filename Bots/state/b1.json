@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "name": "b1",
+  "first_seen": 1778113878.135799,
+  "last_seen": 1778196628.0001578,
+  "episodes": 142,
+  "score_total": 3332,
+  "score_best": 82,
+  "best_loadout": [
+    7,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Centipede": 3,
+    "Bee": 7,
+    "Baby Ant": 1,
+    "Rock": 3,
+    "b0": 1,
+    "b2": 1,
+    "Soldier Ant": 1,
+    "Hornet": 115,
+    "b3": 1,
+    "Beetle": 1,
+    "rosie": 1,
+    "Spider": 1,
+    "a": 1,
+    "Desert Centipede": 1,
+    "bot-xcaw": 1,
+    "bot-bdfq": 1
+  },
+  "loadout_history": {
+    "1": 135,
+    "6": 3,
+    "2": 2,
+    "3": 2,
+    "7": 2,
+    "16": 1,
+    "4": 1,
+    "0": 88,
+    "10": 2,
+    "24": 5,
+    "18": 2,
+    "5": 1,
+    "40": 3,
+    "14": 1,
+    "19": 1,
+    "35": 1
+  }
+}

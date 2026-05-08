@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "name": "bot-jlki",
+  "first_seen": 1778120109.114667,
+  "last_seen": 1778121913.55181,
+  "episodes": 19,
+  "score_total": 1468,
+  "score_best": 218,
+  "best_loadout": [
+    34,
+    40,
+    42,
+    18,
+    9,
+    9
+  ],
+  "killed_by": {
+    "thorny": 2,
+    "calyx": 2,
+    "bot-vulq": 1,
+    "tendril": 2,
+    "anther": 1,
+    "Bee": 4,
+    "Centipede": 1,
+    "rhizome": 1,
+    "bramble": 1,
+    "buddy": 1,
+    "wildvine": 1,
+    "sussy": 1
+  },
+  "loadout_history": {
+    "1": 5,
+    "34": 11,
+    "41": 3,
+    "14": 3,
+    "15": 2,
+    "48": 3,
+    "24": 4,
+    "9": 11,
+    "6": 1,
+    "11": 1,
+    "40": 12,
+    "18": 7,
+    "19": 1,
+    "42": 1,
+    "25": 1,
+    "23": 1
+  }
+}

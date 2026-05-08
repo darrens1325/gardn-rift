@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "name": "bot-uldi",
+  "first_seen": 1778127181.4395149,
+  "last_seen": 1778127230.97809,
+  "episodes": 25,
+  "score_total": 0,
+  "score_best": 0,
+  "best_loadout": [],
+  "killed_by": {},
+  "loadout_history": {
+    "1": 25,
+    "0": 1
+  }
+}

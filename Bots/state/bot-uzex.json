@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "bot-uzex",
+  "first_seen": 1778193120.152506,
+  "last_seen": 1778193323.213183,
+  "episodes": 9,
+  "score_total": 178,
+  "score_best": 47,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 7
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 6,
+    "10": 1
+  }
+}

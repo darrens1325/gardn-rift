@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "name": "bot-quga",
+  "first_seen": 1778128593.13799,
+  "last_seen": 1778128593.13799,
+  "episodes": 1,
+  "score_total": 19,
+  "score_best": 19,
+  "best_loadout": [
+    24,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "24": 1,
+    "0": 1
+  }
+}

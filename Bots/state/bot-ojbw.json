@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "name": "bot-ojbw",
+  "first_seen": 1778196274.6527948,
+  "last_seen": 1778196621.355695,
+  "episodes": 13,
+  "score_total": 181,
+  "score_best": 24,
+  "best_loadout": [
+    40,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 8,
+    "Centipede": 2,
+    "bot-axnb": 1,
+    "Cactus": 1
+  },
+  "loadout_history": {
+    "0": 8,
+    "40": 1,
+    "1": 9
+  }
+}

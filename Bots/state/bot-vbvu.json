@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-vbvu",
+  "first_seen": 1778195354.730402,
+  "last_seen": 1778196037.969377,
+  "episodes": 18,
+  "score_total": 1248,
+  "score_best": 238,
+  "best_loadout": [
+    0,
+    34,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 10,
+    "bot-jbid": 1,
+    "Bee": 1,
+    "Scorpion": 1,
+    "Beetle": 1,
+    "Spider": 1,
+    "bot-xcez": 1,
+    "bot-wwip": 1
+  },
+  "loadout_history": {
+    "0": 18,
+    "18": 1,
+    "16": 1,
+    "1": 8,
+    "9": 2,
+    "34": 2,
+    "14": 3,
+    "55": 1,
+    "25": 1
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-rwox",
+  "first_seen": 1778118064.6383371,
+  "last_seen": 1778118454.712682,
+  "episodes": 6,
+  "score_total": 307,
+  "score_best": 110,
+  "best_loadout": [
+    19,
+    18,
+    40,
+    24,
+    9
+  ],
+  "killed_by": {
+    "buddy": 1,
+    "bot-evhw": 1,
+    "trampler": 1,
+    "tendril": 1,
+    "petalpop": 1
+  },
+  "loadout_history": {
+    "1": 4,
+    "5": 1,
+    "6": 2,
+    "9": 3,
+    "18": 3,
+    "40": 4,
+    "10": 2,
+    "15": 1,
+    "19": 1,
+    "24": 2
+  }
+}

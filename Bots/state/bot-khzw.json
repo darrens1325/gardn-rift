@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-khzw",
+  "first_seen": 1778127338.138137,
+  "last_seen": 1778127795.701791,
+  "episodes": 12,
+  "score_total": 538,
+  "score_best": 230,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "sussy": 1,
+    "Hornet": 5,
+    "gardn": 1,
+    "Bee": 1,
+    "Soldier Ant": 1
+  },
+  "loadout_history": {
+    "0": 11,
+    "1": 6
+  }
+}

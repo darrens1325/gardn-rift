@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "name": "bot-ksng",
+  "first_seen": 1778123113.5352068,
+  "last_seen": 1778123928.756978,
+  "episodes": 8,
+  "score_total": 566,
+  "score_best": 264,
+  "best_loadout": [
+    26,
+    40,
+    24,
+    25,
+    26,
+    41
+  ],
+  "killed_by": {
+    "sussy": 1,
+    "rosie": 1,
+    "bot": 1,
+    "bot-bddb": 1,
+    "hello": 1,
+    "florrio": 1,
+    "aa": 1
+  },
+  "loadout_history": {
+    "16": 1,
+    "1": 7,
+    "40": 4,
+    "14": 3,
+    "15": 1,
+    "20": 1,
+    "9": 2,
+    "10": 1,
+    "42": 1,
+    "41": 1,
+    "24": 1,
+    "25": 1,
+    "26": 1
+  }
+}

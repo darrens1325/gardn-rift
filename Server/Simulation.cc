@@ -33,7 +33,7 @@ static void calculate_leaderboard(Simulation *sim) {
 void Simulation::tick() {
     pre_tick();
     spatial_hash.refresh(ARENA_WIDTH, ARENA_HEIGHT);
-    if (frand() < 1.0f / TPS)
+    if (frand() < 1.0f / SIM_RATE)
         for (uint32_t i = 0; i < 10; ++i)
             Map::spawn_random_mob(this);
     for_each_entity([](Simulation *sim, Entity &ent) {
@@ -73,7 +73,7 @@ void Simulation::post_tick() {
         if (!ent.pending_delete) return;
         if (!ent.has_component(kPhysics)) 
             return sim->_delete_ent(ent.id);
-        if (ent.deletion_tick >= TPS / 5) 
+        if (ent.deletion_tick >= SIM_RATE / 5) 
             return sim->_delete_ent(ent.id);
         if (ent.deletion_tick == 0)
             entity_on_death(sim, ent);

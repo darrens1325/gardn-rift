@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "bot-btdo",
+  "first_seen": 1778123353.444418,
+  "last_seen": 1778123853.3393888,
+  "episodes": 5,
+  "score_total": 232,
+  "score_best": 65,
+  "best_loadout": [
+    5,
+    14,
+    14,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Bee": 1,
+    "Ladybug": 1,
+    "a": 1,
+    "gardn": 1
+  },
+  "loadout_history": {
+    "40": 2,
+    "1": 5,
+    "10": 1,
+    "5": 2,
+    "9": 1,
+    "14": 3,
+    "8": 1
+  }
+}

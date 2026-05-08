@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-iwlv",
+  "first_seen": 1778193428.868555,
+  "last_seen": 1778193618.6491241,
+  "episodes": 10,
+  "score_total": 148,
+  "score_best": 47,
+  "best_loadout": [
+    1,
+    0,
+    1,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Bee": 1,
+    "Hornet": 8
+  },
+  "loadout_history": {
+    "0": 6,
+    "40": 1,
+    "1": 8,
+    "34": 1
+  }
+}

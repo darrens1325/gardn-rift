@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-crmn",
+  "first_seen": 1778213393.694699,
+  "last_seen": 1778213420.77694,
+  "episodes": 2,
+  "score_total": 12,
+  "score_best": 8,
+  "best_loadout": [
+    1,
+    0,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "bot": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 2
+  }
+}

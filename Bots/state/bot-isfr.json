@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "bot-isfr",
+  "first_seen": 1778123090.195658,
+  "last_seen": 1778123979.9213781,
+  "episodes": 8,
+  "score_total": 361,
+  "score_best": 78,
+  "best_loadout": [
+    40,
+    24,
+    40,
+    40,
+    24
+  ],
+  "killed_by": {
+    "not bot": 1,
+    "bot-ksng": 1,
+    "bot-xhka": 2,
+    "bot-syfr": 1,
+    "bot-goyi": 1,
+    "thorn": 1
+  },
+  "loadout_history": {
+    "1": 1,
+    "24": 7,
+    "40": 7,
+    "48": 1,
+    "42": 1
+  }
+}

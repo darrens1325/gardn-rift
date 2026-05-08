@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "bot-qztj",
+  "first_seen": 1778123094.858043,
+  "last_seen": 1778123989.584383,
+  "episodes": 8,
+  "score_total": 1092,
+  "score_best": 348,
+  "best_loadout": [
+    41,
+    23,
+    40,
+    40,
+    24,
+    24
+  ],
+  "killed_by": {
+    "Cactus": 1,
+    "florrio": 2,
+    "thorn": 1,
+    "bot-syfr": 1,
+    "bot-egno": 1,
+    "root": 1
+  },
+  "loadout_history": {
+    "1": 2,
+    "40": 6,
+    "24": 6,
+    "26": 1,
+    "41": 2,
+    "34": 1,
+    "23": 2,
+    "48": 1,
+    "18": 1,
+    "14": 1
+  }
+}

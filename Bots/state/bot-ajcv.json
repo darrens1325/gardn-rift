@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-ajcv",
+  "first_seen": 1778193478.86065,
+  "last_seen": 1778193607.886762,
+  "episodes": 7,
+  "score_total": 72,
+  "score_best": 15,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 6
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 4
+  }
+}

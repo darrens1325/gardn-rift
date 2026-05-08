@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "name": "b3",
+  "first_seen": 1778113878.496952,
+  "last_seen": 1778196627.695423,
+  "episodes": 149,
+  "score_total": 2868,
+  "score_best": 68,
+  "best_loadout": [
+    1,
+    0,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "b0": 2,
+    "Bee": 4,
+    "Cactus": 2,
+    "Beetle": 3,
+    "Centipede": 5,
+    "Soldier Ant": 1,
+    "Hornet": 124,
+    "b1": 1,
+    "67": 1,
+    "bot-xdkk": 1,
+    "Spider": 1,
+    "thorn": 1
+  },
+  "loadout_history": {
+    "1": 148,
+    "5": 5,
+    "4": 2,
+    "18": 1,
+    "24": 2,
+    "0": 105,
+    "28": 1,
+    "34": 1,
+    "9": 3,
+    "40": 2,
+    "41": 1,
+    "12": 1,
+    "48": 1
+  }
+}

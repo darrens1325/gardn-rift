@@ -19,7 +19,7 @@ void Simulation::tick() {
                 ent.y.step(amt);
             }
             if (ent.has_component(kDrop) || ent.has_component(kWeb)) {
-                if (ent.lifetime < TPS)
+                if (ent.lifetime < SIM_RATE)
                     LERP(ent.animation, 1, amt * 0.75)
                 else ent.animation = 1;
             } else {

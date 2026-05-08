@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "bot-cjbn",
+  "first_seen": 1778210950.949574,
+  "last_seen": 1778211778.0231628,
+  "episodes": 21,
+  "score_total": 814,
+  "score_best": 150,
+  "best_loadout": [
+    19,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Centipede": 1,
+    "Hornet": 14,
+    "bot-wcog": 1,
+    "Bee": 1,
+    "blossom": 1,
+    "bot-oxqf": 1,
+    "Ladybug": 1
+  },
+  "loadout_history": {
+    "0": 19,
+    "1": 14,
+    "17": 2,
+    "14": 2,
+    "19": 2,
+    "9": 3,
+    "41": 1,
+    "10": 1,
+    "5": 2,
+    "6": 1
+  }
+}

@@ -69,6 +69,14 @@ void GameInstance::tick() {
     for (Client *client : clients)
         _update_client(&simulation, client);
     simulation.post_tick();
+    ++tick_count;
+}
+
+void GameInstance::broadcast(uint8_t const *packet, size_t len) {
+    for (Client *client : clients) {
+        if (!client->verified) continue;
+        client->send_packet(packet, len);
+    }
 }
 
 void GameInstance::add_client(Client *client) {

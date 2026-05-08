@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-qjtw",
+  "first_seen": 1778196211.536455,
+  "last_seen": 1778196632.682005,
+  "episodes": 17,
+  "score_total": 371,
+  "score_best": 76,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 11,
+    "bot-krdu": 1,
+    "Bee": 3,
+    "Rock": 1
+  },
+  "loadout_history": {
+    "0": 12,
+    "1": 11,
+    "32": 1,
+    "15": 1
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "name": "bot-gces",
+  "first_seen": 1778122040.326711,
+  "last_seen": 1778123048.359488,
+  "episodes": 5,
+  "score_total": 601,
+  "score_best": 521,
+  "best_loadout": [
+    24,
+    23,
+    25,
+    40,
+    40,
+    10
+  ],
+  "killed_by": {
+    "not bot": 1,
+    "bot-jmfo": 1,
+    "bot-wpjg": 1,
+    "gardn": 1
+  },
+  "loadout_history": {
+    "9": 2,
+    "19": 1,
+    "1": 4,
+    "7": 1,
+    "5": 1,
+    "23": 2,
+    "24": 2,
+    "15": 1,
+    "40": 1,
+    "10": 1,
+    "25": 1
+  }
+}

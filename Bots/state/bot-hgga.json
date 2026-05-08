@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "bot-hgga",
+  "first_seen": 1778193459.594647,
+  "last_seen": 1778193612.054444,
+  "episodes": 9,
+  "score_total": 94,
+  "score_best": 18,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 6,
+    "bot-cmwf": 1
+  },
+  "loadout_history": {
+    "0": 5,
+    "1": 6
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "name": "bot-mqgb",
+  "first_seen": 1778210964.539603,
+  "last_seen": 1778211771.665299,
+  "episodes": 27,
+  "score_total": 773,
+  "score_best": 54,
+  "best_loadout": [
+    20,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 19,
+    "bot-ktkm": 1,
+    "Soldier Ant": 3,
+    "bot-irod": 1,
+    "bot-mvkc": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "9": 1,
+    "1": 21,
+    "7": 1,
+    "0": 25,
+    "42": 1,
+    "23": 1,
+    "20": 1,
+    "65": 1,
+    "34": 1,
+    "5": 1,
+    "41": 1,
+    "40": 1,
+    "18": 1
+  }
+}

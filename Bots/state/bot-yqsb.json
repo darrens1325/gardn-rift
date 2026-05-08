@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "name": "bot-yqsb",
+  "first_seen": 1778127179.735863,
+  "last_seen": 1778127231.381888,
+  "episodes": 26,
+  "score_total": 0,
+  "score_best": 0,
+  "best_loadout": [],
+  "killed_by": {},
+  "loadout_history": {
+    "1": 26,
+    "0": 1
+  }
+}

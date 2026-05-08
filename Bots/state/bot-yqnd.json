@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "bot-yqnd",
+  "first_seen": 1778193427.062242,
+  "last_seen": 1778193618.642436,
+  "episodes": 12,
+  "score_total": 292,
+  "score_best": 82,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 10
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 10,
+    "39": 1
+  }
+}

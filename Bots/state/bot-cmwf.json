@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-cmwf",
+  "first_seen": 1778193444.79174,
+  "last_seen": 1778193618.642138,
+  "episodes": 10,
+  "score_total": 216,
+  "score_best": 83,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 8,
+    "bot-cxcs": 1
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 7,
+    "26": 1
+  }
+}

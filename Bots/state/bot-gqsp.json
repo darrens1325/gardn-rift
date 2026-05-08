@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "name": "bot-gqsp",
+  "first_seen": 1778210953.023541,
+  "last_seen": 1778211780.490516,
+  "episodes": 29,
+  "score_total": 829,
+  "score_best": 88,
+  "best_loadout": [
+    14,
+    41,
+    0,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 17,
+    "florrio": 1,
+    "bot-njuj": 1,
+    "Centipede": 2,
+    "Bee": 3,
+    "bot-mqgb": 1,
+    "bot-gery": 2,
+    "bot-mvkc": 1
+  },
+  "loadout_history": {
+    "0": 26,
+    "1": 25,
+    "20": 1,
+    "29": 1,
+    "16": 1,
+    "35": 1,
+    "33": 1,
+    "41": 1,
+    "14": 2,
+    "34": 2,
+    "5": 3,
+    "55": 1,
+    "24": 1
+  }
+}

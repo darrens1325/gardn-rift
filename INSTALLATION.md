@@ -57,7 +57,8 @@ If hosting somewhere other than ``localhost``, use the  ``WS_URL`` constant in `
 ``DEBUG`` | ``Server & Client`` | ``Default: 0`` : compiles with assertions and failsafes. <br>
 ``WASM_SERVER`` | ``Server only`` | ``Default : 0`` : compiles to WASM/JS instead of a native binary <br>
 ``TDM`` | ``Server only`` | ``Default: 0`` : enables TDM instead of FFA.<br>
-``GENERAL_SPATIAL_HASH`` | ``Server only`` | ``Default: 0`` : uses the canonical hash grid implementation instead of a uniform grid; enable this to support large entities
+``GENERAL_SPATIAL_HASH`` | ``Server only`` | ``Default: 0`` : uses the canonical hash grid implementation instead of a uniform grid; enable this to support large entities <br>
+``TPS`` | ``Server & Client`` | ``Default: 20`` : **wall-clock** tick rate — how many `tick()` calls the server schedules per real second. Raise (e.g. ``-DTPS=400``) on a native build to accelerate bot training; the WASM build also accepts the flag but is more CPU-bound at high values. Gameplay timing (AI durations, petal reloads, mob speeds) is calibrated against a fixed ``SIM_RATE = 20`` constant in ``Shared/StaticData.cc`` and is *not* affected by changing TPS — the simulation just advances ``TPS / SIM_RATE`` × faster in wall-clock time. Server and client should still be built with the same TPS so the client renders at the matching frame interval.
 
 # License
 [LICENSE](./LICENSE)

@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "name": "bot-zkbb",
+  "first_seen": 1778200062.5985081,
+  "last_seen": 1778200911.5183759,
+  "episodes": 26,
+  "score_total": 896,
+  "score_best": 98,
+  "best_loadout": [
+    14,
+    1,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 16,
+    "Ladybug": 1,
+    "not bot": 1,
+    "Evil Centipede": 1,
+    "hello": 1,
+    "Soldier Ant": 1,
+    "bot-tbrp": 1,
+    "bot-szhv": 1,
+    "Beetle": 1,
+    "bot": 1
+  },
+  "loadout_history": {
+    "0": 24,
+    "6": 1,
+    "41": 1,
+    "1": 21,
+    "34": 1,
+    "48": 1,
+    "28": 1,
+    "18": 1,
+    "9": 1,
+    "14": 1
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "name": "bot-nkes",
+  "first_seen": 1778122144.1210601,
+  "last_seen": 1778122924.988718,
+  "episodes": 9,
+  "score_total": 777,
+  "score_best": 216,
+  "best_loadout": [
+    41,
+    40,
+    24,
+    9,
+    40,
+    19
+  ],
+  "killed_by": {
+    "bot-pihg": 1,
+    "bot": 1,
+    "bot-fyiw": 1,
+    "hello": 1,
+    "67": 1,
+    "not bot": 1,
+    "sussy": 1,
+    "gardn": 1
+  },
+  "loadout_history": {
+    "40": 5,
+    "41": 4,
+    "9": 4,
+    "19": 1,
+    "24": 2,
+    "1": 4,
+    "18": 2,
+    "42": 1,
+    "6": 1,
+    "48": 1,
+    "14": 2,
+    "15": 1
+  }
+}

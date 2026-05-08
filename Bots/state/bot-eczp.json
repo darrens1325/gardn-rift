@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-eczp",
+  "first_seen": 1778126983.602991,
+  "last_seen": 1778127143.0440729,
+  "episodes": 9,
+  "score_total": 100,
+  "score_best": 21,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 6
+  },
+  "loadout_history": {
+    "0": 9,
+    "1": 3
+  }
+}

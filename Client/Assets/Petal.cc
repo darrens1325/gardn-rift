@@ -21,7 +21,13 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.stroke();
         case PetalID::kUniqueBasic:
         case PetalID::kBasic:
+        case PetalID::kUnusualBasic:
+        case PetalID::kRareBasic:
+        case PetalID::kEpicBasic:
         case PetalID::kLight:
+        case PetalID::kUnusualLight:
+        case PetalID::kRareLight:
+        case PetalID::kEpicLight:
         case PetalID::kTwin:
         case PetalID::kTriplet:
             ctx.set_fill(0xffffffff);
@@ -33,6 +39,10 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.stroke();
             break;
         case PetalID::kHeavy:
+        case PetalID::kUnusualHeavy:
+        case PetalID::kRareHeavy:
+        case PetalID::kEpicHeavy:
+        case PetalID::kLegendaryHeavy:
             ctx.set_fill(0xffaaaaaa);
             ctx.set_stroke(0xff888888);
             ctx.set_line_width(3);
@@ -41,6 +51,10 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
+        case PetalID::kCommonStinger:
+        case PetalID::kRareStinger:
+        case PetalID::kEpicStinger:
+        case PetalID::kMythicTringer:
         case PetalID::kStinger: {
         case PetalID::kTringer:
             ctx.set_fill(0xff333333);
@@ -57,6 +71,10 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.stroke();
             break;
         }
+        case PetalID::kCommonLeaf:
+        case PetalID::kRareLeaf:
+        case PetalID::kEpicLeaf:
+        case PetalID::kLegendaryLeaf:
         case PetalID::kLeaf:
             ctx.set_fill(0xff39b54a);
             ctx.set_stroke(0xff2e933c);
@@ -75,6 +93,9 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.qcurve_to(0,-1.5,7.5,0);
             ctx.stroke();
             break;
+        case PetalID::kCommonRose:
+        case PetalID::kRareRose:
+        case PetalID::kLegendaryRose:
         case PetalID::kRose:
         case PetalID::kDahlia:
             ctx.set_fill(0xffff94c9);
@@ -118,6 +139,9 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
+        case PetalID::kCommonIris:
+        case PetalID::kRareIris:
+        case PetalID::kLegendaryIris:
         case PetalID::kIris:
             ctx.set_fill(0xffce76db);
             ctx.set_stroke(0xffa760b1);
@@ -136,6 +160,10 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
+        case PetalID::kCommonBubble:
+        case PetalID::kUnusualBubble:
+        case PetalID::kEpicBubble:
+        case PetalID::kLegendaryBubble:
         case PetalID::kBubble:
             ctx.begin_path();
             ctx.arc(0,0,r);
@@ -211,6 +239,10 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.round_line_join();
             ctx.stroke();
             break;
+        case PetalID::kCommonRock:
+        case PetalID::kUnusualRock:
+        case PetalID::kEpicRock:
+        case PetalID::kLegendaryRock:
         case PetalID::kRock: {
             ctx.set_fill(0xff777777);
             ctx.set_stroke(Renderer::HSV(0xff777777, 0.8));

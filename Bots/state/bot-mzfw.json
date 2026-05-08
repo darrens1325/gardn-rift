@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "name": "bot-mzfw",
+  "first_seen": 1778127180.685836,
+  "last_seen": 1778127230.290499,
+  "episodes": 25,
+  "score_total": 0,
+  "score_best": 0,
+  "best_loadout": [],
+  "killed_by": {},
+  "loadout_history": {
+    "1": 25
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "name": "bot-emdl",
+  "first_seen": 1778124108.792428,
+  "last_seen": 1778126340.4729102,
+  "episodes": 27,
+  "score_total": 1071,
+  "score_best": 82,
+  "best_loadout": [
+    40,
+    40,
+    14,
+    18,
+    5
+  ],
+  "killed_by": {
+    "bot-tyrj": 1,
+    "florrio": 3,
+    "bot-bfcl": 1,
+    "Scorpion": 1,
+    "not bot": 1,
+    "bot-qdbs": 1,
+    "leafy": 1,
+    "aa": 1,
+    "bot-qusm": 1,
+    "gardn": 1,
+    "Rock": 2,
+    "root": 2,
+    "Centipede": 2,
+    "Hornet": 6
+  },
+  "loadout_history": {
+    "1": 24,
+    "41": 3,
+    "7": 2,
+    "9": 1,
+    "18": 5,
+    "5": 4,
+    "19": 2,
+    "23": 3,
+    "55": 1,
+    "28": 3,
+    "40": 1,
+    "14": 3,
+    "6": 2,
+    "62": 1,
+    "39": 1,
+    "10": 1
+  }
+}

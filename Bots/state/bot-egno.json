@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "name": "bot-egno",
+  "first_seen": 1778123126.215779,
+  "last_seen": 1778123945.265662,
+  "episodes": 10,
+  "score_total": 471,
+  "score_best": 153,
+  "best_loadout": [
+    23,
+    40,
+    40,
+    24,
+    40
+  ],
+  "killed_by": {
+    "bot-asxe": 1,
+    "root": 2,
+    "bot-sxrp": 1,
+    "bot-lhlt": 1,
+    "Centipede": 1,
+    "bot": 1,
+    "sussy": 2
+  },
+  "loadout_history": {
+    "1": 2,
+    "36": 1,
+    "6": 1,
+    "7": 1,
+    "18": 5,
+    "24": 7,
+    "9": 1,
+    "34": 5,
+    "40": 9,
+    "35": 1,
+    "48": 1,
+    "23": 3,
+    "41": 1
+  }
+}

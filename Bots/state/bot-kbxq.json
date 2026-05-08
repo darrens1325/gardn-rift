@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "name": "bot-kbxq",
+  "first_seen": 1778115226.710521,
+  "last_seen": 1778115828.8463721,
+  "episodes": 12,
+  "score_total": 369,
+  "score_best": 67,
+  "best_loadout": [
+    7,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Rock": 1,
+    "bot-mpns": 2,
+    "petalpop": 1,
+    "Centipede": 1,
+    "buddy": 1,
+    "bot-oqdg": 1,
+    "anther": 1,
+    "dewdrop": 1,
+    "thorny": 1,
+    "bot-hase": 1
+  },
+  "loadout_history": {
+    "1": 12,
+    "7": 1
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "name": "bot-oqdg",
+  "first_seen": 1778115227.510657,
+  "last_seen": 1778115677.016384,
+  "episodes": 12,
+  "score_total": 352,
+  "score_best": 49,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "dewdrop": 3,
+    "pollen-x": 1,
+    "Centipede": 1,
+    "bot-mslt": 1,
+    "blossom_v2": 1,
+    "bot-kbxq": 1,
+    "stigma": 2,
+    "bot-gzak": 1
+  },
+  "loadout_history": {
+    "1": 12,
+    "5": 3,
+    "7": 2,
+    "6": 1
+  }
+}

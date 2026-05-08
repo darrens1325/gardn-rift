@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-vbxh",
+  "first_seen": 1778196068.63971,
+  "last_seen": 1778196094.817983,
+  "episodes": 2,
+  "score_total": 41,
+  "score_best": 29,
+  "best_loadout": [
+    0,
+    1,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 2
+  }
+}

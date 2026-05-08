@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "name": "bot-qspz",
+  "first_seen": 1778127178.226864,
+  "last_seen": 1778127231.830069,
+  "episodes": 27,
+  "score_total": 0,
+  "score_best": 0,
+  "best_loadout": [],
+  "killed_by": {},
+  "loadout_history": {
+    "0": 1,
+    "1": 27
+  }
+}

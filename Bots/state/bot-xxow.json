@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "bot-xxow",
+  "first_seen": 1778115233.670472,
+  "last_seen": 1778115876.515136,
+  "episodes": 11,
+  "score_total": 631,
+  "score_best": 165,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "bot-ntrp": 1,
+    "bot-mpns": 1,
+    "bot-gzak": 1,
+    "Rock": 2,
+    "sproutling": 1,
+    "sussy": 1,
+    "Centipede": 1,
+    "petalpop": 1,
+    "calyx": 1
+  },
+  "loadout_history": {
+    "1": 11,
+    "6": 1
+  }
+}

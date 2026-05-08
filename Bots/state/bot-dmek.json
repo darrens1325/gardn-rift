@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "name": "bot-dmek",
+  "first_seen": 1778128581.479939,
+  "last_seen": 1778128643.6880279,
+  "episodes": 2,
+  "score_total": 2,
+  "score_best": 2,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "0": 2
+  }
+}

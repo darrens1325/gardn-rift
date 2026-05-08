@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "name": "bot-xfih",
+  "first_seen": 1778127029.069283,
+  "last_seen": 1778127157.078242,
+  "episodes": 7,
+  "score_total": 44,
+  "score_best": 26,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 6
+  },
+  "loadout_history": {
+    "0": 7
+  }
+}
