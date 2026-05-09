@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-dhwu",
+  "first_seen": 1778278954.9210181,
+  "last_seen": 1778280049.0866501,
+  "episodes": 22,
+  "score_total": 1288,
+  "score_best": 171,
+  "best_loadout": [
+    0,
+    9,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 11,
+    "Rock": 1,
+    "bot-zoit": 1,
+    "Bee": 2,
+    "florrio": 1,
+    "rosie": 1,
+    "Cactus": 1,
+    "sussy": 2,
+    "bot-sgzx": 1
+  },
+  "loadout_history": {
+    "40": 2,
+    "1": 14,
+    "34": 2,
+    "0": 22,
+    "18": 1,
+    "41": 1,
+    "14": 1,
+    "9": 3,
+    "23": 1
+  }
+}

@@ -125,6 +125,129 @@ PETAL_RARITY = [
     RARITY_LEGENDARY,  # 78  kBone
     RARITY_UNUSUAL,    # 79  kYucca
     RARITY_EPIC,       # 80  kCorn
+    # ---- wave-system rarity expansion (Shared/StaticDefinitions.hh) ----
+    RARITY_LEGENDARY,  # 81  kLegendaryBasic
+    RARITY_MYTHIC,     # 82  kMythicBasic
+    RARITY_LEGENDARY,  # 83  kLegendaryLight
+    RARITY_MYTHIC,     # 84  kMythicLight
+    RARITY_UNIQUE,     # 85  kUniqueLight
+    RARITY_MYTHIC,     # 86  kMythicHeavy
+    RARITY_UNIQUE,     # 87  kUniqueHeavy
+    RARITY_UNIQUE,     # 88  kUniqueStinger
+    RARITY_MYTHIC,     # 89  kMythicLeaf
+    RARITY_UNIQUE,     # 90  kUniqueLeaf
+    RARITY_COMMON,     # 91  kCommonTwin
+    RARITY_RARE,       # 92  kRareTwin
+    RARITY_EPIC,       # 93  kEpicTwin
+    RARITY_LEGENDARY,  # 94  kLegendaryTwin
+    RARITY_MYTHIC,     # 95  kMythicTwin
+    RARITY_UNIQUE,     # 96  kUniqueTwin
+    RARITY_MYTHIC,     # 97  kMythicRose
+    RARITY_UNIQUE,     # 98  kUniqueRose
+    RARITY_MYTHIC,     # 99  kMythicIris
+    RARITY_UNIQUE,     # 100 kUniqueIris
+    RARITY_MYTHIC,     # 101 kMythicBubble
+    RARITY_UNIQUE,     # 102 kUniqueBubble
+    RARITY_MYTHIC,     # 103 kMythicRock
+    RARITY_UNIQUE,     # 104 kUniqueRock
+    RARITY_COMMON,     # 105 kCommonWeb
+    RARITY_UNUSUAL,    # 106 kUnusualWeb
+    RARITY_EPIC,       # 107 kEpicWeb
+    RARITY_MYTHIC,     # 108 kMythicWeb
+    RARITY_UNIQUE,     # 109 kUniqueWeb
+    RARITY_COMMON,     # 110 kCommonWing
+    RARITY_UNUSUAL,    # 111 kUnusualWing
+    RARITY_EPIC,       # 112 kEpicWing
+    RARITY_LEGENDARY,  # 113 kLegendaryWing
+    RARITY_MYTHIC,     # 114 kMythicWing
+    RARITY_UNIQUE,     # 115 kUniqueWing
+    RARITY_COMMON,     # 116 kCommonPeas
+    RARITY_UNUSUAL,    # 117 kUnusualPeas
+    RARITY_LEGENDARY,  # 118 kLegendaryPeas
+    RARITY_MYTHIC,     # 119 kMythicPeas
+    RARITY_UNIQUE,     # 120 kUniquePeas
+    RARITY_COMMON,     # 121 kCommonSand
+    RARITY_UNUSUAL,    # 122 kUnusualSand
+    RARITY_EPIC,       # 123 kEpicSand
+    RARITY_LEGENDARY,  # 124 kLegendarySand
+    RARITY_MYTHIC,     # 125 kMythicSand
+    RARITY_UNIQUE,     # 126 kUniqueSand
+    RARITY_COMMON,     # 127 kCommonPincer
+    RARITY_UNUSUAL,    # 128 kUnusualPincer
+    RARITY_EPIC,       # 129 kEpicPincer
+    RARITY_LEGENDARY,  # 130 kLegendaryPincer
+    RARITY_MYTHIC,     # 131 kMythicPincer
+    RARITY_UNIQUE,     # 132 kUniquePincer
+    RARITY_COMMON,     # 133 kCommonDahlia
+    RARITY_UNUSUAL,    # 134 kUnusualDahlia
+    RARITY_EPIC,       # 135 kEpicDahlia
+    RARITY_LEGENDARY,  # 136 kLegendaryDahlia
+    RARITY_MYTHIC,     # 137 kMythicDahlia
+    RARITY_UNIQUE,     # 138 kUniqueDahlia
+    RARITY_COMMON,     # 139 kCommonTriplet
+    RARITY_UNUSUAL,    # 140 kUnusualTriplet
+    RARITY_RARE,       # 141 kRareTriplet
+    RARITY_LEGENDARY,  # 142 kLegendaryTriplet
+    RARITY_MYTHIC,     # 143 kMythicTriplet
+    RARITY_UNIQUE,     # 144 kUniqueTriplet
+    RARITY_COMMON,     # 145 kCommonSalt
+    RARITY_UNUSUAL,    # 146 kUnusualSalt
+    RARITY_EPIC,       # 147 kEpicSalt
+    RARITY_LEGENDARY,  # 148 kLegendarySalt
+    RARITY_MYTHIC,     # 149 kMythicSalt
+    RARITY_UNIQUE,     # 150 kUniqueSalt
+    RARITY_COMMON,     # 151 kCommonPollen
+    RARITY_UNUSUAL,    # 152 kUnusualPollen
+    RARITY_RARE,       # 153 kRarePollen
+    RARITY_LEGENDARY,  # 154 kLegendaryPollen
+    RARITY_MYTHIC,     # 155 kMythicPollen
+    RARITY_UNIQUE,     # 156 kUniquePollen
+    RARITY_COMMON,     # 157 kCommonFaster
+    RARITY_UNUSUAL,    # 158 kUnusualFaster
+    RARITY_EPIC,       # 159 kEpicFaster
+    RARITY_LEGENDARY,  # 160 kLegendaryFaster
+    RARITY_MYTHIC,     # 161 kMythicFaster
+    RARITY_UNIQUE,     # 162 kUniqueFaster
+    RARITY_COMMON,     # 163 kCommonCactus
+    RARITY_UNUSUAL,    # 164 kUnusualCactus
+    RARITY_MYTHIC,     # 165 kMythicCactus
+    RARITY_UNIQUE,     # 166 kUniqueCactus
+    RARITY_COMMON,     # 167 kCommonMissile
+    RARITY_UNUSUAL,    # 168 kUnusualMissile
+    RARITY_EPIC,       # 169 kEpicMissile
+    RARITY_LEGENDARY,  # 170 kLegendaryMissile
+    RARITY_MYTHIC,     # 171 kMythicMissile
+    RARITY_UNIQUE,     # 172 kUniqueMissile
+    RARITY_COMMON,     # 173 kCommonDandelion
+    RARITY_UNUSUAL,    # 174 kUnusualDandelion
+    RARITY_EPIC,       # 175 kEpicDandelion
+    RARITY_LEGENDARY,  # 176 kLegendaryDandelion
+    RARITY_MYTHIC,     # 177 kMythicDandelion
+    RARITY_UNIQUE,     # 178 kUniqueDandelion
+    RARITY_COMMON,     # 179 kCommonYucca
+    RARITY_RARE,       # 180 kRareYucca
+    RARITY_EPIC,       # 181 kEpicYucca
+    RARITY_LEGENDARY,  # 182 kLegendaryYucca
+    RARITY_MYTHIC,     # 183 kMythicYucca
+    RARITY_UNIQUE,     # 184 kUniqueYucca
+    RARITY_COMMON,     # 185 kCommonBone
+    RARITY_UNUSUAL,    # 186 kUnusualBone
+    RARITY_RARE,       # 187 kRareBone
+    RARITY_EPIC,       # 188 kEpicBone
+    RARITY_MYTHIC,     # 189 kMythicBone
+    RARITY_UNIQUE,     # 190 kUniqueBone
+    RARITY_COMMON,     # 191 kCommonRice
+    RARITY_UNUSUAL,    # 192 kUnusualRice
+    RARITY_RARE,       # 193 kRareRice
+    RARITY_LEGENDARY,  # 194 kLegendaryRice
+    RARITY_MYTHIC,     # 195 kMythicRice
+    RARITY_UNIQUE,     # 196 kUniqueRice
+    RARITY_COMMON,     # 197 kCommonCorn
+    RARITY_UNUSUAL,    # 198 kUnusualCorn
+    RARITY_RARE,       # 199 kRareCorn
+    RARITY_LEGENDARY,  # 200 kLegendaryCorn
+    RARITY_MYTHIC,     # 201 kMythicCorn
+    RARITY_UNIQUE,     # 202 kUniqueCorn
 ]
 
 PETAL_NONE = 0
@@ -231,6 +354,129 @@ PETAL_TYPE = [
     PETAL_TYPE_TANK,     # 78  kBone
     PETAL_TYPE_HEAL,     # 79  kYucca
     PETAL_TYPE_TANK,     # 80  kCorn
+    # ---- wave-system rarity expansion (mirrors PETAL_RARITY indices) ----
+    PETAL_TYPE_DAMAGE,   # 81  kLegendaryBasic
+    PETAL_TYPE_DAMAGE,   # 82  kMythicBasic
+    PETAL_TYPE_DAMAGE,   # 83  kLegendaryLight
+    PETAL_TYPE_DAMAGE,   # 84  kMythicLight
+    PETAL_TYPE_DAMAGE,   # 85  kUniqueLight
+    PETAL_TYPE_TANK,     # 86  kMythicHeavy
+    PETAL_TYPE_TANK,     # 87  kUniqueHeavy
+    PETAL_TYPE_DAMAGE,   # 88  kUniqueStinger
+    PETAL_TYPE_HEAL,     # 89  kMythicLeaf
+    PETAL_TYPE_HEAL,     # 90  kUniqueLeaf
+    PETAL_TYPE_DAMAGE,   # 91  kCommonTwin
+    PETAL_TYPE_DAMAGE,   # 92  kRareTwin
+    PETAL_TYPE_DAMAGE,   # 93  kEpicTwin
+    PETAL_TYPE_DAMAGE,   # 94  kLegendaryTwin
+    PETAL_TYPE_DAMAGE,   # 95  kMythicTwin
+    PETAL_TYPE_DAMAGE,   # 96  kUniqueTwin
+    PETAL_TYPE_HEAL,     # 97  kMythicRose
+    PETAL_TYPE_HEAL,     # 98  kUniqueRose
+    PETAL_TYPE_POISON,   # 99  kMythicIris
+    PETAL_TYPE_POISON,   # 100 kUniqueIris
+    PETAL_TYPE_UTILITY,  # 101 kMythicBubble
+    PETAL_TYPE_UTILITY,  # 102 kUniqueBubble
+    PETAL_TYPE_TANK,     # 103 kMythicRock
+    PETAL_TYPE_TANK,     # 104 kUniqueRock
+    PETAL_TYPE_UTILITY,  # 105 kCommonWeb
+    PETAL_TYPE_UTILITY,  # 106 kUnusualWeb
+    PETAL_TYPE_UTILITY,  # 107 kEpicWeb
+    PETAL_TYPE_UTILITY,  # 108 kMythicWeb
+    PETAL_TYPE_UTILITY,  # 109 kUniqueWeb
+    PETAL_TYPE_UTILITY,  # 110 kCommonWing
+    PETAL_TYPE_UTILITY,  # 111 kUnusualWing
+    PETAL_TYPE_UTILITY,  # 112 kEpicWing
+    PETAL_TYPE_UTILITY,  # 113 kLegendaryWing
+    PETAL_TYPE_UTILITY,  # 114 kMythicWing
+    PETAL_TYPE_UTILITY,  # 115 kUniqueWing
+    PETAL_TYPE_DAMAGE,   # 116 kCommonPeas
+    PETAL_TYPE_DAMAGE,   # 117 kUnusualPeas
+    PETAL_TYPE_DAMAGE,   # 118 kLegendaryPeas
+    PETAL_TYPE_DAMAGE,   # 119 kMythicPeas
+    PETAL_TYPE_DAMAGE,   # 120 kUniquePeas
+    PETAL_TYPE_DAMAGE,   # 121 kCommonSand
+    PETAL_TYPE_DAMAGE,   # 122 kUnusualSand
+    PETAL_TYPE_DAMAGE,   # 123 kEpicSand
+    PETAL_TYPE_DAMAGE,   # 124 kLegendarySand
+    PETAL_TYPE_DAMAGE,   # 125 kMythicSand
+    PETAL_TYPE_DAMAGE,   # 126 kUniqueSand
+    PETAL_TYPE_POISON,   # 127 kCommonPincer
+    PETAL_TYPE_POISON,   # 128 kUnusualPincer
+    PETAL_TYPE_POISON,   # 129 kEpicPincer
+    PETAL_TYPE_POISON,   # 130 kLegendaryPincer
+    PETAL_TYPE_POISON,   # 131 kMythicPincer
+    PETAL_TYPE_POISON,   # 132 kUniquePincer
+    PETAL_TYPE_HEAL,     # 133 kCommonDahlia
+    PETAL_TYPE_HEAL,     # 134 kUnusualDahlia
+    PETAL_TYPE_HEAL,     # 135 kEpicDahlia
+    PETAL_TYPE_HEAL,     # 136 kLegendaryDahlia
+    PETAL_TYPE_HEAL,     # 137 kMythicDahlia
+    PETAL_TYPE_HEAL,     # 138 kUniqueDahlia
+    PETAL_TYPE_DAMAGE,   # 139 kCommonTriplet
+    PETAL_TYPE_DAMAGE,   # 140 kUnusualTriplet
+    PETAL_TYPE_DAMAGE,   # 141 kRareTriplet
+    PETAL_TYPE_DAMAGE,   # 142 kLegendaryTriplet
+    PETAL_TYPE_DAMAGE,   # 143 kMythicTriplet
+    PETAL_TYPE_DAMAGE,   # 144 kUniqueTriplet
+    PETAL_TYPE_UTILITY,  # 145 kCommonSalt
+    PETAL_TYPE_UTILITY,  # 146 kUnusualSalt
+    PETAL_TYPE_UTILITY,  # 147 kEpicSalt
+    PETAL_TYPE_UTILITY,  # 148 kLegendarySalt
+    PETAL_TYPE_UTILITY,  # 149 kMythicSalt
+    PETAL_TYPE_UTILITY,  # 150 kUniqueSalt
+    PETAL_TYPE_UTILITY,  # 151 kCommonPollen
+    PETAL_TYPE_UTILITY,  # 152 kUnusualPollen
+    PETAL_TYPE_UTILITY,  # 153 kRarePollen
+    PETAL_TYPE_UTILITY,  # 154 kLegendaryPollen
+    PETAL_TYPE_UTILITY,  # 155 kMythicPollen
+    PETAL_TYPE_UTILITY,  # 156 kUniquePollen
+    PETAL_TYPE_UTILITY,  # 157 kCommonFaster
+    PETAL_TYPE_UTILITY,  # 158 kUnusualFaster
+    PETAL_TYPE_UTILITY,  # 159 kEpicFaster
+    PETAL_TYPE_UTILITY,  # 160 kLegendaryFaster
+    PETAL_TYPE_UTILITY,  # 161 kMythicFaster
+    PETAL_TYPE_UTILITY,  # 162 kUniqueFaster
+    PETAL_TYPE_TANK,     # 163 kCommonCactus
+    PETAL_TYPE_TANK,     # 164 kUnusualCactus
+    PETAL_TYPE_TANK,     # 165 kMythicCactus
+    PETAL_TYPE_TANK,     # 166 kUniqueCactus
+    PETAL_TYPE_UTILITY,  # 167 kCommonMissile
+    PETAL_TYPE_UTILITY,  # 168 kUnusualMissile
+    PETAL_TYPE_UTILITY,  # 169 kEpicMissile
+    PETAL_TYPE_UTILITY,  # 170 kLegendaryMissile
+    PETAL_TYPE_UTILITY,  # 171 kMythicMissile
+    PETAL_TYPE_UTILITY,  # 172 kUniqueMissile
+    PETAL_TYPE_UTILITY,  # 173 kCommonDandelion
+    PETAL_TYPE_UTILITY,  # 174 kUnusualDandelion
+    PETAL_TYPE_UTILITY,  # 175 kEpicDandelion
+    PETAL_TYPE_UTILITY,  # 176 kLegendaryDandelion
+    PETAL_TYPE_UTILITY,  # 177 kMythicDandelion
+    PETAL_TYPE_UTILITY,  # 178 kUniqueDandelion
+    PETAL_TYPE_HEAL,     # 179 kCommonYucca
+    PETAL_TYPE_HEAL,     # 180 kRareYucca
+    PETAL_TYPE_HEAL,     # 181 kEpicYucca
+    PETAL_TYPE_HEAL,     # 182 kLegendaryYucca
+    PETAL_TYPE_HEAL,     # 183 kMythicYucca
+    PETAL_TYPE_HEAL,     # 184 kUniqueYucca
+    PETAL_TYPE_TANK,     # 185 kCommonBone
+    PETAL_TYPE_TANK,     # 186 kUnusualBone
+    PETAL_TYPE_TANK,     # 187 kRareBone
+    PETAL_TYPE_TANK,     # 188 kEpicBone
+    PETAL_TYPE_TANK,     # 189 kMythicBone
+    PETAL_TYPE_TANK,     # 190 kUniqueBone
+    PETAL_TYPE_DAMAGE,   # 191 kCommonRice
+    PETAL_TYPE_DAMAGE,   # 192 kUnusualRice
+    PETAL_TYPE_DAMAGE,   # 193 kRareRice
+    PETAL_TYPE_DAMAGE,   # 194 kLegendaryRice
+    PETAL_TYPE_DAMAGE,   # 195 kMythicRice
+    PETAL_TYPE_DAMAGE,   # 196 kUniqueRice
+    PETAL_TYPE_TANK,     # 197 kCommonCorn
+    PETAL_TYPE_TANK,     # 198 kUnusualCorn
+    PETAL_TYPE_TANK,     # 199 kRareCorn
+    PETAL_TYPE_TANK,     # 200 kLegendaryCorn
+    PETAL_TYPE_TANK,     # 201 kMythicCorn
+    PETAL_TYPE_TANK,     # 202 kUniqueCorn
 ]
 
 
@@ -322,15 +568,143 @@ PETAL_BURST = [
     10,   # 78  kBone
     5,    # 79  kYucca
     2,    # 80  kCorn
+    # ---- wave-system rarity expansion (formula = round(damage × count),
+    # damage = base_damage × 1.5^Δ_rarity from the existing tier; values
+    # exceeding _PETAL_MAX_BURST are clamped to 1.0 by petal_burst_norm) ----
+    60,   # 81  kLegendaryBasic   (40 × 1.5)
+    90,   # 82  kMythicBasic      (40 × 2.25)
+    52,   # 83  kLegendaryLight   (35 × 1.5)
+    79,   # 84  kMythicLight      (35 × 2.25)
+    118,  # 85  kUniqueLight      (35 × 3.375)
+    150,  # 86  kMythicHeavy      (100 × 1.5)
+    225,  # 87  kUniqueHeavy      (100 × 2.25)
+    225,  # 88  kUniqueStinger    (50 × 1.5 × 3 count)
+    38,   # 89  kMythicLeaf       (25 × 1.5)
+    56,   # 90  kUniqueLeaf       (25 × 2.25)
+    10,   # 91  kCommonTwin       (5 × 2)
+    24,   # 92  kRareTwin         (12 × 2)
+    36,   # 93  kEpicTwin         (18 × 2)
+    54,   # 94  kLegendaryTwin    (27 × 2)
+    80,   # 95  kMythicTwin       (40 × 2)
+    122,  # 96  kUniqueTwin       (61 × 2)
+    15,   # 97  kMythicRose       (10 × 1.5)
+    22,   # 98  kUniqueRose       (10 × 2.25)
+    22,   # 99  kMythicIris       (15 × 1.5)
+    34,   # 100 kUniqueIris       (15 × 2.25)
+    0,    # 101 kMythicBubble
+    0,    # 102 kUniqueBubble
+    38,   # 103 kMythicRock       (25 × 1.5)
+    56,   # 104 kUniqueRock       (25 × 2.25)
+    2,    # 105 kCommonWeb
+    3,    # 106 kUnusualWeb
+    7,    # 107 kEpicWeb
+    51,   # 108 kMythicWeb        (17 × 3 count)
+    75,   # 109 kUniqueWeb        (25 × 3 count)
+    7,    # 110 kCommonWing
+    10,   # 111 kUnusualWing
+    22,   # 112 kEpicWing
+    34,   # 113 kLegendaryWing
+    51,   # 114 kMythicWing
+    76,   # 115 kUniqueWing
+    16,   # 116 kCommonPeas       (4 × 4)
+    20,   # 117 kUnusualPeas      (5 × 4)
+    72,   # 118 kLegendaryPeas    (18 × 4)
+    108,  # 119 kMythicPeas       (27 × 4)
+    160,  # 120 kUniquePeas       (40 × 4)
+    4,    # 121 kCommonSand       (1 × 4)
+    8,    # 122 kUnusualSand      (2 × 4)
+    16,   # 123 kEpicSand         (4 × 4)
+    28,   # 124 kLegendarySand    (7 × 4)
+    40,   # 125 kMythicSand       (10 × 4)
+    60,   # 126 kUniqueSand       (15 × 4)
+    2,    # 127 kCommonPincer
+    3,    # 128 kUnusualPincer
+    7,    # 129 kEpicPincer
+    11,   # 130 kLegendaryPincer
+    17,   # 131 kMythicPincer
+    25,   # 132 kUniquePincer
+    6,    # 133 kCommonDahlia     (2 × 3)
+    9,    # 134 kUnusualDahlia    (3 × 3)
+    21,   # 135 kEpicDahlia       (7 × 3)
+    33,   # 136 kLegendaryDahlia  (11 × 3)
+    51,   # 137 kMythicDahlia     (17 × 3)
+    75,   # 138 kUniqueDahlia     (25 × 3)
+    6,    # 139 kCommonTriplet    (2 × 3)
+    12,   # 140 kUnusualTriplet   (4 × 3)
+    15,   # 141 kRareTriplet      (5 × 3)
+    36,   # 142 kLegendaryTriplet (12 × 3)
+    54,   # 143 kMythicTriplet    (18 × 3)
+    81,   # 144 kUniqueTriplet    (27 × 3)
+    4,    # 145 kCommonSalt
+    7,    # 146 kUnusualSalt
+    15,   # 147 kEpicSalt
+    22,   # 148 kLegendarySalt
+    34,   # 149 kMythicSalt
+    51,   # 150 kUniqueSalt
+    6,    # 151 kCommonPollen     (2 × 3)
+    12,   # 152 kUnusualPollen    (4 × 3)
+    15,   # 153 kRarePollen       (5 × 3)
+    36,   # 154 kLegendaryPollen  (12 × 3)
+    54,   # 155 kMythicPollen     (18 × 3)
+    81,   # 156 kUniquePollen     (27 × 3)
+    3,    # 157 kCommonFaster
+    5,    # 158 kUnusualFaster
+    10,   # 159 kEpicFaster
+    16,   # 160 kLegendaryFaster
+    24,   # 161 kMythicFaster
+    35,   # 162 kUniqueFaster
+    2,    # 163 kCommonCactus
+    3,    # 164 kUnusualCactus
+    17,   # 165 kMythicCactus
+    25,   # 166 kUniqueCactus
+    11,   # 167 kCommonMissile
+    17,   # 168 kUnusualMissile
+    38,   # 169 kEpicMissile
+    56,   # 170 kLegendaryMissile
+    84,   # 171 kMythicMissile
+    127,  # 172 kUniqueMissile
+    4,    # 173 kCommonDandelion
+    7,    # 174 kUnusualDandelion
+    15,   # 175 kEpicDandelion
+    22,   # 176 kLegendaryDandelion
+    34,   # 177 kMythicDandelion
+    51,   # 178 kUniqueDandelion
+    3,    # 179 kCommonYucca
+    7,    # 180 kRareYucca
+    11,   # 181 kEpicYucca
+    17,   # 182 kLegendaryYucca
+    25,   # 183 kMythicYucca
+    38,   # 184 kUniqueYucca
+    2,    # 185 kCommonBone
+    3,    # 186 kUnusualBone
+    4,    # 187 kRareBone
+    7,    # 188 kEpicBone
+    15,   # 189 kMythicBone
+    22,   # 190 kUniqueBone
+    1,    # 191 kCommonRice
+    2,    # 192 kUnusualRice
+    3,    # 193 kRareRice
+    6,    # 194 kLegendaryRice
+    9,    # 195 kMythicRice
+    13,   # 196 kUniqueRice
+    1,    # 197 kCommonCorn
+    1,    # 198 kUnusualCorn
+    2,    # 199 kRareCorn
+    4,    # 200 kLegendaryCorn
+    6,    # 201 kMythicCorn
+    8,    # 202 kUniqueCorn
 ]
 
 
 def petal_burst_norm(petal_id: int) -> float:
     """Effective petal burst (damage × count) normalised to [0, 1]. Empty
-    or out-of-range maps to 0. The Mythic Tringer at 150 is the ceiling;
-    everything else lives below it."""
+    or out-of-range maps to 0. New rarity-expansion petals can exceed
+    _PETAL_MAX_BURST (kept at the original 150 so already-trained
+    checkpoints don't see their input distribution shift); we clamp here
+    so the network always sees a value in [0, 1]."""
     if 0 <= petal_id < len(PETAL_BURST):
-        return PETAL_BURST[petal_id] / _PETAL_MAX_BURST
+        v = PETAL_BURST[petal_id] / _PETAL_MAX_BURST
+        return v if v < 1.0 else 1.0
     return 0.0
 
 
@@ -362,6 +736,11 @@ C_DISCONNECT = 0
 C_CLIENT_UPDATE = 1
 C_OUTDATED = 2
 C_CHAT = 3            # { u8 op, string sender_name, u8 sender_color, string text }
+# { u8 op, string winner_name, u32 winner_score } — broadcast by the server
+# at WAVE_TICKS_PER_ROUND boundaries. By the time we receive this, every
+# flower in the simulation has been killed and every camera's inventory
+# wiped, so a respawn after this packet is treated as a "new round" start.
+C_ROUND_END = 4
 
 # Input flags (Shared/StaticDefinitions.hh InputFlags)
 INPUT_ATTACK = 1 << 0
@@ -727,6 +1106,20 @@ def parse_chat_packet(data: bytes) -> tuple[str, int, str] | None:
         sender_color = r.r_u8()
         text = r.r_string()
         return sender_name, sender_color, text
+    except (IndexError, ValueError):
+        return None
+
+
+def parse_round_end(data: bytes) -> tuple[str, int] | None:
+    """Decode a C_ROUND_END packet → (winner_name, winner_score). Returns
+    None on parse error or non-roundend opcode."""
+    try:
+        r = Reader(data)
+        if r.r_u8() != C_ROUND_END:
+            return None
+        winner_name = r.r_string()
+        winner_score = r.r_u32()
+        return winner_name, winner_score
     except (IndexError, ValueError):
         return None
 

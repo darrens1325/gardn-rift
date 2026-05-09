@@ -80,6 +80,13 @@ async def _stats_loop(agent: DQNAgent, bots: list[LearningBot], interval: float)
             f"overrun={overrun_pct:.0f}%  avg_work={avg_work_ms:.1f}ms  "
             f"max_work={max_work_ms:.1f}ms"
         )
+        # Wave-system: cumulative round-end events seen and how many of
+        # them named someone in our swarm as the winner. `wins/seen` shows
+        # what fraction of rounds the swarm dominated.
+        rounds_seen = max((b.rounds_seen for b in bots), default=0)
+        rounds_won = sum(b.rounds_won for b in bots)
+        if rounds_seen > 0:
+            line += f"  rounds={rounds_seen} wins={rounds_won}"
         print(line, flush=True)
 
 

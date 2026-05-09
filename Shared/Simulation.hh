@@ -22,6 +22,11 @@ public:
     SERVER_ONLY(uint32_t petal_count_tracker[PetalID::kNumPetals];)
     SERVER_ONLY(uint32_t zone_mob_counts[MAP.size()];)
     SERVER_ONLY(SpatialHash spatial_hash;)
+    // Wave-system mob rarity tier in [0, kNumRarities). Common at the
+    // start of a round, ramps to Unique just before WAVE_TICKS_PER_ROUND.
+    // Updated by GameInstance::tick(); read by alloc_mob when scaling
+    // newly-spawned mob stats (HP, damage, xp, radius).
+    SERVER_ONLY(uint32_t current_wave_rarity = 0;)
     Arena arena_info;
     Simulation();
     void reset();

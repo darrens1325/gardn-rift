@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "name": "bot-ndrj",
+  "first_seen": 1778278960.221617,
+  "last_seen": 1778280049.084296,
+  "episodes": 33,
+  "score_total": 1432,
+  "score_best": 71,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Spider": 4,
+    "Bee": 1,
+    "67": 2,
+    "bot-fvwy": 1,
+    "Hornet": 14,
+    "Ladybug": 3,
+    "Centipede": 1,
+    "Rock": 1,
+    "bot-fhtb": 2,
+    "bot-sgzx": 1,
+    "blossom": 1,
+    "root": 1
+  },
+  "loadout_history": {
+    "0": 32,
+    "1": 27,
+    "9": 2,
+    "24": 3,
+    "5": 1,
+    "18": 1,
+    "36": 1,
+    "28": 1,
+    "6": 1,
+    "14": 2,
+    "19": 1,
+    "23": 1,
+    "40": 3,
+    "34": 1
+  }
+}

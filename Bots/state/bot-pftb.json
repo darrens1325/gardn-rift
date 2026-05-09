@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "name": "bot-pftb",
+  "first_seen": 1778282657.399723,
+  "last_seen": 1778283806.662119,
+  "episodes": 80,
+  "score_total": 3919,
+  "score_best": 221,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Spider": 3,
+    "Hornet": 49,
+    "Bee": 4,
+    "florrio": 3,
+    "Rock": 3,
+    "bot-lyof": 2,
+    "Ladybug": 1,
+    "Soldier Ant": 3,
+    "bot": 1,
+    "bot-ebds": 1,
+    "bot-dvha": 2,
+    "Centipede": 5,
+    "bot-qxzc": 1,
+    "bot-pjfp": 1
+  },
+  "loadout_history": {
+    "0": 71,
+    "1": 61,
+    "34": 3,
+    "14": 8,
+    "9": 6,
+    "6": 5,
+    "33": 2,
+    "36": 1,
+    "40": 3,
+    "35": 1,
+    "28": 3,
+    "5": 3,
+    "15": 1,
+    "26": 1,
+    "7": 1,
+    "10": 2,
+    "48": 1,
+    "24": 1
+  }
+}

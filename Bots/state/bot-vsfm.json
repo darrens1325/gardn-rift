@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-vsfm",
+  "first_seen": 1778287621.774229,
+  "last_seen": 1778288035.252317,
+  "episodes": 3,
+  "score_total": 67,
+  "score_best": 42,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Spider": 1
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 3
+  }
+}

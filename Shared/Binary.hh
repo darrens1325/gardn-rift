@@ -12,6 +12,11 @@ enum Clientbound {
     kOutdated,
     // Broadcast: { u8: kChat, string: sender_name, u8: sender_color, string: text }
     kChat,
+    // Broadcast at round end (every WAVE_TICKS_PER_ROUND game-ticks):
+    //   { u8: kRoundEnd, string: winner_name, u32: winner_score }
+    // Server has already cleared every flower and inventory by the time it
+    // sends this; clients should treat it as "you may respawn now."
+    kRoundEnd,
 };
 
 enum Serverbound {

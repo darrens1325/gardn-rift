@@ -48,6 +48,7 @@ from protocol import (
     C_CHAT,
     C_CLIENT_UPDATE,
     C_OUTDATED,
+    C_ROUND_END,
     INPUT_ATTACK,
     INPUT_DEFEND,
     MAX_SLOT_COUNT,
@@ -67,12 +68,13 @@ from protocol import (
     has_component,
     parse_chat_packet,
     parse_client_update,
+    parse_round_end,
     petal_burst_norm,
     petal_rank,
     petal_type_norm,
 )
 
-VERSION_HASH = 4728567265382324  # bumped when chat opcodes were added
+VERSION_HASH = 4728567265382325  # bumped for kRoundEnd + 124 new petal IDs
 
 MOVE_MAG = 260.0          # server clamps to PLAYER_ACCELERATION above 200
 DEFAULT_CONTROL_HZ = 20   # sane default for stock TPS=20; bump when server runs faster
@@ -152,6 +154,15 @@ APPROACH_CAP = 50.0    # max distance-units of closing rewarded per tick
 # Keeps inventory actions model-controlled (no heuristic gating); just
 # makes the cost of deletion immediately visible.
 W_PETAL_PRESENT = 0.1
+# Per-tick bonus is scaled by `1 + RARITY_PRESENT_SCALE * rank` so a slot
+# holding kUnique pays more than a slot holding kCommon. With scale=0.5:
+# common=1.0×, unusual=1.5×, rare=2.0×, ..., unique=4.0×. Gives the policy
+# an immediate, monotonic signal that rarer petals are more valuable to keep
+# (and conversely more valuable to swap *into* the primary row from a drop).
+# Without this the petal-present stream was flat — the only way the model
+# could tell rare from common was via downstream damage credit, which is
+# delayed by many ticks and shared with mob damage noise.
+RARITY_PRESENT_SCALE = 0.5
 # Active *negative* reward per empty primary slot per tick. Combined with
 # W_PETAL_PRESENT this turns the "keep your petals" signal into a two-sided
 # gradient: full loadout pays the positive bonus, deletes immediately incur
@@ -166,7 +177,15 @@ W_EMPTY_PRIMARY_PENALTY = 0.25
 # delete-spam during ε-greedy exploration; small enough that an actually
 # useful delete (storage-full + replacing trash with a drop) still
 # pays off via the better-petal reward later.
+#
+# Scaled by the rarity of the deleted slot — deleting a kUnique is far
+# more punishing than deleting a kCommon. The rank is read from the
+# previous-state loadout column (loadout_feats start at offset 13).
 W_DELETE_COST = 1.5
+# Slot 0 of the loadout-rank feature column lives here in `_prev_state`
+# (1 hp + 12 hostile = 13). Used to scale W_DELETE_COST by the rarity of
+# whatever lived in the slot we just deleted from.
+LOADOUT_RANK_OFFSET = 13
 
 # Kill-event bonuses. The damage-credit path already pays per HP-ratio
 # point dealt by our petals, so the killing blow naturally pays whatever
@@ -178,6 +197,17 @@ W_DELETE_COST = 1.5
 # a mob," because mobs are everywhere and players are scarce.
 W_MOB_KILL_BONUS = 10.0
 W_PLAYER_KILL_BONUS = 50.0
+
+# Wave-system end-of-round bonus. Server fires kRoundEnd every
+# WAVE_TICKS_PER_ROUND game-ticks naming the player with the highest score
+# at the moment of reset. Whichever bot's name matches gets W_ROUND_WIN
+# credited into the same transition that would otherwise carry the round-
+# end DEATH_PENALTY — net effect: winning a round pays roughly
+# (W_ROUND_WIN - DEATH_PENALTY) ≈ +32, losing a round pays -DEATH_PENALTY.
+# Sized to outweigh the death penalty by a clear margin so the policy
+# can learn "max score by tick 72000" as a top-level objective without
+# the death cost cancelling the win.
+W_ROUND_WIN = 50.0
 
 
 def _hostile_features(entities: dict, my_player: dict, my_team: tuple[int, int]) -> list[float]:
@@ -523,6 +553,23 @@ class LearningBot:
         # CHAT_COOLDOWN). Wall-clock seconds between bot-emitted lines.
         self._chat_cooldown_s = 2.5
 
+        # Wave / round state — driven by the server's kRoundEnd packets.
+        #  - `_can_respawn` gates kClientSpawn sends. True initially (so the
+        #    very first life starts immediately on connect), set False when
+        #    the bot dies, and re-armed only by a kRoundEnd. Net result: a
+        #    bot that dies mid-round sits in spectator state until the round
+        #    ends, then everyone respawns together at round start.
+        #  - `_round_win_pending` carries the kRoundEnd winner-bonus into
+        #    the next reward credit. Folded into either the next normal
+        #    transition's reward or the next death-credit, whichever fires
+        #    first; cleared after use so each round-end pays exactly once.
+        #  - `rounds_won` counts cumulative wins across the run for the
+        #    stats line.
+        self._can_respawn = True
+        self._round_win_pending = 0.0
+        self.rounds_won = 0
+        self.rounds_seen = 0
+
     # -- protocol helpers (unchanged from the heuristic version) ------------
 
     async def _send_verify(self, ws) -> None:
@@ -649,9 +696,21 @@ class LearningBot:
 
     def _on_death(self, terminal_state: list[float]) -> None:
         if self._prev_state is not None and self._prev_action is not None:
-            self.episode_reward += -DEATH_PENALTY
-            self.agent.push(self._prev_state, self._prev_action, -DEATH_PENALTY,
+            # If a kRoundEnd just fired naming us the winner, fold the
+            # bonus into the same transition. Cleared after use so a single
+            # round-end credits exactly once even if the bot's death and
+            # the round-end coincide.
+            terminal_reward = -DEATH_PENALTY + self._round_win_pending
+            self._round_win_pending = 0.0
+            self.episode_reward += terminal_reward
+            self.agent.push(self._prev_state, self._prev_action, terminal_reward,
                             terminal_state, True)
+        # NOTE: _can_respawn is *not* touched here. It is True at boot, set
+        # False only after a successful spawn, and re-armed True only by a
+        # kRoundEnd packet. Mid-round deaths leave the bot dead-without-
+        # respawn until the round ends; round-end deaths see _can_respawn
+        # already flipped True by the recv loop so the next control tick
+        # respawns immediately.
         self.last_episode_reward = self.episode_reward
         self.last_episode_score = self._prev_score
         self.episodes_finished += 1
@@ -757,9 +816,22 @@ class LearningBot:
             # Credit-assigned to the delete action directly, so the QNet
             # learns "delete = expensive" without waiting for the empty-slot
             # penalty stream to flow through several future ticks.
-            prev_kind, _, _ = decode_inventory_action(self._prev_action)
+            prev_kind, prev_p1, _ = decode_inventory_action(self._prev_action)
             if prev_kind == "delete":
-                reward -= W_DELETE_COST
+                # Scale the cost by the rarity of what we just deleted, so
+                # tossing a kUnique is far more painful than tossing a
+                # kCommon. The rank-norm sits in `_prev_state` at the
+                # loadout-feature column for slot prev_p1; recovering rank
+                # is `norm * (_MAX_RARITY_RANK + 1) - 1`. norm=0 means the
+                # slot was already empty — still pays the base cost so
+                # spamming delete on empty slots stays discouraged.
+                rarity_factor = 1.0
+                if 0 <= prev_p1 < 16 and self._prev_state is not None:
+                    norm = self._prev_state[LOADOUT_RANK_OFFSET + prev_p1]
+                    if norm > 0.0:
+                        rank = norm * (_MAX_RARITY_RANK + 1) - 1
+                        rarity_factor = 1.0 + RARITY_PRESENT_SCALE * max(0.0, rank)
+                reward -= W_DELETE_COST * rarity_factor
             # Engagement shaping #2: small per-tick bonus while *any* hostile
             # (mob or enemy player) is within engagement range. Continuous
             # gradient toward "seek a fight," even before any kill resolves.
@@ -939,12 +1011,25 @@ class LearningBot:
             loadout_count = int(player.get("loadout_count", 0))
             if loadout_ids and loadout_count > 0:
                 end = min(loadout_count, len(loadout_ids))
-                active_primary = sum(
-                    1 for i in range(end) if int(loadout_ids[i]) != PETAL_NONE
-                )
-                empty_primary = end - active_primary
-                if active_primary > 0:
-                    reward += W_PETAL_PRESENT * active_primary
+                # Per-slot rarity-scaled bonus. A slot with kCommon pays
+                # 1.0× W_PETAL_PRESENT; a slot with kUnique pays
+                # (1 + 0.5 × 6) = 4.0×. This gives a direct, immediate
+                # gradient that "rarer = more valuable to hold," which the
+                # flat sum couldn't express.
+                slot_value = 0.0
+                empty_primary = 0
+                for i in range(end):
+                    pid = int(loadout_ids[i])
+                    if pid == PETAL_NONE:
+                        empty_primary += 1
+                        continue
+                    rank = petal_rank(pid)
+                    if rank < 0:
+                        slot_value += 1.0
+                    else:
+                        slot_value += 1.0 + RARITY_PRESENT_SCALE * rank
+                if slot_value > 0.0:
+                    reward += W_PETAL_PRESENT * slot_value
                 if empty_primary > 0:
                     reward -= W_EMPTY_PRIMARY_PENALTY * empty_primary
             self.episode_reward += reward
@@ -1048,6 +1133,10 @@ class LearningBot:
         async with websockets.connect(self.url, max_size=2 * 1024 * 1024) as ws:
             await self._send_verify(ws)
             await self._send_spawn(ws)
+            # The initial spawn counts as our one allowed spawn for the
+            # current round — don't let control_loop double-spawn before
+            # the next kRoundEnd re-arms us.
+            self._can_respawn = False
             stop = asyncio.Event()
 
             async def recv_loop():
@@ -1071,6 +1160,18 @@ class LearningBot:
                             print(f"[{self.name}] server says client is outdated; bump VERSION_HASH")
                             stop.set()
                             return
+                        elif op == C_ROUND_END:
+                            parsed = parse_round_end(msg)
+                            if parsed is not None:
+                                winner_name, winner_score = parsed
+                                self.rounds_seen += 1
+                                if winner_name == self.name:
+                                    self._round_win_pending = W_ROUND_WIN
+                                    self.rounds_won += 1
+                                # Re-arm respawn — every bot waits for this
+                                # signal between rounds so they all spawn
+                                # together at round start.
+                                self._can_respawn = True
                         elif op == C_CHAT:
                             parsed = parse_chat_packet(msg)
                             if parsed is not None:
@@ -1117,16 +1218,22 @@ class LearningBot:
                         continue
                     player = self._my_player()
                     if player is None:
-                        # Dead — credit the death once, then respawn.
+                        # Dead — credit the death once.
                         if self._prev_player_id is not None:
                             self._on_death(_ZERO_STATE)
                         now = asyncio.get_event_loop().time()
-                        if now - last_spawn > 1.0:
+                        # Wave-system respawn gate: only allowed once per
+                        # round. _can_respawn is flipped True on each
+                        # kRoundEnd, then back to False here when we
+                        # actually fire the spawn — so a bot can't quietly
+                        # double-spawn within a round.
+                        if self._can_respawn and now - last_spawn > 1.0:
                             try:
                                 await self._send_spawn(ws)
                             except websockets.ConnectionClosed:
                                 return
                             last_spawn = now
+                            self._can_respawn = False
                         self._record_tick_work(
                             asyncio.get_event_loop().time() - tick_start, period
                         )

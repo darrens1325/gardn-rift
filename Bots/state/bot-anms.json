@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-anms",
+  "first_seen": 1778287625.050293,
+  "last_seen": 1778288047.300436,
+  "episodes": 3,
+  "score_total": 343,
+  "score_best": 324,
+  "best_loadout": [
+    0,
+    1,
+    0,
+    1,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 3,
+    "15": 1,
+    "40": 1,
+    "41": 1,
+    "19": 1
+  }
+}

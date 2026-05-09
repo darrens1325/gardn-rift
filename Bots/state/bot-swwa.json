@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "name": "bot-swwa",
+  "first_seen": 1778280103.6944299,
+  "last_seen": 1778282591.320352,
+  "episodes": 49,
+  "score_total": 2602,
+  "score_best": 307,
+  "best_loadout": [
+    24,
+    0,
+    0,
+    0,
+    34,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 36,
+    "Soldier Ant": 1,
+    "bot-jgjz": 1,
+    "bot-yhwd": 1,
+    "bot-mhzd": 1,
+    "aa": 1,
+    "hello": 1,
+    "Bee": 2,
+    "bot-nllq": 1,
+    "bot-uuao": 1,
+    "Centipede": 1,
+    "Spider": 1
+  },
+  "loadout_history": {
+    "0": 48,
+    "1": 37,
+    "6": 3,
+    "41": 1,
+    "40": 5,
+    "18": 5,
+    "24": 3,
+    "10": 3,
+    "34": 3,
+    "5": 3,
+    "9": 1,
+    "42": 1,
+    "14": 2,
+    "25": 1,
+    "21": 1
+  }
+}

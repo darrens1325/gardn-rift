@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "name": "bot-mcsc",
+  "first_seen": 1778215536.9106,
+  "last_seen": 1778218173.965864,
+  "episodes": 74,
+  "score_total": 5152,
+  "score_best": 349,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    40,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 53,
+    "zorr": 2,
+    "Cactus": 2,
+    "blossom": 1,
+    "bot-cwaz": 1,
+    "bot-cdfw": 1,
+    "Scorpion": 1,
+    "Boulder": 1,
+    "Beetle": 1,
+    "Centipede": 1,
+    "Soldier Ant": 2,
+    "Spider": 2,
+    "Rock": 1,
+    "bot-lspm": 1,
+    "hello": 2,
+    "florrio": 1
+  },
+  "loadout_history": {
+    "0": 68,
+    "1": 55,
+    "14": 8,
+    "5": 3,
+    "6": 1,
+    "10": 2,
+    "28": 1,
+    "9": 3,
+    "48": 1,
+    "40": 5,
+    "18": 2,
+    "35": 1,
+    "23": 2,
+    "7": 2
+  }
+}

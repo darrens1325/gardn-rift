@@ -29,14 +29,54 @@ Entity &alloc_drop(Simulation *sim, PetalID::T drop_id) {
     return drop;
 }
 
+// Wave-rarity scaling for mob stats. The mob's *effective* rarity at spawn
+// time is max(authored, current_wave_rarity); we never downgrade an Epic-
+// authored mob into a Common one.
+//
+// HP / damage / xp scale by `delta = effective - authored` so authored-Epic
+// mobs stay tougher than authored-Common ones at the same wave tier. HP
+// uses the steepest curve (1.7× per tier) so the bot feels the round-end
+// difficulty wall; damage scales more gently so late-round mobs aren't
+// flat-out unkillable.
+//
+// Radius is *absolute* by effective rarity rather than delta-based: a
+// Mythic mob always reads as twice the size of a Common one regardless of
+// how it was authored. Per-rarity multipliers per the spec — linear +0.2
+// per tier from Common (1.0×) through Mythic (2.0×); Unique extrapolates
+// to 2.2× to keep the curve monotonic.
+static constexpr float _mob_scale_pow(float base, int n) {
+    float r = 1.0f;
+    if (n >= 0) for (int i = 0; i < n; ++i) r *= base;
+    else       for (int i = 0; i < -n; ++i) r /= base;
+    return r;
+}
+static constexpr float MOB_RADIUS_MULT[RarityID::kNumRarities] = {
+    1.0f,  // Common
+    1.2f,  // Unusual
+    1.4f,  // Rare
+    1.6f,  // Epic
+    1.8f,  // Legendary
+    2.0f,  // Mythic
+    2.2f,  // Unique  (extrapolation of the +0.2/tier ramp)
+};
+
 static Entity &__alloc_mob(Simulation *sim, MobID::T mob_id, float x, float y, EntityID const team = NULL_ENTITY) {
     DEBUG_ONLY(assert(mob_id < MobID::kNumMobs);)
     struct MobData const &data = MOB_DATA[mob_id];
+    uint32_t wave = sim->current_wave_rarity;
+    if (wave >= RarityID::kNumRarities) wave = RarityID::kNumRarities - 1;
+    uint32_t effective_rarity = wave;
+    if (effective_rarity < data.rarity) effective_rarity = data.rarity;
+    int delta = (int)effective_rarity - (int)data.rarity;
+    float hp_mult     = _mob_scale_pow(1.7f, delta);
+    float dmg_mult    = _mob_scale_pow(1.5f, delta);
+    float xp_mult     = _mob_scale_pow(1.6f, delta);
+    float radius_mult = MOB_RADIUS_MULT[effective_rarity];
     float seed = frand();
     Entity &mob = sim->alloc_ent();
 
     mob.add_component(kPhysics);
-    mob.set_radius(data.radius.get_single(seed));
+    mob.set_radius(data.radius.get_single(seed) * radius_mult);
     mob.set_angle(frand() * 2 * M_PI);
     mob.set_x(x);
     mob.set_y(y);
@@ -46,7 +86,7 @@ static Entity &__alloc_mob(Simulation *sim, MobID::T mob_id, float x, float y, E
         BIT_SET(mob.flags, EntityFlags::kNoFriendlyCollision);
     if (team == NULL_ENTITY)
         BIT_SET(mob.flags, EntityFlags::kHasCulling);
-        
+
     mob.add_component(kRelations);
     mob.set_team(team);
 
@@ -54,13 +94,14 @@ static Entity &__alloc_mob(Simulation *sim, MobID::T mob_id, float x, float y, E
     mob.set_mob_id(mob_id);
 
     mob.add_component(kHealth);
-    mob.health = mob.max_health = data.health.get_single(seed);
-    mob.damage = data.damage;
+    mob.health = mob.max_health = data.health.get_single(seed) * hp_mult;
+    mob.damage = data.damage * dmg_mult;
     mob.poison_damage = data.attributes.poison_damage;
+    mob.poison_damage.damage *= dmg_mult;
     mob.set_health_ratio(1);
 
     mob.detection_radius = data.attributes.aggro_radius;
-    mob.score_reward = data.xp;
+    mob.score_reward = (uint32_t)(data.xp * xp_mult);
 
     mob.add_component(kName);
     mob.set_name(data.name);

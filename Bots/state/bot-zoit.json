@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-zoit",
+  "first_seen": 1778278968.9801788,
+  "last_seen": 1778280049.089464,
+  "episodes": 30,
+  "score_total": 1564,
+  "score_best": 157,
+  "best_loadout": [
+    18,
+    28,
+    29,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 23,
+    "aa": 1,
+    "Bee": 1,
+    "Spider": 1,
+    "bot-gmxk": 1,
+    "Cactus": 1,
+    "Ladybug": 1
+  },
+  "loadout_history": {
+    "0": 28,
+    "1": 24,
+    "40": 3,
+    "24": 1,
+    "5": 2,
+    "18": 3,
+    "28": 1,
+    "29": 1,
+    "9": 1,
+    "37": 1,
+    "35": 1
+  }
+}

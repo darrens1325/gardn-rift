@@ -3,13 +3,32 @@
 #include <Client/StaticData.hh>
 
 #include <Shared/Helpers.hh>
+#include <Shared/StaticData.hh>
 
 #include <cmath>
 
 #define SET_BASE_COLOR(set_color) { if (!BIT_AT(flags, 0)) base_color = set_color; else { base_color = FLOWER_COLORS[attr.color]; } }
 
 void draw_static_mob(MobID::T mob_id, Renderer &ctx, MobRenderAttributes attr) {
-    float radius = attr.radius;
+    // Wave-system rarity scaling. Server multiplies entity.radius by a
+    // per-tier MOB_RADIUS_MULT (see Server/Spawn.cc). The case bodies
+    // below use a mix of `radius` (the head / body circle) and hardcoded
+    // offsets for decorations like wings, antennae, segments, etc. If we
+    // just use attr.radius directly the decorations stay at their
+    // authored sizes — only the head visibly grows. Soldier ants showed
+    // this most obviously: head doubles, wings + rear ball don't.
+    //
+    // Fix: apply a uniform ctx.scale so *all* drawing in this function
+    // grows uniformly with the entity's actual radius. The case bodies
+    // continue to use `radius`, but we shadow it with the authored
+    // canonical (MOB_DATA[mob_id].radius.min) so the post-scale visual
+    // size still matches attr.radius. For mobs where attr.radius is
+    // already the authored size (Common-tier, Common wave) the scale is
+    // 1.0 and nothing changes.
+    float authored_radius = MOB_DATA[mob_id].radius.lower;
+    float visual_scale = (authored_radius > 0.0f) ? attr.radius / authored_radius : 1.0f;
+    if (visual_scale != 1.0f) ctx.scale(visual_scale);
+    float radius = (authored_radius > 0.0f) ? authored_radius : attr.radius;
     uint32_t flags = attr.flags;
     float animation_value = sinf(attr.animation);
     uint32_t seed = attr.seed;

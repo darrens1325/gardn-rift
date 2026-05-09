@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "name": "bot-qefz",
+  "first_seen": 1778280120.4405692,
+  "last_seen": 1778282524.632538,
+  "episodes": 48,
+  "score_total": 2745,
+  "score_best": 154,
+  "best_loadout": [
+    14,
+    36,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 35,
+    "Boulder": 1,
+    "zorr": 1,
+    "bot-ltcr": 2,
+    "Ladybug": 1,
+    "67": 1,
+    "bot-jgjz": 2,
+    "Bee": 2,
+    "bot-ydzo": 2
+  },
+  "loadout_history": {
+    "0": 47,
+    "1": 36,
+    "34": 1,
+    "24": 2,
+    "40": 3,
+    "18": 2,
+    "6": 1,
+    "14": 6,
+    "5": 1,
+    "23": 1,
+    "36": 1,
+    "9": 1
+  }
+}

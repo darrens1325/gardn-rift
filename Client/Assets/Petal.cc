@@ -3,8 +3,10 @@
 #include <Client/StaticData.hh>
 
 #include <Shared/Helpers.hh>
+#include <Shared/StaticData.hh>
 
 #include <cmath>
+#include <cstring>
 
 void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
     float r = PETAL_DATA[id].radius;
@@ -931,10 +933,25 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        default:
+        default: {
+            // Wave-system rarity expansion: every new (base, rarity)
+            // PetalID added at the end of the enum aliases its rendering
+            // to the first earlier-indexed petal with the same name.
+            // kLegendaryBasic → kBasic, kUniqueRose → kRose, etc. Avoids
+            // having to add ~120 explicit fall-through case labels here.
+            // PETAL_DATA is indexed in the same order as the enum, so a
+            // forward scan from id=1 finds the canonical case.
+            char const *name = PETAL_DATA[id].name;
+            for (PetalID::T fallback = 1; fallback < id; ++fallback) {
+                if (std::strcmp(PETAL_DATA[fallback].name, name) == 0) {
+                    draw_static_petal_single(fallback, ctx);
+                    return;
+                }
+            }
             assert(id < PetalID::kNumPetals);
             assert(!"didn't cover petal render");
             break;
+        }
     }
 }
 

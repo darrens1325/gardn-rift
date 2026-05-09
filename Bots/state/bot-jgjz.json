@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "name": "bot-jgjz",
+  "first_seen": 1778280184.09654,
+  "last_seen": 1778282588.568574,
+  "episodes": 49,
+  "score_total": 2826,
+  "score_best": 250,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-swwa": 1,
+    "bot-ozny": 1,
+    "Hornet": 31,
+    "Bee": 3,
+    "Ladybug": 1,
+    "Spider": 2,
+    "a": 1,
+    "Centipede": 3,
+    "florrio": 1,
+    "aa": 1,
+    "root": 1,
+    "Rock": 2
+  },
+  "loadout_history": {
+    "0": 48,
+    "69": 1,
+    "1": 34,
+    "9": 3,
+    "39": 1,
+    "34": 1,
+    "15": 1,
+    "14": 5,
+    "24": 3,
+    "18": 3,
+    "19": 2,
+    "5": 4,
+    "40": 4,
+    "23": 2,
+    "6": 1
+  }
+}

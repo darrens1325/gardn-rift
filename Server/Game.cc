@@ -65,11 +65,100 @@ void GameInstance::init() {
 }
 
 void GameInstance::tick() {
+    // Advance the wave rarity *before* simulation.tick() so any mob spawned
+    // this tick (in particular Map::spawn_random_mob from inside the sim)
+    // sees the current tier. Linear ramp Common→Unique over the round.
+    uint32_t wave_rarity = (uint32_t)((uint64_t)wave_tick * RarityID::kNumRarities / WAVE_TICKS_PER_ROUND);
+    if (wave_rarity >= RarityID::kNumRarities) wave_rarity = RarityID::kNumRarities - 1;
+    simulation.current_wave_rarity = wave_rarity;
+
     simulation.tick();
     for (Client *client : clients)
         _update_client(&simulation, client);
     simulation.post_tick();
     ++tick_count;
+    ++wave_tick;
+
+    // Count alive flowers across verified clients. We use this both to
+    // arm the early-reset trigger ("had a flower, now don't") and to
+    // remember that a round was *active* — without the latch we'd
+    // re-fire end_round() the very next tick because the kRoundEnd
+    // deletions leave us with zero flowers until the bots respawn.
+    uint32_t alive_flowers = 0;
+    for (Client *client : clients) {
+        if (!client->verified) continue;
+        if (!simulation.ent_exists(client->camera)) continue;
+        Entity &camera = simulation.get_ent(client->camera);
+        if (simulation.ent_alive(camera.player)) ++alive_flowers;
+    }
+    if (alive_flowers > 0) any_flower_this_round = 1;
+
+    bool time_up = wave_tick >= WAVE_TICKS_PER_ROUND;
+    bool wipeout = any_flower_this_round && alive_flowers == 0;
+    if (time_up || wipeout) {
+        end_round();
+        wave_tick = 0;
+        simulation.current_wave_rarity = 0;
+        any_flower_this_round = 0;
+    }
+}
+
+void GameInstance::end_round() {
+    // Pick the top-scoring living flower across all connected clients.
+    std::string winner_name;
+    uint32_t winner_score = 0;
+    for (Client *client : clients) {
+        if (!client->verified) continue;
+        if (!simulation.ent_exists(client->camera)) continue;
+        Entity &camera = simulation.get_ent(client->camera);
+        if (!simulation.ent_alive(camera.player)) continue;
+        Entity &player = simulation.get_ent(camera.player);
+        if (player.score > winner_score) {
+            winner_score = player.score;
+            winner_name = player.name;
+        }
+    }
+    // Broadcast the round-end packet *before* deleting flowers so clients
+    // know whose score they saw last.
+    Writer writer(Server::OUTGOING_PACKET);
+    writer.write<uint8_t>(Clientbound::kRoundEnd);
+    writer.write<std::string>(winner_name);
+    writer.write<uint32_t>(winner_score);
+    broadcast(Server::OUTGOING_PACKET, writer.at - writer.packet);
+
+    // Kill every flower and wipe every camera's inventory. Two cases:
+    //   1. Player alive — wipe the player's loadout *first* so Death.cc's
+    //      flower handler sees only kNone slots (no drops at round end),
+    //      reset score so the post-death respawn_level recomputes to 1,
+    //      then request_delete. Death.cc's normal flower-death path then
+    //      refills camera.inventory with basics for level 1, which is
+    //      exactly what we want.
+    //   2. Player already dead (mid-round death w/o respawn) — Death.cc
+    //      won't run for this camera, so wipe + refill the camera
+    //      inventory directly here.
+    for (Client *client : clients) {
+        if (!simulation.ent_exists(client->camera)) continue;
+        Entity &camera = simulation.get_ent(client->camera);
+        if (simulation.ent_alive(camera.player)) {
+            Entity &player = simulation.get_ent(camera.player);
+            for (uint32_t i = 0; i < player.loadout_count + MAX_SLOT_COUNT; ++i) {
+                PetalTracker::remove_petal(&simulation, player.loadout_ids[i]);
+                player.set_loadout_ids(i, PetalID::kNone);
+            }
+            player.set_score(0);
+            simulation.request_delete(camera.player);
+        } else {
+            for (uint32_t i = 0; i < 2 * MAX_SLOT_COUNT; ++i) {
+                PetalTracker::remove_petal(&simulation, camera.inventory[i]);
+                camera.set_inventory(i, PetalID::kNone);
+            }
+            camera.set_respawn_level(1);
+            for (uint32_t i = 0; i < loadout_slots_at_level(camera.respawn_level); ++i) {
+                camera.set_inventory(i, PetalID::kBasic);
+                PetalTracker::add_petal(&simulation, PetalID::kBasic);
+            }
+        }
+    }
 }
 
 void GameInstance::broadcast(uint8_t const *packet, size_t len) {

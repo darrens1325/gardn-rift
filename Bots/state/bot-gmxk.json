@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "name": "bot-gmxk",
+  "first_seen": 1778279037.8406882,
+  "last_seen": 1778280049.092831,
+  "episodes": 29,
+  "score_total": 2600,
+  "score_best": 236,
+  "best_loadout": [
+    23,
+    0,
+    41,
+    18,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 20,
+    "Soldier Ant": 1,
+    "Ladybug": 2,
+    "Bee": 1,
+    "Centipede": 1,
+    "hello": 1,
+    "Spider": 2
+  },
+  "loadout_history": {
+    "0": 26,
+    "1": 22,
+    "24": 1,
+    "32": 1,
+    "14": 1,
+    "41": 1,
+    "18": 2,
+    "23": 3,
+    "34": 1,
+    "35": 2,
+    "5": 4,
+    "9": 1,
+    "40": 3,
+    "10": 2,
+    "29": 2
+  }
+}
