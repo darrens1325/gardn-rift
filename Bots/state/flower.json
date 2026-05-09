@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "flower",
+  "first_seen": 1778364680.210876,
+  "last_seen": 1778365107.8097239,
+  "episodes": 9,
+  "score_total": 120,
+  "score_best": 32,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Massive Ladybug": 2,
+    "Beetle": 1,
+    "Hornet": 4
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 9,
+    "9": 1
+  }
+}

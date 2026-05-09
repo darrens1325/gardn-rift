@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-301",
+  "first_seen": 1778364742.340859,
+  "last_seen": 1778365108.965527,
+  "episodes": 8,
+  "score_total": 99,
+  "score_best": 26,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 3,
+    "Bee": 2,
+    "Scorpion": 1,
+    "Sandstorm": 1,
+    "bot-509": 1
+  },
+  "loadout_history": {
+    "1": 8,
+    "0": 4,
+    "28": 1,
+    "40": 1
+  }
+}

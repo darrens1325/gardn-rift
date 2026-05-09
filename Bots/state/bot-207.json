@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-207",
+  "first_seen": 1778364743.9667141,
+  "last_seen": 1778365105.557761,
+  "episodes": 8,
+  "score_total": 75,
+  "score_best": 21,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Bee": 1,
+    "Hornet": 4,
+    "Spider": 2,
+    "Beetle": 1
+  },
+  "loadout_history": {
+    "1": 8,
+    "0": 4
+  }
+}

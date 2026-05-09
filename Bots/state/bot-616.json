@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-616",
+  "first_seen": 1778364751.3876638,
+  "last_seen": 1778365109.358912,
+  "episodes": 8,
+  "score_total": 140,
+  "score_best": 28,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 3,
+    "Sandstorm": 2,
+    "Spider": 2
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 8,
+    "14": 1
+  }
+}

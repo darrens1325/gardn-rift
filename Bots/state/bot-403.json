@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-403",
+  "first_seen": 1778364745.6086872,
+  "last_seen": 1778365109.597468,
+  "episodes": 8,
+  "score_total": 79,
+  "score_best": 22,
+  "best_loadout": [
+    16,
+    1,
+    9,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 2,
+    "bot-702": 1,
+    "Cactus": 2
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 8,
+    "5": 1,
+    "68": 1,
+    "16": 1,
+    "9": 1
+  }
+}

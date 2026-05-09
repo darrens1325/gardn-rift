@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-710",
+  "first_seen": 1778364754.032444,
+  "last_seen": 1778365139.42376,
+  "episodes": 9,
+  "score_total": 78,
+  "score_best": 27,
+  "best_loadout": [
+    1,
+    1,
+    0,
+    1,
+    1
+  ],
+  "killed_by": {
+    "hello": 1,
+    "Beetle": 1,
+    "Ladybug": 1,
+    "Baby Ant": 1,
+    "Hornet": 2
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 9,
+    "10": 1
+  }
+}

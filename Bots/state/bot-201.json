@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "bot-201",
+  "first_seen": 1778364741.732075,
+  "last_seen": 1778365142.1526568,
+  "episodes": 9,
+  "score_total": 65,
+  "score_best": 12,
+  "best_loadout": [
+    1,
+    0,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Massive Beetle": 1,
+    "Hornet": 5
+  },
+  "loadout_history": {
+    "1": 9,
+    "0": 4
+  }
+}

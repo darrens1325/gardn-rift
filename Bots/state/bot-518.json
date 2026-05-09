@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-518",
+  "first_seen": 1778364749.102036,
+  "last_seen": 1778365105.752417,
+  "episodes": 7,
+  "score_total": 90,
+  "score_best": 25,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Evil Centipede": 1,
+    "Beetle": 1,
+    "Hornet": 3
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 7,
+    "5": 1
+  }
+}

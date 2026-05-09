@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-418",
+  "first_seen": 1778364745.052651,
+  "last_seen": 1778365106.379872,
+  "episodes": 8,
+  "score_total": 78,
+  "score_best": 28,
+  "best_loadout": [
+    1,
+    0,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Beetle": 4,
+    "Soldier Ant": 2,
+    "Evil Centipede": 1
+  },
+  "loadout_history": {
+    "1": 8,
+    "0": 5
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-101",
+  "first_seen": 1778364740.6258051,
+  "last_seen": 1778365110.4458828,
+  "episodes": 8,
+  "score_total": 64,
+  "score_best": 19,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Beetle": 2,
+    "Spider": 2,
+    "Hornet": 2,
+    "Cactus": 1
+  },
+  "loadout_history": {
+    "0": 5,
+    "1": 8
+  }
+}

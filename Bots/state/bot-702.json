@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-702",
+  "first_seen": 1778364746.484416,
+  "last_seen": 1778365105.7127879,
+  "episodes": 7,
+  "score_total": 147,
+  "score_best": 51,
+  "best_loadout": [
+    1,
+    62,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Bee": 1,
+    "Beetle": 1,
+    "Hornet": 1,
+    "Ladybug": 1,
+    "Centipede": 1,
+    "Scorpion": 1
+  },
+  "loadout_history": {
+    "1": 6,
+    "0": 3,
+    "62": 1
+  }
+}

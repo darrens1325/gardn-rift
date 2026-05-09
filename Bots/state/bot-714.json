@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-714",
+  "first_seen": 1778364747.564119,
+  "last_seen": 1778365139.604544,
+  "episodes": 9,
+  "score_total": 123,
+  "score_best": 27,
+  "best_loadout": [
+    1,
+    0,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 2,
+    "Bee": 2,
+    "Evil Centipede": 1,
+    "Ladybug": 1,
+    "Beetle": 2
+  },
+  "loadout_history": {
+    "1": 9,
+    "0": 4,
+    "45": 1,
+    "28": 1
+  }
+}

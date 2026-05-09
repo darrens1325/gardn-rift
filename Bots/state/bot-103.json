@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "name": "bot-103",
+  "first_seen": 1778364740.526263,
+  "last_seen": 1778365136.678762,
+  "episodes": 9,
+  "score_total": 282,
+  "score_best": 228,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Beetle": 4,
+    "Hornet": 2,
+    "Cactus": 1
+  },
+  "loadout_history": {
+    "1": 9,
+    "0": 5,
+    "49": 1
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-202",
+  "first_seen": 1778364741.870444,
+  "last_seen": 1778365148.8396642,
+  "episodes": 9,
+  "score_total": 58,
+  "score_best": 14,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Bee": 1,
+    "Hornet": 2,
+    "Worker Ant": 1,
+    "Sandstorm": 1,
+    "bot-617": 2
+  },
+  "loadout_history": {
+    "1": 9,
+    "0": 4,
+    "18": 1
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-305",
+  "first_seen": 1778364744.3316932,
+  "last_seen": 1778365105.414376,
+  "episodes": 8,
+  "score_total": 111,
+  "score_best": 26,
+  "best_loadout": [
+    0,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "bot-211": 2,
+    "bot-115": 1,
+    "Boulder": 1,
+    "Hornet": 1,
+    "Massive Beetle": 2
+  },
+  "loadout_history": {
+    "0": 5,
+    "1": 8,
+    "10": 1
+  }
+}

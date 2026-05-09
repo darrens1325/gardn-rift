@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-309",
+  "first_seen": 1778364743.332937,
+  "last_seen": 1778365136.41823,
+  "episodes": 9,
+  "score_total": 99,
+  "score_best": 28,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 4,
+    "Beetle": 4,
+    "bot-400": 1
+  },
+  "loadout_history": {
+    "1": 9,
+    "0": 3,
+    "5": 1
+  }
+}

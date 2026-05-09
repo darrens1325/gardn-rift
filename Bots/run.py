@@ -32,14 +32,14 @@ from agent import DQNAgent, _pad_load_state_dict
 from bot import LearningBot
 
 DEFAULT_NAMES = [
-    "hello", "gardn", "florrio", "root", "leafy", "blossom", "rosie", "a", "aa", "67", "bot", "not bot", "thorn", "petalpop", "zorr"
+    "hello", "gardn", "florrio", "root", "leafy", "blossom", "rosie", "a", "aa", "67", "bot", "not bot", "thorn", "petalpop", "zorr", "blossom-v2", "flower", "thorny", "prickly", "bloom", "bloomy", "thornbloom",
 ]
 
 
 def _make_name(i: int) -> str:
     if i < len(DEFAULT_NAMES):
         return DEFAULT_NAMES[i]
-    suffix = "".join(random.choice(string.ascii_lowercase) for _ in range(4))
+    suffix = str(i)
     return f"bot-{suffix}"
 
 
@@ -137,16 +137,45 @@ def _spawn_workers(args: argparse.Namespace) -> int:
     """Parent mode: fork N child workers, each running its share of bots.
     Splits `count` as evenly as possible. Forwards stdout/stderr inline so
     the user sees per-worker stats interleaved (each prefixes its lines
-    with the worker id)."""
+    with the worker id).
+
+    Spawns workers with an `n × stagger`-second delay between them so the
+    server doesn't see all N×workers connections arrive in one burst —
+    the total connection span ends up identical to running `count` bots
+    in a single process with the same `--stagger`."""
     base_per = args.count // args.workers
     extra = args.count % args.workers
     children: list[subprocess.Popen] = []
     print(f"[run] spawning {args.workers} workers (count={args.count}, "
           f"split ~{base_per} bot(s) per worker)")
+    # Thread-cap per worker. PyTorch / OpenMP / MKL each default to
+    # `os.cpu_count()` worker threads inside their op kernels, so without
+    # capping a fleet of N workers ends up with N × cpu_count threads
+    # contending for the same physical cores — the CPU pegs at 100 %
+    # but most of that is context-switch overhead, not useful work.
+    # Default each worker to 1 thread so cores divide evenly across
+    # workers; user can override via `--threads-per-worker`.
+    cores = os.cpu_count() or 1
+    threads_per_worker = args.threads_per_worker
+    if threads_per_worker <= 0:
+        threads_per_worker = max(1, cores // max(1, args.workers))
+    print(f"[run] capping each worker to {threads_per_worker} torch / OMP "
+          f"thread(s) (system has {cores} cores)")
+    worker_env = os.environ.copy()
+    worker_env["OMP_NUM_THREADS"] = str(threads_per_worker)
+    worker_env["MKL_NUM_THREADS"] = str(threads_per_worker)
+    worker_env["OPENBLAS_NUM_THREADS"] = str(threads_per_worker)
+    worker_env["GARDN_TORCH_THREADS"] = str(threads_per_worker)
     for wid in range(args.workers):
         n = base_per + (1 if wid < extra else 0)
         if n <= 0:
             continue
+        # Each worker waits `wid * n * stagger` seconds before opening its
+        # first WebSocket so worker B starts spawning bots only after
+        # worker A has finished its own staggered burst. Without this, all
+        # workers race to connect simultaneously and a high-`-n` run can
+        # overwhelm the server's accept loop on startup.
+        worker_initial_delay = wid * base_per * args.stagger
         cmd = [
             sys.executable, os.path.abspath(sys.argv[0]),
             "--workers", "1",
@@ -154,6 +183,7 @@ def _spawn_workers(args: argparse.Namespace) -> int:
             "-n", str(n),
             "-u", args.url,
             "-s", str(args.stagger),
+            "--initial-delay", f"{worker_initial_delay:.3f}",
             "--control-hz", str(args.control_hz),
             "--action-repeat", str(args.action_repeat),
             "--lr", str(args.lr),
@@ -167,7 +197,7 @@ def _spawn_workers(args: argparse.Namespace) -> int:
             cmd += ["--checkpoint", args.checkpoint]
         else:
             cmd += ["--checkpoint", ""]
-        children.append(subprocess.Popen(cmd))
+        children.append(subprocess.Popen(cmd, env=worker_env))
     rc = 0
     try:
         for p in children:
@@ -257,6 +287,21 @@ async def _stats_loop(
 
 
 async def _amain(args: argparse.Namespace) -> None:
+    # Belt-and-braces thread cap: env vars are set by the parent in
+    # multi-worker mode, but a worker started without the parent (e.g.
+    # `python run.py -n 4 --workers 1`) won't see them. Honor
+    # GARDN_TORCH_THREADS if the parent set it; otherwise fall back to
+    # --threads-per-worker; otherwise leave torch's default alone.
+    _torch_threads = int(os.environ.get("GARDN_TORCH_THREADS", "0"))
+    if _torch_threads <= 0:
+        _torch_threads = args.threads_per_worker
+    if _torch_threads > 0:
+        try:
+            import torch as _torch
+            _torch.set_num_threads(_torch_threads)
+        except Exception:  # noqa: BLE001
+            pass
+
     base_checkpoint = args.checkpoint  # may be None
     # Always start from the best file when it exists; otherwise the
     # user's --checkpoint path. The worker then writes back to its own
@@ -306,6 +351,15 @@ async def _amain(args: argparse.Namespace) -> None:
         )
         for i in range(args.count)
     ]
+    # When the parent splits a fleet across workers, each child is given
+    # an `--initial-delay` so its first WebSocket only opens after every
+    # earlier worker has finished staggering its own bots. This keeps the
+    # server's connection accept rate at ~1/stagger regardless of how
+    # many workers we have.
+    if args.initial_delay > 0:
+        label = f" (worker {args.worker_id})" if args.worker_id is not None else ""
+        print(f"[run]{label} delaying initial connection by {args.initial_delay:.2f}s")
+        await asyncio.sleep(args.initial_delay)
     tasks = []
     for b in bots:
         tasks.append(asyncio.create_task(b.run_forever()))
@@ -366,6 +420,20 @@ def main() -> int:
         "--worker-id", type=int, default=None,
         help="(internal) set by the parent when forking workers; identifies which "
              "worker this child is for checkpoint pathing.",
+    )
+    p.add_argument(
+        "--initial-delay", type=float, default=0.0,
+        help="(internal) seconds to wait before opening the first WebSocket. "
+             "Used by the multi-worker spawner to space worker startup so the "
+             "server doesn't see all N×workers connections in one burst.",
+    )
+    p.add_argument(
+        "--threads-per-worker", type=int, default=0,
+        help="cap each worker process to N torch / OMP threads. Default 0 = "
+             "auto: floor(cpu_count / workers), at least 1. Without this, "
+             "every worker spins up cpu_count threads and they all fight "
+             "over the same cores — total CPU pegs at 100%% but most of "
+             "that is context-switch overhead, not real work.",
     )
     args = p.parse_args()
     if args.checkpoint == "":

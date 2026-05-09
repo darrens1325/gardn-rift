@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-316",
+  "first_seen": 1778364744.2053618,
+  "last_seen": 1778365142.747916,
+  "episodes": 9,
+  "score_total": 103,
+  "score_best": 21,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Boulder": 1,
+    "Evil Centipede": 3,
+    "Beetle": 1,
+    "Sandstorm": 1,
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 9,
+    "7": 1,
+    "40": 1
+  }
+}

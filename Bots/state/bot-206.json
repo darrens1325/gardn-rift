@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-206",
+  "first_seen": 1778364743.097614,
+  "last_seen": 1778365141.341104,
+  "episodes": 9,
+  "score_total": 111,
+  "score_best": 36,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 3,
+    "Cactus": 1,
+    "Beetle": 2
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 9,
+    "79": 1
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "name": "bot-507",
+  "first_seen": 1778364748.529471,
+  "last_seen": 1778365117.1291788,
+  "episodes": 8,
+  "score_total": 134,
+  "score_best": 41,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 1,
+    "bot-705": 3,
+    "Evil Centipede": 1,
+    "Cactus": 1
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 8,
+    "16": 1
+  }
+}

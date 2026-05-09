@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-118",
+  "first_seen": 1778364743.2131178,
+  "last_seen": 1778365143.755666,
+  "episodes": 9,
+  "score_total": 136,
+  "score_best": 28,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Baby Ant": 1,
+    "bot-208": 1,
+    "Hornet": 3,
+    "Ladybug": 1,
+    "Cactus": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "0": 8,
+    "1": 9,
+    "34": 1
+  }
+}

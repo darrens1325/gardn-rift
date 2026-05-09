@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-513",
+  "first_seen": 1778364746.5700228,
+  "last_seen": 1778365145.404779,
+  "episodes": 9,
+  "score_total": 73,
+  "score_best": 14,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Sandstorm": 1,
+    "Hornet": 2,
+    "Cactus": 4,
+    "Beetle": 1
+  },
+  "loadout_history": {
+    "0": 5,
+    "1": 9,
+    "15": 1,
+    "9": 1
+  }
+}

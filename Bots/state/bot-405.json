@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "name": "bot-405",
+  "first_seen": 1778364743.653638,
+  "last_seen": 1778365141.476674,
+  "episodes": 8,
+  "score_total": 110,
+  "score_best": 44,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 1,
+    "Cactus": 2,
+    "bot-413": 1,
+    "bot-417": 1,
+    "Beetle": 1
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 8
+  }
+}

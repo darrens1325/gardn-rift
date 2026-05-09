@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-109",
+  "first_seen": 1778364741.606845,
+  "last_seen": 1778365140.47365,
+  "episodes": 9,
+  "score_total": 118,
+  "score_best": 24,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Sandstorm": 2,
+    "Hornet": 3,
+    "Evil Centipede": 2
+  },
+  "loadout_history": {
+    "1": 9,
+    "0": 3,
+    "10": 1
+  }
+}

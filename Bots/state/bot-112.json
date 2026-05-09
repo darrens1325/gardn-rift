@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-112",
+  "first_seen": 1778364741.9860768,
+  "last_seen": 1778365137.4660852,
+  "episodes": 8,
+  "score_total": 124,
+  "score_best": 25,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Bee": 1,
+    "Spider": 1,
+    "Hornet": 3,
+    "Evil Centipede": 1,
+    "Worker Ant": 1
+  },
+  "loadout_history": {
+    "1": 8,
+    "0": 4,
+    "40": 1
+  }
+}

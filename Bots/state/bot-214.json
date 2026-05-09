@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-214",
+  "first_seen": 1778364742.213428,
+  "last_seen": 1778365113.5833228,
+  "episodes": 8,
+  "score_total": 95,
+  "score_best": 19,
+  "best_loadout": [
+    0,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "bot-611": 1,
+    "Centipede": 1,
+    "Hornet": 2,
+    "Worker Ant": 1,
+    "bot-603": 1
+  },
+  "loadout_history": {
+    "1": 7,
+    "9": 1,
+    "0": 5,
+    "19": 1
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "bot-500",
+  "first_seen": 1778364745.462504,
+  "last_seen": 1778365140.432794,
+  "episodes": 8,
+  "score_total": 90,
+  "score_best": 25,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 5,
+    "Centipede": 2
+  },
+  "loadout_history": {
+    "1": 8,
+    "0": 4
+  }
+}

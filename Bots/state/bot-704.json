@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-704",
+  "first_seen": 1778364752.326335,
+  "last_seen": 1778365143.495893,
+  "episodes": 9,
+  "score_total": 121,
+  "score_best": 31,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    9,
+    1
+  ],
+  "killed_by": {
+    "Cactus": 2,
+    "Worker Ant": 1,
+    "Desert Centipede": 1,
+    "Centipede": 1,
+    "Hornet": 3
+  },
+  "loadout_history": {
+    "0": 7,
+    "1": 9,
+    "28": 1,
+    "9": 1
+  }
+}

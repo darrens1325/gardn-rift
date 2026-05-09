@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "blossom-v2",
+  "first_seen": 1778364678.878558,
+  "last_seen": 1778365106.91327,
+  "episodes": 8,
+  "score_total": 78,
+  "score_best": 24,
+  "best_loadout": [
+    0,
+    1,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 3,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 8
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-210",
+  "first_seen": 1778364743.342874,
+  "last_seen": 1778365143.512415,
+  "episodes": 9,
+  "score_total": 113,
+  "score_best": 24,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Beetle": 1,
+    "Hornet": 4,
+    "Boulder": 2
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 9,
+    "14": 1
+  }
+}

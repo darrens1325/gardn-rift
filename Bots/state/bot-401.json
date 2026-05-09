@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-401",
+  "first_seen": 1778364743.47365,
+  "last_seen": 1778365137.73185,
+  "episodes": 9,
+  "score_total": 101,
+  "score_best": 18,
+  "best_loadout": [
+    1,
+    1,
+    0,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Beetle": 4,
+    "Bee": 1,
+    "Hornet": 3
+  },
+  "loadout_history": {
+    "1": 9,
+    "0": 4
+  }
+}

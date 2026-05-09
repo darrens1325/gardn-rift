@@ -1,9 +1,46 @@
+# Pre-`project()` setup. CMAKE_TOOLCHAIN_FILE and CMAKE_SYSTEM_NAME must be
+# resolved before project() runs the compiler-detection probe. Without the
+# Emscripten toolchain CMake picks Apple Clang (or whatever cc is on PATH),
+# which then fails the test compile with "library 'System' not found"
+# because we set CMAKE_SYSTEM_NAME=Generic to skip platform detection.
+#
+# Mirrors the auto-detect block in Server/CMakeLists.txt: search $EMSDK
+# first, then `em-config EMSCRIPTEN_ROOT`, so plain `cmake ..` works
+# equivalently to `emcmake cmake ..` as long as Emscripten is installed.
+if (NOT CMAKE_TOOLCHAIN_FILE)
+    set(_em_root "")
+    if (DEFINED ENV{EMSDK})
+        set(_em_root "$ENV{EMSDK}/upstream/emscripten")
+    endif()
+    if (NOT _em_root OR NOT EXISTS "${_em_root}/cmake/Modules/Platform/Emscripten.cmake")
+        execute_process(COMMAND em-config EMSCRIPTEN_ROOT
+                        OUTPUT_VARIABLE _em_root
+                        OUTPUT_STRIP_TRAILING_WHITESPACE
+                        RESULT_VARIABLE _em_res
+                        ERROR_QUIET)
+        if (NOT _em_res EQUAL 0)
+            set(_em_root "")
+        endif()
+    endif()
+    if (_em_root AND EXISTS "${_em_root}/cmake/Modules/Platform/Emscripten.cmake")
+        set(CMAKE_TOOLCHAIN_FILE "${_em_root}/cmake/Modules/Platform/Emscripten.cmake"
+            CACHE FILEPATH "Emscripten toolchain (auto-detected)" FORCE)
+        message(STATUS "Auto-loaded Emscripten toolchain: ${CMAKE_TOOLCHAIN_FILE}")
+    else()
+        message(FATAL_ERROR
+            "gardn-client requires the Emscripten toolchain, which could not be "
+            "auto-located. Either run `emcmake cmake ..` or set EMSDK in your "
+            "environment so this CMakeLists can find Emscripten.cmake.")
+    endif()
+endif()
+
 set(CMAKE_SYSTEM_NAME Generic)
 
 cmake_minimum_required(VERSION 3.16)
 
 project(gardn-client)
 include_directories(..)
+set(CMAKE_C_COMPILER "emcc")
 
 set(SRCS
     Assets/Flower.cc

@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-600",
+  "first_seen": 1778364748.7327218,
+  "last_seen": 1778365128.249113,
+  "episodes": 8,
+  "score_total": 343,
+  "score_best": 243,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Cactus": 1,
+    "Spider": 1,
+    "Hornet": 3
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 7
+  }
+}

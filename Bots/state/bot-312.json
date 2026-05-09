@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-312",
+  "first_seen": 1778364748.106099,
+  "last_seen": 1778365138.711348,
+  "episodes": 9,
+  "score_total": 138,
+  "score_best": 57,
+  "best_loadout": [
+    1,
+    0,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "bot-109": 1,
+    "Beetle": 1,
+    "Cactus": 1,
+    "Evil Centipede": 2,
+    "bot-506": 1,
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 5,
+    "1": 9,
+    "11": 1,
+    "14": 1
+  }
+}

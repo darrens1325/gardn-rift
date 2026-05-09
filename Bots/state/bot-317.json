@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-317",
+  "first_seen": 1778364746.691415,
+  "last_seen": 1778365138.855529,
+  "episodes": 9,
+  "score_total": 530,
+  "score_best": 409,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    0,
+    1,
+    24
+  ],
+  "killed_by": {
+    "Scorpion": 1,
+    "Soldier Ant": 1,
+    "Cactus": 1,
+    "Beetle": 1,
+    "Hornet": 4
+  },
+  "loadout_history": {
+    "0": 7,
+    "1": 9,
+    "24": 1,
+    "9": 1
+  }
+}

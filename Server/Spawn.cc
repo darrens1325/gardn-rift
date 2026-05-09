@@ -7,6 +7,7 @@
 #include <Shared/Map.hh>
 #include <Shared/Simulation.hh>
 #include <Shared/StaticData.hh>
+#include <Shared/StaticDefinitions.hh>
 
 #include <cmath>
 
@@ -273,9 +274,11 @@ void player_spawn(Simulation *sim, Entity &camera, Entity &player) {
     player.set_parent(camera.id);
     player.set_color(camera.color);
     uint32_t power = Map::difficulty_at_level(camera.respawn_level);
-    ZoneDefinition const &zone = MAP[Map::get_suitable_difficulty_zone(power)];
-    float spawn_x = lerp(zone.left, zone.right, frand());
-    float spawn_y = lerp(zone.top, zone.bottom, frand());
+    // ZoneDefinition const &zone = MAP[Map::get_suitable_difficulty_zone(power)];
+    // float spawn_x = lerp(zone.left, zone.right, frand());
+    // float spawn_y = lerp(zone.top, zone.bottom, frand());
+    float spawn_x = lerp(ARENA_WIDTH * 0.1, ARENA_WIDTH * 0.9, frand());
+    float spawn_y = lerp(ARENA_HEIGHT * 0.1, ARENA_HEIGHT * 0.9, frand());
     camera.set_camera_x(spawn_x);
     camera.set_camera_y(spawn_y);
     player.set_x(spawn_x);

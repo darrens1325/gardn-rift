@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-414",
+  "first_seen": 1778364745.5698152,
+  "last_seen": 1778365144.3205109,
+  "episodes": 8,
+  "score_total": 114,
+  "score_best": 31,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Spider": 1,
+    "Hornet": 3,
+    "Beetle": 2
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 8,
+    "23": 1
+  }
+}

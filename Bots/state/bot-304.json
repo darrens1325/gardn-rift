@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-304",
+  "first_seen": 1778364743.8099751,
+  "last_seen": 1778365119.9627168,
+  "episodes": 8,
+  "score_total": 118,
+  "score_best": 39,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Beetle": 1,
+    "Massive Beetle": 1,
+    "Cactus": 5
+  },
+  "loadout_history": {
+    "1": 8,
+    "0": 2,
+    "9": 1
+  }
+}

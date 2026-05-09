@@ -38,7 +38,7 @@ std::array const MAP = std::to_array<struct ZoneDefinition>({
         .left = 0,
         .top = 0,
         .right = 10000,
-        .bottom = 4000,
+        .bottom = 10000,
         .density = 1,
         .drop_multiplier = 0.3,
         .spawns = {
@@ -62,9 +62,9 @@ std::array const MAP = std::to_array<struct ZoneDefinition>({
         .left = 10000,
         .top = 0,
         .right = 20000,
-        .bottom = 4000,
+        .bottom = 10000,
         .density = 1,
-        .drop_multiplier = 0.15,
+        .drop_multiplier = 0.3,
         .spawns = {
             { MobID::kCactus, 400000 },
             { MobID::kBeetle, 100000 },
@@ -82,12 +82,12 @@ std::array const MAP = std::to_array<struct ZoneDefinition>({
         .name = "Medium"
     },
     {
-        .left = 20000,
-        .top = 0,
-        .right = 30000,
-        .bottom = 4000,
+        .left = 10000,
+        .top = 10000,
+        .right = 20000,
+        .bottom = 20000,
         .density = 1,
-        .drop_multiplier = 0.1,
+        .drop_multiplier = 0.3,
         .spawns = {
             { MobID::kSpider, 100000 },
             { MobID::kBoulder, 100000 },
@@ -106,12 +106,12 @@ std::array const MAP = std::to_array<struct ZoneDefinition>({
         .name = "Hard"
     },
     {
-        .left = 30000,
-        .top = 0,
-        .right = 40000,
-        .bottom = 4000,
+        .left = 0,
+        .top = 10000,
+        .right = 10000,
+        .bottom = 20000,
         .density = 1,
-        .drop_multiplier = 0.025,
+        .drop_multiplier = 0.3,
         .spawns = {
             { MobID::kDarkLadybug, 150000 },
             { MobID::kBeetle, 150000 },

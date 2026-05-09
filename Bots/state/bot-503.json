@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-503",
+  "first_seen": 1778364744.707045,
+  "last_seen": 1778365138.738537,
+  "episodes": 8,
+  "score_total": 119,
+  "score_best": 25,
+  "best_loadout": [
+    0,
+    1,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 5,
+    "Massive Beetle": 1,
+    "Beetle": 1
+  },
+  "loadout_history": {
+    "1": 8,
+    "0": 5
+  }
+}
