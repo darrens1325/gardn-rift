@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-kdla",
+  "first_seen": 1778352471.9933052,
+  "last_seen": 1778352600.07535,
+  "episodes": 16,
+  "score_total": 147,
+  "score_best": 30,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Ladybug": 1,
+    "bot-sbcw": 3,
+    "Hornet": 8,
+    "bot-hcft": 1,
+    "Centipede": 1,
+    "bot-yytf": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 16,
+    "34": 1
+  }
+}

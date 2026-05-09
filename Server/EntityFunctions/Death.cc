@@ -10,7 +10,34 @@
 #include <Shared/Vector.hh>
 
 #include <algorithm>
+#include <cstring>
 #include <iostream>
+
+// Promote `base_id` to its highest-rarity sibling whose rarity ≤
+// target_rarity. Two petals are siblings iff PETAL_DATA[].name matches.
+// Used to upgrade mob drops by the mob's per-spawn rarity tier (Spawn.cc):
+// a Mythic-rolled bee drops `kMythicTringer` even though its authored
+// drop list contains `kCommonStinger`, because both name == "Stinger".
+// Falls back to base_id if no sibling at higher rarity exists (e.g. for
+// flag petals like kAntennae that only have one tier).
+static PetalID::T _upgrade_drop(PetalID::T base_id, uint8_t target_rarity) {
+    if (base_id == PetalID::kNone || base_id >= PetalID::kNumPetals) return base_id;
+    if (PETAL_DATA[base_id].rarity >= target_rarity) return base_id;
+    char const *name = PETAL_DATA[base_id].name;
+    PetalID::T best = base_id;
+    uint8_t best_rarity = PETAL_DATA[base_id].rarity;
+    for (PetalID::T id = 1; id < PetalID::kNumPetals; ++id) {
+        if (id == base_id) continue;
+        if (std::strcmp(PETAL_DATA[id].name, name) != 0) continue;
+        uint8_t r = PETAL_DATA[id].rarity;
+        if (r > target_rarity) continue;
+        if (r > best_rarity) {
+            best = id;
+            best_rarity = r;
+        }
+    }
+    return best;
+}
 
 static void _alloc_drops(Simulation *sim, std::vector<PetalID::T> &success_drops, float x, float y) {
     #ifdef DEBUG
@@ -69,16 +96,61 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
             struct MobData const &mob_data = MOB_DATA[ent.mob_id];
             std::vector<PetalID::T> success_drops = {};
             StaticArray<float, MAX_DROPS_PER_MOB> const &drop_chances = MOB_DROP_CHANCES[ent.mob_id];
-            for (uint32_t i = 0; i < mob_data.drops.size(); ++i) 
-                if (frand() < drop_chances[i])
-                 success_drops.push_back(mob_data.drops[i]);
+
+            // Drop model: a single outcome per kill drawn from the
+            // distribution { no_drop, drop_0, drop_1, ... } where
+            // P(drop_i) = drop_chances[i] and P(no_drop) = 1 - Σchances.
+            // For delta > 0 (mob rolled higher than authored) the entire
+            // distribution shifts upward by `delta` tiers:
+            //   - "no_drop" becomes a drop at tier `delta`
+            //   - each authored drop's rarity becomes (authored + delta),
+            //     saturating at Unique
+            // Net effect: higher-rarity mobs drop at a higher rate AND at
+            // higher rarities; a Mythic-rolled Common-authored mob (delta=5)
+            // is guaranteed to drop at tier ≥ Mythic.
+            int delta = (int)ent.mob_rarity - (int)mob_data.rarity;
+            if (delta < 0) delta = 0;
+            if (mob_data.drops.size() > 0) {
+                float total = 0.0f;
+                for (uint32_t i = 0; i < mob_data.drops.size(); ++i) total += drop_chances[i];
+                float no_drop_mass = 1.0f - total;
+                if (no_drop_mass < 0) no_drop_mass = 0;
+                float roll = frand();
+                if (roll < no_drop_mass) {
+                    if (delta > 0) {
+                        // Pick the highest-base-chance entry as the carrier
+                        // petal — its name determines which family the
+                        // upgrade lookup walks.
+                        uint32_t best = 0;
+                        for (uint32_t i = 1; i < mob_data.drops.size(); ++i)
+                            if (drop_chances[i] > drop_chances[best]) best = i;
+                        uint32_t r = (uint32_t)delta;
+                        if (r >= RarityID::kNumRarities) r = RarityID::kNumRarities - 1;
+                        success_drops.push_back(_upgrade_drop(mob_data.drops[best], (uint8_t)r));
+                    }
+                    // else: original "no drop" outcome preserved for delta=0.
+                } else {
+                    float cum = no_drop_mass;
+                    for (uint32_t i = 0; i < mob_data.drops.size(); ++i) {
+                        cum += drop_chances[i];
+                        if (roll < cum) {
+                            uint32_t r = (uint32_t)PETAL_DATA[mob_data.drops[i]].rarity + (uint32_t)delta;
+                            if (r >= RarityID::kNumRarities) r = RarityID::kNumRarities - 1;
+                            success_drops.push_back(_upgrade_drop(mob_data.drops[i], (uint8_t)r));
+                            break;
+                        }
+                    }
+                }
+            }
             _alloc_drops(sim, success_drops, ent.x, ent.y);
         }
-        if (ent.mob_id == MobID::kAntHole && ent.team == NULL_ENTITY && frand() < DIGGER_SPAWN_CHANCE) { 
+        if (ent.mob_id == MobID::kAntHole && ent.team == NULL_ENTITY && frand() < DIGGER_SPAWN_CHANCE) {
             EntityID team = NULL_ENTITY;
             if (sim->ent_exists(ent.last_damaged_by))
                 team = sim->get_ent(ent.last_damaged_by).team;
-            alloc_mob(sim, MobID::kDigger, ent.x, ent.y, team);
+            // Inherit the Ant Hole's rolled rarity — a Mythic Hole drops
+            // a Mythic-tier Digger.
+            alloc_mob(sim, MobID::kDigger, ent.x, ent.y, team, (int)ent.mob_rarity);
         }
 
     } else if (ent.has_component(kPetal)) {

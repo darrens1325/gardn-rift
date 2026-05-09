@@ -22,7 +22,11 @@ namespace Game {
     extern EntityID player_id;
     extern std::string nickname;
     extern std::array<uint8_t, PetalID::kNumPetals> seen_petals;
-    extern std::array<uint8_t, MobID::kNumMobs> seen_mobs;
+    // Indexed [mob_id][rarity]: nonzero once we've rendered a live mob
+    // of this (kind, rolled-rarity) tuple. The mob gallery emits one
+    // card per (id, rarity) flag set so a Mythic Bee and a Common Bee
+    // show up as separate, individually-revealable entries.
+    extern std::array<std::array<uint8_t, RarityID::kNumRarities>, MobID::kNumMobs> seen_mobs;
     
     extern double timestamp;
     

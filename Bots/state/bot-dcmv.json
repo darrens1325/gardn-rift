@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-dcmv",
+  "first_seen": 1778353449.369899,
+  "last_seen": 1778353564.6444259,
+  "episodes": 15,
+  "score_total": 322,
+  "score_best": 207,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Spider": 1,
+    "bot-yhia": 1,
+    "florrio": 3,
+    "Hornet": 4,
+    "bot-fzsw": 2,
+    "bot": 2,
+    "bot-bdtt": 2
+  },
+  "loadout_history": {
+    "1": 15,
+    "34": 1,
+    "0": 5
+  }
+}

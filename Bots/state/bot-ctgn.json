@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "name": "bot-ctgn",
+  "first_seen": 1778352646.5739331,
+  "last_seen": 1778352922.456268,
+  "episodes": 31,
+  "score_total": 774,
+  "score_best": 404,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    5
+  ],
+  "killed_by": {
+    "Hornet": 5,
+    "bot-leec": 1,
+    "bot-rubg": 1,
+    "Bee": 4,
+    "bot-bmoe": 2,
+    "bot-ufcz": 2,
+    "bot-zvzs": 1,
+    "67": 2,
+    "zorr": 1,
+    "Spider": 4,
+    "hello": 2,
+    "bot-obbf": 1,
+    "Ladybug": 2,
+    "bot-ygik": 1,
+    "bot-dleg": 1,
+    "bot-asxn": 1
+  },
+  "loadout_history": {
+    "0": 11,
+    "1": 31,
+    "23": 1,
+    "5": 2,
+    "18": 1,
+    "35": 1
+  }
+}

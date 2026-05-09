@@ -52,26 +52,58 @@ static constexpr float _mob_scale_pow(float base, int n) {
 }
 static constexpr float MOB_RADIUS_MULT[RarityID::kNumRarities] = {
     1.0f,  // Common
-    1.2f,  // Unusual
-    1.4f,  // Rare
-    1.6f,  // Epic
-    1.8f,  // Legendary
-    2.0f,  // Mythic
-    2.2f,  // Unique  (extrapolation of the +0.2/tier ramp)
+    1.1f,  // Unusual
+    1.3f,  // Rare
+    1.72f,  // Epic
+    3.0f,  // Legendary
+    5.0f,  // Mythic
+    7.0f,  // Unique  (extrapolation of the +0.2/tier ramp)
 };
 
-static Entity &__alloc_mob(Simulation *sim, MobID::T mob_id, float x, float y, EntityID const team = NULL_ENTITY) {
-    DEBUG_ONLY(assert(mob_id < MobID::kNumMobs);)
+float mob_radius_mult(uint8_t rarity) {
+    if (rarity >= RarityID::kNumRarities) rarity = RarityID::kNumRarities - 1;
+    return MOB_RADIUS_MULT[rarity];
+}
+float mob_dmg_mult(uint8_t rolled_rarity, uint8_t authored_rarity) {
+    if (rolled_rarity >= RarityID::kNumRarities) rolled_rarity = RarityID::kNumRarities - 1;
+    int delta = (int)rolled_rarity - (int)authored_rarity;
+    if (delta < 0) delta = 0;
+    return _mob_scale_pow(1.5f, delta);
+}
+
+// Pick a per-spawn rarity for a mob: floor at the authored rarity, ceiling
+// at the current wave_rarity, uniform within. Returned via out-parameter so
+// the segmented-mob path can roll *once* for the whole snake and feed the
+// result into every segment via __alloc_mob's `forced_rarity` arg.
+static uint32_t _roll_mob_rarity(Simulation *sim, MobID::T mob_id) {
     struct MobData const &data = MOB_DATA[mob_id];
     uint32_t wave = sim->current_wave_rarity;
     if (wave >= RarityID::kNumRarities) wave = RarityID::kNumRarities - 1;
-    uint32_t effective_rarity = wave;
-    if (effective_rarity < data.rarity) effective_rarity = data.rarity;
-    int delta = (int)effective_rarity - (int)data.rarity;
+    uint32_t lo = data.rarity;
+    uint32_t hi = wave > lo ? wave : lo;
+    uint32_t span = hi - lo + 1;
+    uint32_t rolled = lo + (uint32_t)(frand() * span);
+    if (rolled > hi) rolled = hi;
+    return rolled;
+}
+
+static Entity &__alloc_mob(Simulation *sim, MobID::T mob_id, float x, float y, EntityID const team = NULL_ENTITY, int forced_rarity = -1) {
+    DEBUG_ONLY(assert(mob_id < MobID::kNumMobs);)
+    struct MobData const &data = MOB_DATA[mob_id];
+    // Per-spawn rarity. Wave is the ceiling, authored rarity is the floor;
+    // uniform within. A Mythic-wave bee field has a mix of Common, Unusual,
+    // ..., Mythic bees side by side rather than every bee being Mythic.
+    // Higher-rarity rolls hit higher HP / damage / xp / radius multipliers
+    // (below) and a higher drop-chance multiplier (Death.cc), so mythic
+    // bees are visibly more dangerous and more worth killing than the
+    // commons in the same wave. `forced_rarity >= 0` overrides the roll,
+    // used by the segmented path so all segments share one tier.
+    uint32_t rolled = (forced_rarity >= 0) ? (uint32_t)forced_rarity : _roll_mob_rarity(sim, mob_id);
+    int delta = (int)rolled - (int)data.rarity;
     float hp_mult     = _mob_scale_pow(1.7f, delta);
     float dmg_mult    = _mob_scale_pow(1.5f, delta);
     float xp_mult     = _mob_scale_pow(1.6f, delta);
-    float radius_mult = MOB_RADIUS_MULT[effective_rarity];
+    float radius_mult = MOB_RADIUS_MULT[rolled];
     float seed = frand();
     Entity &mob = sim->alloc_ent();
 
@@ -92,6 +124,7 @@ static Entity &__alloc_mob(Simulation *sim, MobID::T mob_id, float x, float y, E
 
     mob.add_component(kMob);
     mob.set_mob_id(mob_id);
+    mob.set_mob_rarity((uint8_t)rolled);
 
     mob.add_component(kHealth);
     mob.health = mob.max_health = data.health.get_single(seed) * hp_mult;
@@ -115,30 +148,39 @@ static Entity &__alloc_mob(Simulation *sim, MobID::T mob_id, float x, float y, E
     return mob;
 }
 
-Entity &alloc_mob(Simulation *sim, MobID::T mob_id, float x, float y, EntityID const team) {
+Entity &alloc_mob(Simulation *sim, MobID::T mob_id, float x, float y, EntityID const team, int forced_rarity) {
     struct MobData const &data = MOB_DATA[mob_id];
     if (data.attributes.segments <= 1) {
-        Entity &ent = __alloc_mob(sim, mob_id, x, y, team);
+        Entity &ent = __alloc_mob(sim, mob_id, x, y, team, forced_rarity);
         if (mob_id == MobID::kAntHole) {
-            std::vector<MobID::T> const spawns = { 
-                MobID::kBabyAnt, MobID::kBabyAnt, MobID::kBabyAnt, 
+            // The Ant Hole's initial ant burst inherits the hole's
+            // rolled rarity — a Mythic Ant Hole pops out Mythic-tier
+            // baby/worker/soldier ants matching its size.
+            int child_rarity = (int)ent.mob_rarity;
+            std::vector<MobID::T> const spawns = {
+                MobID::kBabyAnt, MobID::kBabyAnt, MobID::kBabyAnt,
                 MobID::kWorkerAnt, MobID::kWorkerAnt, MobID::kSoldierAnt
             };
             for (MobID::T mob_id : spawns) {
                 Vector rand = Vector::rand(ent.radius * 2);
-                Entity &ant = __alloc_mob(sim, mob_id, x + rand.x, y + rand.y, team);
+                Entity &ant = __alloc_mob(sim, mob_id, x + rand.x, y + rand.y, team, child_rarity);
                 ant.set_parent(ent.id);
             }
         }
         return ent;
     }
     else {
-        Entity &head = __alloc_mob(sim, mob_id, x, y, team);
+        // Roll the rarity once for the whole snake — otherwise each segment
+        // would roll independently and you'd see a centipede with a Common
+        // head, a Mythic torso, and a Rare tail (each segment also picks
+        // its own radius_mult, so the segments wouldn't even fit together).
+        int shared_rarity = forced_rarity >= 0 ? forced_rarity : (int)_roll_mob_rarity(sim, mob_id);
+        Entity &head = __alloc_mob(sim, mob_id, x, y, team, shared_rarity);
         head.add_component(kSegmented);
         head.set_is_tail(0);
         Entity *curr = &head;
         for (uint32_t i = 1; i < data.attributes.segments; ++i) {
-            Entity &seg = __alloc_mob(sim, mob_id, x, y, team);
+            Entity &seg = __alloc_mob(sim, mob_id, x, y, team, shared_rarity);
             seg.add_component(kSegmented);
             seg.set_is_tail(1);
             seg.seg_head = curr->id;

@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-uros",
+  "first_seen": 1778352468.470381,
+  "last_seen": 1778352606.48799,
+  "episodes": 16,
+  "score_total": 194,
+  "score_best": 32,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 8,
+    "not bot": 1,
+    "Centipede": 2,
+    "bot-qdsl": 2,
+    "bot-fdyl": 1,
+    "Bee": 2
+  },
+  "loadout_history": {
+    "1": 16,
+    "19": 1,
+    "0": 1,
+    "6": 1
+  }
+}

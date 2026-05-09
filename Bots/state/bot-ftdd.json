@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "bot-ftdd",
+  "first_seen": 1778353455.841763,
+  "last_seen": 1778353565.313612,
+  "episodes": 15,
+  "score_total": 267,
+  "score_best": 45,
+  "best_loadout": [
+    40,
+    1,
+    1,
+    1,
+    23
+  ],
+  "killed_by": {
+    "Hornet": 7,
+    "bot-xjwc": 1,
+    "Bee": 2,
+    "Centipede": 1,
+    "bot-yirx": 1,
+    "bot-vqfw": 2
+  },
+  "loadout_history": {
+    "0": 7,
+    "9": 1,
+    "1": 15,
+    "40": 1,
+    "23": 1
+  }
+}

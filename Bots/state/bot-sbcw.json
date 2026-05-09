@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-sbcw",
+  "first_seen": 1778352468.396321,
+  "last_seen": 1778352603.533231,
+  "episodes": 16,
+  "score_total": 198,
+  "score_best": 35,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "thorn": 1,
+    "Hornet": 6,
+    "bot-kdla": 2,
+    "Bee": 2,
+    "Centipede": 2,
+    "Spider": 2
+  },
+  "loadout_history": {
+    "1": 16,
+    "0": 2
+  }
+}

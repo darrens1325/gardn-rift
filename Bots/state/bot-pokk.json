@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-pokk",
+  "first_seen": 1778352470.5502238,
+  "last_seen": 1778352605.46953,
+  "episodes": 16,
+  "score_total": 173,
+  "score_best": 20,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "bot-vkhm": 2,
+    "Hornet": 7,
+    "bot-ebqm": 1,
+    "bot-seep": 1,
+    "bot-fdyl": 1,
+    "bot-yytf": 1,
+    "leafy": 2
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 16
+  }
+}

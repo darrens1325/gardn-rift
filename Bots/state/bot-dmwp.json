@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-dmwp",
+  "first_seen": 1778353447.6704352,
+  "last_seen": 1778353567.870744,
+  "episodes": 14,
+  "score_total": 198,
+  "score_best": 47,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 9,
+    "bot-qinj": 2,
+    "Rock": 1,
+    "bot-roqk": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 14,
+    "14": 1,
+    "40": 1,
+    "10": 1
+  }
+}

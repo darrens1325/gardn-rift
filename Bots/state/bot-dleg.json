@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "name": "bot-dleg",
+  "first_seen": 1778352652.460393,
+  "last_seen": 1778352918.3797178,
+  "episodes": 31,
+  "score_total": 326,
+  "score_best": 48,
+  "best_loadout": [
+    14,
+    1,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 12,
+    "bot-vmlc": 1,
+    "not bot": 1,
+    "bot-kqci": 1,
+    "bot-hmpa": 1,
+    "bot-emgb": 1,
+    "aa": 1,
+    "bot-leec": 2,
+    "bot-obbf": 1,
+    "bot-xppg": 1,
+    "Spider": 1,
+    "blossom": 2,
+    "bot-jrax": 1,
+    "Bee": 1,
+    "bot-jufv": 2,
+    "bot-asxn": 1
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 31,
+    "6": 1,
+    "7": 1,
+    "14": 1
+  }
+}

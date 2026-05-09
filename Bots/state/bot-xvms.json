@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-xvms",
+  "first_seen": 1778294426.661885,
+  "last_seen": 1778294505.806425,
+  "episodes": 2,
+  "score_total": 16,
+  "score_best": 12,
+  "best_loadout": [
+    1,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 2
+  }
+}

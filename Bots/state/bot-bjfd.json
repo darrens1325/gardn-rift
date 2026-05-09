@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-bjfd",
+  "first_seen": 1778297345.596704,
+  "last_seen": 1778297618.510972,
+  "episodes": 4,
+  "score_total": 28,
+  "score_best": 15,
+  "best_loadout": [
+    6,
+    5,
+    6,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Centipede": 1,
+    "bot-exff": 2
+  },
+  "loadout_history": {
+    "0": 4,
+    "5": 1,
+    "6": 1,
+    "1": 3
+  }
+}

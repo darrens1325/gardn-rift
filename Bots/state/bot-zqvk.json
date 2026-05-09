@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "name": "bot-zqvk",
+  "first_seen": 1778348270.4814248,
+  "last_seen": 1778352312.244351,
+  "episodes": 28,
+  "score_total": 433,
+  "score_best": 58,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 19,
+    "Bee": 2,
+    "bot-dikb": 2,
+    "Spider": 1,
+    "bot-prin": 1,
+    "Cactus": 1,
+    "Rock": 1
+  },
+  "loadout_history": {
+    "0": 24,
+    "1": 21,
+    "40": 1,
+    "19": 1,
+    "24": 3,
+    "9": 3,
+    "34": 1,
+    "47": 1,
+    "41": 1,
+    "48": 1,
+    "52": 1,
+    "20": 1
+  }
+}

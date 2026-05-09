@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-wvcn",
+  "first_seen": 1778297014.111752,
+  "last_seen": 1778297142.1398668,
+  "episodes": 2,
+  "score_total": 27,
+  "score_best": 14,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-hatn": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 1
+  }
+}

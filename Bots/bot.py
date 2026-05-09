@@ -74,7 +74,7 @@ from protocol import (
     petal_type_norm,
 )
 
-VERSION_HASH = 4728567265382325  # bumped for kRoundEnd + 124 new petal IDs
+VERSION_HASH = 4728567265382326  # bumped: mob_rarity is now a synced FIELDS_Mob field
 
 MOVE_MAG = 260.0          # server clamps to PLAYER_ACCELERATION above 200
 DEFAULT_CONTROL_HZ = 20   # sane default for stock TPS=20; bump when server runs faster
@@ -207,7 +207,7 @@ W_PLAYER_KILL_BONUS = 50.0
 # Sized to outweigh the death penalty by a clear margin so the policy
 # can learn "max score by tick 72000" as a top-level objective without
 # the death cost cancelling the win.
-W_ROUND_WIN = 50.0
+W_ROUND_WIN = 150.0
 
 
 def _hostile_features(entities: dict, my_player: dict, my_team: tuple[int, int]) -> list[float]:

@@ -4,6 +4,7 @@
 
 #include <Shared/Simulation.hh>
 
+#include <atomic>
 #include <set>
 
 class Client;
@@ -28,6 +29,18 @@ public:
     // start (between kRoundEnd and the bots' kClientSpawn packets) and
     // loop the round forever.
     uint8_t any_flower_this_round = 0;
+    // Peak flower count seen this round. Used to gate the "last man
+    // standing" reset: if the peak was ≥ 2 and the live count drops to
+    // 1, end the round (the last alive flower is the winner). Without
+    // this latch, a solo-bot session would reset every tick because
+    // alive_flowers would always equal 1.
+    uint32_t max_flowers_this_round = 0;
+    // Debug stdin override. Negative = no override; ≥ 0 = the next
+    // tick() should set wave_tick to this value (and re-derive the
+    // wave rarity from it). Written by the stdin reader thread, read
+    // by the main game-loop thread — atomic to keep the cross-thread
+    // hand-off honest. See Native.cc for the reader loop.
+    std::atomic<int64_t> stdin_wave_tick_override{-1};
     GameInstance();
     void init();
     void tick();

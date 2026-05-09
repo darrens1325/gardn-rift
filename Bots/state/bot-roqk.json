@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-roqk",
+  "first_seen": 1778353449.8753211,
+  "last_seen": 1778353561.375593,
+  "episodes": 14,
+  "score_total": 189,
+  "score_best": 37,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 7,
+    "Spider": 1,
+    "bot-vqfw": 3,
+    "bot-ipmh": 2,
+    "bot-zrag": 1
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 14,
+    "10": 1
+  }
+}

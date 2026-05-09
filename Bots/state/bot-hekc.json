@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-hekc",
+  "first_seen": 1778353450.343433,
+  "last_seen": 1778353569.470155,
+  "episodes": 16,
+  "score_total": 218,
+  "score_best": 32,
+  "best_loadout": [
+    0,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Spider": 1,
+    "bot-ukqj": 1,
+    "Rock": 1,
+    "Centipede": 6,
+    "bot-jucr": 1,
+    "a": 1,
+    "Hornet": 5
+  },
+  "loadout_history": {
+    "0": 5,
+    "1": 16
+  }
+}

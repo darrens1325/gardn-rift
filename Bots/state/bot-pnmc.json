@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-pnmc",
+  "first_seen": 1778294674.458238,
+  "last_seen": 1778295090.240247,
+  "episodes": 6,
+  "score_total": 48,
+  "score_best": 21,
+  "best_loadout": [
+    0,
+    1,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 2,
+    "Spider": 3
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 5,
+    "7": 1,
+    "19": 1
+  }
+}

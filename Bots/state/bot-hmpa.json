@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "name": "bot-hmpa",
+  "first_seen": 1778352647.344665,
+  "last_seen": 1778352923.7358751,
+  "episodes": 32,
+  "score_total": 432,
+  "score_best": 35,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 9,
+    "Ladybug": 2,
+    "bot-vhyw": 1,
+    "bot-asxn": 2,
+    "bot-dqkr": 1,
+    "Centipede": 1,
+    "Bee": 2,
+    "thorn": 1,
+    "bot-jzbh": 1,
+    "bot-dxar": 1,
+    "blossom": 1,
+    "bot-djlo": 1,
+    "Spider": 1,
+    "Soldier Ant": 3,
+    "bot-ygik": 2,
+    "zorr": 2
+  },
+  "loadout_history": {
+    "0": 7,
+    "1": 31,
+    "9": 1
+  }
+}

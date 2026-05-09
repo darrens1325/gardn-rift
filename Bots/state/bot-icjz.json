@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-icjz",
+  "first_seen": 1778352474.9829388,
+  "last_seen": 1778352603.886264,
+  "episodes": 15,
+  "score_total": 229,
+  "score_best": 84,
+  "best_loadout": [
+    0,
+    1,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 9,
+    "Bee": 2,
+    "Rock": 1,
+    "bot-eqpu": 1,
+    "bot-fqfr": 1,
+    "bot-pkxi": 1
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 15
+  }
+}

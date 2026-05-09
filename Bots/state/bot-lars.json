@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-lars",
+  "first_seen": 1778353447.6883311,
+  "last_seen": 1778353568.412808,
+  "episodes": 16,
+  "score_total": 116,
+  "score_best": 26,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 7,
+    "gardn": 2,
+    "bot-qinj": 1,
+    "Centipede": 2,
+    "Cactus": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "1": 16,
+    "15": 1,
+    "0": 1
+  }
+}

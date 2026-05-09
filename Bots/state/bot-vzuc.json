@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "bot-vzuc",
+  "first_seen": 1778297328.7521658,
+  "last_seen": 1778297628.1671748,
+  "episodes": 4,
+  "score_total": 35,
+  "score_best": 20,
+  "best_loadout": [
+    40,
+    0,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 3
+  },
+  "loadout_history": {
+    "0": 4,
+    "40": 1,
+    "1": 2
+  }
+}

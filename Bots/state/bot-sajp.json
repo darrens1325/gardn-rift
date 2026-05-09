@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-sajp",
+  "first_seen": 1778352471.531971,
+  "last_seen": 1778352605.0311658,
+  "episodes": 16,
+  "score_total": 210,
+  "score_best": 31,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 8,
+    "bot-ymyg": 2,
+    "bot-nrfa": 2,
+    "Ladybug": 3,
+    "bot-sbcw": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 16,
+    "9": 1
+  }
+}

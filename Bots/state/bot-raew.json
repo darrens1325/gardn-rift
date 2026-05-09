@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "bot-raew",
+  "first_seen": 1778353454.23741,
+  "last_seen": 1778353568.420161,
+  "episodes": 14,
+  "score_total": 273,
+  "score_best": 65,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 8,
+    "aa": 1,
+    "Rock": 1,
+    "petalpop": 1,
+    "bot-stiy": 1,
+    "Centipede": 1
+  },
+  "loadout_history": {
+    "24": 1,
+    "1": 14,
+    "0": 5,
+    "40": 1,
+    "7": 1
+  }
+}

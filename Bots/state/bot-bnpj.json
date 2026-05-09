@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "bot-bnpj",
+  "first_seen": 1778294435.905684,
+  "last_seen": 1778294524.935647,
+  "episodes": 2,
+  "score_total": 42,
+  "score_best": 27,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 2,
+    "34": 1
+  }
+}

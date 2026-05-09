@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-zgfm",
+  "first_seen": 1778294678.8289149,
+  "last_seen": 1778295089.166593,
+  "episodes": 6,
+  "score_total": 70,
+  "score_best": 27,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Bee": 1,
+    "Hornet": 3,
+    "Ladybug": 1
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 5
+  }
+}

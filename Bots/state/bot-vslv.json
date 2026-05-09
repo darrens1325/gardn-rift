@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "bot-vslv",
+  "first_seen": 1778294712.5778072,
+  "last_seen": 1778295175.538006,
+  "episodes": 6,
+  "score_total": 95,
+  "score_best": 23,
+  "best_loadout": [
+    0,
+    1,
+    24,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Bee": 2,
+    "Hornet": 2,
+    "thorn": 1
+  },
+  "loadout_history": {
+    "0": 6,
+    "29": 1,
+    "14": 1,
+    "1": 4,
+    "34": 1,
+    "24": 1
+  }
+}

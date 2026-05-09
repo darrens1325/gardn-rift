@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-kqci",
+  "first_seen": 1778352641.268071,
+  "last_seen": 1778352923.7364402,
+  "episodes": 30,
+  "score_total": 1277,
+  "score_best": 1034,
+  "best_loadout": [
+    0,
+    14,
+    0,
+    0,
+    0,
+    40
+  ],
+  "killed_by": {
+    "Hornet": 18,
+    "gardn": 1,
+    "root": 1,
+    "Beetle": 2,
+    "Spider": 3,
+    "bot-ctgn": 1,
+    "bot-buxz": 1,
+    "Centipede": 2
+  },
+  "loadout_history": {
+    "1": 28,
+    "34": 1,
+    "0": 6,
+    "10": 1,
+    "40": 1,
+    "14": 1
+  }
+}

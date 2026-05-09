@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-ancu",
+  "first_seen": 1778294438.096912,
+  "last_seen": 1778294533.330034,
+  "episodes": 2,
+  "score_total": 11,
+  "score_best": 6,
+  "best_loadout": [
+    36,
+    0,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Ladybug": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 2,
+    "36": 1,
+    "9": 1
+  }
+}

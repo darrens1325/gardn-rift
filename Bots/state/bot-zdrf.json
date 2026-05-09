@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "name": "bot-zdrf",
+  "first_seen": 1778348273.793761,
+  "last_seen": 1778352278.5271611,
+  "episodes": 28,
+  "score_total": 870,
+  "score_best": 296,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    9
+  ],
+  "killed_by": {
+    "Centipede": 2,
+    "bot-ospj": 1,
+    "Hornet": 17,
+    "Bee": 2,
+    "Spider": 1,
+    "Boulder": 1,
+    "Soldier Ant": 1,
+    "Ladybug": 1
+  },
+  "loadout_history": {
+    "0": 26,
+    "25": 1,
+    "1": 26,
+    "9": 2,
+    "14": 3,
+    "12": 1,
+    "7": 1,
+    "15": 1,
+    "11": 1,
+    "10": 1,
+    "5": 3
+  }
+}

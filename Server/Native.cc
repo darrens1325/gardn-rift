@@ -2,7 +2,15 @@
 #include <Server/Server.hh>
 
 #include <Server/Client.hh>
+#include <Server/Game.hh>
 #include <Shared/Config.hh>
+#include <Shared/StaticDefinitions.hh>
+
+#include <atomic>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <thread>
 
 uWS::App Server::server = uWS::App({
     .key_file_name = "misc/key.pem",
@@ -62,6 +70,53 @@ uWS::App Server::server = uWS::App({
 // fire to keep wall-clock pace.
 static uint32_t TICKS_PER_FIRE = 1;
 
+// Debug stdin reader. Runs on a dedicated thread so the blocking
+// std::getline doesn't stall the main game loop. Recognised commands:
+//   <number>        Set the wave-tick counter to that value (clamped to
+//                   [0, WAVE_TICKS_PER_ROUND]). Use this to fast-forward
+//                   into a high-rarity phase without waiting out the
+//                   round — e.g. `60000\n` jumps near round end so the
+//                   next tick fires kRoundEnd, while `36000\n` puts us
+//                   mid-round at roughly the Epic→Legendary boundary.
+//   wave <number>   Same as above, more explicit.
+//   end             Set wave_tick to WAVE_TICKS_PER_ROUND so the next
+//                   tick fires end_round() naturally.
+//   help            Print the command list.
+// Anything else is reported but otherwise ignored.
+static void _stdin_loop() {
+    std::cout << "[debug] stdin commands available: <wave_tick> | wave N | end | help\n";
+    std::string line;
+    while (std::getline(std::cin, line)) {
+        // Strip leading whitespace.
+        size_t i = 0;
+        while (i < line.size() && std::isspace((unsigned char)line[i])) ++i;
+        if (i == line.size()) continue;
+        std::string trimmed = line.substr(i);
+        if (trimmed == "help") {
+            std::cout << "[debug] commands: <wave_tick> | wave N | end | help\n";
+            continue;
+        }
+        if (trimmed == "end") {
+            Server::game.stdin_wave_tick_override.store((int64_t)WAVE_TICKS_PER_ROUND);
+            std::cout << "[debug] queued: jump to wave_tick=" << WAVE_TICKS_PER_ROUND
+                      << " (will trigger end_round)\n";
+            continue;
+        }
+        std::istringstream iss(trimmed);
+        std::string head;
+        iss >> head;
+        int64_t target = -1;
+        if (head == "wave") iss >> target;
+        else { std::istringstream iss2(trimmed); iss2 >> target; }
+        if (target < 0) {
+            std::cout << "[debug] unrecognised: " << trimmed << "\n";
+            continue;
+        }
+        Server::game.stdin_wave_tick_override.store(target);
+        std::cout << "[debug] queued: jump to wave_tick=" << target << "\n";
+    }
+}
+
 void Server::run() {
     struct us_loop_t *loop = (struct us_loop_t *) uWS::Loop::get();
     struct us_timer_t *delayTimer = us_create_timer(loop, 0, 0);
@@ -70,6 +125,10 @@ void Server::run() {
     if (interval_ms < 1) interval_ms = 1;
     TICKS_PER_FIRE = (TPS * (uint32_t)interval_ms) / 1000;
     if (TICKS_PER_FIRE < 1) TICKS_PER_FIRE = 1;
+
+    // Spawn the stdin reader as a detached background thread — the main
+    // thread owns the uSockets event loop and can't block on getline.
+    std::thread(_stdin_loop).detach();
 
     us_timer_set(delayTimer, [](us_timer_t *x){
         for (uint32_t i = 0; i < TICKS_PER_FIRE; ++i) Server::tick();

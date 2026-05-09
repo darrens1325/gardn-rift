@@ -898,6 +898,7 @@ FIELDS: list[tuple[str, str, str, int]] = [
     ("Health",    "health_ratio",     "float",  0),
     ("Health",    "damaged",          "u8",     0),
     ("Mob",       "mob_id",           "u8",     0),
+    ("Mob",       "mob_rarity",       "u8",     0),
     ("Drop",      "drop_id",          "u8",     0),
     ("Segmented", "is_tail",          "u8",     0),
     ("Score",     "score",            "u32",    0),

@@ -27,7 +27,7 @@ namespace Game {
     EntityID player_id;
     std::string nickname;
     std::array<uint8_t, PetalID::kNumPetals> seen_petals;
-    std::array<uint8_t, MobID::kNumMobs> seen_mobs;
+    std::array<std::array<uint8_t, RarityID::kNumRarities>, MobID::kNumMobs> seen_mobs;
 
     double timestamp = 0;
 

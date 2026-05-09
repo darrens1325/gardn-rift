@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-wpho",
+  "first_seen": 1778352648.0616598,
+  "last_seen": 1778352922.989606,
+  "episodes": 31,
+  "score_total": 318,
+  "score_best": 31,
+  "best_loadout": [
+    0,
+    1,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 20,
+    "bot-rubg": 1,
+    "bot-bmoe": 2,
+    "bot-hwcz": 1,
+    "a": 1,
+    "hello": 2,
+    "aa": 1,
+    "Ladybug": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "0": 11,
+    "1": 31,
+    "14": 1,
+    "9": 1,
+    "40": 1,
+    "16": 1
+  }
+}

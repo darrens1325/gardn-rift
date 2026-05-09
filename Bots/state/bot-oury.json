@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "name": "bot-oury",
+  "first_seen": 1778348220.5218182,
+  "last_seen": 1778352280.6848588,
+  "episodes": 30,
+  "score_total": 583,
+  "score_best": 210,
+  "best_loadout": [
+    14,
+    1,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 22,
+    "Cactus": 1,
+    "bot-sozm": 1,
+    "leafy": 1,
+    "bot-vbko": 1,
+    "rosie": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "0": 30,
+    "1": 26,
+    "8": 1,
+    "9": 1,
+    "33": 1,
+    "14": 2,
+    "23": 1,
+    "15": 1,
+    "40": 1,
+    "37": 1,
+    "5": 2,
+    "36": 1,
+    "28": 1
+  }
+}

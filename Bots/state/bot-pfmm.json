@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-pfmm",
+  "first_seen": 1778294433.839117,
+  "last_seen": 1778294543.4594948,
+  "episodes": 2,
+  "score_total": 26,
+  "score_best": 25,
+  "best_loadout": [
+    0,
+    14,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "40": 1,
+    "1": 1,
+    "0": 2,
+    "14": 1
+  }
+}

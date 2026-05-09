@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "bot-leec",
+  "first_seen": 1778352645.5370932,
+  "last_seen": 1778352922.997207,
+  "episodes": 32,
+  "score_total": 447,
+  "score_best": 54,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    40,
+    1
+  ],
+  "killed_by": {
+    "bot-jzbh": 2,
+    "Spider": 2,
+    "Hornet": 12,
+    "bot-kqci": 1,
+    "bot-rubg": 2,
+    "Rock": 1,
+    "bot-hmpa": 2,
+    "zorr": 2,
+    "bot-asxn": 3,
+    "Ladybug": 1,
+    "thorn": 1,
+    "bot-jrax": 1
+  },
+  "loadout_history": {
+    "0": 9,
+    "1": 32,
+    "40": 1,
+    "24": 1,
+    "47": 1
+  }
+}

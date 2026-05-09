@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "bot-rnpn",
+  "first_seen": 1778294684.3705149,
+  "last_seen": 1778295133.290323,
+  "episodes": 6,
+  "score_total": 1094,
+  "score_best": 1043,
+  "best_loadout": [
+    0,
+    8,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-etbv": 1,
+    "bot-pnmc": 1,
+    "Bee": 1,
+    "Hornet": 1,
+    "bot-fron": 1
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 4,
+    "24": 1,
+    "15": 1,
+    "8": 1
+  }
+}

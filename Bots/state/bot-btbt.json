@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "bot-btbt",
+  "first_seen": 1778352642.168174,
+  "last_seen": 1778352917.021652,
+  "episodes": 30,
+  "score_total": 473,
+  "score_best": 75,
+  "best_loadout": [
+    1,
+    0,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {
+    "bot-emgb": 1,
+    "Ladybug": 2,
+    "root": 1,
+    "Hornet": 10,
+    "Cactus": 2,
+    "bot-rxia": 3,
+    "Rock": 1,
+    "Spider": 4,
+    "Soldier Ant": 1,
+    "bot-ufcz": 1,
+    "petalpop": 1,
+    "bot-asxn": 1,
+    "bot-dleg": 1
+  },
+  "loadout_history": {
+    "0": 9,
+    "1": 30,
+    "6": 1,
+    "40": 2
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-dpgl",
+  "first_seen": 1778297355.699938,
+  "last_seen": 1778297633.792267,
+  "episodes": 4,
+  "score_total": 49,
+  "score_best": 24,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 2
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 2
+  }
+}

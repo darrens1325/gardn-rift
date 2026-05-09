@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "name": "bot-ufcz",
+  "first_seen": 1778352645.4289632,
+  "last_seen": 1778352917.8443038,
+  "episodes": 31,
+  "score_total": 306,
+  "score_best": 29,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Bee": 3,
+    "Ladybug": 2,
+    "Centipede": 1,
+    "bot-asxn": 2,
+    "Hornet": 11,
+    "bot-iplo": 1,
+    "bot-kqci": 1,
+    "bot-btbt": 2,
+    "bot-vmlc": 1,
+    "petalpop": 1,
+    "root": 1,
+    "bot-zvzs": 1,
+    "bot-hmpa": 1,
+    "Spider": 2
+  },
+  "loadout_history": {
+    "0": 11,
+    "1": 31,
+    "15": 1,
+    "5": 1,
+    "9": 1,
+    "25": 1
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "bot-wtqs",
+  "first_seen": 1778348266.029276,
+  "last_seen": 1778352308.678669,
+  "episodes": 29,
+  "score_total": 526,
+  "score_best": 72,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 21,
+    "Centipede": 1,
+    "leafy": 1,
+    "bot-rejs": 1,
+    "Bee": 2,
+    "Soldier Ant": 2
+  },
+  "loadout_history": {
+    "0": 25,
+    "1": 26,
+    "5": 4,
+    "9": 2,
+    "14": 1,
+    "36": 3,
+    "33": 1,
+    "19": 1,
+    "6": 1,
+    "24": 1,
+    "23": 1
+  }
+}

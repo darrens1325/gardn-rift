@@ -137,12 +137,18 @@ using namespace StorageProtocol;
 void Storage::retrieve() {
     Game::seen_petals[PetalID::kBasic] = 1;
     {
-        uint32_t len = StorageProtocol::retrieve("mobs", 256);
+        // Each stored entry is a packed (mob_id, rarity) pair: high byte
+        // is mob_id, low nibble is rarity. The format predated the wave
+        // system as just a one-byte mob_id stream, so a stale storage
+        // blob (rarity nibble = 0) decodes cleanly as "Common-tier seen".
+        uint32_t len = StorageProtocol::retrieve("mobs", 1024);
         Decoder reader(&StorageProtocol::buffer[0]);
-        while (reader.at < StorageProtocol::buffer + len) {
+        while (reader.at + 1 < StorageProtocol::buffer + len) {
             MobID::T mob_id = reader.read<uint8_t>();
+            uint8_t rarity = reader.read<uint8_t>();
             if (mob_id >= MobID::kNumMobs) break;
-            Game::seen_mobs[mob_id] = 1;
+            if (rarity >= RarityID::kNumRarities) rarity = 0;
+            Game::seen_mobs[mob_id][rarity] = 1;
         }
     }
     {
@@ -171,7 +177,9 @@ void Storage::retrieve() {
         }
     }
     #ifdef DEBUG
-    for (MobID::T i = 0; i < MobID::kNumMobs; ++i) Game::seen_mobs[i] = 1;
+    for (MobID::T i = 0; i < MobID::kNumMobs; ++i)
+        for (uint8_t r = 0; r < RarityID::kNumRarities; ++r)
+            Game::seen_mobs[i][r] = 1;
     for (PetalID::T i = PetalID::kBasic; i < PetalID::kNumPetals; ++i) Game::seen_petals[i] = 1;
     #endif
 }
@@ -190,8 +198,13 @@ void Storage::set() {
     }
     {
         Encoder writer(&StorageProtocol::buffer[0]);
+        // Pair-stream: { u8 mob_id, u8 rarity } per seen tuple.
         for (MobID::T id = 0; id < MobID::kNumMobs; ++id)
-            if (Game::seen_mobs[id]) writer.write<uint8_t>(id);
+            for (uint8_t r = 0; r < RarityID::kNumRarities; ++r)
+                if (Game::seen_mobs[id][r]) {
+                    writer.write<uint8_t>(id);
+                    writer.write<uint8_t>(r);
+                }
         StorageProtocol::store("mobs", writer.at - writer.base);
     }
     {

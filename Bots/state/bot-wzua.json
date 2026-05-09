@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-wzua",
+  "first_seen": 1778294432.764385,
+  "last_seen": 1778294565.740512,
+  "episodes": 2,
+  "score_total": 59,
+  "score_best": 46,
+  "best_loadout": [
+    0,
+    21,
+    39,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "24": 1,
+    "1": 1,
+    "21": 1,
+    "39": 1
+  }
+}

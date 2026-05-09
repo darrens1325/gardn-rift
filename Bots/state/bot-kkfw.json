@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-kkfw",
+  "first_seen": 1778348146.595791,
+  "last_seen": 1778348183.43309,
+  "episodes": 2,
+  "score_total": 25,
+  "score_best": 13,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 1,
+    "1": 2
+  }
+}

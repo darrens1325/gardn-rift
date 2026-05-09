@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "name": "bot-uprj",
+  "first_seen": 1778353454.1728199,
+  "last_seen": 1778353568.6618218,
+  "episodes": 16,
+  "score_total": 171,
+  "score_best": 37,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Bee": 3,
+    "Hornet": 8,
+    "blossom": 1,
+    "bot-njiw": 1
+  },
+  "loadout_history": {
+    "24": 1,
+    "1": 16,
+    "0": 4
+  }
+}

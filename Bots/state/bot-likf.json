@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "bot-likf",
+  "first_seen": 1778294698.3344169,
+  "last_seen": 1778295166.434289,
+  "episodes": 7,
+  "score_total": 180,
+  "score_best": 66,
+  "best_loadout": [
+    23,
+    33,
+    7,
+    23,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 3,
+    "bot-ltvz": 1,
+    "bot-idvw": 2
+  },
+  "loadout_history": {
+    "0": 7,
+    "33": 1,
+    "7": 1,
+    "23": 1,
+    "1": 4,
+    "18": 1,
+    "5": 1,
+    "40": 1
+  }
+}

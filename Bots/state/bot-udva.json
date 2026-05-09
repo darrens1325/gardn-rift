@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "bot-udva",
+  "first_seen": 1778352645.588446,
+  "last_seen": 1778352922.264236,
+  "episodes": 32,
+  "score_total": 255,
+  "score_best": 24,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 18,
+    "bot-xppg": 1,
+    "petalpop": 1,
+    "bot-ozdl": 2,
+    "Centipede": 1,
+    "Bee": 1,
+    "bot-jrax": 2,
+    "hello": 1,
+    "bot-rxia": 1,
+    "not bot": 3
+  },
+  "loadout_history": {
+    "1": 32,
+    "0": 5,
+    "14": 1
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "bot-utqd",
+  "first_seen": 1778352648.607557,
+  "last_seen": 1778352917.0168478,
+  "episodes": 28,
+  "score_total": 355,
+  "score_best": 85,
+  "best_loadout": [
+    35,
+    1,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 10,
+    "67": 1,
+    "leafy": 1,
+    "Centipede": 3,
+    "bot-dosx": 1,
+    "thorn": 4,
+    "Soldier Ant": 1,
+    "bot-asxn": 4,
+    "Bee": 1,
+    "petalpop": 1
+  },
+  "loadout_history": {
+    "0": 8,
+    "1": 28,
+    "35": 1
+  }
+}

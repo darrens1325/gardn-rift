@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "bot-emfk",
+  "first_seen": 1778353449.854787,
+  "last_seen": 1778353560.3809621,
+  "episodes": 14,
+  "score_total": 160,
+  "score_best": 25,
+  "best_loadout": [
+    40,
+    1,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Rock": 3,
+    "bot-bdtt": 2,
+    "Soldier Ant": 1,
+    "bot-zrag": 2,
+    "bot-raew": 1,
+    "a": 1,
+    "Bee": 1,
+    "Hornet": 3
+  },
+  "loadout_history": {
+    "0": 7,
+    "1": 14,
+    "40": 1
+  }
+}

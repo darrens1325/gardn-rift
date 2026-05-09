@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "name": "bot-zuyn",
+  "first_seen": 1778348128.537146,
+  "last_seen": 1778348128.537146,
+  "episodes": 1,
+  "score_total": 6,
+  "score_best": 6,
+  "best_loadout": [
+    1,
+    0,
+    0,
+    1,
+    1
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "0": 1,
+    "1": 1
+  }
+}

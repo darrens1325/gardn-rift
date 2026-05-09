@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "bot-ylag",
+  "first_seen": 1778352472.1449971,
+  "last_seen": 1778352600.245648,
+  "episodes": 14,
+  "score_total": 144,
+  "score_best": 31,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 1,
+    "gardn": 1,
+    "rosie": 1,
+    "Centipede": 4,
+    "bot-scdb": 1,
+    "bot-whmi": 1,
+    "bot-pokk": 2,
+    "Ladybug": 1,
+    "Rock": 1
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 14,
+    "18": 1,
+    "42": 1
+  }
+}

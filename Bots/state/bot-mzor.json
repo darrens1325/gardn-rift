@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "name": "bot-mzor",
+  "first_seen": 1778348244.6955001,
+  "last_seen": 1778352301.371666,
+  "episodes": 28,
+  "score_total": 579,
+  "score_best": 241,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Cactus": 1,
+    "Hornet": 17,
+    "Rock": 1,
+    "bot-ysec": 2,
+    "Spider": 1,
+    "bot-ztlx": 2,
+    "root": 3
+  },
+  "loadout_history": {
+    "0": 25,
+    "1": 23,
+    "34": 1,
+    "48": 1,
+    "9": 2,
+    "23": 1,
+    "33": 1,
+    "18": 1,
+    "46": 1,
+    "40": 1,
+    "41": 1,
+    "42": 1
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-khji",
+  "first_seen": 1778352470.287251,
+  "last_seen": 1778352604.674089,
+  "episodes": 16,
+  "score_total": 146,
+  "score_best": 32,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "bot-sajp": 1,
+    "Hornet": 5,
+    "Ladybug": 1,
+    "Centipede": 1,
+    "Cactus": 3,
+    "Rock": 1,
+    "Bee": 1,
+    "bot-nrfa": 2
+  },
+  "loadout_history": {
+    "1": 16,
+    "0": 2
+  }
+}

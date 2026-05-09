@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-umfa",
+  "first_seen": 1778294686.940576,
+  "last_seen": 1778295109.342359,
+  "episodes": 6,
+  "score_total": 171,
+  "score_best": 93,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Spider": 1,
+    "Hornet": 2,
+    "Ladybug": 1,
+    "bot-dlnu": 1
+  },
+  "loadout_history": {
+    "40": 1,
+    "1": 4,
+    "33": 1,
+    "0": 5
+  }
+}

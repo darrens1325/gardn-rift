@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "name": "bot-tlbi",
+  "first_seen": 1778348226.108643,
+  "last_seen": 1778352279.0585501,
+  "episodes": 31,
+  "score_total": 876,
+  "score_best": 225,
+  "best_loadout": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 18,
+    "Bee": 3,
+    "bot-sozm": 1,
+    "bot-zqvk": 2,
+    "67": 1,
+    "rosie": 2,
+    "bot-ysec": 1,
+    "bot-ospj": 1
+  },
+  "loadout_history": {
+    "1": 24,
+    "14": 2,
+    "0": 29,
+    "9": 3,
+    "25": 1,
+    "18": 1,
+    "10": 1,
+    "55": 1,
+    "24": 1,
+    "19": 1
+  }
+}

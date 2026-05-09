@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-xjwc",
+  "first_seen": 1778353451.501256,
+  "last_seen": 1778353568.4214962,
+  "episodes": 16,
+  "score_total": 203,
+  "score_best": 32,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 4,
+    "bot-emfk": 3,
+    "Centipede": 3,
+    "bot-zesr": 2,
+    "Spider": 1,
+    "Cactus": 1,
+    "bot-yirx": 1
+  },
+  "loadout_history": {
+    "1": 16,
+    "0": 5,
+    "34": 1
+  }
+}

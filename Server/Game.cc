@@ -8,6 +8,8 @@
 #include <Shared/Entity.hh>
 #include <Shared/Map.hh>
 
+#include <iostream>
+
 static void _update_client(Simulation *sim, Client *client) {
     if (client == nullptr) return;
     if (!client->verified) return;
@@ -65,6 +67,17 @@ void GameInstance::init() {
 }
 
 void GameInstance::tick() {
+    // Stdin override (debug): a non-negative value posted by Native.cc's
+    // reader thread jumps wave_tick directly so we can fast-forward into
+    // a high-rarity phase without waiting out the round. Cleared after
+    // applying.
+    int64_t override_val = stdin_wave_tick_override.exchange(-1);
+    if (override_val >= 0) {
+        if (override_val > (int64_t)WAVE_TICKS_PER_ROUND)
+            override_val = (int64_t)WAVE_TICKS_PER_ROUND;
+        wave_tick = (uint32_t)override_val;
+        std::cout << "[debug] wave_tick set to " << wave_tick << "\n";
+    }
     // Advance the wave rarity *before* simulation.tick() so any mob spawned
     // this tick (in particular Map::spawn_random_mob from inside the sim)
     // sees the current tier. Linear ramp Common→Unique over the round.
@@ -92,14 +105,23 @@ void GameInstance::tick() {
         if (simulation.ent_alive(camera.player)) ++alive_flowers;
     }
     if (alive_flowers > 0) any_flower_this_round = 1;
+    if (alive_flowers > max_flowers_this_round) max_flowers_this_round = alive_flowers;
 
+    // Last-man-standing: if the round had ≥ 2 flowers in it at any
+    // point and we're now down to ≤ 1, end the round. The remaining
+    // flower (if any) is the winner. Solo sessions (peak == 1) don't
+    // hit this branch — they only end on full wipeout or timeout.
     bool time_up = wave_tick >= WAVE_TICKS_PER_ROUND;
     bool wipeout = any_flower_this_round && alive_flowers == 0;
-    if (time_up || wipeout) {
+    bool last_standing = max_flowers_this_round >= 2 && alive_flowers <= 1;
+    if (time_up || wipeout || last_standing) {
+        printf("Round end: time_up=%d wipeout=%d last_standing=%d alive_flowers=%d max=%d\n",
+               time_up, wipeout, last_standing, alive_flowers, max_flowers_this_round);
         end_round();
         wave_tick = 0;
         simulation.current_wave_rarity = 0;
         any_flower_this_round = 0;
+        max_flowers_this_round = 0;
     }
 }
 

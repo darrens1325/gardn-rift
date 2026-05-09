@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "name": "bot-feqq",
+  "first_seen": 1778348236.920976,
+  "last_seen": 1778352321.455186,
+  "episodes": 31,
+  "score_total": 5782,
+  "score_best": 5006,
+  "best_loadout": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    40,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 23,
+    "Spider": 1,
+    "gardn": 1,
+    "rosie": 1,
+    "bot-wtqs": 1,
+    "Bee": 2,
+    "Centipede": 1
+  },
+  "loadout_history": {
+    "25": 1,
+    "5": 3,
+    "1": 27,
+    "23": 2,
+    "0": 28,
+    "40": 2,
+    "41": 1,
+    "32": 1,
+    "18": 1,
+    "14": 2,
+    "34": 1,
+    "17": 1,
+    "35": 1,
+    "10": 1
+  }
+}

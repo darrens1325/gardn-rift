@@ -3,7 +3,7 @@
 // Bumped because the wave-system rolled out new wire features: kRoundEnd
 // broadcasts, plus 124 new petal IDs in the enum. Old clients would
 // misinterpret either.
-extern const uint64_t VERSION_HASH = 4728567265382325ll;
+extern const uint64_t VERSION_HASH = 4728567265382326ll;
 extern const uint32_t SERVER_PORT = 9001;
 extern const uint32_t MAX_NAME_LENGTH = 16;
 extern const uint32_t MAX_CHAT_LENGTH = 80;

@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "bot-iqvj",
+  "first_seen": 1778294445.49162,
+  "last_seen": 1778294506.2725928,
+  "episodes": 2,
+  "score_total": 98,
+  "score_best": 98,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    0,
+    29
+  ],
+  "killed_by": {
+    "bot-vcur": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 2,
+    "29": 1
+  }
+}

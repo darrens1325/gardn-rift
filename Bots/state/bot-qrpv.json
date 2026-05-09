@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-qrpv",
+  "first_seen": 1778297021.576653,
+  "last_seen": 1778297111.983448,
+  "episodes": 2,
+  "score_total": 12,
+  "score_best": 12,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {
+    "bot-obya": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 2
+  }
+}

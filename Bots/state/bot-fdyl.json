@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-fdyl",
+  "first_seen": 1778352469.226392,
+  "last_seen": 1778352605.8500202,
+  "episodes": 16,
+  "score_total": 391,
+  "score_best": 223,
+  "best_loadout": [
+    1,
+    1,
+    0,
+    1,
+    0,
+    42
+  ],
+  "killed_by": {
+    "Hornet": 3,
+    "bot-icjz": 1,
+    "67": 1,
+    "bot": 1,
+    "bot-nrfa": 2,
+    "Spider": 1,
+    "bot-hcft": 2,
+    "Bee": 1,
+    "bot-ebqm": 1,
+    "bot-uros": 2
+  },
+  "loadout_history": {
+    "1": 16,
+    "0": 3,
+    "42": 1,
+    "46": 1
+  }
+}

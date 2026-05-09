@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "bot-vzhg",
+  "first_seen": 1778348269.634903,
+  "last_seen": 1778352293.832303,
+  "episodes": 31,
+  "score_total": 565,
+  "score_best": 220,
+  "best_loadout": [
+    34,
+    1,
+    1,
+    1,
+    1,
+    40
+  ],
+  "killed_by": {
+    "Soldier Ant": 3,
+    "Centipede": 4,
+    "Hornet": 21,
+    "Spider": 2
+  },
+  "loadout_history": {
+    "0": 23,
+    "1": 28,
+    "28": 1,
+    "5": 3,
+    "40": 1,
+    "34": 1,
+    "33": 1,
+    "6": 1,
+    "14": 3,
+    "18": 2,
+    "23": 1,
+    "9": 1
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-gbzf",
+  "first_seen": 1778294428.245972,
+  "last_seen": 1778294523.171607,
+  "episodes": 2,
+  "score_total": 23,
+  "score_best": 23,
+  "best_loadout": [
+    1,
+    1,
+    0,
+    1,
+    0
+  ],
+  "killed_by": {
+    "bot-ftli": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 2
+  }
+}

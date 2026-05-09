@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-rxia",
+  "first_seen": 1778352647.90116,
+  "last_seen": 1778352922.995361,
+  "episodes": 32,
+  "score_total": 509,
+  "score_best": 83,
+  "best_loadout": [
+    1,
+    19,
+    18,
+    19,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 16,
+    "Spider": 2,
+    "Cactus": 1,
+    "bot-jrax": 2,
+    "bot-zvzs": 1,
+    "Beetle": 1,
+    "a": 1,
+    "bot": 1,
+    "Bee": 2,
+    "Soldier Ant": 1,
+    "leafy": 3
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 32,
+    "9": 1,
+    "24": 1,
+    "10": 1,
+    "18": 1,
+    "19": 1
+  }
+}

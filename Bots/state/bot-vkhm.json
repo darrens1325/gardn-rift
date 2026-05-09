@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-vkhm",
+  "first_seen": 1778352470.808293,
+  "last_seen": 1778352600.011428,
+  "episodes": 15,
+  "score_total": 399,
+  "score_best": 269,
+  "best_loadout": [
+    0,
+    1,
+    1,
+    1,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-pokk": 1,
+    "Hornet": 6,
+    "Centipede": 2,
+    "bot-xngp": 2,
+    "bot-seep": 1,
+    "Spider": 2
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 15,
+    "26": 1
+  }
+}

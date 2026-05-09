@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-xsvw",
+  "first_seen": 1778352466.477321,
+  "last_seen": 1778352599.902358,
+  "episodes": 14,
+  "score_total": 253,
+  "score_best": 96,
+  "best_loadout": [
+    14,
+    1,
+    33,
+    1,
+    5
+  ],
+  "killed_by": {
+    "Hornet": 8,
+    "Bee": 1,
+    "florrio": 2,
+    "Soldier Ant": 1,
+    "bot-icjz": 1
+  },
+  "loadout_history": {
+    "1": 14,
+    "5": 2,
+    "14": 1,
+    "33": 1,
+    "0": 3
+  }
+}

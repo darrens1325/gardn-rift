@@ -45,7 +45,9 @@ namespace Ui {
     class GalleryMob final : public Element {
     public:
         MobID::T id;
+        uint8_t rarity;
         GalleryMob(MobID::T, float);
+        GalleryMob(MobID::T, uint8_t, float);
 
         virtual void on_render(Renderer &) override;
     };

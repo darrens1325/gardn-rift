@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-elgd",
+  "first_seen": 1778348131.593837,
+  "last_seen": 1778348180.654374,
+  "episodes": 2,
+  "score_total": 19,
+  "score_best": 12,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "bot-mrjh": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 2
+  }
+}

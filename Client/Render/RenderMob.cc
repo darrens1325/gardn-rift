@@ -29,8 +29,11 @@ void render_mob(Renderer &ctx, Entity const &ent) {
         };
     }
     draw_static_mob(ent.mob_id, ctx, attrs);
-    if (ent.deletion_animation > 0)
-        Game::seen_mobs[ent.mob_id] = 1;
+    if (ent.deletion_animation > 0) {
+        uint8_t r = ent.mob_rarity;
+        if (r >= RarityID::kNumRarities) r = RarityID::kNumRarities - 1;
+        Game::seen_mobs[ent.mob_id][r] = 1;
+    }
     /*
     #ifdef DEBUG
     ctx.set_stroke(0x80ff0000);

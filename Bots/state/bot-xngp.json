@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-xngp",
+  "first_seen": 1778352469.192737,
+  "last_seen": 1778352601.021024,
+  "episodes": 16,
+  "score_total": 208,
+  "score_best": 29,
+  "best_loadout": [
+    0,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Centipede": 1,
+    "a": 2,
+    "Hornet": 4,
+    "bot-vkhm": 4,
+    "Soldier Ant": 1,
+    "bot": 2,
+    "bot-gkfi": 1
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 16,
+    "40": 1
+  }
+}

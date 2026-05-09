@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-tbvr",
+  "first_seen": 1778297312.233078,
+  "last_seen": 1778297663.0926132,
+  "episodes": 4,
+  "score_total": 209,
+  "score_best": 203,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 4,
+    "1": 3
+  }
+}

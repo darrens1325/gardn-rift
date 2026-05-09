@@ -156,18 +156,23 @@ static void tick_hornet_aggro(Simulation *sim, Entity &ent) {
         ent.set_angle(v.angle());
         if (ent.ai_tick >= 1.5 * SIM_RATE && dist < 800) {
             ent.ai_tick = 0;
-            //spawn missile;
+            // Scale the missile by the hornet's rolled rarity so a Mythic
+            // Hornet fires a missile that's MOB_RADIUS_MULT[Mythic]× as
+            // wide and 1.5^Δ× as damaging as a Common one. Without this
+            // the projectile stays Common-sized regardless of how
+            // intimidating the parent mob looks.
+            float r_mult = mob_radius_mult(ent.mob_rarity);
+            float d_mult = mob_dmg_mult(ent.mob_rarity, MOB_DATA[ent.mob_id].rarity);
             Entity &missile = alloc_petal(sim, PetalID::kMissile, ent);
-            missile.damage = 10;
-            missile.health = missile.max_health = 10;
-            //missile.health = missile.max_health = 20;
-            //missile.despawn_tick = 1;
+            missile.set_radius(missile.radius * r_mult);
+            missile.damage = 10 * d_mult;
+            missile.health = missile.max_health = 10 * d_mult;
             entity_set_despawn_tick(missile, 3 * SIM_RATE);
             missile.set_angle(ent.angle);
             missile.acceleration.unit_normal(ent.angle).set_magnitude(40 * PLAYER_ACCELERATION);
             Vector kb;
             kb.unit_normal(ent.angle - M_PI).set_magnitude(2.5 * PLAYER_ACCELERATION);
-            ent.velocity += kb;            
+            ent.velocity += kb;
         }
         return;
     } else {
@@ -420,8 +425,10 @@ void tick_ai_behavior(Simulation *sim, Entity &ent) {
             tick_default_aggro(sim, ent, 1.20);
             break;
         case MobID::kSpider:
-            if (ent.lifetime % (SIM_RATE) == 0) 
-                alloc_web(sim, 25, ent);
+            // Web radius scales with the spider's rolled rarity (Mythic
+            // spider drops MOB_RADIUS_MULT[Mythic]× the radius web).
+            if (ent.lifetime % (SIM_RATE) == 0)
+                alloc_web(sim, 25 * mob_radius_mult(ent.mob_rarity), ent);
             tick_default_aggro(sim, ent, 1.20);
             break;
         case MobID::kQueenAnt:
@@ -429,7 +436,10 @@ void tick_ai_behavior(Simulation *sim, Entity &ent) {
                 Vector behind;
                 behind.unit_normal(ent.angle + M_PI);
                 behind *= ent.radius;
-                Entity &spawned = alloc_mob(sim, MobID::kSoldierAnt, ent.x + behind.x, ent.y + behind.y, ent.team);
+                // Spawned soldier inherits the queen's rolled rarity —
+                // a Mythic Queen pops out Mythic-sized soldiers, so
+                // their bodies match the queen they came from.
+                Entity &spawned = alloc_mob(sim, MobID::kSoldierAnt, ent.x + behind.x, ent.y + behind.y, ent.team, (int)ent.mob_rarity);
                 entity_set_despawn_tick(spawned, 10 * SIM_RATE);
                 spawned.set_parent(ent.parent);
             }

@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "name": "bot-zuvz",
+  "first_seen": 1778353456.3107011,
+  "last_seen": 1778353564.152338,
+  "episodes": 15,
+  "score_total": 225,
+  "score_best": 30,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    28,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 12,
+    "Bee": 2
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 15,
+    "33": 1,
+    "28": 1,
+    "34": 1
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-hvha",
+  "first_seen": 1778297367.172247,
+  "last_seen": 1778297615.2647018,
+  "episodes": 3,
+  "score_total": 12,
+  "score_best": 9,
+  "best_loadout": [
+    1,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-xdyt": 1
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 2
+  }
+}

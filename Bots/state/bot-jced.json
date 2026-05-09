@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "bot-jced",
+  "first_seen": 1778353459.510195,
+  "last_seen": 1778353569.6010308,
+  "episodes": 12,
+  "score_total": 185,
+  "score_best": 45,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "bot-dmxi": 1,
+    "Hornet": 5,
+    "bot-fzsw": 1,
+    "Bee": 2,
+    "bot-emfk": 1,
+    "Baby Ant": 1
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 11,
+    "23": 1,
+    "40": 1,
+    "41": 1
+  }
+}

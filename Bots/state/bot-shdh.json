@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "name": "bot-shdh",
+  "first_seen": 1778294671.8933618,
+  "last_seen": 1778295182.2097979,
+  "episodes": 7,
+  "score_total": 123,
+  "score_best": 35,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 4,
+    "bot-uukx": 1,
+    "blossom": 1
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 6,
+    "9": 1,
+    "36": 1
+  }
+}

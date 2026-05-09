@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-jrax",
+  "first_seen": 1778352649.5811882,
+  "last_seen": 1778352923.7371929,
+  "episodes": 31,
+  "score_total": 681,
+  "score_best": 205,
+  "best_loadout": [
+    1,
+    0,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Cactus": 3,
+    "Hornet": 8,
+    "bot-asxn": 1,
+    "Bee": 3,
+    "bot-emgb": 1,
+    "bot-ehzh": 3,
+    "Centipede": 2,
+    "bot-dosx": 1,
+    "bot-djlo": 3,
+    "bot": 1,
+    "Spider": 2,
+    "bot-ufcz": 1,
+    "bot-kqci": 1
+  },
+  "loadout_history": {
+    "0": 10,
+    "1": 31,
+    "5": 2,
+    "24": 1,
+    "9": 1
+  }
+}

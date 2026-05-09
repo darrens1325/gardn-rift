@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "name": "bot-nete",
+  "first_seen": 1778348139.5676968,
+  "last_seen": 1778348139.5676968,
+  "episodes": 1,
+  "score_total": 19,
+  "score_best": 19,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "0": 1,
+    "1": 1
+  }
+}

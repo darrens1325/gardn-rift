@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "name": "bot-gmca",
+  "first_seen": 1778353451.760586,
+  "last_seen": 1778353565.752631,
+  "episodes": 15,
+  "score_total": 144,
+  "score_best": 32,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "a": 1,
+    "Hornet": 6,
+    "rosie": 1,
+    "Baby Ant": 1,
+    "bot-zuvz": 2,
+    "Ladybug": 3
+  },
+  "loadout_history": {
+    "1": 15,
+    "36": 1,
+    "0": 4,
+    "40": 1,
+    "14": 1,
+    "26": 1
+  }
+}

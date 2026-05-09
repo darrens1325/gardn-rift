@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-bjqt",
+  "first_seen": 1778297075.3075871,
+  "last_seen": 1778297127.244064,
+  "episodes": 2,
+  "score_total": 1078,
+  "score_best": 1068,
+  "best_loadout": [
+    1,
+    0,
+    14,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 2,
+    "14": 1,
+    "40": 1
+  }
+}

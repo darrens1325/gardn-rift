@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-twyf",
+  "first_seen": 1778297045.637911,
+  "last_seen": 1778297140.3915598,
+  "episodes": 2,
+  "score_total": 37,
+  "score_best": 25,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 2
+  },
+  "loadout_history": {
+    "0": 2,
+    "1": 1
+  }
+}

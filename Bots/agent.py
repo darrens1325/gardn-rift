@@ -185,9 +185,11 @@ class QNet(nn.Module):
         self.net = nn.Sequential(
             nn.Linear(STATE_DIM, 128),
             nn.ReLU(),
-            nn.Linear(128, 64),
+            nn.Linear(128, 128),
             nn.ReLU(),
-            nn.Linear(64, 128),
+            nn.Linear(128, 256),
+            nn.ReLU(),
+            nn.Linear(256, 128),
             nn.ReLU(),
             nn.Linear(128, NUM_ACTIONS),
         )
@@ -211,7 +213,7 @@ class DQNAgent:
         target_sync_steps: int = 1_000,
         train_every: int = 4,
         warmup: int = 2_000,
-        device: str = "mps",
+        device: str = "cpu",
         checkpoint_path: str | None = None,
         checkpoint_every_train_steps: int = 1_000,
     ) -> None:
@@ -474,16 +476,21 @@ class DQNAgent:
     def save(self) -> None:
         if not self.checkpoint_path:
             return
-        # Hold the sync lock so we capture a self-consistent view of the
-        # weights (no half-applied gradient step). We save `q` not
-        # `q_inference` because q is the freshest set of weights; if the
-        # process is killed we want to resume from the latest gradient
-        # update, not the last sync point.
+        self.save_to(self.checkpoint_path)
+
+    def save_to(self, path: str) -> None:
+        """Snapshot the live Q-network to `path`. Used both for the
+        normal periodic checkpoint and for the multi-worker "best so
+        far" file maintained in run.py. Holds the sync lock so we
+        capture a self-consistent view of the weights (no half-applied
+        gradient step). We save `q` not `q_inference` because q is the
+        freshest set of weights; on resume we want the latest gradient
+        update, not the last sync point."""
         with self._sync_lock:
             sd = {k: v.cpu().clone() for k, v in self.q.state_dict().items()}
             env_steps = self.env_steps
             train_steps = self.train_steps
         torch.save(
             {"q": sd, "env_steps": env_steps, "train_steps": train_steps},
-            self.checkpoint_path,
+            path,
         )

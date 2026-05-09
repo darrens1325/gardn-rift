@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-cmxc",
+  "first_seen": 1778297460.376003,
+  "last_seen": 1778297651.4574971,
+  "episodes": 3,
+  "score_total": 26,
+  "score_best": 16,
+  "best_loadout": [
+    14,
+    42,
+    0,
+    1,
+    1
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "0": 3,
+    "42": 2,
+    "1": 2,
+    "14": 1
+  }
+}

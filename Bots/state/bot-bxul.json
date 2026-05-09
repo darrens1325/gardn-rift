@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-bxul",
+  "first_seen": 1778297351.633625,
+  "last_seen": 1778297634.516547,
+  "episodes": 4,
+  "score_total": 22,
+  "score_best": 12,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 2,
+    "Rock": 1
+  },
+  "loadout_history": {
+    "0": 4,
+    "8": 1,
+    "1": 2
+  }
+}

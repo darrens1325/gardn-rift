@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-irbl",
+  "first_seen": 1778294673.7807648,
+  "last_seen": 1778295108.168986,
+  "episodes": 6,
+  "score_total": 152,
+  "score_best": 54,
+  "best_loadout": [
+    0,
+    1,
+    9,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 2,
+    "Bee": 1,
+    "rosie": 1,
+    "petalpop": 1
+  },
+  "loadout_history": {
+    "0": 6,
+    "1": 4,
+    "35": 1,
+    "9": 1
+  }
+}

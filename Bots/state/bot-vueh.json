@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "name": "bot-vueh",
+  "first_seen": 1778348135.4914901,
+  "last_seen": 1778348135.4914901,
+  "episodes": 1,
+  "score_total": 19,
+  "score_best": 19,
+  "best_loadout": [
+    0,
+    1,
+    1,
+    5,
+    1
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "0": 1,
+    "1": 1,
+    "5": 1
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "bot-ebqm",
+  "first_seen": 1778352472.0280058,
+  "last_seen": 1778352600.076888,
+  "episodes": 16,
+  "score_total": 258,
+  "score_best": 31,
+  "best_loadout": [
+    1,
+    0,
+    0,
+    1,
+    0
+  ],
+  "killed_by": {
+    "root": 1,
+    "bot-osos": 2,
+    "Hornet": 3,
+    "thorn": 1,
+    "Sandstorm": 2,
+    "bot-ylag": 1,
+    "bot-whmi": 1,
+    "Centipede": 1,
+    "67": 1,
+    "bot-pkxi": 2
+  },
+  "loadout_history": {
+    "0": 3,
+    "1": 15,
+    "40": 1
+  }
+}
