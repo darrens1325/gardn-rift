@@ -214,7 +214,13 @@ static void tick_mantis_aggro(Simulation *sim, Entity &ent) {
             missile.health = missile.max_health = 10 * d_mult;
             entity_set_despawn_tick(missile, 3 * SIM_RATE);
             missile.set_angle(ent.angle);
-            missile.acceleration.unit_normal(ent.angle).set_magnitude(40 * PLAYER_ACCELERATION);
+            // tick_petal_behavior runs before motion and zeros out the
+            // acceleration on a despawning kPeas (the default switch arm),
+            // so setting acceleration here is a no-op. Set velocity
+            // directly and drop friction so the missile actually flies
+            // for the full 3-second despawn instead of stalling on launch.
+            missile.friction = 0;
+            missile.velocity.unit_normal(ent.angle).set_magnitude(8 * PLAYER_ACCELERATION);
             Vector kb;
             kb.unit_normal(ent.angle - M_PI).set_magnitude(2.5 * PLAYER_ACCELERATION);
             ent.velocity += kb;
