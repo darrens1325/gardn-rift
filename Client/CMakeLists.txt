@@ -114,7 +114,7 @@ set(CMAKE_CXX_COMPILER "em++")
 if(DEBUG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG=1 -gdwarf-4 -sNO_DISABLE_EXCEPTION_CATCHING")
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -ffast-math --closure=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -ffast-math --closure=0")
 endif()
 
 add_link_options(-sEXPORTED_FUNCTIONS=_main,_malloc,_free,_key_event,_mouse_event,_wheel_event,_loop,_on_message)

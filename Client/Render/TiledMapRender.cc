@@ -43,12 +43,48 @@ EM_JS(void, tiled_map_init_js, (), {
         const ts = await r.json();
         const tsDir = tsPath.substring(0, tsPath.lastIndexOf("/"));
         const tilesArr = ts["tiles"] || [];
+        // Why we don't just `img.src = url` here:
+        // The shipped SVGs have a root element of `<svg xml:space="preserve"
+        // viewBox="…">` with no `xmlns="http://www.w3.org/2000/svg"`.
+        // Browsers will happily inline that into HTML, but they refuse to
+        // load it through an <img> (the namespace check is strict for
+        // external SVGs) and fire `error`. Workaround: fetch each SVG as
+        // text, inject the namespace if missing, then hand the patched
+        // markup to the Image via a data: URL.
+        const ready = (M["tileReady"] = M["tileReady"] || {});
         for (let i = 0; i < tilesArr.length; i++) {
             const t = tilesArr[i];
             const gid = firstgid + ((t["id"] | 0));
+            const url = tsDir + "/" + t["image"];
             const img = new Image();
-            img.src = tsDir + "/" + t["image"];
             M["tileImages"][gid] = img;
+            (function (g, im, u) {
+                im.addEventListener("load", function () { ready[g] = true; });
+                im.addEventListener("error", function () { ready[g] = false; });
+                fetch(u)
+                    .then(function (r) {
+                        if (!r.ok) throw new Error("http " + r.status);
+                        return r.text();
+                    })
+                    .then(function (txt) {
+                        // \\s in C source → \s in the JS regex at runtime.
+                        // (Single-backslash \s isn't a recognised C escape;
+                        // the preprocessor drops the backslash so the regex
+                        // becomes /<svg(s|>)/ which never matches anything
+                        // useful. Same warning trap I hit earlier with \/.)
+                        if (txt.indexOf("xmlns=") < 0) {
+                            txt = txt.replace(/<svg(\\s|>)/, '<svg xmlns="http://www.w3.org/2000/svg"$1');
+                        }
+                        im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(txt);
+                    })
+                    .catch(function (e) {
+                        ready[g] = false;
+                        if (!Module["_tiledLoggedFirstErr"]) {
+                            Module["_tiledLoggedFirstErr"] = 1;
+                            console.warn("[TiledMap] first tile fetch failed: " + u + " — " + e.message);
+                        }
+                    });
+            })(gid, img, url);
         }
         M["tileSize"] = (ts["tilewidth"] | 0) || 256;
         console.log("[TiledMap] tileset loaded: " + tilesArr.length + " tiles");
@@ -148,10 +184,22 @@ EM_JS(void, tiled_map_draw_js, (int ctx_id), {
     const M = Module["tiledMap"];
     if (!M || !M["ready"]) return;
     const c = Module.ctxs[ctx_id];
-    if (!c) return;
+    if (!c) {
+        if (!Module["_tiledLoggedNoCtx"]) {
+            Module["_tiledLoggedNoCtx"] = 1;
+            console.warn("[TiledMap] draw: no canvas context for id " + ctx_id);
+        }
+        return;
+    }
     const tw = M["tileWidth"] | 0;
     const th = M["tileHeight"] | 0;
-    if (tw <= 0 || th <= 0) return;
+    if (tw <= 0 || th <= 0) {
+        if (!Module["_tiledLoggedNoTile"]) {
+            Module["_tiledLoggedNoTile"] = 1;
+            console.warn("[TiledMap] draw: tile size invalid tw=" + tw + " th=" + th);
+        }
+        return;
+    }
 
     // Recover the visible world rectangle from the current 2D transform —
     // the C++ Renderer last set this with the camera matrix. Mapping the
@@ -191,6 +239,12 @@ EM_JS(void, tiled_map_draw_js, (int ctx_id), {
     const GID_MASK = 0x1fffffff;
     const layers = M["layers"];
     const tileImages = M["tileImages"];
+    const tileReady = M["tileReady"] || {};
+
+    let dbgDrawn = 0;
+    let dbgSkipped = 0;
+    let dbgNonZero = 0;
+    let dbgErrored = 0;
 
     for (let li = 0; li < layers.length; li++) {
         const layer = layers[li];
@@ -206,14 +260,70 @@ EM_JS(void, tiled_map_draw_js, (int ctx_id), {
             for (let col = sx; col < ex; col++) {
                 const rawg = data[rowOff + col];
                 if (!rawg) continue;
+                dbgNonZero++;
                 const gid = rawg & GID_MASK;
                 if (!gid) continue;
                 const img = tileImages[gid];
-                if (!img || !img.complete || img.naturalWidth === 0) continue;
-                c.drawImage(img, col * tw, drawY, tw, th);
+                if (!img || tileReady[gid] !== true) { dbgSkipped++; continue; }
+                try {
+                    c.drawImage(img, col * tw, drawY, tw, th);
+                    dbgDrawn++;
+                } catch (e) {
+                    // A previously-loaded Image can land in the "broken"
+                    // state if its decode fails later (rare). Mark it
+                    // unready so future frames skip it.
+                    tileReady[gid] = false;
+                    dbgErrored++;
+                }
             }
         }
     }
+    {
+        // Log on the first draw, when we first paint any tile, and every
+        // ~120 frames thereafter — enough to see if images eventually
+        // load without spamming the console.
+        const prevDrawn = Module["_tiledDrawnEver"] | 0;
+        const frame = (Module["_tiledFrame"] | 0) + 1;
+        Module["_tiledFrame"] = frame;
+        const totalImages = Object.keys(tileImages).length;
+        let loadedImages = 0;
+        let erroredImages = 0;
+        let inflightImages = 0;
+        let sampleErrSrc = "";
+        let sampleOkSrc = "";
+        for (const k in tileImages) {
+            if (tileReady[k] === true) {
+                loadedImages++;
+                if (!sampleOkSrc) sampleOkSrc = tileImages[k].src;
+            } else if (tileReady[k] === false) {
+                erroredImages++;
+                if (!sampleErrSrc) sampleErrSrc = tileImages[k].src;
+            } else {
+                inflightImages++;
+            }
+        }
+        const firstPaint = dbgDrawn > 0 && prevDrawn === 0;
+        if (firstPaint) Module["_tiledDrawnEver"] = 1;
+        const shouldLog = !Module["_tiledFirstDraw"]
+            || firstPaint
+            || (frame % 120) === 0;
+        if (shouldLog) {
+            Module["_tiledFirstDraw"] = 1;
+            console.log("[TiledMap] draw frame " + frame
+                + ": tw=" + tw + " th=" + th
+                + " transform a=" + t.a.toFixed(3) + " e=" + t.e.toFixed(0) + " f=" + t.f.toFixed(0)
+                + " canvas=" + cw + "x" + ch
+                + " viewport(world)=[" + lx.toFixed(0) + "," + topY.toFixed(0)
+                + " -> " + rx.toFixed(0) + "," + by.toFixed(0) + "]"
+                + " layers=" + layers.length
+                + " nonZero=" + dbgNonZero + " drawn=" + dbgDrawn + " skipped=" + dbgSkipped
+                + " drawErr=" + dbgErrored
+                + " imgs=" + loadedImages + "ok/" + erroredImages + "err/" + inflightImages + "loading/" + totalImages + "total"
+                + (sampleErrSrc ? " sampleErr=" + sampleErrSrc : "")
+                + (sampleOkSrc ? " sampleOk=" + sampleOkSrc : ""));
+        }
+    }
+
     const objects = M["objects"];
     for (let oi = 0; oi < objects.length; oi++) {
         const o = objects[oi];
@@ -221,9 +331,11 @@ EM_JS(void, tiled_map_draw_js, (int ctx_id), {
         if (o.x > rx) continue;
         if (o.y + o.h < topY) continue;
         if (o.y > by) continue;
-        const img = tileImages[o.gid & GID_MASK];
-        if (!img || !img.complete || img.naturalWidth === 0) continue;
-        c.drawImage(img, o.x, o.y, o.w, o.h);
+        const ogid2 = o.gid & GID_MASK;
+        const img = tileImages[ogid2];
+        if (!img || tileReady[ogid2] !== true) continue;
+        try { c.drawImage(img, o.x, o.y, o.w, o.h); }
+        catch (e) { tileReady[ogid2] = false; }
     }
 });
 
