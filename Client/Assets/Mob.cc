@@ -697,7 +697,7 @@ void draw_static_mob(MobID::T mob_id, Renderer &ctx, MobRenderAttributes attr) {
             break;
         };
         case MobID::kLeafbug:
-            ctx.scale(radius / 20);
+            ctx.scale(radius / 10);
             ctx.set_stroke(0xff333333);
             ctx.set_line_width(2.51);
             ctx.round_line_cap();
