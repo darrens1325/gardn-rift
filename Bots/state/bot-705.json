@@ -2,25 +2,41 @@
   "schema": 1,
   "name": "bot-705",
   "first_seen": 1778364747.217209,
-  "last_seen": 1778365140.043257,
-  "episodes": 9,
-  "score_total": 151,
-  "score_best": 48,
+  "last_seen": 1778372514.4291682,
+  "episodes": 80,
+  "score_total": 1843,
+  "score_best": 1016,
   "best_loadout": [
-    1,
-    1,
-    1,
-    1,
-    1
+    5,
+    0,
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
-    "Beetle": 2,
-    "Bee": 1,
-    "Hornet": 6
+    "Beetle": 7,
+    "Bee": 2,
+    "Hornet": 31,
+    "Evil Centipede": 6,
+    "Soldier Ant": 8,
+    "bot-503": 1,
+    "Cactus": 7,
+    "Boulder": 1,
+    "Sandstorm": 4,
+    "bot-603": 1,
+    "bot-711": 1,
+    "Worker Ant": 3,
+    "Rock": 2,
+    "Desert Centipede": 1,
+    "Massive Beetle": 1
   },
   "loadout_history": {
-    "1": 9,
-    "0": 4,
-    "40": 1
+    "1": 56,
+    "0": 69,
+    "40": 2,
+    "30": 1,
+    "5": 1,
+    "48": 1
   }
 }

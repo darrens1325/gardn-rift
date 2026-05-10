@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-614",
   "first_seen": 1778364749.741123,
-  "last_seen": 1778365113.082953,
-  "episodes": 8,
-  "score_total": 134,
+  "last_seen": 1778366658.451225,
+  "episodes": 9,
+  "score_total": 151,
   "score_best": 40,
   "best_loadout": [
     1,
@@ -16,10 +16,10 @@
   "killed_by": {
     "Desert Centipede": 1,
     "Beetle": 1,
-    "Hornet": 3
+    "Hornet": 4
   },
   "loadout_history": {
-    "0": 5,
-    "1": 8
+    "0": 6,
+    "1": 9
   }
 }

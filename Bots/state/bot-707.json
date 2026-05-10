@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-707",
   "first_seen": 1778364746.576769,
-  "last_seen": 1778365141.345681,
-  "episodes": 9,
+  "last_seen": 1778366668.096736,
+  "episodes": 10,
   "score_total": 177,
   "score_best": 41,
   "best_loadout": [
@@ -20,8 +20,8 @@
     "Evil Centipede": 2
   },
   "loadout_history": {
-    "0": 4,
-    "1": 9,
+    "0": 5,
+    "1": 10,
     "45": 1,
     "9": 1
   }

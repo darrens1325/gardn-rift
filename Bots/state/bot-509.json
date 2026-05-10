@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-509",
   "first_seen": 1778364748.307193,
-  "last_seen": 1778365114.403167,
-  "episodes": 8,
-  "score_total": 108,
+  "last_seen": 1778366677.0208452,
+  "episodes": 9,
+  "score_total": 114,
   "score_best": 27,
   "best_loadout": [
     18,
@@ -14,14 +14,15 @@
     1
   ],
   "killed_by": {
-    "Hornet": 5,
+    "Hornet": 6,
     "Evil Centipede": 1,
     "Beetle": 1,
     "Cactus": 1
   },
   "loadout_history": {
-    "0": 4,
-    "1": 8,
-    "18": 1
+    "0": 5,
+    "1": 9,
+    "18": 1,
+    "20": 1
   }
 }

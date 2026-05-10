@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-408",
   "first_seen": 1778364744.1696908,
-  "last_seen": 1778365105.728151,
-  "episodes": 7,
+  "last_seen": 1778366650.815646,
+  "episodes": 8,
   "score_total": 76,
   "score_best": 28,
   "best_loadout": [
@@ -21,8 +21,8 @@
     "Ladybug": 1
   },
   "loadout_history": {
-    "1": 7,
-    "0": 2,
+    "1": 8,
+    "0": 3,
     "5": 1
   }
 }

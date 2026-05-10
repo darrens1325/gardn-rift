@@ -2,26 +2,49 @@
   "schema": 1,
   "name": "bot-205",
   "first_seen": 1778364743.513648,
-  "last_seen": 1778365141.946286,
-  "episodes": 8,
-  "score_total": 123,
-  "score_best": 37,
+  "last_seen": 1778372479.954619,
+  "episodes": 78,
+  "score_total": 913,
+  "score_best": 77,
   "best_loadout": [
+    0,
+    35,
     1,
     1,
-    1,
-    1,
-    1
+    0
   ],
   "killed_by": {
-    "Hornet": 1,
-    "Soldier Ant": 2,
-    "Ladybug": 1,
-    "Beetle": 3,
-    "Sandstorm": 1
+    "Hornet": 27,
+    "Soldier Ant": 4,
+    "Ladybug": 4,
+    "Beetle": 10,
+    "Sandstorm": 2,
+    "Desert Centipede": 2,
+    "bot-300": 6,
+    "Cactus": 2,
+    "Queen Ant": 2,
+    "bot-309": 1,
+    "Baby Ant": 1,
+    "a": 1,
+    "bot-603": 3,
+    "Evil Centipede": 4,
+    "Spider": 2,
+    "Massive Beetle": 1,
+    "Centipede": 1,
+    "leafy": 2
   },
   "loadout_history": {
-    "0": 4,
-    "1": 8
+    "0": 69,
+    "1": 57,
+    "10": 1,
+    "14": 1,
+    "23": 1,
+    "38": 1,
+    "9": 1,
+    "35": 1,
+    "46": 1,
+    "25": 1,
+    "79": 1,
+    "6": 1
   }
 }

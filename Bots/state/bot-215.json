@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-215",
   "first_seen": 1778364742.054307,
-  "last_seen": 1778365136.421398,
-  "episodes": 9,
+  "last_seen": 1778366663.428181,
+  "episodes": 10,
   "score_total": 149,
   "score_best": 37,
   "best_loadout": [
@@ -21,6 +21,6 @@
   },
   "loadout_history": {
     "1": 9,
-    "0": 5
+    "0": 6
   }
 }

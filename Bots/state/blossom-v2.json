@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "blossom-v2",
   "first_seen": 1778364678.878558,
-  "last_seen": 1778365106.91327,
-  "episodes": 8,
+  "last_seen": 1778366639.3083909,
+  "episodes": 9,
   "score_total": 78,
   "score_best": 24,
   "best_loadout": [
@@ -18,7 +18,7 @@
     "Bee": 1
   },
   "loadout_history": {
-    "0": 3,
-    "1": 8
+    "0": 4,
+    "1": 9
   }
 }

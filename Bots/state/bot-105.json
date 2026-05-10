@@ -2,25 +2,46 @@
   "schema": 1,
   "name": "bot-105",
   "first_seen": 1778364740.783486,
-  "last_seen": 1778365141.2064588,
-  "episodes": 9,
-  "score_total": 120,
-  "score_best": 42,
+  "last_seen": 1778372491.632496,
+  "episodes": 80,
+  "score_total": 1220,
+  "score_best": 210,
   "best_loadout": [
     0,
-    1,
-    1,
-    1,
-    1
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "bot-312": 1,
-    "Hornet": 4,
-    "Beetle": 2
+    "Hornet": 27,
+    "Beetle": 7,
+    "bot-604": 1,
+    "Worker Ant": 3,
+    "Bee": 4,
+    "Spider": 5,
+    "Cactus": 9,
+    "Desert Centipede": 1,
+    "Evil Centipede": 9,
+    "Soldier Ant": 2,
+    "root": 1,
+    "Scorpion": 1,
+    "bot-401": 1,
+    "not bot": 1,
+    "Massive Beetle": 1,
+    "bot-301": 1
   },
   "loadout_history": {
-    "1": 9,
-    "0": 6,
-    "63": 1
+    "1": 58,
+    "0": 69,
+    "63": 1,
+    "9": 1,
+    "40": 2,
+    "29": 1,
+    "25": 1,
+    "18": 1,
+    "14": 1,
+    "24": 1
   }
 }

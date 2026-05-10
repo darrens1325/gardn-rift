@@ -2,26 +2,45 @@
   "schema": 1,
   "name": "bot-400",
   "first_seen": 1778364744.414997,
-  "last_seen": 1778365136.375382,
-  "episodes": 9,
-  "score_total": 121,
-  "score_best": 34,
+  "last_seen": 1778372482.147598,
+  "episodes": 79,
+  "score_total": 1165,
+  "score_best": 225,
   "best_loadout": [
-    1,
+    0,
+    0,
+    0,
     0,
     1,
-    1,
-    1
+    0
   ],
   "killed_by": {
-    "Beetle": 3,
-    "Hornet": 2,
-    "Cactus": 1,
-    "Spider": 1,
-    "Evil Centipede": 2
+    "Beetle": 8,
+    "Hornet": 21,
+    "Cactus": 9,
+    "Spider": 10,
+    "Evil Centipede": 5,
+    "Massive Beetle": 1,
+    "Soldier Ant": 1,
+    "Scorpion": 2,
+    "Bee": 7,
+    "root": 2,
+    "bot-101": 2,
+    "bot-400": 1,
+    "Ladybug": 2,
+    "bot-509": 1,
+    "Worker Ant": 2
   },
   "loadout_history": {
-    "1": 9,
-    "0": 4
+    "1": 63,
+    "0": 66,
+    "34": 1,
+    "5": 1,
+    "6": 1,
+    "24": 3,
+    "40": 1,
+    "10": 1,
+    "62": 1,
+    "99": 1
   }
 }

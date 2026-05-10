@@ -841,6 +841,12 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         RarityID::kEpic, {250.0}, 25.0, {40.0}, 1, {
         PetalID::kCutter
     }, {}},
+    {
+        "Leafbug",
+        "It looks like a leaf, but it's actually a bug.",
+        RarityID::kCommon, {20.0}, 10.0, {30.0}, 2, {
+        PetalID::kCommonLeaf, PetalID::kLeaf, PetalID::kRareLeaf, PetalID::kEpicLeaf, PetalID::kLegendaryLeaf
+    }, {}},
 };
 
 std::array<StaticArray<float, MAX_DROPS_PER_MOB>, MobID::kNumMobs> const MOB_DROP_CHANCES = [](){

@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-108",
   "first_seen": 1778364741.45984,
-  "last_seen": 1778365140.082916,
-  "episodes": 9,
+  "last_seen": 1778366645.9784708,
+  "episodes": 10,
   "score_total": 176,
   "score_best": 69,
   "best_loadout": [
@@ -19,9 +19,9 @@
     "bot-304": 1
   },
   "loadout_history": {
-    "1": 9,
+    "1": 10,
     "15": 1,
-    "0": 3,
+    "0": 4,
     "5": 1,
     "14": 1
   }

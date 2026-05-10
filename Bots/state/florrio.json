@@ -2,31 +2,43 @@
   "schema": 1,
   "name": "florrio",
   "first_seen": 1778364027.031883,
-  "last_seen": 1778365142.293393,
-  "episodes": 31,
-  "score_total": 327,
-  "score_best": 31,
+  "last_seen": 1778372546.738998,
+  "episodes": 99,
+  "score_total": 1201,
+  "score_best": 73,
   "best_loadout": [
-    1,
-    1,
     0,
-    1,
-    1
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Massive Beetle": 2,
     "Desert Centipede": 1,
-    "Hornet": 13,
-    "Evil Centipede": 1,
-    "Cactus": 4,
+    "Hornet": 54,
+    "Evil Centipede": 5,
+    "Cactus": 9,
     "Sandstorm": 1,
     "Spider": 2,
-    "Beetle": 1,
-    "Centipede": 2,
-    "Soldier Ant": 1
+    "Beetle": 2,
+    "Centipede": 6,
+    "Soldier Ant": 1,
+    "Bee": 4,
+    "Boulder": 3,
+    "Queen Ant": 1,
+    "Worker Ant": 2,
+    "Scorpion": 1
   },
   "loadout_history": {
-    "0": 10,
-    "1": 31
+    "0": 66,
+    "1": 83,
+    "19": 1,
+    "14": 2,
+    "48": 1,
+    "40": 1,
+    "33": 1,
+    "9": 1,
+    "15": 1
   }
 }

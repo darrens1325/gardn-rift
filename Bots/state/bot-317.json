@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-317",
   "first_seen": 1778364746.691415,
-  "last_seen": 1778365138.855529,
-  "episodes": 9,
+  "last_seen": 1778366662.1735308,
+  "episodes": 10,
   "score_total": 530,
   "score_best": 409,
   "best_loadout": [
@@ -22,8 +22,8 @@
     "Hornet": 4
   },
   "loadout_history": {
-    "0": 7,
-    "1": 9,
+    "0": 8,
+    "1": 10,
     "24": 1,
     "9": 1
   }

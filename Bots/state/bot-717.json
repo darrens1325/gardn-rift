@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-717",
   "first_seen": 1778364747.8951402,
-  "last_seen": 1778365146.13245,
-  "episodes": 9,
-  "score_total": 157,
+  "last_seen": 1778366662.03388,
+  "episodes": 10,
+  "score_total": 159,
   "score_best": 36,
   "best_loadout": [
     1,
@@ -16,12 +16,12 @@
   "killed_by": {
     "Beetle": 3,
     "Ladybug": 1,
-    "Hornet": 2,
+    "Hornet": 3,
     "Bee": 1
   },
   "loadout_history": {
-    "0": 4,
-    "1": 9,
+    "0": 5,
+    "1": 10,
     "18": 1,
     "5": 1,
     "28": 1,

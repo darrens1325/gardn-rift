@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-608",
   "first_seen": 1778364746.37713,
-  "last_seen": 1778365141.958842,
-  "episodes": 8,
+  "last_seen": 1778366654.020896,
+  "episodes": 9,
   "score_total": 114,
   "score_best": 30,
   "best_loadout": [
@@ -14,14 +14,14 @@
     1
   ],
   "killed_by": {
-    "Hornet": 2,
+    "Hornet": 3,
     "Boulder": 1,
     "Cactus": 2,
     "Evil Centipede": 2
   },
   "loadout_history": {
     "0": 7,
-    "1": 8,
+    "1": 9,
     "15": 1,
     "56": 1
   }

@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-415",
   "first_seen": 1778364745.500248,
-  "last_seen": 1778365106.0436292,
-  "episodes": 8,
+  "last_seen": 1778366679.60515,
+  "episodes": 9,
   "score_total": 85,
   "score_best": 14,
   "best_loadout": [
@@ -19,7 +19,7 @@
     "Evil Centipede": 1
   },
   "loadout_history": {
-    "0": 4,
-    "1": 8
+    "0": 5,
+    "1": 9
   }
 }

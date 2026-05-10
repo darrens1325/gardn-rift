@@ -2,23 +2,24 @@
   "schema": 1,
   "name": "thorny",
   "first_seen": 1778364667.569299,
-  "last_seen": 1778365136.5658188,
-  "episodes": 9,
-  "score_total": 94,
-  "score_best": 23,
+  "last_seen": 1778366661.873033,
+  "episodes": 10,
+  "score_total": 121,
+  "score_best": 27,
   "best_loadout": [
     0,
-    1,
-    1,
-    1,
-    1
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Beetle": 2,
-    "Hornet": 4
+    "Hornet": 4,
+    "Bee": 1
   },
   "loadout_history": {
-    "0": 6,
+    "0": 7,
     "1": 9,
     "48": 1
   }

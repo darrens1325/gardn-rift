@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-312",
   "first_seen": 1778364748.106099,
-  "last_seen": 1778365138.711348,
-  "episodes": 9,
+  "last_seen": 1778366644.301568,
+  "episodes": 10,
   "score_total": 138,
   "score_best": 57,
   "best_loadout": [
@@ -22,8 +22,8 @@
     "Hornet": 1
   },
   "loadout_history": {
-    "0": 5,
-    "1": 9,
+    "0": 6,
+    "1": 10,
     "11": 1,
     "14": 1
   }

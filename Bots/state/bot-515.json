@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-515",
   "first_seen": 1778364747.915873,
-  "last_seen": 1778365111.958849,
-  "episodes": 8,
-  "score_total": 46,
+  "last_seen": 1778366657.9942431,
+  "episodes": 9,
+  "score_total": 50,
   "score_best": 10,
   "best_loadout": [
     1,
@@ -14,13 +14,13 @@
     0
   ],
   "killed_by": {
-    "Hornet": 2,
+    "Hornet": 3,
     "Spider": 2,
     "Bee": 3,
     "Cactus": 1
   },
   "loadout_history": {
-    "1": 8,
-    "0": 3
+    "1": 9,
+    "0": 4
   }
 }

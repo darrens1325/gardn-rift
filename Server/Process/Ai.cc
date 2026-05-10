@@ -458,6 +458,9 @@ void tick_ai_behavior(Simulation *sim, Entity &ent) {
             break;
         case MobID::kDigger:
             tick_digger(sim, ent);
+        case MobID::kLeafbug:
+            tick_default_neutral(sim, ent);
+            break;
         default:
             break;
     }

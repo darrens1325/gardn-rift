@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "petalpop",
   "first_seen": 1778364029.198153,
-  "last_seen": 1778365142.0405881,
-  "episodes": 30,
-  "score_total": 248,
+  "last_seen": 1778366658.566346,
+  "episodes": 31,
+  "score_total": 260,
   "score_best": 31,
   "best_loadout": [
     1,
@@ -16,7 +16,7 @@
   "killed_by": {
     "Hornet": 8,
     "Cactus": 4,
-    "Massive Beetle": 2,
+    "Massive Beetle": 3,
     "Spider": 2,
     "Beetle": 4,
     "bot-52": 1,
@@ -24,8 +24,9 @@
     "bot": 1
   },
   "loadout_history": {
-    "0": 11,
-    "1": 30,
-    "25": 1
+    "0": 12,
+    "1": 31,
+    "25": 1,
+    "18": 1
   }
 }

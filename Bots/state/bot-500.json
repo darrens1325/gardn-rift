@@ -2,23 +2,42 @@
   "schema": 1,
   "name": "bot-500",
   "first_seen": 1778364745.462504,
-  "last_seen": 1778365140.432794,
-  "episodes": 8,
-  "score_total": 90,
-  "score_best": 25,
+  "last_seen": 1778372509.6769888,
+  "episodes": 79,
+  "score_total": 1758,
+  "score_best": 1015,
   "best_loadout": [
-    1,
-    1,
-    1,
-    1,
-    1
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
-    "Hornet": 5,
-    "Centipede": 2
+    "Hornet": 39,
+    "Centipede": 3,
+    "Beetle": 7,
+    "bot-210": 2,
+    "Desert Centipede": 1,
+    "Cactus": 6,
+    "bot-707": 1,
+    "florrio": 1,
+    "Spider": 3,
+    "Massive Beetle": 1,
+    "bot-601": 1,
+    "bot-502": 3,
+    "Scorpion": 3,
+    "Evil Centipede": 5,
+    "blossom": 1
   },
   "loadout_history": {
-    "1": 8,
-    "0": 4
+    "1": 57,
+    "0": 71,
+    "14": 2,
+    "39": 1,
+    "18": 1,
+    "7": 1,
+    "11": 1
   }
 }

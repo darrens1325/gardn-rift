@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "a",
   "first_seen": 1778364028.324828,
-  "last_seen": 1778365143.81334,
-  "episodes": 28,
-  "score_total": 280,
+  "last_seen": 1778366682.0952902,
+  "episodes": 30,
+  "score_total": 316,
   "score_best": 48,
   "best_loadout": [
     0,
@@ -17,14 +17,14 @@
     "Hornet": 8,
     "Beetle": 4,
     "Evil Centipede": 1,
-    "Cactus": 3,
+    "Cactus": 4,
     "Scorpion": 1,
     "Ladybug": 2,
     "Spider": 2
   },
   "loadout_history": {
-    "0": 13,
-    "1": 28,
+    "0": 15,
+    "1": 30,
     "10": 1,
     "28": 1
   }

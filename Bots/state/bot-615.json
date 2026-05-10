@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-615",
   "first_seen": 1778364746.102874,
-  "last_seen": 1778365134.010914,
-  "episodes": 8,
-  "score_total": 107,
+  "last_seen": 1778366681.791445,
+  "episodes": 10,
+  "score_total": 128,
   "score_best": 27,
   "best_loadout": [
     1,
@@ -20,8 +20,8 @@
     "Spider": 1
   },
   "loadout_history": {
-    "1": 8,
-    "0": 3,
+    "1": 10,
+    "0": 5,
     "14": 1
   }
 }

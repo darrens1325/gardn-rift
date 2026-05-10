@@ -2,26 +2,43 @@
   "schema": 1,
   "name": "bot-700",
   "first_seen": 1778364752.435858,
-  "last_seen": 1778365141.074569,
-  "episodes": 9,
-  "score_total": 133,
-  "score_best": 32,
+  "last_seen": 1778372483.88348,
+  "episodes": 79,
+  "score_total": 1112,
+  "score_best": 82,
   "best_loadout": [
+    7,
     0,
-    1,
     0,
-    1,
-    1
+    0,
+    0
   ],
   "killed_by": {
-    "Cactus": 1,
-    "Hornet": 5,
-    "Beetle": 1
+    "Cactus": 7,
+    "Hornet": 37,
+    "Beetle": 6,
+    "Massive Beetle": 2,
+    "bot-505": 5,
+    "Scorpion": 2,
+    "bot-702": 3,
+    "Ladybug": 3,
+    "Spider": 5,
+    "root": 1,
+    "Soldier Ant": 1,
+    "bot-210": 2,
+    "Worker Ant": 1
   },
   "loadout_history": {
-    "0": 4,
-    "1": 9,
+    "0": 70,
+    "1": 59,
     "25": 1,
-    "19": 1
+    "19": 2,
+    "29": 1,
+    "14": 1,
+    "10": 2,
+    "7": 1,
+    "92": 1,
+    "9": 1,
+    "5": 1
   }
 }

@@ -2,26 +2,42 @@
   "schema": 1,
   "name": "bot-300",
   "first_seen": 1778364742.874444,
-  "last_seen": 1778365111.9831161,
-  "episodes": 8,
-  "score_total": 116,
-  "score_best": 32,
+  "last_seen": 1778372496.220312,
+  "episodes": 79,
+  "score_total": 934,
+  "score_best": 62,
   "best_loadout": [
+    1,
     0,
     1,
-    1,
-    1,
-    1
+    0,
+    0
   ],
   "killed_by": {
-    "Scorpion": 1,
-    "Hornet": 2,
-    "Beetle": 1,
-    "Cactus": 2,
-    "Spider": 1
+    "Scorpion": 7,
+    "Hornet": 35,
+    "Beetle": 5,
+    "Cactus": 11,
+    "Spider": 3,
+    "Worker Ant": 2,
+    "Evil Centipede": 1,
+    "bot-502": 2,
+    "Centipede": 1,
+    "Soldier Ant": 4,
+    "Ladybug": 1,
+    "bot-209": 2,
+    "bot-207": 1
   },
   "loadout_history": {
-    "0": 6,
-    "1": 8
+    "0": 75,
+    "1": 56,
+    "8": 1,
+    "14": 2,
+    "32": 1,
+    "7": 1,
+    "29": 1,
+    "79": 1,
+    "9": 1,
+    "5": 1
   }
 }

@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-307",
   "first_seen": 1778364744.192675,
-  "last_seen": 1778365143.48733,
-  "episodes": 9,
+  "last_seen": 1778366649.467722,
+  "episodes": 10,
   "score_total": 141,
   "score_best": 54,
   "best_loadout": [
@@ -21,7 +21,7 @@
     "Bee": 1
   },
   "loadout_history": {
-    "0": 5,
-    "1": 9
+    "0": 6,
+    "1": 10
   }
 }

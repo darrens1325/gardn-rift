@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-613",
   "first_seen": 1778364747.6487832,
-  "last_seen": 1778365141.541122,
-  "episodes": 9,
+  "last_seen": 1778366665.2053618,
+  "episodes": 10,
   "score_total": 69,
   "score_best": 25,
   "best_loadout": [
@@ -20,7 +20,7 @@
     "prickly": 1
   },
   "loadout_history": {
-    "0": 5,
-    "1": 9
+    "0": 6,
+    "1": 10
   }
 }

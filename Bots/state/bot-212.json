@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-212",
   "first_seen": 1778364742.201698,
-  "last_seen": 1778365137.751559,
-  "episodes": 9,
-  "score_total": 124,
+  "last_seen": 1778366647.2729301,
+  "episodes": 10,
+  "score_total": 136,
   "score_best": 36,
   "best_loadout": [
     0,
@@ -14,13 +14,13 @@
     0
   ],
   "killed_by": {
-    "Evil Centipede": 2,
+    "Evil Centipede": 3,
     "Cactus": 3,
     "Hornet": 2,
     "bot-209": 1
   },
   "loadout_history": {
-    "1": 9,
+    "1": 10,
     "0": 6
   }
 }

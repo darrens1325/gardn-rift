@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-508",
   "first_seen": 1778364745.490823,
-  "last_seen": 1778365135.590453,
-  "episodes": 9,
-  "score_total": 99,
+  "last_seen": 1778366654.336101,
+  "episodes": 10,
+  "score_total": 122,
   "score_best": 31,
   "best_loadout": [
     1,
@@ -17,12 +17,12 @@
     "Evil Centipede": 1,
     "Beetle": 1,
     "Spider": 1,
-    "Hornet": 1,
+    "Hornet": 2,
     "Cactus": 1,
     "bot-116": 3
   },
   "loadout_history": {
-    "1": 9,
-    "0": 2
+    "1": 10,
+    "0": 3
   }
 }

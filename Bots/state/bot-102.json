@@ -2,26 +2,40 @@
   "schema": 1,
   "name": "bot-102",
   "first_seen": 1778364740.8740768,
-  "last_seen": 1778365140.68272,
-  "episodes": 9,
-  "score_total": 120,
-  "score_best": 32,
+  "last_seen": 1778372526.172531,
+  "episodes": 79,
+  "score_total": 1283,
+  "score_best": 200,
   "best_loadout": [
-    0,
     1,
     1,
-    0,
+    1,
+    1,
     1
   ],
   "killed_by": {
-    "Hornet": 2,
-    "Beetle": 1,
-    "Bee": 1,
-    "Spider": 3
+    "Hornet": 32,
+    "Beetle": 9,
+    "Bee": 3,
+    "Spider": 5,
+    "bot-707": 2,
+    "Cactus": 4,
+    "Centipede": 2,
+    "Soldier Ant": 4,
+    "bot-401": 1,
+    "Desert Centipede": 1,
+    "Boulder": 4,
+    "Evil Centipede": 3,
+    "bot-403": 1,
+    "Sandstorm": 2
   },
   "loadout_history": {
-    "0": 6,
-    "1": 9,
-    "28": 1
+    "0": 67,
+    "1": 56,
+    "28": 1,
+    "14": 1,
+    "46": 1,
+    "15": 1,
+    "10": 1
   }
 }

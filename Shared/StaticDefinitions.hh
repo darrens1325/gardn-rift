@@ -277,6 +277,7 @@ namespace MobID {
         kShinyLadybug,
         kSquare,
         kDigger,
+        kLeafbug,
         kNumMobs
     };
 };

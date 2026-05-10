@@ -2,24 +2,25 @@
   "schema": 1,
   "name": "bot-413",
   "first_seen": 1778364744.4650722,
-  "last_seen": 1778365141.0800462,
-  "episodes": 8,
-  "score_total": 48,
-  "score_best": 23,
+  "last_seen": 1778366681.471951,
+  "episodes": 10,
+  "score_total": 86,
+  "score_best": 36,
   "best_loadout": [
     1,
     1,
     1,
     1,
-    1
+    0
   ],
   "killed_by": {
     "Beetle": 3,
     "Cactus": 3,
-    "bot-101": 1
+    "bot-101": 1,
+    "Spider": 1
   },
   "loadout_history": {
-    "1": 8,
-    "0": 4
+    "1": 10,
+    "0": 6
   }
 }

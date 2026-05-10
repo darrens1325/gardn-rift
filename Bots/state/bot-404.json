@@ -2,26 +2,43 @@
   "schema": 1,
   "name": "bot-404",
   "first_seen": 1778364743.344855,
-  "last_seen": 1778365144.170388,
-  "episodes": 8,
-  "score_total": 56,
-  "score_best": 20,
+  "last_seen": 1778372478.389098,
+  "episodes": 78,
+  "score_total": 925,
+  "score_best": 140,
   "best_loadout": [
-    46,
     0,
-    1,
-    1,
-    1
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Desert Centipede": 2,
-    "Hornet": 1,
-    "Beetle": 1,
-    "Spider": 1
+    "Hornet": 32,
+    "Beetle": 9,
+    "Spider": 6,
+    "bot-306": 1,
+    "Cactus": 11,
+    "Soldier Ant": 2,
+    "Bee": 1,
+    "Evil Centipede": 2,
+    "Massive Beetle": 1,
+    "Queen Ant": 2,
+    "bot-705": 1,
+    "bot-400": 2
   },
   "loadout_history": {
-    "1": 8,
-    "0": 3,
-    "46": 1
+    "1": 61,
+    "0": 68,
+    "46": 1,
+    "47": 1,
+    "24": 1,
+    "7": 1,
+    "15": 1,
+    "5": 1,
+    "40": 1,
+    "14": 1,
+    "11": 1
   }
 }

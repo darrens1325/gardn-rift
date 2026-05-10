@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-606",
   "first_seen": 1778364750.864934,
-  "last_seen": 1778365145.3645692,
-  "episodes": 9,
-  "score_total": 167,
+  "last_seen": 1778366663.8639722,
+  "episodes": 10,
+  "score_total": 177,
   "score_best": 64,
   "best_loadout": [
     0,
@@ -14,15 +14,15 @@
     0
   ],
   "killed_by": {
-    "Hornet": 2,
+    "Hornet": 3,
     "Bee": 1,
     "Centipede": 1,
     "Cactus": 2,
     "Evil Centipede": 1
   },
   "loadout_history": {
-    "0": 6,
-    "1": 9,
+    "0": 7,
+    "1": 10,
     "19": 1,
     "33": 1,
     "14": 1

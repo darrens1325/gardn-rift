@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-117",
   "first_seen": 1778364742.580827,
-  "last_seen": 1778365147.987964,
-  "episodes": 9,
-  "score_total": 68,
+  "last_seen": 1778366643.581784,
+  "episodes": 10,
+  "score_total": 83,
   "score_best": 15,
   "best_loadout": [
     1,
@@ -18,7 +18,7 @@
     "Worker Ant": 1
   },
   "loadout_history": {
-    "1": 9,
-    "0": 5
+    "1": 10,
+    "0": 6
   }
 }

@@ -2,16 +2,16 @@
   "schema": 1,
   "name": "bot-611",
   "first_seen": 1778364748.318967,
-  "last_seen": 1778365124.3665469,
-  "episodes": 8,
-  "score_total": 98,
-  "score_best": 19,
+  "last_seen": 1778366689.10484,
+  "episodes": 10,
+  "score_total": 135,
+  "score_best": 20,
   "best_loadout": [
+    1,
+    1,
     0,
     0,
-    0,
-    0,
-    0
+    1
   ],
   "killed_by": {
     "Hornet": 3,
@@ -20,8 +20,8 @@
     "Soldier Ant": 2
   },
   "loadout_history": {
-    "0": 4,
-    "1": 7,
+    "0": 6,
+    "1": 9,
     "48": 1
   }
 }

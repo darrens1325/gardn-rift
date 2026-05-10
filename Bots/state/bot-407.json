@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-407",
   "first_seen": 1778364745.217207,
-  "last_seen": 1778365108.337118,
-  "episodes": 7,
-  "score_total": 65,
+  "last_seen": 1778366668.256812,
+  "episodes": 8,
+  "score_total": 69,
   "score_best": 22,
   "best_loadout": [
     1,
@@ -15,12 +15,12 @@
   ],
   "killed_by": {
     "Beetle": 1,
-    "Cactus": 1,
+    "Cactus": 2,
     "Hornet": 1,
     "Massive Beetle": 1
   },
   "loadout_history": {
-    "0": 4,
-    "1": 7
+    "0": 5,
+    "1": 8
   }
 }

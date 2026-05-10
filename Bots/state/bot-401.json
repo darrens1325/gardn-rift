@@ -2,24 +2,45 @@
   "schema": 1,
   "name": "bot-401",
   "first_seen": 1778364743.47365,
-  "last_seen": 1778365137.73185,
-  "episodes": 9,
-  "score_total": 101,
-  "score_best": 18,
+  "last_seen": 1778372496.6867049,
+  "episodes": 80,
+  "score_total": 1066,
+  "score_best": 80,
   "best_loadout": [
-    1,
-    1,
     0,
-    1,
-    1
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
-    "Beetle": 4,
-    "Bee": 1,
-    "Hornet": 3
+    "Beetle": 10,
+    "Bee": 2,
+    "Hornet": 35,
+    "bot-309": 1,
+    "Massive Beetle": 3,
+    "Cactus": 5,
+    "bot-103": 1,
+    "Centipede": 2,
+    "Queen Ant": 2,
+    "Worker Ant": 1,
+    "Soldier Ant": 6,
+    "Evil Centipede": 1,
+    "Desert Centipede": 2,
+    "bot-701": 1,
+    "Sandstorm": 1,
+    "Spider": 1,
+    "Boulder": 1,
+    "bot-111": 2
   },
   "loadout_history": {
-    "1": 9,
-    "0": 4
+    "1": 57,
+    "0": 69,
+    "6": 1,
+    "5": 2,
+    "14": 1,
+    "18": 1,
+    "20": 1,
+    "9": 2
   }
 }

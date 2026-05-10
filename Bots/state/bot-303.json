@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-303",
   "first_seen": 1778364742.611978,
-  "last_seen": 1778365139.735378,
-  "episodes": 9,
-  "score_total": 1107,
+  "last_seen": 1778372506.884583,
+  "episodes": 78,
+  "score_total": 2313,
   "score_best": 1009,
   "best_loadout": [
     1,
@@ -15,13 +15,28 @@
     0
   ],
   "killed_by": {
-    "Hornet": 3,
-    "Beetle": 3,
-    "Boulder": 1
+    "Hornet": 32,
+    "Beetle": 9,
+    "Boulder": 3,
+    "Massive Beetle": 2,
+    "florrio": 1,
+    "Cactus": 5,
+    "Evil Centipede": 5,
+    "Ant Hole": 1,
+    "bot-411": 2,
+    "Soldier Ant": 4,
+    "Bee": 4,
+    "Ladybug": 1,
+    "Worker Ant": 1,
+    "Desert Centipede": 2,
+    "bot-408": 2
   },
   "loadout_history": {
-    "0": 7,
-    "1": 9,
-    "26": 1
+    "0": 73,
+    "1": 53,
+    "26": 2,
+    "6": 1,
+    "9": 1,
+    "45": 1
   }
 }

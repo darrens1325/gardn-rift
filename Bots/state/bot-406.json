@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-406",
   "first_seen": 1778364745.567152,
-  "last_seen": 1778365140.870709,
-  "episodes": 9,
-  "score_total": 95,
+  "last_seen": 1778366681.474208,
+  "episodes": 10,
+  "score_total": 103,
   "score_best": 25,
   "best_loadout": [
     0,
@@ -24,6 +24,6 @@
   "loadout_history": {
     "1": 9,
     "49": 1,
-    "0": 5
+    "0": 6
   }
 }

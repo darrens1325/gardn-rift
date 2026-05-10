@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-216",
   "first_seen": 1778364743.2492821,
-  "last_seen": 1778365148.418688,
-  "episodes": 9,
-  "score_total": 130,
+  "last_seen": 1778366647.505722,
+  "episodes": 10,
+  "score_total": 147,
   "score_best": 39,
   "best_loadout": [
     0,
@@ -18,10 +18,11 @@
     "Boulder": 1,
     "Cactus": 4,
     "Hornet": 1,
-    "Spider": 1
+    "Spider": 1,
+    "Desert Centipede": 1
   },
   "loadout_history": {
-    "0": 5,
-    "1": 9
+    "0": 6,
+    "1": 10
   }
 }

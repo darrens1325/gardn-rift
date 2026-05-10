@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-412",
   "first_seen": 1778364746.208626,
-  "last_seen": 1778365147.066428,
-  "episodes": 9,
-  "score_total": 103,
+  "last_seen": 1778366652.0394182,
+  "episodes": 10,
+  "score_total": 105,
   "score_best": 28,
   "best_loadout": [
     1,
@@ -15,12 +15,12 @@
   ],
   "killed_by": {
     "bot-211": 1,
-    "Hornet": 5,
+    "Hornet": 6,
     "Soldier Ant": 2
   },
   "loadout_history": {
-    "1": 9,
-    "0": 2,
+    "1": 10,
+    "0": 3,
     "48": 1
   }
 }

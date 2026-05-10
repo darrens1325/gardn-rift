@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "prickly",
   "first_seen": 1778364670.581866,
-  "last_seen": 1778365110.517239,
-  "episodes": 8,
-  "score_total": 129,
+  "last_seen": 1778366641.2386901,
+  "episodes": 9,
+  "score_total": 149,
   "score_best": 38,
   "best_loadout": [
     1,
@@ -19,8 +19,8 @@
     "Cactus": 1
   },
   "loadout_history": {
-    "0": 5,
-    "1": 8,
+    "0": 6,
+    "1": 9,
     "29": 1,
     "40": 1,
     "10": 1

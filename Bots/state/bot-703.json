@@ -2,27 +2,41 @@
   "schema": 1,
   "name": "bot-703",
   "first_seen": 1778364748.063893,
-  "last_seen": 1778365138.1498199,
-  "episodes": 9,
-  "score_total": 94,
-  "score_best": 23,
+  "last_seen": 1778372504.1193888,
+  "episodes": 77,
+  "score_total": 795,
+  "score_best": 73,
   "best_loadout": [
     1,
-    1,
+    0,
     1,
     0,
     1
   ],
   "killed_by": {
-    "Hornet": 3,
-    "Scorpion": 1,
-    "Cactus": 2,
-    "Boulder": 2,
-    "Centipede": 1
+    "Hornet": 35,
+    "Scorpion": 3,
+    "Cactus": 5,
+    "Boulder": 3,
+    "Centipede": 2,
+    "Bee": 3,
+    "Beetle": 3,
+    "Spider": 6,
+    "Evil Centipede": 1,
+    "bot-608": 2,
+    "Massive Beetle": 3,
+    "Soldier Ant": 2,
+    "Worker Ant": 2,
+    "Desert Centipede": 1,
+    "bot-407": 3
   },
   "loadout_history": {
-    "1": 9,
-    "0": 6,
-    "41": 1
+    "1": 60,
+    "0": 66,
+    "41": 1,
+    "9": 4,
+    "14": 1,
+    "34": 1,
+    "8": 1
   }
 }

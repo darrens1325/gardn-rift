@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-715",
   "first_seen": 1778364748.133724,
-  "last_seen": 1778365118.948271,
-  "episodes": 7,
-  "score_total": 115,
+  "last_seen": 1778366661.981559,
+  "episodes": 8,
+  "score_total": 126,
   "score_best": 36,
   "best_loadout": [
     1,
@@ -15,14 +15,14 @@
   ],
   "killed_by": {
     "Hornet": 2,
-    "Cactus": 1,
+    "Cactus": 2,
     "bot-615": 1,
     "Boulder": 1,
     "Massive Beetle": 2
   },
   "loadout_history": {
-    "1": 7,
+    "1": 8,
     "34": 1,
-    "0": 1
+    "0": 2
   }
 }

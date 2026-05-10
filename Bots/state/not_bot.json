@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "not bot",
   "first_seen": 1778364028.713105,
-  "last_seen": 1778365144.7388852,
-  "episodes": 30,
-  "score_total": 278,
+  "last_seen": 1778366641.048,
+  "episodes": 31,
+  "score_total": 280,
   "score_best": 43,
   "best_loadout": [
     1,
@@ -25,8 +25,8 @@
     "Boulder": 2
   },
   "loadout_history": {
-    "1": 30,
-    "0": 9,
+    "1": 31,
+    "0": 10,
     "14": 1
   }
 }

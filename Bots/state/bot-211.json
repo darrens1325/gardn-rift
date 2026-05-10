@@ -2,13 +2,13 @@
   "schema": 1,
   "name": "bot-211",
   "first_seen": 1778364747.5951622,
-  "last_seen": 1778365117.355496,
-  "episodes": 8,
-  "score_total": 166,
-  "score_best": 59,
+  "last_seen": 1778366669.5898528,
+  "episodes": 9,
+  "score_total": 276,
+  "score_best": 110,
   "best_loadout": [
     0,
-    1,
+    0,
     0,
     0,
     0
@@ -19,7 +19,7 @@
     "Ladybug": 1
   },
   "loadout_history": {
-    "0": 4,
+    "0": 5,
     "1": 8
   }
 }

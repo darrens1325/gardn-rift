@@ -2,12 +2,12 @@
   "schema": 1,
   "name": "bot-610",
   "first_seen": 1778364747.8324401,
-  "last_seen": 1778365143.630338,
-  "episodes": 9,
-  "score_total": 89,
-  "score_best": 20,
+  "last_seen": 1778366661.761426,
+  "episodes": 10,
+  "score_total": 125,
+  "score_best": 36,
   "best_loadout": [
-    0,
+    1,
     1,
     1,
     1,
@@ -15,11 +15,11 @@
   ],
   "killed_by": {
     "Massive Beetle": 2,
-    "Hornet": 1,
+    "Hornet": 2,
     "Evil Centipede": 3
   },
   "loadout_history": {
-    "1": 9,
+    "1": 10,
     "0": 6
   }
 }

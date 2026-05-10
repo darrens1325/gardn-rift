@@ -2,25 +2,49 @@
   "schema": 1,
   "name": "bot-701",
   "first_seen": 1778364748.473857,
-  "last_seen": 1778365108.648076,
-  "episodes": 8,
-  "score_total": 111,
-  "score_best": 23,
+  "last_seen": 1778372495.8845398,
+  "episodes": 79,
+  "score_total": 936,
+  "score_best": 74,
   "best_loadout": [
-    1,
-    1,
-    1,
-    1,
-    1
+    0,
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
-    "Beetle": 1,
+    "Beetle": 4,
     "Massive Ladybug": 1,
-    "Spider": 1,
-    "Hornet": 4
+    "Spider": 6,
+    "Hornet": 36,
+    "Cactus": 6,
+    "Bee": 2,
+    "bot-610": 2,
+    "Scorpion": 1,
+    "bot-301": 1,
+    "Evil Centipede": 3,
+    "Desert Centipede": 2,
+    "bot-710": 1,
+    "Soldier Ant": 3,
+    "bot-604": 1,
+    "Centipede": 1,
+    "bot-507": 1,
+    "bot-504": 4
   },
   "loadout_history": {
-    "1": 7,
-    "0": 6
+    "1": 54,
+    "0": 74,
+    "14": 3,
+    "15": 2,
+    "24": 2,
+    "9": 1,
+    "6": 1,
+    "92": 1,
+    "29": 1,
+    "40": 1,
+    "5": 1,
+    "11": 1,
+    "7": 1
   }
 }

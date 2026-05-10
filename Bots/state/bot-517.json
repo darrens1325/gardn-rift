@@ -2,16 +2,16 @@
   "schema": 1,
   "name": "bot-517",
   "first_seen": 1778364746.551878,
-  "last_seen": 1778365138.389625,
-  "episodes": 9,
-  "score_total": 131,
-  "score_best": 40,
+  "last_seen": 1778366678.05174,
+  "episodes": 10,
+  "score_total": 191,
+  "score_best": 60,
   "best_loadout": [
     0,
-    1,
-    1,
-    1,
-    1
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Hornet": 3,
@@ -21,7 +21,7 @@
   },
   "loadout_history": {
     "1": 9,
-    "0": 4,
+    "0": 5,
     "11": 1
   }
 }

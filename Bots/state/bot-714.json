@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-714",
   "first_seen": 1778364747.564119,
-  "last_seen": 1778365139.604544,
-  "episodes": 9,
-  "score_total": 123,
+  "last_seen": 1778366669.516922,
+  "episodes": 10,
+  "score_total": 148,
   "score_best": 27,
   "best_loadout": [
     1,
@@ -18,12 +18,14 @@
     "Bee": 2,
     "Evil Centipede": 1,
     "Ladybug": 1,
-    "Beetle": 2
+    "Beetle": 2,
+    "Cactus": 1
   },
   "loadout_history": {
-    "1": 9,
+    "1": 10,
     "0": 4,
     "45": 1,
-    "28": 1
+    "28": 1,
+    "49": 1
   }
 }

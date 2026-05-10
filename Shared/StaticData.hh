@@ -114,12 +114,9 @@ std::array const MAP = std::to_array<struct ZoneDefinition>({
         .drop_multiplier = 0.3,
         .spawns = {
             { MobID::kDarkLadybug, 150000 },
-            { MobID::kBeetle, 150000 },
+            { MobID::kLeafbug, 150000 },
             { MobID::kHornet, 150000 },
-            { MobID::kSpider, 150000 },
-            { MobID::kBoulder, 100000 },
             { MobID::kEvilCentipede, 10000 },
-            { MobID::kMassiveBeetle, 2500 },
             { MobID::kAntHole, 2500 },
             { MobID::kSquare, 1 }
         },

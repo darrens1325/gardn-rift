@@ -2,25 +2,43 @@
   "schema": 1,
   "name": "bot-504",
   "first_seen": 1778364744.4048488,
-  "last_seen": 1778365114.912025,
-  "episodes": 8,
-  "score_total": 82,
-  "score_best": 28,
+  "last_seen": 1778372482.359,
+  "episodes": 77,
+  "score_total": 1067,
+  "score_best": 216,
   "best_loadout": [
-    1,
+    59,
+    0,
     0,
     1,
     1,
-    1
+    0
   ],
   "killed_by": {
-    "Hornet": 4,
+    "Hornet": 31,
     "Boulder": 1,
-    "Worker Ant": 2
+    "Worker Ant": 4,
+    "Centipede": 4,
+    "Bee": 9,
+    "Cactus": 6,
+    "bot-306": 2,
+    "Soldier Ant": 1,
+    "Evil Centipede": 5,
+    "Beetle": 5,
+    "bot-206": 1,
+    "Ladybug": 1,
+    "bot-104": 1,
+    "Sandstorm": 2,
+    "bot-410": 2
   },
   "loadout_history": {
-    "1": 8,
+    "1": 54,
     "79": 1,
-    "0": 1
+    "0": 68,
+    "39": 1,
+    "46": 1,
+    "29": 1,
+    "10": 1,
+    "59": 1
   }
 }
