@@ -863,6 +863,13 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         RarityID::kCommon, {30.0}, 10.0, {30.0}, 3, {
         PetalID::kCommonPeas, PetalID::kUnusualPeas, PetalID::kPeas, PetalID::kEpicPeas, PetalID::kLegendaryPeas
     }, {}
+    },
+    {
+        "Wasp",
+        "It's aggressive and it stings. Watch out.",
+        RarityID::kCommon, {40.0}, 40.0, {40.0}, 12, {
+            PetalID::kCommonMissile, PetalID::kUnusualMissile, PetalID::kMissile, PetalID::kEpicMissile, PetalID::kLegendaryMissile, PetalID::kCommonBubble, PetalID::kUnusualBubble, PetalID::kBubble, PetalID::kEpicBubble, PetalID::kLegendaryBubble, PetalID::kAntennae
+    }, {}
     }
 };
 

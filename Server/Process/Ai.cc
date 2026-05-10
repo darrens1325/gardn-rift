@@ -186,6 +186,51 @@ static void tick_hornet_aggro(Simulation *sim, Entity &ent) {
     }
 }
 
+static void tick_wasp_aggro(Simulation *sim, Entity &ent) {
+    if (sim->ent_alive(ent.target)) {
+        Entity &target = sim->get_ent(ent.target);
+        Vector v(target.x - ent.x, target.y - ent.y);
+        _focus_lose_clause(ent, v);
+        float dist = v.magnitude();
+        if (dist > 300) {
+            v.set_magnitude(PLAYER_ACCELERATION * 0.975);
+            ent.acceleration = v;
+        } else {
+            ent.acceleration.set(0,0);
+        }
+        ent.set_angle(v.angle());
+        if (ent.ai_tick >= 0.75 * SIM_RATE && dist < 800) {
+            ent.ai_tick = 0;
+            // Scale the missile by the hornet's rolled rarity so a Mythic
+            // Hornet fires a missile that's MOB_RADIUS_MULT[Mythic]× as
+            // wide and 1.5^Δ× as damaging as a Common one. Without this
+            // the projectile stays Common-sized regardless of how
+            // intimidating the parent mob looks.
+            float r_mult = mob_radius_mult(ent.mob_rarity);
+            float d_mult = mob_dmg_mult(ent.mob_rarity, MOB_DATA[ent.mob_id].rarity);
+            Entity &missile = alloc_petal(sim, PetalID::kMissile, ent);
+            missile.set_radius(missile.radius * r_mult);
+            missile.damage = 10 * d_mult;
+            missile.health = missile.max_health = 10 * d_mult;
+            entity_set_despawn_tick(missile, 3 * SIM_RATE);
+            missile.set_angle(ent.angle);
+            missile.acceleration.unit_normal(ent.angle).set_magnitude(40 * PLAYER_ACCELERATION);
+            Vector kb;
+            kb.unit_normal(ent.angle - M_PI).set_magnitude(2.5 * PLAYER_ACCELERATION);
+            ent.velocity += kb;
+        }
+        return;
+    } else {
+        if (!(ent.target == NULL_ENTITY)) {
+            ent.ai_state = AIState::kIdle;
+            ent.ai_tick = 0;
+            ent.target = NULL_ENTITY;
+        }
+        ent.target = find_nearest_enemy(sim, ent, ent.detection_radius);
+        tick_bee_passive(sim, ent);;
+    }
+}
+
 static void tick_mantis_aggro(Simulation *sim, Entity &ent) {
     if (sim->ent_alive(ent.target)) {
         Entity &target = sim->get_ent(ent.target);
@@ -496,6 +541,9 @@ void tick_ai_behavior(Simulation *sim, Entity &ent) {
             }
             tick_default_aggro(sim, ent, 0.95);
             break;
+        case MobID::kWasp:
+            tick_wasp_aggro(sim, ent);
+            break;
         case MobID::kHornet:
             tick_hornet_aggro(sim, ent);
             break;
@@ -515,6 +563,7 @@ void tick_ai_behavior(Simulation *sim, Entity &ent) {
             break;
         case MobID::kMantis:
             tick_mantis_aggro(sim, ent);
+            break;
         default:
             break;
     }

@@ -283,6 +283,7 @@ namespace MobID {
         kLeafbug,
         kBush,
         kMantis,
+        kWasp,
         kNumMobs
     };
 };
