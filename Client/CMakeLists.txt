@@ -55,6 +55,7 @@ set(SRCS
     Render/RenderPetal.cc
     Render/RenderWeb.cc
     Render/Renderer.cc
+    Render/TiledMapRender.cc
     Debug.cc
     DOM.cc
     Game.cc

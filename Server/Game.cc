@@ -3,11 +3,13 @@
 #include <Server/Client.hh>
 #include <Server/PetalTracker.hh>
 #include <Server/Server.hh>
+#include <Server/TiledMap.hh>
 
 #include <Shared/Binary.hh>
 #include <Shared/Entity.hh>
 #include <Shared/Map.hh>
 
+#include <cstdlib>
 #include <iostream>
 
 static void _update_client(Simulation *sim, Client *client) {
@@ -60,6 +62,11 @@ static void _update_client(Simulation *sim, Client *client) {
 GameInstance::GameInstance() : simulation(), clients(), team_manager(&simulation) {}
 
 void GameInstance::init() {
+    // Load the Tiled map (collision rects + mob-spawn polygons). If this
+    // fails the simulation falls back to the hardcoded MAP zones in
+    // StaticData.hh — see Map::spawn_random_mob.
+    char const *map_path = std::getenv("GARDN_MAP");
+    TiledMap::load(map_path ? map_path : "Map/main/main.tmj");
     for (uint32_t i = 0; i < ENTITY_CAP / 2; ++i)
         Map::spawn_random_mob(&simulation);
     team_manager.add_team(ColorID::kBlue);

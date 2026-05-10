@@ -2,6 +2,7 @@
 
 #ifdef SERVERSIDE
 #include <Server/Spawn.hh>
+#include <Server/TiledMap.hh>
 #include <Shared/Entity.hh>
 #include <Shared/Helpers.hh>
 #endif
@@ -37,11 +38,19 @@ uint32_t Map::get_suitable_difficulty_zone(uint32_t power) {
 #ifdef SERVERSIDE
 #include <Shared/Simulation.hh>
 void Map::remove_mob(Simulation *sim, uint32_t zone) {
+    if (TiledMap::loaded) {
+        TiledMap::note_mob_death(zone);
+        return;
+    }
     DEBUG_ONLY(assert(zone < MAP.size());)
     --sim->zone_mob_counts[zone];
 }
 
 void Map::spawn_random_mob(Simulation *sim) {
+    if (TiledMap::loaded) {
+        TiledMap::spawn_random_mob(sim);
+        return;
+    }
     float x = frand() * ARENA_WIDTH;
     float y = frand() * ARENA_HEIGHT;
     uint32_t zone_id = Map::get_zone_from_pos(x, y);

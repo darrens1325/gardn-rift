@@ -4,8 +4,12 @@
 
 #include <cstdint>
 
-inline uint32_t const ARENA_WIDTH = 20000;
-inline uint32_t const ARENA_HEIGHT = 20000;
+// Sized to the Tiled map at Map/main/main.tmj (50×51 tiles × 512px). The
+// hardcoded MAP zones in StaticData.hh still cover only the 0..20000 quadrant
+// of this larger arena; positions outside fall through `get_zone_from_pos`
+// to zone 0 and the Tiled spawn polygons are what populates them.
+inline uint32_t const ARENA_WIDTH = 25600;
+inline uint32_t const ARENA_HEIGHT = 26112;
 
 inline uint32_t const MAX_SLOT_COUNT = 8;
 inline uint32_t const LEVELS_PER_EXTRA_SLOT = 15;

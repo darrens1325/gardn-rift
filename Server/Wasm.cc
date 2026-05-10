@@ -63,7 +63,36 @@ WebSocketServer::WebSocketServer() {
                     file = "";
                     break;
             }
-            if (fs.existsSync(file)) {            
+            // Static map assets (Tiled JSON + tileset SVGs). The client
+            // fetches these at runtime to render the world. We constrain
+            // paths to a small allow-list of prefixes, reject ".." so the
+            // sandboxing isn't subverted, and try CWD then "../.." so the
+            // server resolves whether it's run from the repo root or from
+            // Server/build/ (per INSTALLATION.md).
+            if (!file && (req.url.startsWith("/Map/") || req.url.startsWith("/tiles/")) && !req.url.includes("..")) {
+                const path = require("path");
+                // Resolve the request by trying CWD then "../.." so the
+                // server works whether it's run from the repo root or
+                // from Server/build/ (per INSTALLATION.md). NOTE: avoid
+                // array literals with commas inside this EM_ASM body —
+                // the C preprocessor splits top-level commas as macro
+                // separators. (Parens protect commas; braces and brackets
+                // do not.)
+                function pick(rel) {
+                    const c = path.normalize(rel + req.url);
+                    return fs.existsSync(c) ? c : "";
+                }
+                let c = pick(".");
+                if (!c) c = pick("../..");
+                if (c) {
+                    file = c;
+                    if (c.endsWith(".svg")) encodeType = "image/svg+xml";
+                    else if (c.endsWith(".json") || c.endsWith(".tmj") || c.endsWith(".tsj"))
+                        encodeType = "application/json";
+                    else encodeType = "application/octet-stream";
+                }
+            }
+            if (fs.existsSync(file)) {
                 res.writeHead(200, {"Content-Type": encodeType});
                 res.end(fs.readFileSync(file));
                 return;

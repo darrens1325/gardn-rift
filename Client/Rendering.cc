@@ -5,6 +5,7 @@
 
 #include <Client/Ui/Extern.hh>
 #include <Client/Render/RenderEntity.hh>
+#include <Client/Render/TiledMapRender.hh>
 
 #include <Shared/Map.hh>
 #include <Shared/StaticData.hh>
@@ -53,13 +54,18 @@ void Game::render_game() {
     }
     {
         RenderContext context(&renderer);
-        for (ZoneDefinition const &def : MAP) {
-            renderer.set_fill(def.color);
-            renderer.fill_rect(def.left, def.top, def.right - def.left, def.bottom - def.top);
-            if (Map::difficulty_at_level(score_to_level(Game::score)) > def.difficulty) {
-                renderer.set_fill(0x40000000);
+        bool tiles_ready = TiledMapRender::is_ready();
+        if (!tiles_ready) {
+            for (ZoneDefinition const &def : MAP) {
+                renderer.set_fill(def.color);
                 renderer.fill_rect(def.left, def.top, def.right - def.left, def.bottom - def.top);
+                if (Map::difficulty_at_level(score_to_level(Game::score)) > def.difficulty) {
+                    renderer.set_fill(0x40000000);
+                    renderer.fill_rect(def.left, def.top, def.right - def.left, def.bottom - def.top);
+                }
             }
+        } else {
+            TiledMapRender::draw(renderer);
         }
         renderer.set_stroke(alpha);
         renderer.set_line_width(0.5);

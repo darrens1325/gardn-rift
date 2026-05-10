@@ -2,6 +2,7 @@
 
 #include <Client/Debug.hh>
 #include <Client/Particle.hh>
+#include <Client/Render/TiledMapRender.hh>
 #include <Client/Setup.hh>
 #include <Client/Storage.hh>
 
@@ -52,6 +53,7 @@ using namespace Game;
 void Game::init() {
     Storage::retrieve();
     reset();
+    TiledMapRender::init();
     title_ui_window.add_child(
         [](){ 
             Ui::Element *elt = new Ui::StaticText(60, "the gardn project");

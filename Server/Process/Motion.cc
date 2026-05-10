@@ -1,5 +1,6 @@
 #include <Server/Process.hh>
 
+#include <Server/TiledMap.hh>
 #include <Shared/Simulation.hh>
 #include <Shared/Entity.hh>
 
@@ -28,6 +29,12 @@ void tick_entity_motion(Simulation *sim, Entity &ent) {
     if (!ent.has_component(kPetal) && !ent.has_component(kWeb)) {
         ent.set_x(fclamp(ent.x, ent.radius, ARENA_WIDTH - ent.radius));
         ent.set_y(fclamp(ent.y, ent.radius, ARENA_HEIGHT - ent.radius));
+        if (TiledMap::loaded) {
+            float x = ent.x, y = ent.y;
+            TiledMap::resolve_collision(x, y, ent.radius);
+            if (x != ent.x) ent.set_x(x);
+            if (y != ent.y) ent.set_y(y);
+        }
     }
     if (ent.has_component(kFlower)) {
         if (ent.acceleration.x != 0 || ent.acceleration.y != 0)

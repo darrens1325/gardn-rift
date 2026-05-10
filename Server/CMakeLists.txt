@@ -70,6 +70,7 @@ set(SOURCES
     Simulation.cc
     Spawn.cc
     TeamManager.cc
+    TiledMap.cc
     ../Shared/Arena.cc
     ../Shared/Binary.cc
     ../Shared/Config.cc
