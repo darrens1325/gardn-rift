@@ -117,7 +117,7 @@ std::array const MAP = std::to_array<struct ZoneDefinition>({
             { MobID::kLeafbug, 150000 },
             { MobID::kHornet, 150000 },
             { MobID::kEvilCentipede, 10000 },
-            { MobID::kAntHole, 2500 },
+            { MobID::kBush, 150000 },
             { MobID::kSquare, 1 }
         },
         .difficulty = 3,

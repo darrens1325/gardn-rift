@@ -278,6 +278,7 @@ namespace MobID {
         kSquare,
         kDigger,
         kLeafbug,
+        kBush,
         kNumMobs
     };
 };
