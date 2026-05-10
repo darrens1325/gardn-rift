@@ -96,6 +96,12 @@ void tick_petal_behavior(Simulation *sim, Entity &petal) {
                     break;
                 case PetalID::kPeas:
                 case PetalID::kPoisonPeas:
+                case PetalID::kCommonPeas:
+                case PetalID::kUnusualPeas:
+                case PetalID::kEpicPeas:
+                case PetalID::kLegendaryPeas:
+                case PetalID::kMythicPeas:
+                case PetalID::kUniquePeas:
                     if (BIT_AT(player.input, InputFlags::kAttacking)) {
                         Vector delta(petal.x - player.x, petal.y - player.y);
                         petal.friction = DEFAULT_FRICTION;

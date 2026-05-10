@@ -246,6 +246,9 @@ namespace PetalID {
         kLegendaryCorn,
         kMythicCorn,
         kUniqueCorn,
+        // Appended (not slotted next to other Peas tiers) so existing IDs
+        // stay stable for trained checkpoints that key petals by integer.
+        kEpicPeas,
         kNumPetals
     };
 };
@@ -279,6 +282,7 @@ namespace MobID {
         kDigger,
         kLeafbug,
         kBush,
+        kMantis,
         kNumMobs
     };
 };

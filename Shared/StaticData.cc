@@ -694,6 +694,10 @@ struct PetalData const PETAL_DATA[PetalID::kNumPetals] = {
         scale_hp(500.0, 2), scale_dmg(2.5, 2), 16.0, 10.0, 1, RarityID::kMythic, {.icon_angle = 0.5}},
     {"Corn", "Takes a long time to spawn, but has a lot of health",
         scale_hp(500.0, 3), scale_dmg(2.5, 3), 16.0, 10.0, 1, RarityID::kUnique, {.icon_angle = 0.5}},
+    // Epic Peas — Δ from kPeas (5/8 count=4 @ Rare=2). Appended; see enum.
+    {"Peas", "4 in 1 deal",
+        scale_hp(5.0, 1), scale_dmg(8.0, 1), 7.0, 2.0, 4, RarityID::kEpic,
+        {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
 };
 
 struct MobData const MOB_DATA[MobID::kNumMobs] = {
@@ -853,6 +857,13 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         RarityID::kCommon, {20, 70.0}, 10.0, {20, 70.0}, 1, {
         PetalID::kCommonLeaf, PetalID::kLeaf, PetalID::kRareLeaf, PetalID::kEpicLeaf, PetalID::kLegendaryLeaf, PetalID::kCommonRose, PetalID::kRose, PetalID::kRareRose, PetalID::kLegendaryRose
     }, { .stationary = 1 }},
+    {
+        "Mantis",
+        "It looks like it's praying, but it's actually waiting to strike.",
+        RarityID::kCommon, {30.0}, 10.0, {30.0}, 3, {
+        PetalID::kCommonPeas, PetalID::kUnusualPeas, PetalID::kPeas, PetalID::kEpicPeas, PetalID::kLegendaryPeas
+    }, {}
+    }
 };
 
 std::array<StaticArray<float, MAX_DROPS_PER_MOB>, MobID::kNumMobs> const MOB_DROP_CHANCES = [](){
