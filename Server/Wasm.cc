@@ -12,9 +12,48 @@
 
 std::unordered_map<int, WebSocket *> WS_MAP;
 
+// In the bundle build the server's incoming buffer must be large enough for
+// petal/loadout updates (client → server messages stay tiny — kVerify,
+// kInput, kPetalSwap — all ≪ 1 KB). Keep at 1024 to match the standalone
+// WASM server.
 size_t const MAX_BUFFER_LEN = 1024;
 static uint8_t INCOMING_BUFFER[MAX_BUFFER_LEN] = {0};
 
+#ifdef GARDN_BUNDLE
+// In the bundle build these are *plain* in-namespace functions because the
+// surrounding TU lives inside `namespace gardn::server`. Bundle/Bridge.cc
+// re-exports them as `server_on_connect` / `server_tick` / etc. via an
+// `extern "C"` shim that lives at global scope.
+void on_connect(int ws_id) {
+    std::printf("[bundle] client connection with id %d\n", ws_id);
+    WebSocket *ws = new WebSocket(ws_id);
+    (void)ws;
+}
+
+void on_disconnect(int ws_id, int reason) {
+    WebSocket *ws = WS_MAP[ws_id];
+    if (ws == nullptr) return;
+    Client::on_disconnect(ws, reason, {});
+    WS_MAP.erase(ws_id);
+}
+
+void tick() {
+    Server::tick();
+}
+
+void on_message(int ws_id, uint32_t len) {
+    WebSocket *ws = WS_MAP[ws_id];
+    if (ws == nullptr) return;
+    std::string_view message(reinterpret_cast<char const *>(INCOMING_BUFFER), len);
+    Client::on_message(ws, message, 0);
+}
+
+// Bridge accessor: returns the absolute (linear-memory) address of the
+// incoming buffer so the JS bridge in Bundle/Bridge.cc can blit client →
+// server packets into it before invoking server_on_message.
+uint8_t *get_incoming_buffer_ptr() { return INCOMING_BUFFER; }
+uint32_t get_incoming_buffer_cap() { return (uint32_t)MAX_BUFFER_LEN; }
+#else
 extern "C" {
     void on_connect(int ws_id) {
         std::printf("client connection with id %d\n", ws_id);
@@ -39,7 +78,61 @@ extern "C" {
         Client::on_message(ws, message, 0);
     }
 }
+#endif
 
+#ifdef GARDN_BUNDLE
+WebSocketServer::WebSocketServer() {
+    // Bundle build: no Node-style HTTP, no `ws` require. The harness drives
+    // connect/disconnect/message/tick via the C ABI exports defined in
+    // Bundle/Bridge.cc; this ctor only exists so the global `Server::server`
+    // definition below has a target.
+}
+
+void Server::run() {
+    // Bundle harness drives ticking from JS via _server_tick. Nothing to do.
+}
+
+void Client::send_packet(uint8_t const *packet, size_t size) {
+    if (ws == nullptr) return;
+    ws->send(packet, size);
+}
+
+WebSocket::WebSocket(int id) : ws_id(id) {
+    client.ws = this;
+    WS_MAP.insert({id, this});
+}
+
+void WebSocket::send(uint8_t const *packet, size_t size) {
+    // Server → client routing through the JS bridge. The bridge dispatches:
+    //   ws_id == 0       → main player: blit into client's INCOMING_PACKET
+    //                      and call _client_on_message(1, size).
+    //   ws_id >= 1       → bot: short-circuited here. The bot driver reads
+    //                      Simulation state directly via C++ pointers, so
+    //                      bots don't need kClientUpdate packets. Skipping
+    //                      the JS↔WASM crossing for ~150 bots/tick is a
+    //                      meaningful perf win.
+    if (ws_id != 0) return;
+    EM_ASM({
+        if (Module._gardn_send_from_server) {
+            Module._gardn_send_from_server($0, $1, $2);
+        }
+    }, ws_id, packet, (uint32_t)size);
+}
+
+void WebSocket::end() {
+    EM_ASM({
+        if (Module._gardn_close_from_server) {
+            Module._gardn_close_from_server($0);
+        }
+    }, ws_id);
+}
+
+Client *WebSocket::getUserData() {
+    return &client;
+}
+
+WebSocketServer Server::server;
+#else
 WebSocketServer::WebSocketServer() {
     EM_ASM({
         const WSS = require("ws");
@@ -166,4 +259,5 @@ Client *WebSocket::getUserData() {
 }
 
 WebSocketServer Server::server;
-#endif
+#endif // !GARDN_BUNDLE
+#endif // WASM_SERVER
