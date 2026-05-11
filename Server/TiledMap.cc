@@ -454,18 +454,69 @@ static std::vector<TiledPolyVert> svg_parse_path(std::string const &d) {
 // or rect with a real `fill` color and no `opacity` attribute). The
 // shadow paths in this tileset use `fill="none"` plus a stroke with
 // `stroke-opacity`, so the fill-check is enough to skip them.
+static std::vector<TiledPolyVert> svg_parse_points(std::string const &s) {
+    // points="x,y x,y x,y …" (commas and/or whitespace separators).
+    std::vector<TiledPolyVert> out;
+    size_t i = 0, n = s.size();
+    auto skip = [&]() {
+        while (i < n && (s[i] == ' ' || s[i] == ',' || s[i] == '\t' || s[i] == '\n' || s[i] == '\r')) ++i;
+    };
+    while (i < n) {
+        skip();
+        if (i >= n) break;
+        size_t start = i;
+        if (i < n && (s[i] == '+' || s[i] == '-')) ++i;
+        while (i < n) {
+            char c = s[i];
+            if ((c >= '0' && c <= '9') || c == '.' || c == 'e' || c == 'E' ||
+                ((c == '+' || c == '-') && (s[i-1] == 'e' || s[i-1] == 'E'))) {
+                ++i;
+            } else break;
+        }
+        if (i == start) { ++i; continue; }
+        float x = (float)std::strtod(s.substr(start, i - start).c_str(), nullptr);
+        skip();
+        start = i;
+        if (i < n && (s[i] == '+' || s[i] == '-')) ++i;
+        while (i < n) {
+            char c = s[i];
+            if ((c >= '0' && c <= '9') || c == '.' || c == 'e' || c == 'E' ||
+                ((c == '+' || c == '-') && (s[i-1] == 'e' || s[i-1] == 'E'))) {
+                ++i;
+            } else break;
+        }
+        if (i == start) break;
+        float y = (float)std::strtod(s.substr(start, i - start).c_str(), nullptr);
+        out.push_back({x, y});
+    }
+    return out;
+}
+
 static std::vector<TiledPolyVert> svg_extract_polygon(std::string const &svg) {
     size_t pos = 0;
     while (pos < svg.size()) {
-        size_t path_at = svg.find("<path", pos);
-        size_t rect_at = svg.find("<rect", pos);
-        size_t at = std::min(path_at, rect_at);
+        // Find the next supported element. We look for <path, <rect,
+        // <polyline, <polygon — Tiled tilesets used in this map mix all
+        // three for "the main filled shape". Picking only <path missed
+        // dirt_tl_0/dirt_tri_0 (which use <polyline> for the boundary)
+        // and fell through to the small decoration <path> dots instead,
+        // so the dots were the collision shape rather than the outline.
+        size_t a = svg.find("<path", pos);
+        size_t b = svg.find("<rect", pos);
+        size_t c = svg.find("<polyline", pos);
+        size_t d_ = svg.find("<polygon", pos);
+        size_t at = std::min(std::min(a, b), std::min(c, d_));
         if (at == std::string::npos) break;
         size_t end = svg.find('>', at);
         if (end == std::string::npos) break;
         std::string elem = svg.substr(at, end - at + 1);
 
-        bool is_path = elem.compare(1, 4, "path") == 0;
+        // What element is this?
+        enum { ELT_PATH, ELT_RECT, ELT_POLYLINE, ELT_POLYGON } kind;
+        if (elem.compare(1, 4, "path") == 0) kind = ELT_PATH;
+        else if (elem.compare(1, 4, "rect") == 0) kind = ELT_RECT;
+        else if (elem.compare(1, 8, "polyline") == 0) kind = ELT_POLYLINE;
+        else kind = ELT_POLYGON;
 
         // Extract fill, skip non-solid.
         size_t fp = elem.find("fill=\"");
@@ -477,13 +528,20 @@ static std::vector<TiledPolyVert> svg_extract_polygon(std::string const &svg) {
         // Skip elements with `opacity="..."` — those are shadows.
         if (elem.find("opacity=\"") != std::string::npos) { pos = end + 1; continue; }
 
-        if (is_path) {
+        if (kind == ELT_PATH) {
             size_t dp = elem.find("d=\"");
             if (dp == std::string::npos) { pos = end + 1; continue; }
             size_t ds = dp + 3, de = elem.find('"', ds);
             std::string d = elem.substr(ds, de - ds);
             auto poly = svg_parse_path(d);
             if (!poly.empty()) return poly;
+        } else if (kind == ELT_POLYLINE || kind == ELT_POLYGON) {
+            size_t pp = elem.find("points=\"");
+            if (pp == std::string::npos) { pos = end + 1; continue; }
+            size_t ps = pp + 8, pe = elem.find('"', ps);
+            std::string pts = elem.substr(ps, pe - ps);
+            auto poly = svg_parse_points(pts);
+            if (poly.size() >= 3) return poly;
         } else {
             // <rect> — read x/y/width/height, default x=0 y=0.
             auto attr = [&](char const *k) -> float {
@@ -514,10 +572,16 @@ static std::vector<TiledPolyVert> const *load_tile_shape(uint32_t base_gid,
     if (it != TiledMap::tile_shape_cache.end()) return &it->second;
 
     std::ifstream f(svg_path);
-    if (!f) return nullptr;
+    if (!f) {
+        std::cerr << "[TiledMap] could not open " << svg_path << " for gid " << base_gid << "\n";
+        return nullptr;
+    }
     std::stringstream ss; ss << f.rdbuf();
     auto poly = svg_extract_polygon(ss.str());
-    if (poly.empty()) return nullptr;
+    if (poly.empty()) {
+        std::cerr << "[TiledMap] no solid path in " << svg_path << " for gid " << base_gid << "\n";
+        return nullptr;
+    }
     auto [it2, _] = TiledMap::tile_shape_cache.emplace(base_gid, std::move(poly));
     return &it2->second;
 }
