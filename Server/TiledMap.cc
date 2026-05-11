@@ -21,8 +21,15 @@
 namespace TiledMap {
     bool loaded = false;
     std::vector<TiledCollisionRect> collision_rects;
+    std::vector<TiledCollisionPoly> collision_polys;
     std::vector<TiledSpawnPolygon> spawn_polygons;
     static std::vector<uint32_t> mob_counts;
+
+    // Cache of per-tile polygons in image-local 0..1 coords, keyed by base
+    // gid (flags stripped). Populated on demand from the SVG files in the
+    // tileset; the per-cell collision_polys vector is built from these by
+    // applying the cell's flip flags + grid translation at load time.
+    static std::unordered_map<uint32_t, std::vector<TiledPolyVert>> tile_shape_cache;
 }
 
 // ---------------------------------------------------------------------------
@@ -299,6 +306,280 @@ std::vector<TiledSpawnEntry> parse_mob_list(std::string const &s) {
 }
 
 // ---------------------------------------------------------------------------
+// SVG → polygon. Each "solid" tile (cliff/water/dirt/bush/castle) is a tile
+// whose collision shape we want to derive from its SVG markup so the player
+// follows the painted edge, not the tile-rectangle. We parse just the
+// subset of SVG used by this tileset: <rect> and <path> elements with a
+// solid `fill` color, with path-data commands M/m, L/l, H/h, V/v, C/c, S/s,
+// and Z/z. Curves are sampled at SVG_CURVE_STEPS points each.
+//
+// The parser is deliberately minimal — no XML library — because the input
+// is a fixed set of hand-authored SVGs whose structure we can rely on.
+
+static constexpr int SVG_CURVE_STEPS = 8;
+
+static void svg_sample_cubic(std::vector<TiledPolyVert> &out,
+                             float x0, float y0, float x1, float y1,
+                             float x2, float y2, float x3, float y3) {
+    for (int i = 1; i <= SVG_CURVE_STEPS; ++i) {
+        float t = (float)i / SVG_CURVE_STEPS;
+        float mt = 1.0f - t;
+        float bx = mt*mt*mt*x0 + 3*mt*mt*t*x1 + 3*mt*t*t*x2 + t*t*t*x3;
+        float by = mt*mt*mt*y0 + 3*mt*mt*t*y1 + 3*mt*t*t*y2 + t*t*t*y3;
+        out.push_back({bx, by});
+    }
+}
+
+static bool svg_is_num_char(char c) {
+    return (c >= '0' && c <= '9') || c == '.' || c == '+' || c == '-' || c == 'e' || c == 'E';
+}
+
+static std::vector<TiledPolyVert> svg_parse_path(std::string const &d) {
+    std::vector<TiledPolyVert> verts;
+    float cpx = 0, cpy = 0;       // current point
+    float subx = 0, suby = 0;     // start of current sub-path
+    float prev_c2x = 0, prev_c2y = 0; // last cubic's control2, for S/s smooth
+    bool have_prev_cubic = false;
+    char cmd = 0;
+    size_t i = 0;
+    const size_t n = d.size();
+
+    auto skip_ws = [&]() {
+        while (i < n && (d[i] == ' ' || d[i] == ',' || d[i] == '\t' || d[i] == '\n' || d[i] == '\r')) ++i;
+    };
+    auto read_num = [&]() -> float {
+        skip_ws();
+        size_t start = i;
+        if (i < n && (d[i] == '+' || d[i] == '-')) ++i;
+        bool seen_dot = false;
+        bool seen_exp = false;
+        while (i < n) {
+            char c = d[i];
+            if (c >= '0' && c <= '9') { ++i; continue; }
+            if (c == '.' && !seen_dot && !seen_exp) { seen_dot = true; ++i; continue; }
+            if ((c == 'e' || c == 'E') && !seen_exp) {
+                seen_exp = true; ++i;
+                if (i < n && (d[i] == '+' || d[i] == '-')) ++i;
+                continue;
+            }
+            break;
+        }
+        if (i == start) return 0;
+        return (float)std::strtod(d.substr(start, i - start).c_str(), nullptr);
+    };
+
+    while (i < n) {
+        skip_ws();
+        if (i >= n) break;
+        char c = d[i];
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+            cmd = c;
+            ++i;
+        } else if (!svg_is_num_char(c)) {
+            ++i; continue;
+        }
+        // After M/m the implicit continuation is L/l, per SVG spec.
+        char effective_cmd = cmd;
+        switch (effective_cmd) {
+        case 'M': {
+            cpx = read_num(); cpy = read_num();
+            subx = cpx; suby = cpy;
+            verts.push_back({cpx, cpy});
+            cmd = 'L';
+            have_prev_cubic = false;
+        } break;
+        case 'm': {
+            cpx += read_num(); cpy += read_num();
+            subx = cpx; suby = cpy;
+            verts.push_back({cpx, cpy});
+            cmd = 'l';
+            have_prev_cubic = false;
+        } break;
+        case 'L': cpx = read_num(); cpy = read_num(); verts.push_back({cpx, cpy}); have_prev_cubic = false; break;
+        case 'l': cpx += read_num(); cpy += read_num(); verts.push_back({cpx, cpy}); have_prev_cubic = false; break;
+        case 'H': cpx = read_num(); verts.push_back({cpx, cpy}); have_prev_cubic = false; break;
+        case 'h': cpx += read_num(); verts.push_back({cpx, cpy}); have_prev_cubic = false; break;
+        case 'V': cpy = read_num(); verts.push_back({cpx, cpy}); have_prev_cubic = false; break;
+        case 'v': cpy += read_num(); verts.push_back({cpx, cpy}); have_prev_cubic = false; break;
+        case 'C': {
+            float x1 = read_num(), y1 = read_num();
+            float x2 = read_num(), y2 = read_num();
+            float x = read_num(),  y = read_num();
+            svg_sample_cubic(verts, cpx, cpy, x1, y1, x2, y2, x, y);
+            prev_c2x = x2; prev_c2y = y2; have_prev_cubic = true;
+            cpx = x; cpy = y;
+        } break;
+        case 'c': {
+            float x1 = read_num() + cpx, y1 = read_num() + cpy;
+            float x2 = read_num() + cpx, y2 = read_num() + cpy;
+            float x  = read_num() + cpx, y  = read_num() + cpy;
+            svg_sample_cubic(verts, cpx, cpy, x1, y1, x2, y2, x, y);
+            prev_c2x = x2; prev_c2y = y2; have_prev_cubic = true;
+            cpx = x; cpy = y;
+        } break;
+        case 'S': {
+            float x1 = have_prev_cubic ? (2 * cpx - prev_c2x) : cpx;
+            float y1 = have_prev_cubic ? (2 * cpy - prev_c2y) : cpy;
+            float x2 = read_num(), y2 = read_num();
+            float x  = read_num(), y  = read_num();
+            svg_sample_cubic(verts, cpx, cpy, x1, y1, x2, y2, x, y);
+            prev_c2x = x2; prev_c2y = y2; have_prev_cubic = true;
+            cpx = x; cpy = y;
+        } break;
+        case 's': {
+            float x1 = have_prev_cubic ? (2 * cpx - prev_c2x) : cpx;
+            float y1 = have_prev_cubic ? (2 * cpy - prev_c2y) : cpy;
+            float x2 = read_num() + cpx, y2 = read_num() + cpy;
+            float x  = read_num() + cpx, y  = read_num() + cpy;
+            svg_sample_cubic(verts, cpx, cpy, x1, y1, x2, y2, x, y);
+            prev_c2x = x2; prev_c2y = y2; have_prev_cubic = true;
+            cpx = x; cpy = y;
+        } break;
+        case 'Z': case 'z':
+            if (cpx != subx || cpy != suby) verts.push_back({subx, suby});
+            cpx = subx; cpy = suby;
+            have_prev_cubic = false;
+            break;
+        default:
+            // Unknown command — skip a single number to avoid an infinite
+            // loop, then continue looking for a new command letter.
+            read_num();
+            break;
+        }
+    }
+    return verts;
+}
+
+// Return the first element in `svg` that defines a *solid* shape (a path
+// or rect with a real `fill` color and no `opacity` attribute). The
+// shadow paths in this tileset use `fill="none"` plus a stroke with
+// `stroke-opacity`, so the fill-check is enough to skip them.
+static std::vector<TiledPolyVert> svg_extract_polygon(std::string const &svg) {
+    size_t pos = 0;
+    while (pos < svg.size()) {
+        size_t path_at = svg.find("<path", pos);
+        size_t rect_at = svg.find("<rect", pos);
+        size_t at = std::min(path_at, rect_at);
+        if (at == std::string::npos) break;
+        size_t end = svg.find('>', at);
+        if (end == std::string::npos) break;
+        std::string elem = svg.substr(at, end - at + 1);
+
+        bool is_path = elem.compare(1, 4, "path") == 0;
+
+        // Extract fill, skip non-solid.
+        size_t fp = elem.find("fill=\"");
+        if (fp == std::string::npos) { pos = end + 1; continue; }
+        size_t fs = fp + 6, fe = elem.find('"', fs);
+        std::string fill = elem.substr(fs, fe - fs);
+        if (fill == "none" || fill.empty()) { pos = end + 1; continue; }
+
+        // Skip elements with `opacity="..."` — those are shadows.
+        if (elem.find("opacity=\"") != std::string::npos) { pos = end + 1; continue; }
+
+        if (is_path) {
+            size_t dp = elem.find("d=\"");
+            if (dp == std::string::npos) { pos = end + 1; continue; }
+            size_t ds = dp + 3, de = elem.find('"', ds);
+            std::string d = elem.substr(ds, de - ds);
+            auto poly = svg_parse_path(d);
+            if (!poly.empty()) return poly;
+        } else {
+            // <rect> — read x/y/width/height, default x=0 y=0.
+            auto attr = [&](char const *k) -> float {
+                std::string key = std::string(k) + "=\"";
+                size_t kp = elem.find(key);
+                if (kp == std::string::npos) return 0;
+                size_t ks = kp + key.size();
+                size_t ke = elem.find('"', ks);
+                return (float)std::strtod(elem.substr(ks, ke - ks).c_str(), nullptr);
+            };
+            float x = attr("x"), y = attr("y"), w = attr("width"), h = attr("height");
+            if (w <= 0 || h <= 0) { pos = end + 1; continue; }
+            std::vector<TiledPolyVert> poly = {
+                {x, y}, {x + w, y}, {x + w, y + h}, {x, y + h}
+            };
+            return poly;
+        }
+        pos = end + 1;
+    }
+    return {};
+}
+
+// Load and cache the polygon for a tile by SVG filename. Returns nullptr
+// if the file is missing or has no solid shape.
+static std::vector<TiledPolyVert> const *load_tile_shape(uint32_t base_gid,
+                                                         std::string const &svg_path) {
+    auto it = TiledMap::tile_shape_cache.find(base_gid);
+    if (it != TiledMap::tile_shape_cache.end()) return &it->second;
+
+    std::ifstream f(svg_path);
+    if (!f) return nullptr;
+    std::stringstream ss; ss << f.rdbuf();
+    auto poly = svg_extract_polygon(ss.str());
+    if (poly.empty()) return nullptr;
+    auto [it2, _] = TiledMap::tile_shape_cache.emplace(base_gid, std::move(poly));
+    return &it2->second;
+}
+
+// Apply the cell's flip flags to a polygon vertex expressed in image-local
+// pixel coords (0..tile_w_image × 0..tile_h_image). The output is in the
+// same coord space — still 0..image_w × 0..image_h — but flipped per the
+// Tiled CellRenderer convention (see Client/Render/TiledMapRender.cc for
+// the matching rendering math).
+static TiledPolyVert apply_flip(float u, float v, float iw, float ih,
+                                bool fH, bool fV, bool fD) {
+    if (fD) {
+        // Tiled: rotate 90° CW about tile center, then scale per
+        // newH=origV, newV=!origH. The composite, with all coords
+        // measured from TL with positive Y down, simplifies to:
+        //   sx = newH ? -1 : 1
+        //   sy = newV ? -1 : 1
+        // applied to the rotated point (iw - v, u) — except that
+        // because the rotation is around the *center* (iw/2, ih/2),
+        // a scale of -1 on the rotated axis maps back to: cell_x =
+        // 0.5*iw + sy*(0.5*iw - v) and cell_y = 0.5*ih + sx*(u - 0.5*ih).
+        float sx = fV ? -1.0f : 1.0f;
+        float sy = (!fH) ? -1.0f : 1.0f;
+        return { 0.5f * iw + sy * (0.5f * iw - v),
+                 0.5f * ih + sx * (u - 0.5f * ih) };
+    } else {
+        return { fH ? (iw - u) : u, fV ? (ih - v) : v };
+    }
+}
+
+// Build a per-cell world-space polygon from the tile's local polygon,
+// applying the cell's flip flags and translating to its grid position.
+// SVG coords are 0..256 (image space); we scale to 0..tile_w world.
+static void build_cell_polygon(uint32_t col, uint32_t row,
+                               uint32_t tile_w, uint32_t tile_h,
+                               std::vector<TiledPolyVert> const &local_poly,
+                               uint32_t raw_gid,
+                               float image_w, float image_h) {
+    bool fH = (raw_gid & 0x80000000u) != 0;
+    bool fV = (raw_gid & 0x40000000u) != 0;
+    bool fD = (raw_gid & 0x20000000u) != 0;
+
+    TiledCollisionPoly out;
+    out.verts.reserve(local_poly.size());
+    out.min_x = out.min_y =  1e30f;
+    out.max_x = out.max_y = -1e30f;
+    float sx_world = (float)tile_w / image_w;
+    float sy_world = (float)tile_h / image_h;
+    for (auto const &p : local_poly) {
+        TiledPolyVert flipped = apply_flip(p.x, p.y, image_w, image_h, fH, fV, fD);
+        float wx = col * (float)tile_w + flipped.x * sx_world;
+        float wy = row * (float)tile_h + flipped.y * sy_world;
+        out.verts.push_back({wx, wy});
+        if (wx < out.min_x) out.min_x = wx;
+        if (wy < out.min_y) out.min_y = wy;
+        if (wx > out.max_x) out.max_x = wx;
+        if (wy > out.max_y) out.max_y = wy;
+    }
+    if (out.verts.size() >= 3) TiledMap::collision_polys.push_back(std::move(out));
+}
+
+// ---------------------------------------------------------------------------
 // Base64 + gzip helpers for the tile-layer data. Tiled stores each tile
 // layer as a base64-encoded gzip stream of uint32 GIDs; we only care about
 // "is this cell non-zero" so we can derive collision rects from solid tile
@@ -362,6 +643,85 @@ static bool gunzip(std::vector<uint8_t> const &in, std::vector<uint8_t> &out) {
 // collision rect for every non-zero cell. Tiles are 512×512 in world
 // units (set by `tilewidth` in the .tmj). We strip the upper 3 flip bits
 // before checking; flip flags don't change whether a cell is solid.
+// gid → svg filename. Built once from the tileset JSON when the map loads.
+static std::unordered_map<uint32_t, std::string> g_gid_to_svg;
+// Tile image native size (square in this tileset); used to scale image
+// coords to world coords.
+static float g_image_w = 256.0f;
+static float g_image_h = 256.0f;
+// Directory the SVGs live in. We need to fetch this when we know the
+// tileset's source path.
+static std::string g_tileset_dir;
+
+static std::string resolve_tileset_path(std::string const &map_path,
+                                        std::string const &src) {
+    // Tiled writes the tileset source as a path relative to the .tmj.
+    // Most often "../../tiles/tileset.tsj" for this map.
+    if (src.empty()) return {};
+    if (src[0] == '/') return src;
+    size_t s = map_path.find_last_of("/\\");
+    std::string dir = (s == std::string::npos) ? "" : map_path.substr(0, s + 1);
+    std::string combined = dir + src;
+    // Resolve ".." segments.
+    std::vector<std::string> parts;
+    size_t i = 0;
+    while (i < combined.size()) {
+        size_t j = combined.find('/', i);
+        if (j == std::string::npos) j = combined.size();
+        std::string part = combined.substr(i, j - i);
+        if (part == "..") { if (!parts.empty()) parts.pop_back(); }
+        else if (!part.empty() && part != ".") parts.push_back(part);
+        i = j + 1;
+    }
+    std::string out;
+    if (!combined.empty() && combined[0] == '/') out = "/";
+    for (size_t k = 0; k < parts.size(); ++k) {
+        if (k) out += '/';
+        out += parts[k];
+    }
+    return out;
+}
+
+static void load_tileset(std::string const &map_path, Json const &map_root) {
+    g_gid_to_svg.clear();
+    Json const *tilesets = map_root.find("tilesets");
+    if (!tilesets || tilesets->type != Json::kArr || tilesets->arr.empty()) return;
+    Json const *ts_ref = &tilesets->arr[0];
+    int firstgid = (int)(ts_ref->find("firstgid") ? ts_ref->find("firstgid")->as_num() : 1);
+    Json const *src = ts_ref->find("source");
+    if (!src || src->type != Json::kStr) return;
+    std::string ts_path = resolve_tileset_path(map_path, src->as_str());
+    std::ifstream f(ts_path);
+    if (!f) {
+        std::cerr << "[TiledMap] could not open tileset " << ts_path << "\n";
+        return;
+    }
+    size_t slash = ts_path.find_last_of("/\\");
+    g_tileset_dir = (slash == std::string::npos) ? "" : ts_path.substr(0, slash + 1);
+
+    std::stringstream ss; ss << f.rdbuf();
+    std::string text = ss.str();
+    try {
+        Parser parser(text.data(), text.data() + text.size());
+        Json ts = parser.parse();
+        Json const *tw = ts.find("tilewidth");
+        Json const *th = ts.find("tileheight");
+        if (tw) g_image_w = (float)tw->as_num();
+        if (th) g_image_h = (float)th->as_num();
+        Json const *tiles = ts.find("tiles");
+        if (!tiles || tiles->type != Json::kArr) return;
+        for (auto const &t : tiles->arr) {
+            Json const *id = t.find("id");
+            Json const *img = t.find("image");
+            if (!id || !img) continue;
+            uint32_t gid = (uint32_t)(firstgid + (int)id->as_num());
+            g_gid_to_svg[gid] = img->as_str();
+        }
+    } catch (std::exception const &e) {
+        std::cerr << "[TiledMap] tileset parse error: " << e.what() << "\n";
+    }
+}
+
 void parse_solid_tile_layer(Json const &layer, uint32_t tile_w, uint32_t tile_h) {
     Json const *encoding = layer.find("encoding");
     Json const *compression = layer.find("compression");
@@ -383,22 +743,34 @@ void parse_solid_tile_layer(Json const &layer, uint32_t tile_w, uint32_t tile_h)
     uint32_t count = (uint32_t)(gids_bytes.size() / 4);
     uint32_t height = count / width;
     for (uint32_t i = 0; i < count; ++i) {
-        uint32_t gid =
+        uint32_t raw_gid =
             (uint32_t)gids_bytes[i * 4 + 0] |
             ((uint32_t)gids_bytes[i * 4 + 1] << 8) |
             ((uint32_t)gids_bytes[i * 4 + 2] << 16) |
             ((uint32_t)gids_bytes[i * 4 + 3] << 24);
-        gid &= 0x1fffffff; // strip flip flags
-        if (!gid) continue;
+        uint32_t base_gid = raw_gid & 0x1fffffff;
+        if (!base_gid) continue;
         uint32_t col = i % width;
         uint32_t row = i / width;
         if (row >= height) break;
-        TiledCollisionRect r;
-        r.x = (float)(col * tile_w);
-        r.y = (float)(row * tile_h);
-        r.w = (float)tile_w;
-        r.h = (float)tile_h;
-        TiledMap::collision_rects.push_back(r);
+
+        // Try to load this tile's SVG polygon; fall back to a full-tile
+        // rectangle if the SVG file is missing or has no solid shape.
+        auto svg_it = g_gid_to_svg.find(base_gid);
+        std::vector<TiledPolyVert> const *poly = nullptr;
+        if (svg_it != g_gid_to_svg.end()) {
+            poly = load_tile_shape(base_gid, g_tileset_dir + svg_it->second);
+        }
+        if (poly) {
+            build_cell_polygon(col, row, tile_w, tile_h, *poly, raw_gid, g_image_w, g_image_h);
+        } else {
+            TiledCollisionRect r;
+            r.x = (float)(col * tile_w);
+            r.y = (float)(row * tile_h);
+            r.w = (float)tile_w;
+            r.h = (float)tile_h;
+            TiledMap::collision_rects.push_back(r);
+        }
     }
 }
 
@@ -487,11 +859,53 @@ bool point_in_polygon(TiledSpawnPolygon const &poly, float x, float y) {
     return inside;
 }
 
+// Test whether (px, py) lies inside a simple polygon via the classic
+// ray-casting odd-crossings test.
+static bool point_in_simple_poly(std::vector<TiledPolyVert> const &v, float px, float py) {
+    bool inside = false;
+    size_t n = v.size();
+    for (size_t i = 0, j = n - 1; i < n; j = i++) {
+        float xi = v[i].x, yi = v[i].y;
+        float xj = v[j].x, yj = v[j].y;
+        bool intersect = ((yi > py) != (yj > py)) &&
+                         (px < (xj - xi) * (py - yi) / (yj - yi + 1e-9f) + xi);
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
+
+// Closest point on segment (a, b) to point p. Returns distance² and writes
+// the closest point into `out_x, out_y` and the outward direction (from
+// the segment toward p) into `out_nx, out_ny` (unit, with magnitude 1 — or
+// zero if p is exactly on the segment).
+static float closest_on_segment(float ax, float ay, float bx, float by,
+                                float px, float py,
+                                float &out_x, float &out_y,
+                                float &out_nx, float &out_ny) {
+    float dx = bx - ax, dy = by - ay;
+    float len2 = dx * dx + dy * dy;
+    float t = (len2 > 1e-9f) ? ((px - ax) * dx + (py - ay) * dy) / len2 : 0.0f;
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    out_x = ax + t * dx;
+    out_y = ay + t * dy;
+    float ndx = px - out_x, ndy = py - out_y;
+    float nd2 = ndx * ndx + ndy * ndy;
+    if (nd2 > 1e-9f) {
+        float nd = std::sqrt(nd2);
+        out_nx = ndx / nd;
+        out_ny = ndy / nd;
+    } else {
+        out_nx = 0; out_ny = 0;
+    }
+    return nd2;
+}
+
 void resolve_collision(float &x, float &y, float radius) {
     if (!loaded) return;
+
+    // Authored `collision` objectgroup → simple AABB push-out.
     for (auto const &r : collision_rects) {
-        // Treat the rectangle as expanded by `radius` so the entity's
-        // body — not just its center — stays outside.
         float l = r.x - radius;
         float t = r.y - radius;
         float ri = r.x + r.w + radius;
@@ -510,6 +924,62 @@ void resolve_collision(float &x, float &y, float radius) {
             case 3: y = bo; break;
         }
     }
+
+    // Per-cell SVG-derived polygons → circle-vs-polygon push-out.
+    // For each polygon overlapping the entity's AABB, find the closest
+    // point on the polygon's edge ring; if the entity penetrates it,
+    // push out along the outward normal of that edge by the penetration
+    // depth. Handles two cases:
+    //   1. Center outside but within radius of an edge → push outward
+    //      along (center − closest_point).
+    //   2. Center inside polygon (deep penetration) → push toward the
+    //      nearest edge so the entity ends up just outside with clearance.
+    for (auto const &p : collision_polys) {
+        // Early-out via expanded bbox.
+        if (x < p.min_x - radius || x > p.max_x + radius ||
+            y < p.min_y - radius || y > p.max_y + radius) continue;
+
+        // Find the closest point on the polygon edge ring.
+        float best_d2 = 1e30f;
+        float best_cx = 0, best_cy = 0;
+        float best_nx = 0, best_ny = 0;
+        size_t n = p.verts.size();
+        for (size_t i = 0, j = n - 1; i < n; j = i++) {
+            float cx, cy, nx, ny;
+            float d2 = closest_on_segment(p.verts[j].x, p.verts[j].y,
+                                          p.verts[i].x, p.verts[i].y,
+                                          x, y, cx, cy, nx, ny);
+            if (d2 < best_d2) {
+                best_d2 = d2;
+                best_cx = cx; best_cy = cy;
+                best_nx = nx; best_ny = ny;
+            }
+        }
+
+        bool inside = point_in_simple_poly(p.verts, x, y);
+        float best_d = std::sqrt(best_d2);
+
+        if (inside) {
+            // Push from the closest edge outward by radius (so the
+            // entity ends up at least `radius` away from the wall). The
+            // outward normal is from the closest point toward the
+            // center — but center is inside the polygon, so that vector
+            // points *into* the polygon. Flip it.
+            float nx = -best_nx, ny = -best_ny;
+            if (nx == 0 && ny == 0) {
+                // Pathological: center exactly on edge. Pick any axis.
+                nx = 1; ny = 0;
+            }
+            x = best_cx + nx * radius;
+            y = best_cy + ny * radius;
+        } else if (best_d < radius) {
+            // Center outside but within radius → push along outward
+            // normal until the entity's surface just touches the edge.
+            float push = radius - best_d;
+            x += best_nx * push;
+            y += best_ny * push;
+        }
+    }
 }
 
 bool load(std::string const &path) {
@@ -523,11 +993,16 @@ bool load(std::string const &path) {
     std::string text = ss.str();
 
     collision_rects.clear();
+    collision_polys.clear();
+    tile_shape_cache.clear();
     spawn_polygons.clear();
 
     try {
         Parser parser(text.data(), text.data() + text.size());
         Json root = parser.parse();
+        // Resolve the tileset and build the gid→SVG map first; the
+        // solid-tile layers need it to produce per-cell collision polygons.
+        load_tileset(path, root);
         Json const *layers = root.find("layers");
         if (!layers || layers->type != Json::kArr) {
             std::cerr << "[TiledMap] no layers in " << path << "\n";
@@ -564,7 +1039,8 @@ bool load(std::string const &path) {
     loaded = true;
     std::cout << "[TiledMap] loaded " << path
               << " — " << spawn_polygons.size() << " spawn polygons, "
-              << collision_rects.size() << " collision rects\n";
+              << collision_rects.size() << " collision rects, "
+              << collision_polys.size() << " collision polygons\n";
     return true;
 }
 

@@ -12,6 +12,18 @@ struct TiledCollisionRect {
     float x, y, w, h;
 };
 
+// Vertex of a per-tile collision polygon, in world-space (after the tile's
+// flip transform + grid translation have been baked in at load time).
+struct TiledPolyVert { float x, y; };
+
+// A per-cell solid-tile polygon. Stored once per occupied solid cell;
+// `verts` already contains the closed polygon in world coordinates so the
+// collision check is just a circle-vs-polygon test without further math.
+struct TiledCollisionPoly {
+    std::vector<TiledPolyVert> verts;
+    float min_x, min_y, max_x, max_y; // bounding box for early-out
+};
+
 struct TiledSpawnEntry {
     MobID::T id;
     float chance;
@@ -29,6 +41,7 @@ struct TiledSpawnPolygon {
 namespace TiledMap {
     extern bool loaded;
     extern std::vector<TiledCollisionRect> collision_rects;
+    extern std::vector<TiledCollisionPoly> collision_polys;
     extern std::vector<TiledSpawnPolygon> spawn_polygons;
 
     // Loads the Tiled JSON map. Returns true on success.
