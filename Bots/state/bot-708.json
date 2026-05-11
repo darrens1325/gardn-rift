@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-708",
   "first_seen": 1778364746.819594,
-  "last_seen": 1778366656.7665339,
-  "episodes": 10,
-  "score_total": 138,
+  "last_seen": 1778470870.970591,
+  "episodes": 18,
+  "score_total": 218,
   "score_best": 35,
   "best_loadout": [
     0,
@@ -14,13 +14,15 @@
     1
   ],
   "killed_by": {
-    "Beetle": 3,
+    "Beetle": 5,
     "Boulder": 1,
-    "Hornet": 3,
-    "bot-510": 1
+    "Hornet": 5,
+    "bot-510": 1,
+    "Wasp": 1
   },
   "loadout_history": {
-    "0": 9,
-    "1": 10
+    "0": 16,
+    "1": 17,
+    "10": 1
   }
 }

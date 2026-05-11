@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "not bot",
   "first_seen": 1778364028.713105,
-  "last_seen": 1778366641.048,
-  "episodes": 31,
-  "score_total": 280,
+  "last_seen": 1778470872.960792,
+  "episodes": 40,
+  "score_total": 385,
   "score_best": 43,
   "best_loadout": [
     1,
@@ -14,19 +14,22 @@
     1
   ],
   "killed_by": {
-    "Beetle": 2,
+    "Beetle": 3,
     "Bee": 2,
     "Hornet": 6,
-    "Spider": 3,
+    "Spider": 4,
     "thorn": 1,
     "Soldier Ant": 2,
     "Worker Ant": 3,
     "bot-602": 1,
-    "Boulder": 2
+    "Boulder": 2,
+    "bot-709": 1,
+    "bot-717": 2
   },
   "loadout_history": {
-    "1": 31,
-    "0": 10,
-    "14": 1
+    "1": 39,
+    "0": 18,
+    "14": 1,
+    "49": 1
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-312",
   "first_seen": 1778364748.106099,
-  "last_seen": 1778366644.301568,
-  "episodes": 10,
-  "score_total": 138,
+  "last_seen": 1778470871.0845592,
+  "episodes": 19,
+  "score_total": 229,
   "score_best": 57,
   "best_loadout": [
     1,
@@ -19,12 +19,16 @@
     "Cactus": 1,
     "Evil Centipede": 2,
     "bot-506": 1,
-    "Hornet": 1
+    "Hornet": 3,
+    "Wasp": 1,
+    "Mantis": 2
   },
   "loadout_history": {
-    "0": 6,
-    "1": 10,
+    "0": 14,
+    "1": 18,
     "11": 1,
-    "14": 1
+    "14": 2,
+    "32": 1,
+    "9": 1
   }
 }

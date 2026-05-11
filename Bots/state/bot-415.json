@@ -2,24 +2,27 @@
   "schema": 1,
   "name": "bot-415",
   "first_seen": 1778364745.500248,
-  "last_seen": 1778366679.60515,
-  "episodes": 9,
-  "score_total": 85,
-  "score_best": 14,
+  "last_seen": 1778470879.818961,
+  "episodes": 18,
+  "score_total": 154,
+  "score_best": 20,
   "best_loadout": [
+    0,
+    0,
     1,
-    1,
-    1,
-    1,
+    0,
     1
   ],
   "killed_by": {
     "Beetle": 3,
     "Cactus": 2,
-    "Evil Centipede": 1
+    "Evil Centipede": 2,
+    "Bee": 1,
+    "Hornet": 3
   },
   "loadout_history": {
-    "0": 5,
-    "1": 9
+    "0": 14,
+    "1": 18,
+    "5": 1
   }
 }

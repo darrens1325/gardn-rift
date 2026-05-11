@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "aa",
   "first_seen": 1778364027.980192,
-  "last_seen": 1778366672.3470578,
-  "episodes": 33,
-  "score_total": 345,
+  "last_seen": 1778470938.776444,
+  "episodes": 42,
+  "score_total": 411,
   "score_best": 52,
   "best_loadout": [
     1,
@@ -15,19 +15,23 @@
   ],
   "killed_by": {
     "Beetle": 4,
-    "Hornet": 9,
+    "Hornet": 12,
     "Bee": 2,
     "Massive Beetle": 2,
     "Desert Centipede": 2,
     "Worker Ant": 1,
     "Cactus": 3,
     "Centipede": 1,
-    "a": 1
+    "a": 1,
+    "Spider": 1,
+    "Wasp": 1
   },
   "loadout_history": {
-    "0": 15,
-    "1": 32,
+    "0": 23,
+    "1": 37,
     "48": 1,
-    "14": 1
+    "14": 2,
+    "5": 1,
+    "7": 1
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "root",
   "first_seen": 1778364027.520142,
-  "last_seen": 1778372543.422484,
-  "episodes": 101,
-  "score_total": 1349,
+  "last_seen": 1778470884.074134,
+  "episodes": 110,
+  "score_total": 1465,
   "score_best": 107,
   "best_loadout": [
     0,
@@ -18,7 +18,7 @@
     "Beetle": 11,
     "Ladybug": 3,
     "Cactus": 7,
-    "Spider": 3,
+    "Spider": 5,
     "bot-211": 1,
     "bot-505": 1,
     "Soldier Ant": 2,
@@ -32,11 +32,13 @@
     "Queen Ant": 1,
     "bot-210": 1,
     "bot-107": 1,
-    "Desert Centipede": 2
+    "Desert Centipede": 3,
+    "Leafbug": 1,
+    "Scorpion": 1
   },
   "loadout_history": {
-    "1": 78,
-    "0": 70,
+    "1": 85,
+    "0": 78,
     "47": 1,
     "20": 1,
     "39": 1,
@@ -48,7 +50,8 @@
     "19": 1,
     "15": 1,
     "45": 1,
-    "9": 1,
-    "24": 1
+    "9": 2,
+    "24": 1,
+    "5": 1
   }
 }

@@ -2,27 +2,28 @@
   "schema": 1,
   "name": "bot-310",
   "first_seen": 1778364744.4101608,
-  "last_seen": 1778366646.293511,
-  "episodes": 9,
-  "score_total": 107,
-  "score_best": 19,
+  "last_seen": 1778470872.300973,
+  "episodes": 18,
+  "score_total": 231,
+  "score_best": 35,
   "best_loadout": [
+    0,
+    0,
     1,
-    0,
-    0,
     0,
     1
   ],
   "killed_by": {
-    "Beetle": 1,
-    "Cactus": 3,
+    "Beetle": 4,
+    "Cactus": 5,
     "Hornet": 2,
     "Spider": 2
   },
   "loadout_history": {
-    "0": 4,
-    "1": 9,
+    "0": 13,
+    "1": 16,
     "15": 1,
-    "79": 1
+    "79": 1,
+    "5": 1
   }
 }

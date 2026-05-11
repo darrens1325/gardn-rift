@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-200",
   "first_seen": 1778364742.724025,
-  "last_seen": 1778372481.500576,
-  "episodes": 80,
-  "score_total": 1007,
+  "last_seen": 1778470922.975925,
+  "episodes": 89,
+  "score_total": 1117,
   "score_best": 69,
   "best_loadout": [
     0,
@@ -16,7 +16,7 @@
   "killed_by": {
     "Desert Centipede": 1,
     "Massive Beetle": 1,
-    "Hornet": 33,
+    "Hornet": 36,
     "Cactus": 9,
     "Beetle": 5,
     "Evil Centipede": 11,
@@ -25,19 +25,23 @@
     "bot-504": 1,
     "Boulder": 2,
     "Scorpion": 4,
-    "Centipede": 1,
-    "Sandstorm": 1
+    "Centipede": 2,
+    "Sandstorm": 1,
+    "Ladybug": 1,
+    "Bee": 1
   },
   "loadout_history": {
-    "1": 63,
-    "0": 66,
+    "1": 70,
+    "0": 74,
     "46": 1,
-    "24": 2,
+    "24": 3,
     "34": 1,
     "11": 1,
     "5": 1,
     "15": 1,
     "29": 1,
-    "9": 1
+    "9": 1,
+    "16": 1,
+    "28": 1
   }
 }

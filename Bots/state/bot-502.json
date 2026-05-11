@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-502",
   "first_seen": 1778364747.952054,
-  "last_seen": 1778372504.8701282,
-  "episodes": 77,
-  "score_total": 847,
+  "last_seen": 1778470888.3759081,
+  "episodes": 86,
+  "score_total": 961,
   "score_best": 58,
   "best_loadout": [
     0,
@@ -14,7 +14,7 @@
     0
   ],
   "killed_by": {
-    "Hornet": 35,
+    "Hornet": 40,
     "Spider": 2,
     "Cactus": 8,
     "Massive Beetle": 3,
@@ -31,12 +31,13 @@
     "Bee": 1
   },
   "loadout_history": {
-    "0": 70,
-    "1": 55,
+    "0": 79,
+    "1": 61,
     "10": 1,
     "49": 2,
     "50": 1,
     "28": 1,
-    "11": 1
+    "11": 2,
+    "25": 1
   }
 }

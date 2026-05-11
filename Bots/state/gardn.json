@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "gardn",
   "first_seen": 1778364026.79023,
-  "last_seen": 1778372501.722355,
-  "episodes": 102,
-  "score_total": 1018,
+  "last_seen": 1778470943.7141912,
+  "episodes": 111,
+  "score_total": 1122,
   "score_best": 41,
   "best_loadout": [
     1,
@@ -19,7 +19,7 @@
     "Hornet": 31,
     "Spider": 7,
     "Evil Centipede": 5,
-    "Beetle": 9,
+    "Beetle": 10,
     "Soldier Ant": 9,
     "Bee": 6,
     "bot-410": 1,
@@ -29,15 +29,18 @@
     "bot-303": 3,
     "bot-701": 1,
     "bot-102": 1,
-    "Desert Centipede": 3
+    "Desert Centipede": 3,
+    "Wasp": 3,
+    "Mantis": 2
   },
   "loadout_history": {
-    "0": 75,
-    "1": 80,
+    "0": 84,
+    "1": 86,
     "9": 1,
     "18": 1,
     "10": 1,
     "28": 2,
-    "7": 1
+    "7": 1,
+    "6": 1
   }
 }

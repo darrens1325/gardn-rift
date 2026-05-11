@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-112",
   "first_seen": 1778364741.9860768,
-  "last_seen": 1778366692.371506,
-  "episodes": 10,
-  "score_total": 140,
+  "last_seen": 1778470884.921398,
+  "episodes": 19,
+  "score_total": 171,
   "score_best": 25,
   "best_loadout": [
     1,
@@ -19,11 +19,12 @@
     "Hornet": 3,
     "Evil Centipede": 1,
     "Worker Ant": 1,
-    "Beetle": 1
+    "Beetle": 1,
+    "Mantis": 3
   },
   "loadout_history": {
-    "1": 9,
-    "0": 6,
+    "1": 16,
+    "0": 13,
     "40": 1
   }
 }

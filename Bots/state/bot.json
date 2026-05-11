@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot",
   "first_seen": 1778364031.0085309,
-  "last_seen": 1778366651.559217,
-  "episodes": 34,
-  "score_total": 297,
+  "last_seen": 1778470867.548373,
+  "episodes": 42,
+  "score_total": 391,
   "score_best": 25,
   "best_loadout": [
     1,
@@ -14,20 +14,20 @@
     1
   ],
   "killed_by": {
-    "Sandstorm": 4,
+    "Sandstorm": 6,
     "Hornet": 14,
     "Beetle": 2,
-    "Bee": 4,
+    "Bee": 6,
     "Spider": 1,
     "Ladybug": 1,
     "bot-101": 1,
     "bot-604": 1,
-    "Evil Centipede": 1,
+    "Evil Centipede": 2,
     "Cactus": 1
   },
   "loadout_history": {
-    "0": 9,
-    "1": 34,
+    "0": 17,
+    "1": 41,
     "18": 2,
     "9": 1,
     "24": 2

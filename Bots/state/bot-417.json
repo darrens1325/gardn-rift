@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-417",
   "first_seen": 1778364747.199444,
-  "last_seen": 1778366696.97815,
-  "episodes": 9,
-  "score_total": 197,
+  "last_seen": 1778470869.32039,
+  "episodes": 17,
+  "score_total": 228,
   "score_best": 56,
   "best_loadout": [
     0,
@@ -14,12 +14,13 @@
     0
   ],
   "killed_by": {
-    "Hornet": 4,
-    "Beetle": 4,
-    "bot-410": 1
+    "Hornet": 6,
+    "Beetle": 6,
+    "bot-410": 1,
+    "Rock": 1
   },
   "loadout_history": {
-    "0": 5,
-    "1": 8
+    "0": 13,
+    "1": 14
   }
 }

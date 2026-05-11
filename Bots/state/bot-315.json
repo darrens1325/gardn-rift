@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-315",
   "first_seen": 1778364743.409051,
-  "last_seen": 1778366649.474284,
-  "episodes": 9,
-  "score_total": 135,
+  "last_seen": 1778470923.393686,
+  "episodes": 18,
+  "score_total": 226,
   "score_best": 26,
   "best_loadout": [
     1,
@@ -14,12 +14,13 @@
     1
   ],
   "killed_by": {
-    "Beetle": 2,
-    "Hornet": 4
+    "Beetle": 3,
+    "Hornet": 6,
+    "Ladybug": 2
   },
   "loadout_history": {
-    "1": 8,
-    "0": 5,
+    "1": 12,
+    "0": 13,
     "5": 1
   }
 }

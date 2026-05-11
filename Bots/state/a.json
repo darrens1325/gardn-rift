@@ -2,29 +2,29 @@
   "schema": 1,
   "name": "a",
   "first_seen": 1778364028.324828,
-  "last_seen": 1778366682.0952902,
-  "episodes": 30,
-  "score_total": 316,
-  "score_best": 48,
+  "last_seen": 1778470888.699295,
+  "episodes": 39,
+  "score_total": 458,
+  "score_best": 55,
   "best_loadout": [
     0,
     0,
     0,
     0,
-    1
+    0
   ],
   "killed_by": {
-    "Hornet": 8,
+    "Hornet": 9,
     "Beetle": 4,
     "Evil Centipede": 1,
-    "Cactus": 4,
-    "Scorpion": 1,
+    "Cactus": 6,
+    "Scorpion": 3,
     "Ladybug": 2,
     "Spider": 2
   },
   "loadout_history": {
-    "0": 15,
-    "1": 30,
+    "0": 23,
+    "1": 36,
     "10": 1,
     "28": 1
   }

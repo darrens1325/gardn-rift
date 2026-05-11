@@ -2,26 +2,29 @@
   "schema": 1,
   "name": "bot-709",
   "first_seen": 1778364747.6515641,
-  "last_seen": 1778366676.180609,
-  "episodes": 8,
-  "score_total": 86,
-  "score_best": 22,
+  "last_seen": 1778470875.501271,
+  "episodes": 17,
+  "score_total": 185,
+  "score_best": 31,
   "best_loadout": [
+    0,
+    0,
     1,
-    0,
-    0,
-    0,
+    1,
     1
   ],
   "killed_by": {
-    "Hornet": 1,
+    "Hornet": 2,
     "Beetle": 2,
     "Desert Centipede": 1,
     "Bee": 1,
-    "Cactus": 1
+    "Cactus": 1,
+    "bot-102": 2,
+    "Wasp": 3
   },
   "loadout_history": {
-    "1": 8,
-    "0": 5
+    "1": 16,
+    "0": 12,
+    "11": 1
   }
 }

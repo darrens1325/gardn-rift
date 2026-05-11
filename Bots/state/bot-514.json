@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-514",
   "first_seen": 1778364745.126762,
-  "last_seen": 1778366655.774435,
-  "episodes": 9,
-  "score_total": 161,
+  "last_seen": 1778470875.155352,
+  "episodes": 17,
+  "score_total": 239,
   "score_best": 54,
   "best_loadout": [
     0,
@@ -14,14 +14,16 @@
     0
   ],
   "killed_by": {
-    "Beetle": 1,
-    "Hornet": 3,
+    "Beetle": 2,
+    "Hornet": 4,
     "Cactus": 1,
     "Bee": 2,
-    "Soldier Ant": 1
+    "Soldier Ant": 1,
+    "Wasp": 1,
+    "Bush": 2
   },
   "loadout_history": {
-    "1": 9,
-    "0": 5
+    "1": 16,
+    "0": 11
   }
 }

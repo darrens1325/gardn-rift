@@ -2,25 +2,27 @@
   "schema": 1,
   "name": "bot-308",
   "first_seen": 1778364744.433311,
-  "last_seen": 1778366644.627043,
-  "episodes": 9,
-  "score_total": 116,
-  "score_best": 23,
+  "last_seen": 1778470943.320416,
+  "episodes": 17,
+  "score_total": 187,
+  "score_best": 24,
   "best_loadout": [
-    1,
-    1,
-    1,
+    0,
+    0,
+    0,
     1,
     0
   ],
   "killed_by": {
     "Beetle": 2,
-    "Hornet": 1,
+    "Hornet": 2,
     "sussy": 1,
-    "Bee": 1
+    "Bee": 2,
+    "Cactus": 2
   },
   "loadout_history": {
-    "1": 9,
-    "0": 4
+    "1": 14,
+    "0": 12,
+    "14": 1
   }
 }

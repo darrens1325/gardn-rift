@@ -64,12 +64,19 @@ LOADOUT_BURST_DIM = 16
 K_DROPS = 3
 DROP_FEAT_PER_SLOT = 4
 DROP_FEAT_DIM = K_DROPS * DROP_FEAT_PER_SLOT
+# 4 cardinal-direction wall-distance sensors (N/E/S/W), each normalised
+# to [0, 1] where 1 means "≥ WALL_RAY_CAP units of clear space". Read at
+# tick time from the static Tiled map (see Bots/wall_map.py). Lets the
+# policy learn wall avoidance — without these, the bot only sees enemies
+# and inventory and just grinds against the geometry.
+from wall_map import WALL_FEAT_DIM  # noqa: E402  (kept inline so STATE_DIM follows)
 # State layout is **append-only** with respect to previous versions so
 # pad_load_state_dict can preserve trained weights from older checkpoints.
 # Append, never reorder. Boundaries:
 #   [HP] [hostile×12] [loadout_rank×16] [peer_comm×12]            |  ← old 41
 #       [loadout_type×16] [drops×12]                              |  ← old 69
 #       [loadout_burst×16]                                        |  ← +16 = 85
+#       [wall_rays×4]                                             |  ← +4 = 89
 STATE_DIM = (
     BASE_STATE_DIM            # 13
     + LOADOUT_FEAT_DIM        # 16
@@ -77,7 +84,8 @@ STATE_DIM = (
     + LOADOUT_TYPE_DIM        # 16
     + DROP_FEAT_DIM           # 12
     + LOADOUT_BURST_DIM       # 16
-)                              # = 85
+    + WALL_FEAT_DIM           # 4
+)                              # = 89
 # Action space layout (flat):
 #   0..NUM_MOVEMENT_ACTIONS-1            movement (9 directions × 2 modes)
 #   NUM_MOVEMENT_ACTIONS..+NUM_SWAP-1    swap loadout_ids[i] ↔ loadout_ids[i+8]

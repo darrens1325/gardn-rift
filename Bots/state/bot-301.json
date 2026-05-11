@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-301",
   "first_seen": 1778364742.340859,
-  "last_seen": 1778372480.6939561,
-  "episodes": 78,
-  "score_total": 908,
+  "last_seen": 1778470878.9410272,
+  "episodes": 87,
+  "score_total": 1063,
   "score_best": 65,
   "best_loadout": [
     0,
@@ -14,10 +14,10 @@
     0
   ],
   "killed_by": {
-    "Hornet": 39,
+    "Hornet": 43,
     "Bee": 4,
     "Scorpion": 1,
-    "Sandstorm": 2,
+    "Sandstorm": 3,
     "bot-509": 1,
     "Worker Ant": 1,
     "Cactus": 3,
@@ -35,21 +35,23 @@
     "Ant Hole": 1,
     "bot-500": 1,
     "Soldier Ant": 1,
-    "bot-406": 2
+    "bot-406": 2,
+    "Mantis": 1
   },
   "loadout_history": {
-    "1": 52,
-    "0": 66,
+    "1": 59,
+    "0": 74,
     "28": 1,
     "40": 2,
     "79": 1,
-    "5": 3,
+    "5": 5,
     "10": 1,
     "15": 1,
-    "14": 1,
+    "14": 2,
     "7": 1,
     "36": 1,
     "46": 1,
-    "24": 1
+    "24": 1,
+    "9": 1
   }
 }

@@ -2,25 +2,28 @@
   "schema": 1,
   "name": "bot-115",
   "first_seen": 1778364741.369013,
-  "last_seen": 1778366640.761017,
-  "episodes": 10,
-  "score_total": 129,
-  "score_best": 26,
+  "last_seen": 1778470885.861258,
+  "episodes": 19,
+  "score_total": 1209,
+  "score_best": 1050,
   "best_loadout": [
-    1,
     0,
-    1,
     0,
-    1
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
-    "Beetle": 2,
+    "Beetle": 3,
     "Hornet": 5,
-    "Evil Centipede": 1
+    "Evil Centipede": 1,
+    "Bush": 2
   },
   "loadout_history": {
-    "1": 10,
-    "0": 8,
-    "48": 1
+    "1": 17,
+    "0": 16,
+    "48": 1,
+    "9": 1
   }
 }

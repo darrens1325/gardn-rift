@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "leafy",
   "first_seen": 1778364027.298105,
-  "last_seen": 1778372479.0226119,
-  "episodes": 101,
-  "score_total": 1247,
+  "last_seen": 1778470876.143934,
+  "episodes": 110,
+  "score_total": 1365,
   "score_best": 71,
   "best_loadout": [
     0,
@@ -14,7 +14,7 @@
     0
   ],
   "killed_by": {
-    "Beetle": 8,
+    "Beetle": 9,
     "Hornet": 42,
     "Evil Centipede": 6,
     "Massive Beetle": 3,
@@ -29,18 +29,21 @@
     "Scorpion": 2,
     "bot-703": 2,
     "blossom": 1,
-    "Rock": 1
+    "Rock": 1,
+    "Mantis": 2,
+    "Wasp": 2
   },
   "loadout_history": {
-    "0": 72,
-    "1": 85,
+    "0": 81,
+    "1": 93,
     "79": 1,
     "6": 1,
     "40": 2,
     "35": 1,
-    "9": 2,
-    "5": 1,
+    "9": 3,
+    "5": 2,
     "14": 2,
-    "24": 1
+    "24": 1,
+    "11": 1
   }
 }

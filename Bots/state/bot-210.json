@@ -2,26 +2,29 @@
   "schema": 1,
   "name": "bot-210",
   "first_seen": 1778364743.342874,
-  "last_seen": 1778366679.5648482,
-  "episodes": 11,
-  "score_total": 129,
-  "score_best": 24,
+  "last_seen": 1778470868.681389,
+  "episodes": 20,
+  "score_total": 207,
+  "score_best": 25,
   "best_loadout": [
     1,
-    1,
+    0,
     1,
     1,
     1
   ],
   "killed_by": {
     "Beetle": 1,
-    "Hornet": 4,
+    "Hornet": 7,
     "Boulder": 2,
-    "Cactus": 1
+    "Cactus": 1,
+    "Leafbug": 2,
+    "Wasp": 1
   },
   "loadout_history": {
-    "0": 6,
-    "1": 11,
-    "14": 1
+    "0": 14,
+    "1": 18,
+    "14": 1,
+    "24": 1
   }
 }

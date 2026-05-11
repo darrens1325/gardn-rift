@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-302",
   "first_seen": 1778364744.096798,
-  "last_seen": 1778372493.9248698,
-  "episodes": 78,
-  "score_total": 942,
+  "last_seen": 1778470894.420091,
+  "episodes": 86,
+  "score_total": 1073,
   "score_best": 200,
   "best_loadout": [
     0,
@@ -14,7 +14,7 @@
     0
   ],
   "killed_by": {
-    "Hornet": 24,
+    "Hornet": 25,
     "Centipede": 2,
     "Cactus": 9,
     "Beetle": 10,
@@ -28,17 +28,22 @@
     "bot-105": 2,
     "Spider": 2,
     "Boulder": 2,
-    "bot-103": 2
+    "bot-103": 2,
+    "Sandstorm": 1,
+    "Ladybug": 2,
+    "Mantis": 1,
+    "Wasp": 1
   },
   "loadout_history": {
-    "0": 70,
-    "1": 61,
+    "0": 75,
+    "1": 67,
     "14": 2,
     "7": 1,
     "9": 1,
     "39": 1,
     "18": 1,
     "19": 1,
-    "5": 1
+    "5": 1,
+    "15": 1
   }
 }

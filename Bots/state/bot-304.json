@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-304",
   "first_seen": 1778364743.8099751,
-  "last_seen": 1778372489.070465,
-  "episodes": 78,
-  "score_total": 827,
+  "last_seen": 1778470875.698633,
+  "episodes": 87,
+  "score_total": 914,
   "score_best": 68,
   "best_loadout": [
     29,
@@ -17,7 +17,7 @@
     "Beetle": 7,
     "Massive Beetle": 1,
     "Cactus": 12,
-    "Hornet": 25,
+    "Hornet": 26,
     "Evil Centipede": 2,
     "Bee": 4,
     "bot-706": 1,
@@ -26,21 +26,24 @@
     "Soldier Ant": 3,
     "Boulder": 4,
     "bot-608": 2,
-    "rosie": 1,
+    "rosie": 2,
     "Baby Ant": 2,
     "bot": 1,
     "Centipede": 3,
-    "Sandstorm": 2
+    "Sandstorm": 2,
+    "Ladybug": 2,
+    "Wasp": 1
   },
   "loadout_history": {
-    "1": 58,
-    "0": 70,
+    "1": 63,
+    "0": 79,
     "9": 1,
     "24": 1,
     "40": 1,
     "79": 1,
     "16": 1,
     "29": 1,
-    "28": 1
+    "28": 1,
+    "39": 1
   }
 }

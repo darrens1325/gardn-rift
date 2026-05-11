@@ -2,25 +2,28 @@
   "schema": 1,
   "name": "bot-613",
   "first_seen": 1778364747.6487832,
-  "last_seen": 1778366665.2053618,
-  "episodes": 10,
-  "score_total": 69,
-  "score_best": 25,
+  "last_seen": 1778470940.306587,
+  "episodes": 19,
+  "score_total": 205,
+  "score_best": 71,
   "best_loadout": [
-    1,
-    1,
+    0,
+    0,
     0,
     1,
-    1
+    0
   ],
   "killed_by": {
-    "Hornet": 3,
+    "Hornet": 7,
     "Cactus": 1,
     "Beetle": 2,
     "prickly": 1
   },
   "loadout_history": {
-    "0": 6,
-    "1": 10
+    "0": 13,
+    "1": 18,
+    "19": 1,
+    "167": 1,
+    "9": 1
   }
 }

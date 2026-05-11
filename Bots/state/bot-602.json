@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-602",
   "first_seen": 1778364745.897158,
-  "last_seen": 1778372490.935505,
-  "episodes": 78,
-  "score_total": 964,
+  "last_seen": 1778470892.76457,
+  "episodes": 86,
+  "score_total": 1055,
   "score_best": 211,
   "best_loadout": [
     0,
@@ -14,14 +14,14 @@
     0
   ],
   "killed_by": {
-    "Spider": 1,
+    "Spider": 2,
     "bot-407": 1,
-    "Hornet": 24,
+    "Hornet": 27,
     "Cactus": 8,
     "Beetle": 9,
     "bot-204": 1,
     "Evil Centipede": 7,
-    "Soldier Ant": 3,
+    "Soldier Ant": 4,
     "gardn": 2,
     "Sandstorm": 2,
     "Queen Ant": 2,
@@ -35,12 +35,15 @@
     "Bee": 1
   },
   "loadout_history": {
-    "0": 70,
-    "1": 55,
+    "0": 77,
+    "1": 62,
     "40": 1,
     "29": 1,
     "5": 2,
     "28": 1,
-    "14": 1
+    "14": 2,
+    "19": 1,
+    "15": 1,
+    "23": 1
   }
 }

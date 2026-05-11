@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import gc
 import json
 import os
 import random
@@ -285,6 +286,16 @@ async def _stats_loop(
                     flush=True,
                 )
 
+        # Deterministic GC sweep, paired with `gc.disable()` at startup.
+        # Runs once per stats interval so cycle-collection pauses happen
+        # here (where we're already idle on `asyncio.sleep`) instead of
+        # mid-tick. `gc.get_count()` returns (gen0, gen1, gen2) — if
+        # gen2 is consistently 0, the collector has little to reclaim
+        # and the manual cadence is fine; if it climbs, raise the
+        # stats interval or call gc.collect() more often.
+        if gc.isenabled() is False:  # i.e. we own the cadence
+            gc.collect()
+
 
 async def _amain(args: argparse.Namespace) -> None:
     # Belt-and-braces thread cap: env vars are set by the parent in
@@ -301,6 +312,26 @@ async def _amain(args: argparse.Namespace) -> None:
             _torch.set_num_threads(_torch_threads)
         except Exception:  # noqa: BLE001
             pass
+
+    # Manual GC. Each control tick allocates ~30 small Python objects
+    # (feature lists, state tuples, replay-buffer entries). Aggregated
+    # across a fleet of bots, that's millions of objects per minute.
+    # CPython's gen-2 collector fires when those allocations cross
+    # threshold[2]; the sweep walks the entire replay buffer (100k+
+    # tuples) and stalls everything for tens-to-hundreds of ms — that's
+    # the random `max_work` spike pattern showing up in the watchdog.
+    #
+    # Fix: switch off automatic generational GC and run `gc.collect()`
+    # ourselves at deterministic points where a brief pause is harmless
+    # (the stats loop, which is already in an `asyncio.sleep` cycle).
+    # Manual collection still reclaims cycles so memory doesn't leak;
+    # it just no longer happens at unpredictable, high-impact moments.
+    if not args.no_gc_tuning:
+        gc.disable()
+        # Drain whatever's currently queued up before the bots open
+        # sockets, so the first few ticks aren't loaded with the
+        # startup-time allocations.
+        gc.collect()
 
     base_checkpoint = args.checkpoint  # may be None
     # Always start from the best file when it exists; otherwise the
@@ -434,6 +465,14 @@ def main() -> int:
              "every worker spins up cpu_count threads and they all fight "
              "over the same cores — total CPU pegs at 100%% but most of "
              "that is context-switch overhead, not real work.",
+    )
+    p.add_argument(
+        "--no-gc-tuning", action="store_true",
+        help="disable the manual-GC mode that suppresses random per-tick "
+             "stalls. Use this only when diagnosing memory leaks — the "
+             "manual cadence (gc.collect at each stats interval) reclaims "
+             "cycles fine, it just doesn't fire at random mid-tick moments "
+             "the way CPython's default gen-2 sweep does.",
     )
     args = p.parse_args()
     if args.checkpoint == "":

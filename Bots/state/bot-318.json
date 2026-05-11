@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-318",
   "first_seen": 1778364744.2105541,
-  "last_seen": 1778366653.190142,
-  "episodes": 10,
-  "score_total": 129,
+  "last_seen": 1778470894.540388,
+  "episodes": 19,
+  "score_total": 250,
   "score_best": 30,
   "best_loadout": [
     1,
@@ -16,14 +16,15 @@
   "killed_by": {
     "Beetle": 1,
     "Spider": 1,
-    "Cactus": 1,
-    "Hornet": 3,
+    "Cactus": 2,
+    "Hornet": 6,
     "Soldier Ant": 1,
-    "bot-402": 2
+    "bot-402": 2,
+    "Bee": 1
   },
   "loadout_history": {
-    "1": 10,
-    "0": 4,
+    "1": 18,
+    "0": 13,
     "10": 1,
     "14": 1
   }

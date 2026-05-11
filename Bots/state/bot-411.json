@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-411",
   "first_seen": 1778364743.86488,
-  "last_seen": 1778366646.538344,
-  "episodes": 10,
-  "score_total": 80,
+  "last_seen": 1778470898.961505,
+  "episodes": 19,
+  "score_total": 181,
   "score_best": 24,
   "best_loadout": [
     1,
@@ -14,15 +14,17 @@
     1
   ],
   "killed_by": {
-    "Hornet": 5,
+    "Hornet": 8,
     "Bee": 1,
     "Cactus": 1,
-    "Centipede": 2,
-    "bot-313": 1
+    "Centipede": 4,
+    "bot-313": 1,
+    "Wasp": 1
   },
   "loadout_history": {
-    "1": 10,
-    "0": 3,
-    "15": 1
+    "1": 16,
+    "0": 12,
+    "15": 1,
+    "69": 1
   }
 }

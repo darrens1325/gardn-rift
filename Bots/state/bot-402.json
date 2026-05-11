@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-402",
   "first_seen": 1778364744.448641,
-  "last_seen": 1778372505.55296,
-  "episodes": 78,
-  "score_total": 1349,
+  "last_seen": 1778470879.365939,
+  "episodes": 87,
+  "score_total": 1413,
   "score_best": 227,
   "best_loadout": [
     0,
@@ -15,7 +15,7 @@
     0
   ],
   "killed_by": {
-    "Spider": 2,
+    "Spider": 5,
     "Cactus": 5,
     "Hornet": 36,
     "Bee": 6,
@@ -28,12 +28,13 @@
     "Evil Centipede": 2,
     "67": 1,
     "bot-405": 1,
-    "Centipede": 1
+    "Centipede": 1,
+    "Wasp": 3
   },
   "loadout_history": {
-    "0": 74,
-    "1": 60,
-    "5": 5,
+    "0": 82,
+    "1": 69,
+    "5": 7,
     "14": 1,
     "9": 1,
     "69": 1,

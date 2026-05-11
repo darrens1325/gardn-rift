@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-601",
   "first_seen": 1778364745.462831,
-  "last_seen": 1778372489.682559,
-  "episodes": 80,
-  "score_total": 1181,
+  "last_seen": 1778470894.1845288,
+  "episodes": 89,
+  "score_total": 1259,
   "score_best": 207,
   "best_loadout": [
     0,
@@ -14,7 +14,7 @@
     1
   ],
   "killed_by": {
-    "Hornet": 38,
+    "Hornet": 40,
     "Sandstorm": 2,
     "Scorpion": 2,
     "Cactus": 7,
@@ -29,14 +29,17 @@
     "bot-301": 1,
     "Soldier Ant": 1,
     "bot-404": 1,
-    "bot-312": 2
+    "bot-312": 2,
+    "Wasp": 1,
+    "Mantis": 2,
+    "Evil Centipede": 1
   },
   "loadout_history": {
-    "0": 73,
-    "1": 56,
+    "0": 80,
+    "1": 64,
     "15": 1,
     "10": 1,
     "25": 1,
-    "5": 1
+    "5": 2
   }
 }

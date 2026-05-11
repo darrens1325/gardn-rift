@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-300",
   "first_seen": 1778364742.874444,
-  "last_seen": 1778372496.220312,
-  "episodes": 79,
-  "score_total": 934,
+  "last_seen": 1778470864.413759,
+  "episodes": 87,
+  "score_total": 1040,
   "score_best": 62,
   "best_loadout": [
     1,
@@ -15,7 +15,7 @@
   ],
   "killed_by": {
     "Scorpion": 7,
-    "Hornet": 35,
+    "Hornet": 37,
     "Beetle": 5,
     "Cactus": 11,
     "Spider": 3,
@@ -29,8 +29,8 @@
     "bot-207": 1
   },
   "loadout_history": {
-    "0": 75,
-    "1": 56,
+    "0": 83,
+    "1": 60,
     "8": 1,
     "14": 2,
     "32": 1,
@@ -38,6 +38,7 @@
     "29": 1,
     "79": 1,
     "9": 1,
-    "5": 1
+    "5": 1,
+    "15": 1
   }
 }

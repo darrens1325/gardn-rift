@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-600",
   "first_seen": 1778364748.7327218,
-  "last_seen": 1778372486.74575,
-  "episodes": 78,
-  "score_total": 1254,
+  "last_seen": 1778470874.264723,
+  "episodes": 87,
+  "score_total": 1385,
   "score_best": 243,
   "best_loadout": [
     0,
@@ -17,7 +17,7 @@
   "killed_by": {
     "Cactus": 4,
     "Spider": 3,
-    "Hornet": 32,
+    "Hornet": 34,
     "Centipede": 1,
     "rosie": 5,
     "Soldier Ant": 3,
@@ -33,11 +33,13 @@
     "Evil Centipede": 4,
     "Boulder": 3,
     "Beetle": 2,
-    "bot-301": 1
+    "bot-301": 1,
+    "bot-304": 2,
+    "bot-404": 1
   },
   "loadout_history": {
-    "0": 70,
-    "1": 54,
+    "0": 79,
+    "1": 60,
     "5": 1,
     "14": 1,
     "45": 1,

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-516",
   "first_seen": 1778364745.0597289,
-  "last_seen": 1778366665.431304,
-  "episodes": 10,
-  "score_total": 133,
+  "last_seen": 1778470876.133296,
+  "episodes": 19,
+  "score_total": 231,
   "score_best": 28,
   "best_loadout": [
     1,
@@ -16,10 +16,14 @@
   "killed_by": {
     "Beetle": 3,
     "Hornet": 1,
-    "Bee": 3
+    "Bee": 3,
+    "Ladybug": 1,
+    "Wasp": 5
   },
   "loadout_history": {
-    "0": 5,
-    "1": 10
+    "0": 14,
+    "1": 17,
+    "49": 1,
+    "14": 1
   }
 }

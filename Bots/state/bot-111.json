@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-111",
   "first_seen": 1778364754.971021,
-  "last_seen": 1778366663.2775428,
-  "episodes": 9,
-  "score_total": 190,
+  "last_seen": 1778470869.311351,
+  "episodes": 18,
+  "score_total": 264,
   "score_best": 84,
   "best_loadout": [
     1,
@@ -14,16 +14,21 @@
     0
   ],
   "killed_by": {
-    "Hornet": 2,
+    "Hornet": 4,
     "Scorpion": 1,
     "Spider": 3,
-    "Cactus": 1
+    "Cactus": 2,
+    "Wasp": 1,
+    "Bee": 1
   },
   "loadout_history": {
-    "0": 7,
-    "1": 8,
+    "0": 16,
+    "1": 14,
     "15": 1,
-    "23": 1,
-    "59": 1
+    "23": 2,
+    "59": 1,
+    "5": 1,
+    "14": 1,
+    "24": 1
   }
 }

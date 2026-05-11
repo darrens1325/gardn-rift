@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-414",
   "first_seen": 1778364745.5698152,
-  "last_seen": 1778366658.760293,
-  "episodes": 9,
-  "score_total": 129,
+  "last_seen": 1778470879.954201,
+  "episodes": 18,
+  "score_total": 218,
   "score_best": 31,
   "best_loadout": [
     1,
@@ -16,12 +16,14 @@
   "killed_by": {
     "Spider": 1,
     "Hornet": 3,
-    "Beetle": 2,
-    "Ladybug": 1
+    "Beetle": 3,
+    "Ladybug": 1,
+    "Evil Centipede": 4,
+    "Desert Centipede": 1
   },
   "loadout_history": {
-    "0": 5,
-    "1": 9,
+    "0": 13,
+    "1": 17,
     "23": 1,
     "29": 1
   }

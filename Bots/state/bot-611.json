@@ -2,12 +2,12 @@
   "schema": 1,
   "name": "bot-611",
   "first_seen": 1778364748.318967,
-  "last_seen": 1778366689.10484,
-  "episodes": 10,
-  "score_total": 135,
-  "score_best": 20,
+  "last_seen": 1778470870.201827,
+  "episodes": 18,
+  "score_total": 229,
+  "score_best": 24,
   "best_loadout": [
-    1,
+    0,
     1,
     0,
     0,
@@ -17,11 +17,15 @@
     "Hornet": 3,
     "Boulder": 1,
     "Spider": 1,
-    "Soldier Ant": 2
+    "Soldier Ant": 2,
+    "Mantis": 1,
+    "Beetle": 1,
+    "Evil Centipede": 1,
+    "bot-116": 1
   },
   "loadout_history": {
-    "0": 6,
-    "1": 9,
+    "0": 14,
+    "1": 17,
     "48": 1
   }
 }

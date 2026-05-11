@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-607",
   "first_seen": 1778364747.9670122,
-  "last_seen": 1778366658.874808,
-  "episodes": 8,
-  "score_total": 78,
+  "last_seen": 1778470888.5153852,
+  "episodes": 17,
+  "score_total": 165,
   "score_best": 34,
   "best_loadout": [
     1,
@@ -16,11 +16,13 @@
   "killed_by": {
     "Beetle": 3,
     "Centipede": 1,
-    "Hornet": 2,
-    "Spider": 1
+    "Hornet": 4,
+    "Spider": 1,
+    "Mantis": 1,
+    "Wasp": 2
   },
   "loadout_history": {
-    "1": 8,
-    "0": 5
+    "1": 16,
+    "0": 13
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-104",
   "first_seen": 1778364741.737202,
-  "last_seen": 1778372535.8593721,
-  "episodes": 78,
-  "score_total": 1617,
+  "last_seen": 1778470910.442923,
+  "episodes": 87,
+  "score_total": 1757,
   "score_best": 343,
   "best_loadout": [
     0,
@@ -15,7 +15,7 @@
     0
   ],
   "killed_by": {
-    "Hornet": 31,
+    "Hornet": 36,
     "Evil Centipede": 3,
     "Beetle": 3,
     "Centipede": 3,
@@ -35,14 +35,15 @@
     "Worker Ant": 2
   },
   "loadout_history": {
-    "1": 58,
-    "0": 65,
+    "1": 66,
+    "0": 73,
     "25": 2,
-    "5": 1,
+    "5": 2,
     "7": 1,
-    "14": 1,
+    "14": 2,
     "9": 1,
     "79": 1,
-    "36": 1
+    "36": 1,
+    "28": 1
   }
 }

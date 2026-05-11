@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-205",
   "first_seen": 1778364743.513648,
-  "last_seen": 1778372479.954619,
-  "episodes": 78,
-  "score_total": 913,
+  "last_seen": 1778470895.963847,
+  "episodes": 86,
+  "score_total": 953,
   "score_best": 77,
   "best_loadout": [
     0,
@@ -14,7 +14,7 @@
     0
   ],
   "killed_by": {
-    "Hornet": 27,
+    "Hornet": 32,
     "Soldier Ant": 4,
     "Ladybug": 4,
     "Beetle": 10,
@@ -31,11 +31,12 @@
     "Spider": 2,
     "Massive Beetle": 1,
     "Centipede": 1,
-    "leafy": 2
+    "leafy": 2,
+    "Wasp": 1
   },
   "loadout_history": {
-    "0": 69,
-    "1": 57,
+    "0": 77,
+    "1": 61,
     "10": 1,
     "14": 1,
     "23": 1,
@@ -45,6 +46,8 @@
     "46": 1,
     "25": 1,
     "79": 1,
-    "6": 1
+    "6": 1,
+    "15": 1,
+    "18": 1
   }
 }

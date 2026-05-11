@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-501",
   "first_seen": 1778364744.039598,
-  "last_seen": 1778372487.924698,
-  "episodes": 78,
-  "score_total": 903,
+  "last_seen": 1778470873.618933,
+  "episodes": 86,
+  "score_total": 950,
   "score_best": 65,
   "best_loadout": [
     0,
@@ -14,7 +14,7 @@
     1
   ],
   "killed_by": {
-    "Hornet": 34,
+    "Hornet": 37,
     "Cactus": 3,
     "Beetle": 2,
     "Scorpion": 2,
@@ -30,11 +30,12 @@
     "Worker Ant": 1,
     "bot-501": 1,
     "Spider": 3,
-    "bot-502": 1
+    "bot-502": 1,
+    "Mantis": 1
   },
   "loadout_history": {
-    "1": 60,
-    "0": 67,
+    "1": 66,
+    "0": 75,
     "5": 2,
     "14": 1,
     "48": 1,

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-405",
   "first_seen": 1778364743.653638,
-  "last_seen": 1778372484.771422,
-  "episodes": 79,
-  "score_total": 923,
+  "last_seen": 1778470876.8235059,
+  "episodes": 87,
+  "score_total": 966,
   "score_best": 81,
   "best_loadout": [
     0,
@@ -14,7 +14,7 @@
     0
   ],
   "killed_by": {
-    "Hornet": 34,
+    "Hornet": 36,
     "Cactus": 10,
     "bot-413": 1,
     "bot-417": 1,
@@ -33,11 +33,12 @@
     "Bee": 1,
     "Desert Centipede": 1,
     "Centipede": 2,
-    "Worker Ant": 1
+    "Worker Ant": 1,
+    "Mantis": 1
   },
   "loadout_history": {
-    "0": 68,
-    "1": 56,
+    "0": 76,
+    "1": 62,
     "34": 2,
     "8": 1,
     "50": 1,

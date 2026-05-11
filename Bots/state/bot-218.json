@@ -2,26 +2,30 @@
   "schema": 1,
   "name": "bot-218",
   "first_seen": 1778364743.3603299,
-  "last_seen": 1778366690.362827,
-  "episodes": 10,
-  "score_total": 108,
-  "score_best": 37,
+  "last_seen": 1778470876.770456,
+  "episodes": 19,
+  "score_total": 264,
+  "score_best": 60,
   "best_loadout": [
-    1,
+    0,
+    0,
     0,
     1,
-    1,
-    1
+    0
   ],
   "killed_by": {
     "Boulder": 1,
     "Worker Ant": 1,
     "Massive Beetle": 1,
-    "Hornet": 3
+    "Hornet": 6,
+    "Spider": 1,
+    "Beetle": 1
   },
   "loadout_history": {
-    "0": 7,
-    "1": 10,
-    "15": 1
+    "0": 13,
+    "1": 18,
+    "15": 1,
+    "24": 1,
+    "167": 1
   }
 }

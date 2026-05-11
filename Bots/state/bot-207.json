@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-207",
   "first_seen": 1778364743.9667141,
-  "last_seen": 1778366649.986798,
-  "episodes": 9,
-  "score_total": 99,
+  "last_seen": 1778471115.444362,
+  "episodes": 17,
+  "score_total": 127,
   "score_best": 24,
   "best_loadout": [
     0,
@@ -17,10 +17,11 @@
     "Bee": 1,
     "Hornet": 4,
     "Spider": 3,
-    "Beetle": 1
+    "Beetle": 1,
+    "Desert Centipede": 1
   },
   "loadout_history": {
-    "1": 9,
-    "0": 5
+    "1": 14,
+    "0": 12
   }
 }

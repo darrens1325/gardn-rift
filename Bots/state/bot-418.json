@@ -2,24 +2,27 @@
   "schema": 1,
   "name": "bot-418",
   "first_seen": 1778364745.052651,
-  "last_seen": 1778366685.447198,
-  "episodes": 10,
-  "score_total": 88,
-  "score_best": 28,
+  "last_seen": 1778470871.482464,
+  "episodes": 19,
+  "score_total": 185,
+  "score_best": 36,
   "best_loadout": [
     1,
-    0,
     1,
     1,
-    0
+    1,
+    1
   ],
   "killed_by": {
     "Beetle": 4,
     "Soldier Ant": 2,
-    "Evil Centipede": 1
+    "Evil Centipede": 1,
+    "Spider": 2,
+    "Hornet": 4
   },
   "loadout_history": {
-    "1": 10,
-    "0": 6
+    "1": 18,
+    "0": 13,
+    "5": 1
   }
 }

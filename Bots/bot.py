@@ -44,6 +44,7 @@ from agent import (
     is_movement_action,
 )
 from memory import EpisodicMemory, PersistentMemory
+from wall_map import WALL_FEAT_DIM, load_walls, wall_ray_features
 from protocol import (
     C_CHAT,
     C_CLIENT_UPDATE,
@@ -380,11 +381,13 @@ def _build_state(
     loadout_type_feats: list[float],
     drop_feats: list[float],
     loadout_burst_feats: list[float],
+    wall_feats: list[float],
 ) -> list[float]:
     # Append-only layout. Indices [0..40] match the original 41-input
-    # version, [0..68] match the type+drops version, and [69..84] are the
-    # newly-appended per-slot effective-burst column. Older checkpoints
-    # pad-load cleanly into the first 41 / 69 input columns.
+    # version, [0..68] match the type+drops version, [69..84] are the
+    # per-slot effective-burst column, [85..88] are the wall-ray
+    # sensors. Older checkpoints pad-load cleanly into the leading
+    # slots; new training fills the trailing wall columns.
     return (
         [float(my_player.get("health_ratio", 1.0))]
         + hostile_feats
@@ -393,6 +396,7 @@ def _build_state(
         + loadout_type_feats
         + drop_feats
         + loadout_burst_feats
+        + wall_feats
     )
 
 
@@ -438,6 +442,16 @@ def _peer_features(agent: DQNAgent, my_name: str, my_player: dict) -> list[float
             out.extend([0.0] * COMM_PER_PEER)
     return out
 
+
+# Static wall map, loaded once per process and shared across all bots
+# in this worker. `load_walls` returns (0, 0, []) if the .tmj is
+# missing — in that case `wall_ray_features` reports "fully clear" in
+# every direction, matching the pre-wall behavior so a bot run without
+# the map still functions (just won't learn wall avoidance).
+_WALL_WORLD_W, _WALL_WORLD_H, _WALL_RECTS = load_walls()
+print(f"[wall_map] loaded {len(_WALL_RECTS)} wall rect(s); world bounds "
+      f"{_WALL_WORLD_W:.0f} × {_WALL_WORLD_H:.0f}", flush=True)
+_ZERO_WALL_FEATS = [0.0] * WALL_FEAT_DIM
 
 _ZERO_STATE = [0.0] * STATE_DIM
 
@@ -794,6 +808,17 @@ class LearningBot:
         # condition on whatever peers decided last tick — never on our own
         # current decision (no self-loops).
         peer_feats = _peer_features(self.agent, self.name, player)
+        # Wall-distance sensors — 4 cardinal-direction rays to the
+        # nearest wall AABB (or arena boundary), normalised to [0, 1].
+        # Lets the policy learn "I'm cornered, back off" without
+        # waiting to grind against geometry.
+        if _WALL_RECTS or _WALL_WORLD_W > 0:
+            wall_feats = wall_ray_features(
+                float(player.get("x", 0.0)), float(player.get("y", 0.0)),
+                _WALL_WORLD_W, _WALL_WORLD_H, _WALL_RECTS,
+            )
+        else:
+            wall_feats = _ZERO_WALL_FEATS
         state = _build_state(
             player,
             hostile_feats,
@@ -802,6 +827,7 @@ class LearningBot:
             loadout_type_feats,
             drop_feats,
             loadout_burst_feats,
+            wall_feats,
         )
 
         cur_score = int(player.get("score", 0))

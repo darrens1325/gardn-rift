@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-617",
   "first_seen": 1778364747.596433,
-  "last_seen": 1778366660.3052878,
-  "episodes": 9,
-  "score_total": 124,
+  "last_seen": 1778470889.9173272,
+  "episodes": 18,
+  "score_total": 183,
   "score_best": 29,
   "best_loadout": [
     1,
@@ -18,10 +18,16 @@
     "Spider": 1,
     "Centipede": 1,
     "bot-506": 1,
-    "Hornet": 2
+    "Hornet": 2,
+    "Beetle": 1,
+    "Wasp": 1
   },
   "loadout_history": {
-    "1": 9,
-    "0": 4
+    "1": 17,
+    "0": 12,
+    "15": 1,
+    "9": 1,
+    "18": 1,
+    "19": 1
   }
 }

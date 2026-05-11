@@ -2,25 +2,31 @@
   "schema": 1,
   "name": "bot-506",
   "first_seen": 1778364744.48,
-  "last_seen": 1778366682.067557,
-  "episodes": 10,
-  "score_total": 166,
-  "score_best": 35,
+  "last_seen": 1778470903.234617,
+  "episodes": 19,
+  "score_total": 1256,
+  "score_best": 1021,
   "best_loadout": [
-    0,
     1,
     1,
     1,
-    0
+    1,
+    1,
+    9
   ],
   "killed_by": {
-    "Hornet": 4,
+    "Hornet": 7,
     "bot-617": 1,
     "Bee": 1,
-    "Beetle": 1
+    "Beetle": 1,
+    "Cactus": 3,
+    "Wasp": 1
   },
   "loadout_history": {
-    "1": 10,
-    "0": 6
+    "1": 17,
+    "0": 14,
+    "9": 1,
+    "14": 1,
+    "33": 1
   }
 }

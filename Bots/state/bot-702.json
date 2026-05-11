@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-702",
   "first_seen": 1778364746.484416,
-  "last_seen": 1778372500.685764,
-  "episodes": 76,
-  "score_total": 1033,
+  "last_seen": 1778470880.1234329,
+  "episodes": 85,
+  "score_total": 1138,
   "score_best": 69,
   "best_loadout": [
     0,
@@ -16,7 +16,7 @@
   "killed_by": {
     "Bee": 1,
     "Beetle": 8,
-    "Hornet": 36,
+    "Hornet": 37,
     "Ladybug": 4,
     "Centipede": 1,
     "Scorpion": 1,
@@ -26,11 +26,13 @@
     "Soldier Ant": 1,
     "Spider": 4,
     "Desert Centipede": 1,
-    "bot-209": 1
+    "bot-209": 1,
+    "Wasp": 2,
+    "Mantis": 2
   },
   "loadout_history": {
-    "1": 50,
-    "0": 67,
+    "1": 58,
+    "0": 74,
     "62": 1,
     "24": 1,
     "5": 3,

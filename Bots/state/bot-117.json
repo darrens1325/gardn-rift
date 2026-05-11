@@ -2,23 +2,29 @@
   "schema": 1,
   "name": "bot-117",
   "first_seen": 1778364742.580827,
-  "last_seen": 1778366643.581784,
-  "episodes": 10,
-  "score_total": 83,
-  "score_best": 15,
+  "last_seen": 1778470877.6163788,
+  "episodes": 19,
+  "score_total": 1164,
+  "score_best": 1010,
   "best_loadout": [
-    1,
-    1,
-    1,
-    1,
-    1
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
-    "Hornet": 7,
-    "Worker Ant": 1
+    "Hornet": 10,
+    "Worker Ant": 1,
+    "Wasp": 1,
+    "Mantis": 2
   },
   "loadout_history": {
-    "1": 10,
-    "0": 6
+    "1": 17,
+    "0": 14,
+    "16": 1,
+    "9": 1,
+    "18": 1
   }
 }

@@ -2,30 +2,33 @@
   "schema": 1,
   "name": "bot-714",
   "first_seen": 1778364747.564119,
-  "last_seen": 1778366669.516922,
-  "episodes": 10,
-  "score_total": 148,
-  "score_best": 27,
+  "last_seen": 1778470901.9718468,
+  "episodes": 19,
+  "score_total": 251,
+  "score_best": 38,
   "best_loadout": [
-    1,
+    5,
     0,
-    1,
-    1,
-    1
+    9,
+    0,
+    0
   ],
   "killed_by": {
-    "Hornet": 2,
+    "Hornet": 4,
     "Bee": 2,
     "Evil Centipede": 1,
     "Ladybug": 1,
-    "Beetle": 2,
+    "Beetle": 5,
     "Cactus": 1
   },
   "loadout_history": {
-    "1": 10,
-    "0": 4,
+    "1": 16,
+    "0": 12,
     "45": 1,
     "28": 1,
-    "49": 1
+    "49": 1,
+    "14": 1,
+    "9": 1,
+    "5": 1
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-512",
   "first_seen": 1778364754.958504,
-  "last_seen": 1778366666.731235,
-  "episodes": 9,
-  "score_total": 1125,
+  "last_seen": 1778470885.937419,
+  "episodes": 18,
+  "score_total": 1247,
   "score_best": 1048,
   "best_loadout": [
     0,
@@ -16,12 +16,19 @@
   ],
   "killed_by": {
     "Ladybug": 1,
-    "Hornet": 6,
-    "Cactus": 2
+    "Hornet": 8,
+    "Cactus": 2,
+    "Beetle": 1,
+    "Bee": 1,
+    "Mantis": 1
   },
   "loadout_history": {
-    "0": 5,
-    "1": 9,
-    "14": 1
+    "0": 13,
+    "1": 17,
+    "14": 1,
+    "10": 1,
+    "18": 1,
+    "28": 1,
+    "5": 1
   }
 }

@@ -2,26 +2,28 @@
   "schema": 1,
   "name": "bot-209",
   "first_seen": 1778364745.407786,
-  "last_seen": 1778366652.1837718,
-  "episodes": 10,
-  "score_total": 73,
-  "score_best": 18,
+  "last_seen": 1778470886.354811,
+  "episodes": 19,
+  "score_total": 165,
+  "score_best": 30,
   "best_loadout": [
     1,
+    1,
+    1,
     0,
-    1,
-    1,
-    1
+    0
   ],
   "killed_by": {
-    "Cactus": 4,
-    "Hornet": 1,
+    "Cactus": 5,
+    "Hornet": 2,
     "Centipede": 4,
-    "Boulder": 1
+    "Boulder": 1,
+    "Evil Centipede": 1,
+    "bot-416": 2
   },
   "loadout_history": {
-    "0": 6,
-    "1": 9,
+    "0": 14,
+    "1": 17,
     "5": 1,
     "14": 1
   }
