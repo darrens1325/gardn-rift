@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-100",
   "first_seen": 1778364740.804471,
-  "last_seen": 1778470891.2604249,
-  "episodes": 86,
-  "score_total": 2043,
+  "last_seen": 1778471629.765447,
+  "episodes": 87,
+  "score_total": 2063,
   "score_best": 1003,
   "best_loadout": [
     0,
@@ -17,7 +17,7 @@
   "killed_by": {
     "Hornet": 26,
     "Spider": 2,
-    "Beetle": 7,
+    "Beetle": 8,
     "Cactus": 7,
     "Rock": 1,
     "Soldier Ant": 5,
@@ -39,7 +39,7 @@
   },
   "loadout_history": {
     "0": 72,
-    "1": 64,
+    "1": 65,
     "10": 1,
     "18": 2,
     "15": 1,

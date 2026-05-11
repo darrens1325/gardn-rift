@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-706",
   "first_seen": 1778364754.562461,
-  "last_seen": 1778470871.300438,
-  "episodes": 18,
+  "last_seen": 1778471652.089952,
+  "episodes": 19,
   "score_total": 311,
   "score_best": 84,
   "best_loadout": [
@@ -20,8 +20,8 @@
     "Cactus": 1
   },
   "loadout_history": {
-    "0": 14,
-    "1": 16,
+    "0": 15,
+    "1": 17,
     "25": 1,
     "14": 2,
     "10": 1,

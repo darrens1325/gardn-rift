@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "leafy",
   "first_seen": 1778364027.298105,
-  "last_seen": 1778470876.143934,
-  "episodes": 110,
-  "score_total": 1365,
+  "last_seen": 1778471644.703637,
+  "episodes": 111,
+  "score_total": 1370,
   "score_best": 71,
   "best_loadout": [
     0,
@@ -34,8 +34,8 @@
     "Wasp": 2
   },
   "loadout_history": {
-    "0": 81,
-    "1": 93,
+    "0": 82,
+    "1": 94,
     "79": 1,
     "6": 1,
     "40": 2,

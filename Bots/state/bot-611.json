@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-611",
   "first_seen": 1778364748.318967,
-  "last_seen": 1778470870.201827,
-  "episodes": 18,
-  "score_total": 229,
+  "last_seen": 1778471632.7547572,
+  "episodes": 19,
+  "score_total": 244,
   "score_best": 24,
   "best_loadout": [
     0,
@@ -24,8 +24,8 @@
     "bot-116": 1
   },
   "loadout_history": {
-    "0": 14,
-    "1": 17,
+    "0": 15,
+    "1": 18,
     "48": 1
   }
 }

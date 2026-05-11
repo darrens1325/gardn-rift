@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-111",
   "first_seen": 1778364754.971021,
-  "last_seen": 1778470869.311351,
-  "episodes": 18,
+  "last_seen": 1778471655.716008,
+  "episodes": 19,
   "score_total": 264,
   "score_best": 84,
   "best_loadout": [
@@ -22,8 +22,8 @@
     "Bee": 1
   },
   "loadout_history": {
-    "0": 16,
-    "1": 14,
+    "0": 17,
+    "1": 15,
     "15": 1,
     "23": 2,
     "59": 1,

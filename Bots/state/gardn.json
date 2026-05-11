@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "gardn",
   "first_seen": 1778364026.79023,
-  "last_seen": 1778470943.7141912,
-  "episodes": 111,
-  "score_total": 1122,
+  "last_seen": 1778471650.031144,
+  "episodes": 112,
+  "score_total": 1123,
   "score_best": 41,
   "best_loadout": [
     1,
@@ -34,8 +34,8 @@
     "Mantis": 2
   },
   "loadout_history": {
-    "0": 84,
-    "1": 86,
+    "0": 85,
+    "1": 87,
     "9": 1,
     "18": 1,
     "10": 1,

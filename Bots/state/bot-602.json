@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-602",
   "first_seen": 1778364745.897158,
-  "last_seen": 1778470892.76457,
-  "episodes": 86,
-  "score_total": 1055,
+  "last_seen": 1778471632.994424,
+  "episodes": 87,
+  "score_total": 1067,
   "score_best": 211,
   "best_loadout": [
     0,
@@ -32,11 +32,12 @@
     "Ant Hole": 2,
     "bot-205": 1,
     "Scorpion": 2,
-    "Bee": 1
+    "Bee": 1,
+    "Centipede": 1
   },
   "loadout_history": {
-    "0": 77,
-    "1": 62,
+    "0": 78,
+    "1": 63,
     "40": 1,
     "29": 1,
     "5": 2,
@@ -44,6 +45,7 @@
     "14": 2,
     "19": 1,
     "15": 1,
-    "23": 1
+    "23": 1,
+    "21": 1
   }
 }

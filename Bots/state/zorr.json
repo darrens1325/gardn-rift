@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "zorr",
   "first_seen": 1778364032.693025,
-  "last_seen": 1778470870.2912278,
-  "episodes": 40,
+  "last_seen": 1778471659.5361211,
+  "episodes": 41,
   "score_total": 427,
   "score_best": 29,
   "best_loadout": [
@@ -26,8 +26,8 @@
     "Cactus": 2
   },
   "loadout_history": {
-    "0": 17,
-    "1": 37,
+    "0": 18,
+    "1": 38,
     "10": 1,
     "5": 1,
     "9": 2,

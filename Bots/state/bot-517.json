@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-517",
   "first_seen": 1778364746.551878,
-  "last_seen": 1778470878.074935,
-  "episodes": 19,
-  "score_total": 274,
+  "last_seen": 1778471631.343627,
+  "episodes": 20,
+  "score_total": 290,
   "score_best": 60,
   "best_loadout": [
     0,
@@ -16,16 +16,17 @@
   "killed_by": {
     "Hornet": 8,
     "Cactus": 1,
-    "Worker Ant": 2,
+    "Worker Ant": 3,
     "bot-709": 1,
     "Ladybug": 1
   },
   "loadout_history": {
-    "1": 17,
-    "0": 12,
+    "1": 18,
+    "0": 13,
     "11": 1,
     "9": 1,
     "24": 1,
-    "10": 1
+    "10": 1,
+    "28": 1
   }
 }

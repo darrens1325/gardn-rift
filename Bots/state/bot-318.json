@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-318",
   "first_seen": 1778364744.2105541,
-  "last_seen": 1778470894.540388,
-  "episodes": 19,
-  "score_total": 250,
+  "last_seen": 1778471643.94726,
+  "episodes": 20,
+  "score_total": 272,
   "score_best": 30,
   "best_loadout": [
     1,
@@ -23,8 +23,8 @@
     "Bee": 1
   },
   "loadout_history": {
-    "1": 18,
-    "0": 13,
+    "1": 19,
+    "0": 14,
     "10": 1,
     "14": 1
   }

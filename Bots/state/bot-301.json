@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-301",
   "first_seen": 1778364742.340859,
-  "last_seen": 1778470878.9410272,
-  "episodes": 87,
-  "score_total": 1063,
+  "last_seen": 1778471663.472703,
+  "episodes": 88,
+  "score_total": 1064,
   "score_best": 65,
   "best_loadout": [
     0,
@@ -40,7 +40,7 @@
   },
   "loadout_history": {
     "1": 59,
-    "0": 74,
+    "0": 75,
     "28": 1,
     "40": 2,
     "79": 1,

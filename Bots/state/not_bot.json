@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "not bot",
   "first_seen": 1778364028.713105,
-  "last_seen": 1778470872.960792,
-  "episodes": 40,
-  "score_total": 385,
+  "last_seen": 1778471641.085761,
+  "episodes": 41,
+  "score_total": 407,
   "score_best": 43,
   "best_loadout": [
     1,
@@ -24,10 +24,11 @@
     "bot-602": 1,
     "Boulder": 2,
     "bot-709": 1,
-    "bot-717": 2
+    "bot-717": 2,
+    "Evil Centipede": 1
   },
   "loadout_history": {
-    "1": 39,
+    "1": 40,
     "0": 18,
     "14": 1,
     "49": 1

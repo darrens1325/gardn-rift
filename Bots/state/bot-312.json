@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-312",
   "first_seen": 1778364748.106099,
-  "last_seen": 1778470871.0845592,
-  "episodes": 19,
-  "score_total": 229,
+  "last_seen": 1778471638.899698,
+  "episodes": 20,
+  "score_total": 235,
   "score_best": 57,
   "best_loadout": [
     1,
@@ -24,8 +24,8 @@
     "Mantis": 2
   },
   "loadout_history": {
-    "0": 14,
-    "1": 18,
+    "0": 15,
+    "1": 19,
     "11": 1,
     "14": 2,
     "32": 1,

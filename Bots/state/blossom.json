@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "blossom",
   "first_seen": 1778364027.743027,
-  "last_seen": 1778470888.777975,
-  "episodes": 111,
+  "last_seen": 1778471658.356899,
+  "episodes": 112,
   "score_total": 1231,
   "score_best": 69,
   "best_loadout": [
@@ -31,8 +31,8 @@
     "Ladybug": 3
   },
   "loadout_history": {
-    "1": 90,
-    "0": 77,
+    "1": 91,
+    "0": 78,
     "24": 2,
     "7": 1,
     "30": 1,

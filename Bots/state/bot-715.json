@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-715",
   "first_seen": 1778364748.133724,
-  "last_seen": 1778470872.965939,
-  "episodes": 17,
-  "score_total": 302,
+  "last_seen": 1778471636.7618759,
+  "episodes": 18,
+  "score_total": 306,
   "score_best": 78,
   "best_loadout": [
     0,
@@ -23,8 +23,8 @@
     "Mantis": 1
   },
   "loadout_history": {
-    "1": 13,
+    "1": 14,
     "34": 1,
-    "0": 10
+    "0": 11
   }
 }

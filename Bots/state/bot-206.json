@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-206",
   "first_seen": 1778364743.097614,
-  "last_seen": 1778470919.706568,
-  "episodes": 20,
+  "last_seen": 1778471653.230582,
+  "episodes": 21,
   "score_total": 353,
   "score_best": 71,
   "best_loadout": [
@@ -20,7 +20,7 @@
     "Centipede": 1
   },
   "loadout_history": {
-    "0": 16,
+    "0": 17,
     "1": 17,
     "79": 1,
     "5": 1,

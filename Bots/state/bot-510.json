@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-510",
   "first_seen": 1778364744.9234161,
-  "last_seen": 1778470875.57309,
-  "episodes": 18,
-  "score_total": 220,
+  "last_seen": 1778471636.2879841,
+  "episodes": 19,
+  "score_total": 228,
   "score_best": 45,
   "best_loadout": [
     0,
@@ -14,14 +14,14 @@
     1
   ],
   "killed_by": {
-    "Hornet": 5,
+    "Hornet": 6,
     "Spider": 4,
     "rosie": 1,
     "Mantis": 4
   },
   "loadout_history": {
-    "1": 16,
-    "0": 12,
+    "1": 17,
+    "0": 13,
     "14": 2,
     "19": 1
   }

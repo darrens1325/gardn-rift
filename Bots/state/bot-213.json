@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-213",
   "first_seen": 1778364745.864735,
-  "last_seen": 1778470869.927514,
-  "episodes": 17,
-  "score_total": 168,
+  "last_seen": 1778471627.067109,
+  "episodes": 18,
+  "score_total": 178,
   "score_best": 31,
   "best_loadout": [
     0,
@@ -21,8 +21,8 @@
     "Beetle": 1
   },
   "loadout_history": {
-    "0": 14,
-    "1": 15,
+    "0": 15,
+    "1": 16,
     "9": 1,
     "7": 1,
     "48": 1

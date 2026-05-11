@@ -112,6 +112,9 @@ SINGLE(Name, nametag_visible, uint8_t)
     SINGLE(max_health, float, =0) \
     SINGLE(damage, float, =0) \
     SINGLE(armor, float, =0) \
+    SINGLE(armor_stacks, uint8_t, =0) \
+    SINGLE(armor_per_stack, float, =0) \
+    SINGLE(armor_stack_tick, game_tick_t, =0) \
     SINGLE(poison_armor, float, =0) \
     SINGLE(damage_reflection, float, =0) \
     SINGLE(last_damaged_by, EntityID, =NULL_ENTITY) \

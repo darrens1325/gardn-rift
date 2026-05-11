@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-713",
   "first_seen": 1778364749.495064,
-  "last_seen": 1778470875.764829,
-  "episodes": 18,
-  "score_total": 216,
+  "last_seen": 1778471642.005614,
+  "episodes": 19,
+  "score_total": 221,
   "score_best": 34,
   "best_loadout": [
     1,
@@ -20,10 +20,11 @@
     "Wasp": 2
   },
   "loadout_history": {
-    "1": 15,
-    "0": 11,
+    "1": 16,
+    "0": 12,
     "36": 1,
     "9": 1,
-    "5": 1
+    "5": 1,
+    "18": 1
   }
 }

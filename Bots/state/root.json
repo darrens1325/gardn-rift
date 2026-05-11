@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "root",
   "first_seen": 1778364027.520142,
-  "last_seen": 1778470884.074134,
-  "episodes": 110,
-  "score_total": 1465,
+  "last_seen": 1778471633.3816981,
+  "episodes": 111,
+  "score_total": 1477,
   "score_best": 107,
   "best_loadout": [
     0,
@@ -34,11 +34,12 @@
     "bot-107": 1,
     "Desert Centipede": 3,
     "Leafbug": 1,
-    "Scorpion": 1
+    "Scorpion": 1,
+    "Mantis": 1
   },
   "loadout_history": {
-    "1": 85,
-    "0": 78,
+    "1": 86,
+    "0": 79,
     "47": 1,
     "20": 1,
     "39": 1,

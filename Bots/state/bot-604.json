@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-604",
   "first_seen": 1778364745.7694561,
-  "last_seen": 1778470888.781138,
-  "episodes": 86,
-  "score_total": 1134,
+  "last_seen": 1778471653.034379,
+  "episodes": 87,
+  "score_total": 1141,
   "score_best": 74,
   "best_loadout": [
     0,
@@ -15,7 +15,7 @@
   ],
   "killed_by": {
     "Spider": 4,
-    "Hornet": 29,
+    "Hornet": 30,
     "Evil Centipede": 4,
     "bot-600": 1,
     "Ant Hole": 1,
@@ -38,8 +38,8 @@
     "Centipede": 2
   },
   "loadout_history": {
-    "1": 62,
-    "0": 76,
+    "1": 63,
+    "0": 77,
     "14": 2,
     "28": 1,
     "7": 1,

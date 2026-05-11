@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-603",
   "first_seen": 1778364748.675509,
-  "last_seen": 1778470884.328181,
-  "episodes": 88,
+  "last_seen": 1778471629.7442079,
+  "episodes": 89,
   "score_total": 1094,
   "score_best": 72,
   "best_loadout": [
@@ -32,8 +32,8 @@
     "bot-107": 1
   },
   "loadout_history": {
-    "0": 80,
-    "1": 72,
+    "0": 81,
+    "1": 73,
     "18": 3,
     "7": 1,
     "34": 1,

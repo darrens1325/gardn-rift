@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-105",
   "first_seen": 1778364740.783486,
-  "last_seen": 1778470911.794183,
-  "episodes": 89,
-  "score_total": 1323,
+  "last_seen": 1778471634.0957701,
+  "episodes": 90,
+  "score_total": 1328,
   "score_best": 210,
   "best_loadout": [
     0,
@@ -30,11 +30,12 @@
     "bot-401": 1,
     "not bot": 1,
     "Massive Beetle": 1,
-    "bot-301": 1
+    "bot-301": 1,
+    "Wasp": 1
   },
   "loadout_history": {
-    "1": 65,
-    "0": 77,
+    "1": 66,
+    "0": 78,
     "63": 1,
     "9": 1,
     "40": 2,

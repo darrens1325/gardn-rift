@@ -2,10 +2,10 @@
   "schema": 1,
   "name": "bot-406",
   "first_seen": 1778364745.567152,
-  "last_seen": 1778470868.822187,
-  "episodes": 19,
-  "score_total": 148,
-  "score_best": 25,
+  "last_seen": 1778471628.1039722,
+  "episodes": 20,
+  "score_total": 178,
+  "score_best": 30,
   "best_loadout": [
     0,
     1,
@@ -15,7 +15,7 @@
   ],
   "killed_by": {
     "Beetle": 2,
-    "Scorpion": 1,
+    "Scorpion": 2,
     "bot-118": 1,
     "bot-313": 1,
     "Evil Centipede": 5,
@@ -24,9 +24,9 @@
     "Ladybug": 1
   },
   "loadout_history": {
-    "1": 17,
+    "1": 18,
     "49": 1,
-    "0": 15,
+    "0": 16,
     "18": 1,
     "5": 1
   }

@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-714",
   "first_seen": 1778364747.564119,
-  "last_seen": 1778470901.9718468,
-  "episodes": 19,
+  "last_seen": 1778471635.477946,
+  "episodes": 20,
   "score_total": 251,
   "score_best": 38,
   "best_loadout": [
@@ -22,8 +22,8 @@
     "Cactus": 1
   },
   "loadout_history": {
-    "1": 16,
-    "0": 12,
+    "1": 17,
+    "0": 13,
     "45": 1,
     "28": 1,
     "49": 1,

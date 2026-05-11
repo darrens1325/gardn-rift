@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-412",
   "first_seen": 1778364746.208626,
-  "last_seen": 1778470872.7637188,
-  "episodes": 18,
-  "score_total": 156,
+  "last_seen": 1778471627.912478,
+  "episodes": 19,
+  "score_total": 171,
   "score_best": 28,
   "best_loadout": [
     1,
@@ -19,11 +19,11 @@
     "Soldier Ant": 2,
     "Wasp": 1,
     "Bush": 1,
-    "Evil Centipede": 2
+    "Evil Centipede": 3
   },
   "loadout_history": {
-    "1": 17,
-    "0": 8,
+    "1": 18,
+    "0": 9,
     "48": 1,
     "18": 1,
     "24": 1

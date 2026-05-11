@@ -523,9 +523,9 @@ void tick_ai_behavior(Simulation *sim, Entity &ent) {
         case MobID::kSpider:
             // Web radius scales with the spider's rolled rarity (Mythic
             // spider drops MOB_RADIUS_MULT[Mythic]× the radius web).
-            if (ent.lifetime % (SIM_RATE) == 0)
-                alloc_web(sim, 25 * mob_radius_mult(ent.mob_rarity), ent);
-            tick_default_aggro(sim, ent, 1.20);
+            // if (ent.lifetime % (SIM_RATE) == 0)
+            //     alloc_web(sim, 25 * mob_radius_mult(ent.mob_rarity), ent);
+            tick_default_aggro(sim, ent, 0.95);
             break;
         case MobID::kQueenAnt:
             if (ent.lifetime % (2 * SIM_RATE) == 0) {

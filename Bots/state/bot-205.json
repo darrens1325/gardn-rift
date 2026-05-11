@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-205",
   "first_seen": 1778364743.513648,
-  "last_seen": 1778470895.963847,
-  "episodes": 86,
-  "score_total": 953,
+  "last_seen": 1778471626.951214,
+  "episodes": 87,
+  "score_total": 963,
   "score_best": 77,
   "best_loadout": [
     0,
@@ -35,8 +35,8 @@
     "Wasp": 1
   },
   "loadout_history": {
-    "0": 77,
-    "1": 61,
+    "0": 78,
+    "1": 62,
     "10": 1,
     "14": 1,
     "23": 1,

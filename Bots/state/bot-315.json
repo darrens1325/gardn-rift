@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-315",
   "first_seen": 1778364743.409051,
-  "last_seen": 1778470923.393686,
-  "episodes": 18,
+  "last_seen": 1778471640.525742,
+  "episodes": 19,
   "score_total": 226,
   "score_best": 26,
   "best_loadout": [
@@ -19,8 +19,8 @@
     "Ladybug": 2
   },
   "loadout_history": {
-    "1": 12,
-    "0": 13,
+    "1": 13,
+    "0": 14,
     "5": 1
   }
 }

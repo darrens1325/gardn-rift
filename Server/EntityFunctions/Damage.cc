@@ -20,6 +20,10 @@ void inflict_damage(Simulation *sim, EntityID const atk_id, EntityID const def_i
     if (defender.has_component(kMob) && defender.mob_id == MobID::kLeafbug) {
         amt = fclamp(amt - 10, 0, amt);
     }
+    if (type == DamageType::kContact && defender.has_component(kFlower) && defender.armor_stacks > 0) {
+        --defender.armor_stacks;
+        defender.armor = fclamp(defender.armor - defender.armor_per_stack, 0, defender.armor);
+    }
     if (amt <= 0) return;
     //if (amt <= defender.armor) return;
     float old_health = defender.health;

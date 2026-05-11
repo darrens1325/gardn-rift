@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-704",
   "first_seen": 1778364752.326335,
-  "last_seen": 1778470882.585739,
-  "episodes": 88,
-  "score_total": 2065,
+  "last_seen": 1778471645.2462778,
+  "episodes": 89,
+  "score_total": 2088,
   "score_best": 1020,
   "best_loadout": [
     0,
@@ -27,7 +27,7 @@
     "Ladybug": 1,
     "Evil Centipede": 7,
     "Soldier Ant": 1,
-    "Spider": 3,
+    "Spider": 4,
     "Bee": 2,
     "Sandstorm": 2,
     "bot-302": 2,
@@ -37,8 +37,8 @@
     "Wasp": 1
   },
   "loadout_history": {
-    "0": 81,
-    "1": 64,
+    "0": 82,
+    "1": 65,
     "28": 1,
     "9": 2,
     "34": 1,

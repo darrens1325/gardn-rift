@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot",
   "first_seen": 1778364031.0085309,
-  "last_seen": 1778470867.548373,
-  "episodes": 42,
+  "last_seen": 1778471638.097183,
+  "episodes": 43,
   "score_total": 391,
   "score_best": 25,
   "best_loadout": [
@@ -26,8 +26,8 @@
     "Cactus": 1
   },
   "loadout_history": {
-    "0": 17,
-    "1": 41,
+    "0": 18,
+    "1": 42,
     "18": 2,
     "9": 1,
     "24": 2

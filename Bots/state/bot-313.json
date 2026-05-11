@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-313",
   "first_seen": 1778364743.457301,
-  "last_seen": 1778470870.737395,
-  "episodes": 18,
-  "score_total": 235,
+  "last_seen": 1778471629.428041,
+  "episodes": 19,
+  "score_total": 245,
   "score_best": 37,
   "best_loadout": [
     1,
@@ -24,8 +24,8 @@
     "Mantis": 1
   },
   "loadout_history": {
-    "1": 18,
-    "0": 13,
+    "1": 19,
+    "0": 14,
     "5": 1,
     "14": 1,
     "10": 1,

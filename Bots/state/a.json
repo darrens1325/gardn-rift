@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "a",
   "first_seen": 1778364028.324828,
-  "last_seen": 1778470888.699295,
-  "episodes": 39,
-  "score_total": 458,
+  "last_seen": 1778471664.358089,
+  "episodes": 40,
+  "score_total": 474,
   "score_best": 55,
   "best_loadout": [
     0,
@@ -23,7 +23,7 @@
     "Spider": 2
   },
   "loadout_history": {
-    "0": 23,
+    "0": 24,
     "1": 36,
     "10": 1,
     "28": 1

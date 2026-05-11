@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-500",
   "first_seen": 1778364745.462504,
-  "last_seen": 1778470868.821318,
-  "episodes": 88,
-  "score_total": 1812,
+  "last_seen": 1778471636.2903428,
+  "episodes": 89,
+  "score_total": 1819,
   "score_best": 1015,
   "best_loadout": [
     0,
@@ -30,11 +30,11 @@
     "Scorpion": 3,
     "Evil Centipede": 5,
     "blossom": 1,
-    "Wasp": 2
+    "Wasp": 3
   },
   "loadout_history": {
-    "1": 64,
-    "0": 80,
+    "1": 65,
+    "0": 81,
     "14": 2,
     "39": 1,
     "18": 1,

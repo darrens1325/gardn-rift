@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-311",
   "first_seen": 1778364742.733154,
-  "last_seen": 1778470878.653824,
-  "episodes": 18,
-  "score_total": 311,
+  "last_seen": 1778471643.6883662,
+  "episodes": 19,
+  "score_total": 335,
   "score_best": 66,
   "best_loadout": [
     0,
@@ -24,8 +24,9 @@
     "Mantis": 1
   },
   "loadout_history": {
-    "0": 13,
-    "1": 16,
-    "5": 2
+    "0": 14,
+    "1": 17,
+    "5": 2,
+    "15": 1
   }
 }

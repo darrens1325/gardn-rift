@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "hello",
   "first_seen": 1778364027.7534652,
-  "last_seen": 1778470874.9842181,
-  "episodes": 110,
-  "score_total": 1367,
+  "last_seen": 1778471639.155711,
+  "episodes": 111,
+  "score_total": 1378,
   "score_best": 209,
   "best_loadout": [
     0,
@@ -29,8 +29,8 @@
     "Queen Ant": 2
   },
   "loadout_history": {
-    "0": 79,
-    "1": 85,
+    "0": 80,
+    "1": 86,
     "28": 2,
     "8": 1,
     "79": 1,

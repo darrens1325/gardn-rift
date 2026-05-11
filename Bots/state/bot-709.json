@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-709",
   "first_seen": 1778364747.6515641,
-  "last_seen": 1778470875.501271,
-  "episodes": 17,
-  "score_total": 185,
+  "last_seen": 1778471637.500557,
+  "episodes": 18,
+  "score_total": 192,
   "score_best": 31,
   "best_loadout": [
     0,
@@ -23,8 +23,8 @@
     "Wasp": 3
   },
   "loadout_history": {
-    "1": 16,
-    "0": 12,
+    "1": 17,
+    "0": 13,
     "11": 1
   }
 }

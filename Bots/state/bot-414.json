@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-414",
   "first_seen": 1778364745.5698152,
-  "last_seen": 1778470879.954201,
-  "episodes": 18,
-  "score_total": 218,
+  "last_seen": 1778471633.451833,
+  "episodes": 19,
+  "score_total": 245,
   "score_best": 31,
   "best_loadout": [
     1,
@@ -22,9 +22,10 @@
     "Desert Centipede": 1
   },
   "loadout_history": {
-    "0": 13,
-    "1": 17,
+    "0": 14,
+    "1": 18,
     "23": 1,
-    "29": 1
+    "29": 1,
+    "9": 1
   }
 }

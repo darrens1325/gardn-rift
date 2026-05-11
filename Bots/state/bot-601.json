@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-601",
   "first_seen": 1778364745.462831,
-  "last_seen": 1778470894.1845288,
-  "episodes": 89,
-  "score_total": 1259,
+  "last_seen": 1778471636.5217779,
+  "episodes": 90,
+  "score_total": 1272,
   "score_best": 207,
   "best_loadout": [
     0,
@@ -18,7 +18,7 @@
     "Sandstorm": 2,
     "Scorpion": 2,
     "Cactus": 7,
-    "Spider": 1,
+    "Spider": 2,
     "Beetle": 10,
     "Bee": 3,
     "Boulder": 4,
@@ -35,11 +35,12 @@
     "Evil Centipede": 1
   },
   "loadout_history": {
-    "0": 80,
-    "1": 64,
+    "0": 81,
+    "1": 65,
     "15": 1,
     "10": 1,
     "25": 1,
-    "5": 2
+    "5": 2,
+    "39": 1
   }
 }

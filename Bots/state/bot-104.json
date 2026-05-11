@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-104",
   "first_seen": 1778364741.737202,
-  "last_seen": 1778470910.442923,
-  "episodes": 87,
-  "score_total": 1757,
+  "last_seen": 1778471631.809344,
+  "episodes": 88,
+  "score_total": 1758,
   "score_best": 343,
   "best_loadout": [
     0,
@@ -35,8 +35,8 @@
     "Worker Ant": 2
   },
   "loadout_history": {
-    "1": 66,
-    "0": 73,
+    "1": 67,
+    "0": 74,
     "25": 2,
     "5": 2,
     "7": 1,

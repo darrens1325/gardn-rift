@@ -25,7 +25,7 @@ float const DIGGER_SPAWN_CHANCE = 0.25f;
 float const BASE_FLOWER_RADIUS = 25.0f;
 float const BASE_PETAL_ROTATION_SPEED = 2.5f;
 float const BASE_FOV = 0.9f;
-float const BASE_HEALTH = 100.0f;
+float const BASE_HEALTH = 200.0f;
 float const BASE_BODY_DAMAGE = 25.0f;
 
 // -----------------------------------------------------------------------------
@@ -698,6 +698,34 @@ struct PetalData const PETAL_DATA[PetalID::kNumPetals] = {
     {"Peas", "4 in 1 deal",
         scale_hp(5.0, 1), scale_dmg(8.0, 1), 7.0, 2.0, 4, RarityID::kEpic,
         {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
+    {"Root", "Slowly grants stacking armor that absorbs damage",
+        scale_hp(10.0, -3), scale_dmg(10.0, -3), 10.0, 1.0, 1, RarityID::kCommon, {
+            .defend_only = 1
+        }},
+    {"Root", "Slowly grants stacking armor that absorbs damage",
+        scale_hp(10.0, -2), scale_dmg(10.0, -2), 10.0, 1.0, 1, RarityID::kUnusual, {
+            .defend_only = 1
+    }},
+    {"Root", "Slowly grants stacking armor that absorbs damage",
+        scale_hp(10.0, -1), scale_dmg(10.0, -1), 10.0, 1.0, 1, RarityID::kRare, {
+            .defend_only = 1
+    }},
+    {"Root", "Slowly grants stacking armor that absorbs damage",
+        scale_hp(10.0, 0), scale_dmg(10.0, 0), 10.0, 1.0, 1, RarityID::kEpic, {
+            .defend_only = 1
+    }},
+    {"Root", "Slowly grants stacking armor that absorbs damage",
+        scale_hp(10.0, 1), scale_dmg(10.0, 1), 10.0, 1.0, 1, RarityID::kLegendary, {
+            .defend_only = 1
+    }},
+    {"Root", "Slowly grants stacking armor that absorbs damage",
+        scale_hp(10.0, 2), scale_dmg(10.0, 2), 10.0, 1.0, 1, RarityID::kMythic, {
+            .defend_only = 1
+    }},
+    {"Root", "Slowly grants stacking armor that absorbs damage",
+        scale_hp(10.0, 3), scale_dmg(10.0, 3), 10.0, 1.0, 1, RarityID::kUnique, {
+            .defend_only = 1
+    }},
 };
 
 struct MobData const MOB_DATA[MobID::kNumMobs] = {
@@ -849,13 +877,13 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Leafbug",
         "It looks like a leaf, but it's actually a bug.",
         RarityID::kCommon, {20.0}, 10.0, {30.0}, 2, {
-        PetalID::kCommonLeaf, PetalID::kLeaf, PetalID::kRareLeaf, PetalID::kEpicLeaf, PetalID::kLegendaryLeaf
+        PetalID::kCommonLeaf, PetalID::kLeaf, PetalID::kRareLeaf, PetalID::kEpicLeaf, PetalID::kLegendaryLeaf, PetalID::kCommonRoot, PetalID::kUnusualRoot, PetalID::kRoot, PetalID::kEpicRoot, PetalID::kLegendaryRoot, PetalID::kMythicRoot, PetalID::kUniqueRoot
     }, {}},
     {
         "Bush",
         "It's a bush. It doesn't do much.",
         RarityID::kCommon, {20, 70.0}, 10.0, {20, 70.0}, 1, {
-        PetalID::kCommonLeaf, PetalID::kLeaf, PetalID::kRareLeaf, PetalID::kEpicLeaf, PetalID::kLegendaryLeaf, PetalID::kCommonRose, PetalID::kRose, PetalID::kRareRose, PetalID::kLegendaryRose
+        PetalID::kCommonLeaf, PetalID::kLeaf, PetalID::kRareLeaf, PetalID::kEpicLeaf, PetalID::kLegendaryLeaf
     }, { .stationary = 1 }},
     {
         "Mantis",

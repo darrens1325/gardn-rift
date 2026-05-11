@@ -14,12 +14,27 @@ struct PlayerBuffs {
     float heal;
     float extra_vision;
     float extra_health;
+    float root_armor_per_stack;
     uint8_t yinyang_count;
     uint8_t has_antennae : 1;
     uint8_t has_observer : 1;
     uint8_t is_poisonous : 1;
     uint8_t has_cutter : 1;
+    uint8_t has_root : 1;
 };
+
+static float _root_armor_per_stack(PetalID::T id) {
+    switch (id) {
+        case PetalID::kCommonRoot:    return 12.0f;
+        case PetalID::kUnusualRoot:   return 24.0f;
+        case PetalID::kRoot:          return 48.0f;
+        case PetalID::kEpicRoot:      return 60.0f;
+        case PetalID::kLegendaryRoot: return 100.0f;
+        case PetalID::kMythicRoot:    return 150.0f;
+        case PetalID::kUniqueRoot:    return 200.0f;
+        default:                      return 0.0f;
+    }
+}
 
 static struct PlayerBuffs _get_petal_passive_buffs(Simulation *sim, Entity &player) {
     struct PlayerBuffs buffs = {0};
@@ -61,6 +76,13 @@ static struct PlayerBuffs _get_petal_passive_buffs(Simulation *sim, Entity &play
             player.damage_reflection = 0.25;
         } else if (slot_petal_id == PetalID::kLotus) {
             player.poison_armor = 3.5f / SIM_RATE;
+        } else {
+            float root_armor = _root_armor_per_stack(slot_petal_id);
+            if (root_armor > 0) {
+                buffs.has_root = 1;
+                if (root_armor > buffs.root_armor_per_stack)
+                    buffs.root_armor_per_stack = root_armor;
+            }
         }
     }
     return buffs;
@@ -96,6 +118,21 @@ void tick_player_behavior(Simulation *sim, Entity &player) {
         else player.damage = BASE_BODY_DAMAGE;
     }
     player.health = health_ratio * player.max_health;
+    if (buffs.has_root) {
+        player.armor_per_stack = buffs.root_armor_per_stack;
+        ++player.armor_stack_tick;
+        if (player.armor_stack_tick >= 2 * SIM_RATE) {
+            player.armor_stack_tick = 0;
+            if (player.armor_stacks < 10) ++player.armor_stacks;
+        }
+        if (player.armor_stacks > 10) player.armor_stacks = 10;
+        player.armor = player.armor_stacks * player.armor_per_stack;
+    } else {
+        player.armor_stacks = 0;
+        player.armor_stack_tick = 0;
+        player.armor_per_stack = 0;
+        player.armor = 0;
+    }
     if (buffs.heal > 0)
         inflict_heal(sim, player, buffs.heal);
     if (buffs.is_poisonous)

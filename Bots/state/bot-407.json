@@ -2,10 +2,10 @@
   "schema": 1,
   "name": "bot-407",
   "first_seen": 1778364745.217207,
-  "last_seen": 1778470868.453703,
-  "episodes": 16,
-  "score_total": 97,
-  "score_best": 22,
+  "last_seen": 1778471642.200607,
+  "episodes": 17,
+  "score_total": 130,
+  "score_best": 33,
   "best_loadout": [
     1,
     1,
@@ -22,7 +22,7 @@
   },
   "loadout_history": {
     "0": 13,
-    "1": 15,
+    "1": 16,
     "5": 1,
     "16": 1
   }

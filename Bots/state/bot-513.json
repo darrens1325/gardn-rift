@@ -2,8 +2,8 @@
   "schema": 1,
   "name": "bot-513",
   "first_seen": 1778364746.5700228,
-  "last_seen": 1778470910.715515,
-  "episodes": 19,
+  "last_seen": 1778471636.285547,
+  "episodes": 20,
   "score_total": 167,
   "score_best": 29,
   "best_loadout": [
@@ -21,8 +21,8 @@
     "Centipede": 2
   },
   "loadout_history": {
-    "0": 13,
-    "1": 17,
+    "0": 14,
+    "1": 18,
     "15": 2,
     "9": 1,
     "69": 1

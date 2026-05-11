@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-606",
   "first_seen": 1778364750.864934,
-  "last_seen": 1778470892.265096,
-  "episodes": 17,
-  "score_total": 219,
+  "last_seen": 1778471639.242507,
+  "episodes": 18,
+  "score_total": 251,
   "score_best": 64,
   "best_loadout": [
     0,
@@ -22,8 +22,8 @@
     "Ladybug": 2
   },
   "loadout_history": {
-    "0": 14,
-    "1": 16,
+    "0": 15,
+    "1": 17,
     "19": 1,
     "33": 1,
     "14": 1

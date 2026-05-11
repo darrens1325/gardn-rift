@@ -253,6 +253,13 @@ namespace PetalID {
         // Appended (not slotted next to other Peas tiers) so existing IDs
         // stay stable for trained checkpoints that key petals by integer.
         kEpicPeas,
+        kCommonRoot,
+        kUnusualRoot,
+        kRoot,
+        kEpicRoot,
+        kLegendaryRoot,
+        kMythicRoot,
+        kUniqueRoot,
         kNumPetals
     };
 };

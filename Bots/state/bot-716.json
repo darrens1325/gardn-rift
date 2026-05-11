@@ -2,16 +2,16 @@
   "schema": 1,
   "name": "bot-716",
   "first_seen": 1778364747.283807,
-  "last_seen": 1778470886.2112079,
-  "episodes": 17,
-  "score_total": 178,
-  "score_best": 24,
+  "last_seen": 1778471647.716398,
+  "episodes": 18,
+  "score_total": 208,
+  "score_best": 30,
   "best_loadout": [
     0,
     0,
     0,
     0,
-    0
+    1
   ],
   "killed_by": {
     "Evil Centipede": 1,
@@ -21,8 +21,8 @@
     "Wasp": 3
   },
   "loadout_history": {
-    "1": 14,
-    "0": 14,
+    "1": 15,
+    "0": 15,
     "18": 1,
     "24": 1
   }

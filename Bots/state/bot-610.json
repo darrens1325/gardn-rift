@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-610",
   "first_seen": 1778364747.8324401,
-  "last_seen": 1778470870.7337222,
-  "episodes": 19,
-  "score_total": 235,
+  "last_seen": 1778471641.6968782,
+  "episodes": 20,
+  "score_total": 246,
   "score_best": 36,
   "best_loadout": [
     1,
@@ -21,7 +21,9 @@
     "Cactus": 1
   },
   "loadout_history": {
-    "1": 17,
-    "0": 15
+    "1": 18,
+    "0": 15,
+    "24": 1,
+    "15": 1
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-708",
   "first_seen": 1778364746.819594,
-  "last_seen": 1778470870.970591,
-  "episodes": 18,
-  "score_total": 218,
+  "last_seen": 1778471640.7757068,
+  "episodes": 19,
+  "score_total": 226,
   "score_best": 35,
   "best_loadout": [
     0,
@@ -21,8 +21,8 @@
     "Wasp": 1
   },
   "loadout_history": {
-    "0": 16,
-    "1": 17,
+    "0": 17,
+    "1": 18,
     "10": 1
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "thorn",
   "first_seen": 1778364031.4844868,
-  "last_seen": 1778470912.275595,
-  "episodes": 41,
-  "score_total": 370,
+  "last_seen": 1778471653.3555279,
+  "episodes": 42,
+  "score_total": 371,
   "score_best": 32,
   "best_loadout": [
     0,
@@ -27,8 +27,8 @@
     "Rock": 1
   },
   "loadout_history": {
-    "0": 18,
-    "1": 37,
+    "0": 19,
+    "1": 38,
     "25": 1
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-203",
   "first_seen": 1778364742.146689,
-  "last_seen": 1778470951.2857769,
-  "episodes": 88,
-  "score_total": 698,
+  "last_seen": 1778471658.199452,
+  "episodes": 89,
+  "score_total": 708,
   "score_best": 62,
   "best_loadout": [
     0,
@@ -29,8 +29,8 @@
     "hello": 2
   },
   "loadout_history": {
-    "0": 82,
-    "1": 62,
+    "0": 83,
+    "1": 63,
     "29": 1,
     "7": 1,
     "18": 1,

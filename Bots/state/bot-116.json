@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-116",
   "first_seen": 1778364742.0010629,
-  "last_seen": 1778470906.372386,
-  "episodes": 20,
-  "score_total": 1343,
+  "last_seen": 1778471630.2589529,
+  "episodes": 21,
+  "score_total": 1363,
   "score_best": 1049,
   "best_loadout": [
     68,
@@ -22,8 +22,8 @@
     "Mantis": 2
   },
   "loadout_history": {
-    "0": 14,
-    "1": 16,
+    "0": 15,
+    "1": 17,
     "68": 1,
     "116": 1
   }
