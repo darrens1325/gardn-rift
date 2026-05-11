@@ -481,7 +481,18 @@ EM_JS(int, tiled_map_is_ready_js, (), {
 
 namespace TiledMapRender {
 
-void init() { tiled_map_init_js(); }
+void init() { 
+    #if DEBUG
+    EM_ASM({
+        Module._tiledDebug = true;
+    });
+    #else
+    EM_ASM({
+        Module._tiledDebug = false;
+    });
+    #endif
+    tiled_map_init_js();
+}
 
 void draw(Renderer &ctx) { tiled_map_draw_js(ctx.id); }
 
