@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>gardn (bundled)</title>
+<!-- Ubuntu Bold is the font the C++ Renderer asks the canvas to use for
+     every label ("the gardn project", buttons, mob names, tooltips). The
+     canvas font lookup is lazy: the first ctx.measureText / fillText that
+     names the font kicks the load. Without this @font-face the browser
+     silently falls back to serif (Times). Mirrors Client/public/index.html. -->
+<link href="https://fonts.googleapis.com/css?family=Ubuntu:700" rel="stylesheet" type="text/css">
+<style>
+    html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
+    /* CSS sizes the canvas to the full viewport while the JS render loop
+       sets the canvas *buffer* to viewport × devicePixelRatio. Without the
+       explicit width/height here the DOM canvas defaults to its buffer
+       size in CSS pixels — so on a Retina display (DPR=2) the canvas is
+       2× the viewport and only the top-left quadrant is visible (the
+       user reported "needs 50% zoom"). Mirrors Client/public/index.html. */
+    canvas { display: block; position: absolute;
+             top: 0; left: 0; right: 0; bottom: 0;
+             width: 100%; height: 100%; }
+    #status { position: fixed; top: 8px; left: 8px; color: #fff;
+              font-family: monospace; font-size: 12px; z-index: 10;
+              text-shadow: 0 0 2px #000; pointer-events: none; }
+    /* Hidden node referencing Ubuntu so the browser preloads it before the
+       canvas first asks for it — otherwise the first frame paints in serif
+       and only the *second* frame (after the font has loaded) is correct.
+       Same trick as Client/public/index.html. */
+    #font-loader { position: absolute; visibility: hidden;
+                   font-family: 'Ubuntu', sans-serif; font-weight: 700; }
+</style>
+</head>
+<body>
+<div id="font-loader">hello!</div>
+<canvas id="canvas"></canvas>
+<div id="status">loading…</div>
+
+<!-- onnxruntime-web, served from the JSDelivr CDN. The bundle uses this to
+     run the bots' DQN policy locally inside the page; nothing leaves the
+     browser. Pinned to a specific version so the .wasm filenames stay
+     deterministic. -->
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/dist/ort.min.js"></script>
+
+<!-- Bundle JS+WASM (-sSINGLE_FILE=1 embeds the .wasm bytes as base64). One
+     factory function called GardnBundle is exported. We instantiate two
+     copies — one for the "client" side of the in-process bridge, one for
+     the "server" side — so each gets its own linear memory and the two
+     namespaced halves of the binary don't share state outside the bridge.
+
+     Note: SINGLE_FILE means the entire bundle (client+server static code,
+     map assets, tilesets) ships as base64 inside this .js. We only need to
+     load it once and call the factory twice. -->
+<script src="gardn-bundle.js"></script>
+
+<script>
+"use strict";
+
+const STATUS = document.getElementById("status");
+function setStatus(s) { STATUS.textContent = s; console.log("[bundle]", s); }
+
+// Number of bots to spawn after the harness comes up. The QNet checkpoint
+// in Bots/model.pt is shared across the swarm, so this scales linearly.
+// Override via ?bots=N (e.g. ?bots=0 for solo play against mob AI).
+const NUM_BOTS = (() => {
+    const q = new URLSearchParams(location.search).get("bots");
+    if (q === null || q === "") return 150;
+    const n = parseInt(q, 10);
+    return Number.isFinite(n) && n >= 0 ? n : 150;
+})();
+// Tick rate for the server (must match Server's TPS at build time).
+const TPS = 20;
+// ws_id 0 = the local player. Bots use ids 1..NUM_BOTS.
+const PLAYER_WS_ID = 0;
+
+(async function boot() {
+    setStatus("instantiating WASM…");
+    // Two instances of the same factory: one acts as "client", the other as
+    // "server". They communicate exclusively through the bridge below;
+    // neither touches the real network.
+    const clientMod = await GardnBundle({
+        canvas: document.getElementById("canvas"),
+        printErr: (e) => console.warn("[client]", e),
+    });
+    const serverMod = await GardnBundle({
+        printErr: (e) => console.warn("[server]", e),
+    });
+
+    // -------------------------------------------------------------
+    // Serve --embed-file assets to JS-level fetch() callers.
+    //
+    // The C++ server reads Map/main/main.tmj and tiles/*.svg via
+    // std::ifstream — those resolve against Emscripten's MEMFS, which
+    // --embed-file populated for both module instances. But the *client*
+    // also fetches the same files in Client/Render/TiledMapRender.cc
+    // via plain `fetch("Map/main/main.tmj")` etc. for canvas rendering.
+    // Those fetches go to the HTTP server, which doesn't have the files
+    // (the bundle is self-contained — nothing else is served).
+    //
+    // We pre-extract every embedded file out of MEMFS and intercept
+    // window.fetch to serve them from memory. We read from clientMod's
+    // FS (both modules have identical MEMFS contents thanks to embed
+    // happening at compile time).
+    const embedded = new Map();
+    function gather(mod, dir) {
+        try {
+            const names = mod.FS.readdir(dir);
+            for (const n of names) {
+                if (n === "." || n === "..") continue;
+                const p = dir === "/" ? "/" + n : dir + "/" + n;
+                const st = mod.FS.stat(p);
+                if (mod.FS.isDir(st.mode)) gather(mod, p);
+                else embedded.set(p, mod.FS.readFile(p));
+            }
+        } catch (e) { /* dir doesn't exist; skip */ }
+    }
+    gather(clientMod, "/Map");
+    gather(clientMod, "/tiles");
+    console.log(`[bundle] extracted ${embedded.size} embedded files from MEMFS`);
+    const origFetch = window.fetch.bind(window);
+    window.fetch = function(input, init) {
+        let url = (typeof input === "string") ? input : (input && input.url);
+        if (typeof url === "string") {
+            let path;
+            try { path = new URL(url, location.href).pathname; }
+            catch { path = url.startsWith("/") ? url : "/" + url; }
+            if (embedded.has(path)) {
+                const bytes = embedded.get(path);
+                // Pick a sensible Content-Type so the client's r.json() /
+                // r.text() paths don't hit a parser surprise.
+                const ext = path.slice(path.lastIndexOf(".") + 1).toLowerCase();
+                const mime = ({
+                    "tmj": "application/json",
+                    "tsj": "application/json",
+                    "json": "application/json",
+                    "svg": "image/svg+xml",
+                })[ext] || "application/octet-stream";
+                // Clone into a fresh ArrayBuffer because Response will
+                // detach a typed-array view on a transferable buffer.
+                const buf = bytes.slice().buffer;
+                return Promise.resolve(new Response(buf, {
+                    status: 200,
+                    headers: { "Content-Type": mime },
+                }));
+            }
+        }
+        return origFetch(input, init);
+    };
+
+    // Wire the bridge BEFORE invoking _bundle_main on either side.
+    // -------------------------------------------------------------
+    //
+    // Client → Server: clientMod._gardn_send_from_client(ptr, len) blits
+    // bytes from client HEAPU8 into the server's INCOMING_BUFFER (via
+    // _server_incoming_buffer_ptr) and calls _server_on_message(0, len).
+    //
+    // Server → Client (ws_id 0): serverMod._gardn_send_from_server blits
+    // bytes from server HEAPU8 into client INCOMING_PACKET and calls
+    // _client_on_message(1, len). For bot ws_ids (>= 1) the server's
+    // outbound packet feeds the bot driver instead — but in this MVP we
+    // just ignore those (they're the server's state updates which the
+    // C++ bot encoder reads directly from sim, not from the wire).
+    const serverIncomingPtr = serverMod._server_incoming_buffer_ptr();
+    const serverIncomingCap = serverMod._server_incoming_buffer_cap();
+
+    clientMod._gardn_send_from_client = function(ptr, len) {
+        if (len > serverIncomingCap) {
+            console.warn("[bridge] truncating C→S packet", len);
+            len = serverIncomingCap;
+        }
+        const src = clientMod.HEAPU8.subarray(ptr, ptr + len);
+        serverMod.HEAPU8.set(src, serverIncomingPtr);
+        serverMod._server_on_message(PLAYER_WS_ID, len);
+    };
+
+    // Where the client expects S→C packets to land (set by Socket.cc).
+    // It's the address of INCOMING_PACKET inside the client's linear
+    // memory. The client stashes it on Module._gardn_client_incoming_ptr
+    // when it first hits Socket::connect().
+    serverMod._gardn_send_from_server = function(ws_id, ptr, len) {
+        if (ws_id !== PLAYER_WS_ID) return;  // bot traffic — see below
+        const clientPtr = clientMod._gardn_client_incoming_ptr;
+        if (!clientPtr) return;
+        const src = serverMod.HEAPU8.subarray(ptr, ptr + len);
+        clientMod.HEAPU8.set(src, clientPtr);
+        clientMod._client_on_message(1, len);
+    };
+    serverMod._gardn_close_from_server = function(ws_id) {
+        if (ws_id !== PLAYER_WS_ID) return;
+        clientMod._client_on_message(2, 0);
+    };
+
+    // Mark the bridge ready so Socket::connect()'s deferred handshake fires
+    // its kVerify into the server even if its EM_ASM ran before this point.
+    clientMod._gardn_bridge_ready = true;
+    if (clientMod._gardn_on_client_ready) clientMod._gardn_on_client_ready();
+
+    // ---- boot the C++ sides --------------------------------------------
+    setStatus("initializing server…");
+    serverMod._bundle_main();          // loads Tiled map, builds spatial hash
+    setStatus("initializing client…");
+    clientMod._bundle_main();          // Game::init()
+    // The client's Socket::connect() (inside Game::init) hooks into the
+    // bridge above and emits the kVerify handshake. From this point on
+    // packets flow over the bridge identically to a real WebSocket.
+
+    // Open the local player's "connection" on the server side.
+    serverMod._server_on_connect(PLAYER_WS_ID);
+
+    // ---- main loops -----------------------------------------------------
+    const tickMs = 1000 / TPS;
+    setInterval(() => serverMod._server_tick(), tickMs);
+
+    function renderTick(t) {
+        const canvas = document.getElementById("canvas");
+        canvas.width = innerWidth * devicePixelRatio;
+        canvas.height = innerHeight * devicePixelRatio;
+        clientMod._client_loop(t, canvas.width, canvas.height);
+        requestAnimationFrame(renderTick);
+    }
+    requestAnimationFrame(renderTick);
+
+    // DOM input wiring (replaces what Client/Setup.cc does in standalone mode).
+    window.addEventListener("keydown", (e) => {
+        if (!e.repeat) clientMod._client_key_event(e.which, 0);
+    });
+    window.addEventListener("keyup", (e) => {
+        if (!e.repeat) clientMod._client_key_event(e.which, 1);
+    });
+    function mouse(type, e) {
+        clientMod._client_mouse_event(
+            e.clientX * devicePixelRatio,
+            e.clientY * devicePixelRatio,
+            type, +!!e.button);
+    }
+    window.addEventListener("mousedown", (e) => mouse(0, e));
+    window.addEventListener("mousemove", (e) => mouse(1, e));
+    window.addEventListener("mouseup",   (e) => mouse(2, e));
+    window.addEventListener("wheel", (e) => clientMod._client_wheel_event(e.deltaY));
+    window.addEventListener("touchstart", (e) => { const t = e.changedTouches[0]; mouse(0, t); });
+    window.addEventListener("touchmove",  (e) => { const t = e.changedTouches[0]; mouse(1, t); });
+    window.addEventListener("touchend",   (e) => { const t = e.changedTouches[0]; mouse(2, t); });
+
+    // ---- bots: onnxruntime-web inference --------------------------------
+    setStatus("loading ONNX model…");
+    let session = null;
+    try {
+        // model.onnx is generated by Bots/export_onnx.py from Bots/model.pt.
+        // Place it next to gardn-bundle.js (or serve it via your dev server).
+        session = await ort.InferenceSession.create("model.onnx", {
+            executionProviders: ["wasm"],
+        });
+        setStatus(`ONNX ready — spawning ${NUM_BOTS} bots`);
+    } catch (e) {
+        // Falls through to the random-action bot loop below — bots still
+        // spawn, they just choose actions uniformly at random until
+        // model.onnx is provided.
+        console.warn("[bundle] no model.onnx; bots will use random actions", e);
+    }
+
+    const obsDim = serverMod._bot_obs_dim();
+    const numActions = serverMod._bot_num_actions();
+    // Reusable HEAP scratch for observations — one buffer per bot, allocated
+    // once. Bots/_bot_make_obs writes into HEAPF32; we pass the same byte
+    // pointer to ORT each tick via Tensor.fromBufferView.
+    const obsByteLen = obsDim * 4;
+    const obsBuffers = [];
+
+    // Spawn bots regardless of whether the ONNX model loaded. With a model
+    // we run inference each tick; without one we pick a movement action at
+    // random (action ∈ [0, NUM_MOVEMENT_ACTIONS=18)) so the swarm at least
+    // walks around and engages. This keeps the bundle useful out-of-the-box
+    // before `python Bots/export_onnx.py` has been run.
+    for (let i = 0; i < NUM_BOTS; ++i) {
+        const wsId = 1 + i;
+        const ptr = serverMod._malloc(obsByteLen);
+        obsBuffers.push({ wsId, ptr });
+        serverMod._server_on_connect(wsId);
+    }
+    setStatus(session
+        ? `running — ${NUM_BOTS} bots (ONNX policy)`
+        : `running — ${NUM_BOTS} bots (random actions; provide model.onnx for trained policy)`);
+
+    // Diagnostic hook for headless tests / curious users in DevTools:
+    //   __gardn.aliveBots()        → number of bot flowers currently alive
+    //   __gardn.client / .server   → raw module handles
+    // Kept under a single namespaced object so we don't pollute the
+    // global scope.
+    window.__gardn = {
+        client: clientMod,
+        server: serverMod,
+        aliveBots: () => serverMod._bot_alive_count(),
+        numBots: NUM_BOTS,
+    };
+
+    const NUM_MOVEMENT_ACTIONS = 18;  // matches Bundle/BotDriver.cc
+
+    // Batched-inference scratch. With 150 bots, running ORT one at a time
+    // would call session.run 150× per tick (3000× / sec at TPS=20) — each
+    // call has fixed JS↔WASM crossing overhead that dwarfs the actual
+    // matmul on a 89-input MLP. Stacking the obs into a [N, obsDim]
+    // tensor and dispatching ONE session.run is much faster, and the
+    // model was exported with dynamic_axes={"state": {0: "batch"}} for
+    // exactly this purpose.
+    const batchedObs = new Float32Array(NUM_BOTS * obsDim);
+
+    // Bot tick at TPS — matches the agent's training-time control_hz.
+    // The loop is async (ORT.run returns a Promise) but we deliberately
+    // do NOT await between bots: a single batched run handles them all.
+    let inflight = false;
+    setInterval(async () => {
+        // Drop a tick rather than queue, if the previous batched inference
+        // hasn't returned yet. Avoids unbounded promise pileup if the
+        // host machine is slow.
+        if (inflight) return;
+
+        if (!session) {
+            // Random movement action per bot. Skipping inventory swap/delete
+            // in this fallback — a uniform-random policy over the full 42
+            // actions strips loadouts within seconds (see bot.py's
+            // W_PETAL_HAVING shaping comment for the same reasoning).
+            for (const { wsId } of obsBuffers) {
+                serverMod._bot_apply_action(
+                    wsId, (Math.random() * NUM_MOVEMENT_ACTIONS) | 0
+                );
+            }
+            return;
+        }
+
+        // Fill the batched observation tensor from each bot's per-bot
+        // scratch buffer (avoids a single huge malloc on the C side).
+        for (let i = 0; i < obsBuffers.length; ++i) {
+            const { wsId, ptr } = obsBuffers[i];
+            serverMod._bot_make_obs(wsId, ptr);
+            batchedObs.set(
+                new Float32Array(serverMod.HEAPF32.buffer, ptr, obsDim),
+                i * obsDim
+            );
+        }
+        const tensor = new ort.Tensor("float32", batchedObs.slice(),
+                                      [obsBuffers.length, obsDim]);
+        inflight = true;
+        let out;
+        try {
+            // Input name "state" must match what Bots/export_onnx.py
+            // assigns during torch.onnx.export.
+            out = await session.run({ state: tensor });
+        } catch (e) {
+            console.warn("[bot] ORT batched run failed", e);
+            inflight = false;
+            return;
+        }
+        inflight = false;
+
+        const logits = Object.values(out)[0].data;
+        // Logits is row-major [N, numActions]. Argmax row-by-row, dispatch.
+        for (let i = 0; i < obsBuffers.length; ++i) {
+            const off = i * numActions;
+            let bestA = 0, bestV = -Infinity;
+            for (let a = 0; a < numActions; ++a) {
+                const v = logits[off + a];
+                if (v > bestV) { bestV = v; bestA = a; }
+            }
+            serverMod._bot_apply_action(obsBuffers[i].wsId, bestA);
+        }
+    }, 1000 / TPS);
+})().catch((e) => {
+    console.error(e);
+    setStatus("error: " + e.message);
+});
+</script>
+</body>
+</html>
