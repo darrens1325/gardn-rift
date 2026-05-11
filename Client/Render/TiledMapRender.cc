@@ -52,12 +52,14 @@ EM_JS(void, tiled_map_init_js, (), {
         // text, inject the namespace if missing, then hand the patched
         // markup to the Image via a data: URL.
         const ready = (M["tileReady"] = M["tileReady"] || {});
+        const names = (M["tileNames"] = M["tileNames"] || {});
         for (let i = 0; i < tilesArr.length; i++) {
             const t = tilesArr[i];
             const gid = firstgid + ((t["id"] | 0));
             const url = tsDir + "/" + t["image"];
             const img = new Image();
             M["tileImages"][gid] = img;
+            names[gid] = t["image"];
             (function (g, im, u) {
                 im.addEventListener("load", function () { ready[g] = true; });
                 im.addEventListener("error", function () { ready[g] = false; });
@@ -144,12 +146,27 @@ EM_JS(void, tiled_map_init_js, (), {
             if (lt === "tilelayer") {
                 try {
                     const data = await decompressTileLayer(layer);
-                    M["layers"].push({
-                        name: layer["name"],
-                        width: layer["width"] | 0,
-                        height: layer["height"] | 0,
-                        data: data
-                    });
+                    const ln = layer["name"];
+                    const lw = layer["width"] | 0;
+                    const lh = layer["height"] | 0;
+                    M["layers"].push({ name: ln, width: lw, height: lh, data: data });
+                    // Mirror the server's solid-tile-layer collision
+                    // derivation so the debug overlay shows every wall.
+                    // Keep this set in sync with Server/TiledMap.cc.
+                    if (ln === "cliff" || ln === "water" || ln === "dirt" || ln === "castle" || ln === "bush") {
+                        const tw_ = M["tileWidth"] | 0;
+                        const th_ = M["tileHeight"] | 0;
+                        M["collisionRects"] = M["collisionRects"] || [];
+                        for (let r = 0; r < lh; r++) {
+                            for (let cc = 0; cc < lw; cc++) {
+                                const v = data[r * lw + cc] & 0x1fffffff;
+                                if (!v) continue;
+                                M["collisionRects"].push({
+                                    x: cc * tw_, y: r * th_, w: tw_, h: th_
+                                });
+                            }
+                        }
+                    }
                 } catch (e) {
                     console.warn("[TiledMap] layer '" + layer["name"] + "' decode failed: " + e.message);
                 }
@@ -167,6 +184,21 @@ EM_JS(void, tiled_map_init_js, (), {
                         y: (+o["y"]) - oh,
                         w: +o["width"],
                         h: oh
+                    });
+                }
+            } else if (lt === "objectgroup" && layer["name"] === "collision") {
+                // Mirror the server-side collision rect list so we can
+                // overlay walls for debugging. Only the explicit rects
+                // are captured here — the server *also* derives walls
+                // from solid tile layers (cliff), so the in-game wall
+                // set is a superset of this list.
+                const cobjs = layer["objects"] || [];
+                M["collisionRects"] = M["collisionRects"] || [];
+                for (let j = 0; j < cobjs.length; j++) {
+                    const o = cobjs[j];
+                    if (o["type"] !== "collision") continue;
+                    M["collisionRects"].push({
+                        x: +o["x"], y: +o["y"], w: +o["width"], h: +o["height"]
                     });
                 }
             }
@@ -234,9 +266,13 @@ EM_JS(void, tiled_map_draw_js, (int ctx_id), {
     }
 
     // Tiled stores horizontal/vertical/diagonal flip bits in the top three
-    // bits of the gid. We strip them — flipped variants will render
-    // unflipped, which is good enough for the v1 of map rendering.
+    // bits of the gid. The map authors use these heavily (40%+ of tiles in
+    // some layers) so we have to honour them; otherwise the recognisable
+    // shape comes through but every individual tile looks wrong.
     const GID_MASK = 0x1fffffff;
+    const FLIP_H = 0x80000000;
+    const FLIP_V = 0x40000000;
+    const FLIP_D = 0x20000000;
     const layers = M["layers"];
     const tileImages = M["tileImages"];
     const tileReady = M["tileReady"] || {};
@@ -265,8 +301,48 @@ EM_JS(void, tiled_map_draw_js, (int ctx_id), {
                 if (!gid) continue;
                 const img = tileImages[gid];
                 if (!img || tileReady[gid] !== true) { dbgSkipped++; continue; }
+                const fH = (rawg & FLIP_H) !== 0;
+                const fV = (rawg & FLIP_V) !== 0;
+                const fD = (rawg & FLIP_D) !== 0;
                 try {
-                    c.drawImage(img, col * tw, drawY, tw, th);
+                    if (!fH && !fV && !fD) {
+                        c.drawImage(img, col * tw, drawY, tw, th);
+                    } else {
+                        // Pivot at tile center, apply Tiled's flip
+                        // composition, then draw at (-tw/2,-th/2).
+                        // Order matters: diagonal flip is a transpose
+                        // (swap X/Y axes); H and V are then mirrors of
+                        // the resulting orientation.
+                        c.save();
+                        c.translate(col * tw + tw * 0.5, drawY + th * 0.5);
+                        // Matches Tiled's CellRenderer::render in
+                        // src/libtiled/maprenderer.cpp. When D is set,
+                        // Tiled rotates 90° CW and re-derives H/V from
+                        // the original H/V bits:
+                        //   newH = origV
+                        //   newV = !origH
+                        // Then applies scaleX = newH ? -1 : 1 etc.
+                        //
+                        // Visual table (square tiles):
+                        //   D       → main-diagonal flip (TR↔BL)
+                        //   D+H     → rotate 90° CW
+                        //   D+V     → rotate 90° CCW
+                        //   D+H+V   → anti-diagonal flip (TL↔BR)
+                        //
+                        // My earlier "spec canonical" mapping had D-only
+                        // and D+H+V swapped — Tiled's actual code is the
+                        // authority here.
+                        let nH = fH, nV = fV;
+                        if (fD) {
+                            c.rotate(Math.PI * 0.5);
+                            nH = fV;
+                            nV = !fH;
+                        }
+                        if (nH) c.scale(-1, 1);
+                        if (nV) c.scale(1, -1);
+                        c.drawImage(img, -tw * 0.5, -th * 0.5, tw, th);
+                        c.restore();
+                    }
                     dbgDrawn++;
                 } catch (e) {
                     // A previously-loaded Image can land in the "broken"
@@ -322,6 +398,66 @@ EM_JS(void, tiled_map_draw_js, (int ctx_id), {
                 + (sampleErrSrc ? " sampleErr=" + sampleErrSrc : "")
                 + (sampleOkSrc ? " sampleOk=" + sampleOkSrc : ""));
         }
+    }
+
+    // Debug overlay: filename + flags on each visible tile, plus
+    // translucent red over collision rects. Toggle via
+    // `Module._tiledDebug = false` in the console.
+    if (Module["_tiledDebug"] !== false) {
+        const names = M["tileNames"] || {};
+        c.save();
+        c.fillStyle = "white";
+        c.strokeStyle = "black";
+        c.lineWidth = 3;
+        c.font = "32px monospace";
+        c.textAlign = "left";
+        c.textBaseline = "top";
+        for (let li = 0; li < layers.length; li++) {
+            const layer = layers[li];
+            const lw = layer.width;
+            const sx = Math.max(0, Math.floor(lx / tw));
+            const sy = Math.max(0, Math.floor(topY / th));
+            const ex = Math.min(lw, Math.ceil(rx / tw));
+            const ey = Math.min(layer.height, Math.ceil(by / th));
+            const data = layer.data;
+            for (let row = sy; row < ey; row++) {
+                for (let col = sx; col < ex; col++) {
+                    const rawg = data[row * lw + col];
+                    if (!rawg) continue;
+                    const gid = rawg & GID_MASK;
+                    if (!gid) continue;
+                    const nm = names[gid] || ("gid" + gid);
+                    const fH = (rawg & FLIP_H) !== 0 ? "H" : "";
+                    const fV = (rawg & FLIP_V) !== 0 ? "V" : "";
+                    const fD = (rawg & FLIP_D) !== 0 ? "D" : "";
+                    const flagStr = (fH + fV + fD) ? " " + fH + fV + fD : "";
+                    const txt = layer.name + ":" + nm + flagStr;
+                    const x = col * tw + 8;
+                    const y = row * th + 8 + li * 36;
+                    c.strokeText(txt, x, y);
+                    c.fillText(txt, x, y);
+                }
+            }
+        }
+        c.restore();
+    }
+
+    // Debug overlay: translucent red boxes over every collision rect
+    // (explicit `collision` objectgroup + derived from solid tile layers).
+    // Toggle via `Module._tiledDebug = false` in the console to hide.
+    if (Module["_tiledDebug"] !== false) {
+        const rects = M["collisionRects"] || [];
+        c.save();
+        c.fillStyle = "rgba(255,0,0,0.25)";
+        c.strokeStyle = "rgba(255,0,0,0.7)";
+        c.lineWidth = 4;
+        for (let i = 0; i < rects.length; i++) {
+            const r = rects[i];
+            if (r.x + r.w < lx || r.x > rx || r.y + r.h < topY || r.y > by) continue;
+            c.fillRect(r.x, r.y, r.w, r.h);
+            c.strokeRect(r.x, r.y, r.w, r.h);
+        }
+        c.restore();
     }
 
     const objects = M["objects"];

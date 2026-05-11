@@ -32,8 +32,13 @@ void tick_entity_motion(Simulation *sim, Entity &ent) {
         if (TiledMap::loaded) {
             float x = ent.x, y = ent.y;
             TiledMap::resolve_collision(x, y, ent.radius);
-            if (x != ent.x) ent.set_x(x);
-            if (y != ent.y) ent.set_y(y);
+            // Zero the velocity component along whatever axis was
+            // pushed so the entity actually stops at the wall instead of
+            // re-entering on the next tick (the push moves position but
+            // velocity is unchanged, so without this the entity would
+            // grind through the wall over multiple ticks).
+            if (x != ent.x) { ent.set_x(x); ent.velocity.x = 0; ent.acceleration.x = 0; }
+            if (y != ent.y) { ent.set_y(y); ent.velocity.y = 0; ent.acceleration.y = 0; }
         }
     }
     if (ent.has_component(kFlower)) {

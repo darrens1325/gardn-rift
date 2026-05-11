@@ -16,6 +16,7 @@
 #include <iostream>
 #include <sstream>
 #include <unordered_map>
+#include <zlib.h>
 
 namespace TiledMap {
     bool loaded = false;
@@ -298,6 +299,108 @@ std::vector<TiledSpawnEntry> parse_mob_list(std::string const &s) {
 }
 
 // ---------------------------------------------------------------------------
+// Base64 + gzip helpers for the tile-layer data. Tiled stores each tile
+// layer as a base64-encoded gzip stream of uint32 GIDs; we only care about
+// "is this cell non-zero" so we can derive collision rects from solid tile
+// types (cliff, water).
+
+static bool base64_decode(std::string const &s, std::vector<uint8_t> &out) {
+    static int8_t const tbl[256] = {
+        // 256-byte lookup, -1 for invalid. Init via designators wouldn't
+        // be portable to all C++20 frontends so fill at runtime instead.
+    };
+    static bool initialized = false;
+    static int8_t lookup[256];
+    if (!initialized) {
+        for (int i = 0; i < 256; ++i) lookup[i] = -1;
+        char const *a = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        for (int i = 0; i < 64; ++i) lookup[(uint8_t)a[i]] = (int8_t)i;
+        initialized = true;
+    }
+    (void)tbl;
+    out.clear();
+    out.reserve(s.size() * 3 / 4);
+    uint32_t buf = 0;
+    int bits = 0;
+    for (char c : s) {
+        if (c == '=' || c == '\n' || c == '\r' || c == ' ' || c == '\t') continue;
+        int8_t v = lookup[(uint8_t)c];
+        if (v < 0) return false;
+        buf = (buf << 6) | (uint32_t)v;
+        bits += 6;
+        if (bits >= 8) {
+            bits -= 8;
+            out.push_back((uint8_t)((buf >> bits) & 0xff));
+        }
+    }
+    return true;
+}
+
+static bool gunzip(std::vector<uint8_t> const &in, std::vector<uint8_t> &out) {
+    z_stream z{};
+    z.next_in = (Bytef *)in.data();
+    z.avail_in = (uInt)in.size();
+    // 16 + MAX_WBITS = gzip-only decoding (zlib's documented incantation).
+    if (inflateInit2(&z, 16 + MAX_WBITS) != Z_OK) return false;
+    uint8_t chunk[16 * 1024];
+    int ret;
+    do {
+        z.next_out = chunk;
+        z.avail_out = sizeof(chunk);
+        ret = inflate(&z, Z_NO_FLUSH);
+        if (ret != Z_OK && ret != Z_STREAM_END) {
+            inflateEnd(&z);
+            return false;
+        }
+        out.insert(out.end(), chunk, chunk + (sizeof(chunk) - z.avail_out));
+    } while (ret != Z_STREAM_END);
+    inflateEnd(&z);
+    return true;
+}
+
+// Parse a `tilelayer` and, if its name is in `solid_layers`, emit one
+// collision rect for every non-zero cell. Tiles are 512×512 in world
+// units (set by `tilewidth` in the .tmj). We strip the upper 3 flip bits
+// before checking; flip flags don't change whether a cell is solid.
+void parse_solid_tile_layer(Json const &layer, uint32_t tile_w, uint32_t tile_h) {
+    Json const *encoding = layer.find("encoding");
+    Json const *compression = layer.find("compression");
+    Json const *data = layer.find("data");
+    Json const *widthJ = layer.find("width");
+    if (!data || data->type != Json::kStr) return;
+    if (!widthJ) return;
+    if (!encoding || encoding->as_str() != "base64") return;
+    if (!compression || compression->as_str() != "gzip") return;
+
+    std::vector<uint8_t> raw;
+    if (!base64_decode(data->str, raw)) return;
+    std::vector<uint8_t> gids_bytes;
+    if (!gunzip(raw, gids_bytes)) return;
+    if (gids_bytes.size() % 4 != 0) return;
+
+    uint32_t width = (uint32_t)widthJ->as_num();
+    if (width == 0) return;
+    uint32_t count = (uint32_t)(gids_bytes.size() / 4);
+    uint32_t height = count / width;
+    for (uint32_t i = 0; i < count; ++i) {
+        uint32_t gid =
+            (uint32_t)gids_bytes[i * 4 + 0] |
+            ((uint32_t)gids_bytes[i * 4 + 1] << 8) |
+            ((uint32_t)gids_bytes[i * 4 + 2] << 16) |
+            ((uint32_t)gids_bytes[i * 4 + 3] << 24);
+        gid &= 0x1fffffff; // strip flip flags
+        if (!gid) continue;
+        uint32_t col = i % width;
+        uint32_t row = i / width;
+        if (row >= height) break;
+        TiledCollisionRect r;
+        r.x = (float)(col * tile_w);
+        r.y = (float)(row * tile_h);
+        r.w = (float)tile_w;
+        r.h = (float)tile_h;
+        TiledMap::collision_rects.push_back(r);
+    }
+}
 
 void parse_collision_layer(Json const &layer) {
     Json const *objs = layer.find("objects");
@@ -430,13 +533,27 @@ bool load(std::string const &path) {
             std::cerr << "[TiledMap] no layers in " << path << "\n";
             return false;
         }
+        uint32_t tile_w = (uint32_t)(root.find("tilewidth") ? root.find("tilewidth")->as_num() : 512);
+        uint32_t tile_h = (uint32_t)(root.find("tileheight") ? root.find("tileheight")->as_num() : 512);
         for (auto const &layer : layers->arr) {
             Json const *type = layer.find("type");
             Json const *name = layer.find("name");
             if (!type || !name) continue;
-            if (type->as_str() != "objectgroup") continue;
-            if (name->as_str() == "collision") parse_collision_layer(layer);
-            else if (name->as_str() == "mobs") parse_mobs_layer(layer);
+            if (type->as_str() == "objectgroup") {
+                if (name->as_str() == "collision") parse_collision_layer(layer);
+                else if (name->as_str() == "mobs") parse_mobs_layer(layer);
+            } else if (type->as_str() == "tilelayer") {
+                // Layers whose tiles act as walls. The authored
+                // `collision` objectgroup only covers a few special
+                // spots; everything visible-looking-solid (cliff faces,
+                // ponds, dirt embankments, castle walls) needs to
+                // block movement too, or the player walks straight
+                // through what looks like a wall.
+                std::string const &n = name->as_str();
+                if (n == "cliff" || n == "water" || n == "dirt" || n == "castle" || n == "bush") {
+                    parse_solid_tile_layer(layer, tile_w, tile_h);
+                }
+            }
         }
     } catch (std::exception const &e) {
         std::cerr << "[TiledMap] parse error: " << e.what() << "\n";
