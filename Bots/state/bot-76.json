@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-76",
   "first_seen": 1778543479.511195,
-  "last_seen": 1778545866.6046321,
-  "episodes": 16,
-  "score_total": 1001,
+  "last_seen": 1778552131.683758,
+  "episodes": 34,
+  "score_total": 1669,
   "score_best": 132,
   "best_loadout": [
     0,
@@ -14,25 +14,35 @@
     1
   ],
   "killed_by": {
-    "Beetle": 1,
-    "Hornet": 4,
-    "Wasp": 2,
-    "Mantis": 1,
+    "Beetle": 2,
+    "Hornet": 8,
+    "Wasp": 7,
+    "Mantis": 2,
     "Centipede": 2,
     "hello": 1,
     "Bee": 2,
-    "Sandstorm": 1
+    "Sandstorm": 1,
+    "bot-26": 2,
+    "Cactus": 1,
+    "Spider": 1,
+    "bot-129": 1
   },
   "loadout_history": {
-    "0": 15,
-    "1": 15,
+    "0": 33,
+    "1": 26,
     "51": 1,
     "30": 1,
-    "18": 2,
+    "18": 3,
     "34": 1,
     "9": 1,
     "5": 1,
-    "14": 1,
-    "28": 1
+    "14": 2,
+    "28": 2,
+    "69": 1,
+    "39": 1,
+    "79": 1,
+    "19": 1,
+    "167": 2,
+    "6": 1
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-143",
   "first_seen": 1778543535.476518,
-  "last_seen": 1778545624.541037,
-  "episodes": 18,
-  "score_total": 1814,
+  "last_seen": 1778552131.6187992,
+  "episodes": 38,
+  "score_total": 2756,
   "score_best": 549,
   "best_loadout": [
     0,
@@ -16,26 +16,33 @@
   ],
   "killed_by": {
     "bot-96": 1,
-    "Hornet": 5,
-    "Wasp": 1,
-    "Beetle": 1,
+    "Hornet": 11,
+    "Wasp": 4,
+    "Beetle": 3,
     "bot-108": 2,
-    "Mantis": 1,
+    "Mantis": 2,
     "bot-100": 1,
     "bot-40": 2,
-    "bot-120": 2
+    "bot-120": 2,
+    "Cactus": 1,
+    "bloom": 1,
+    "Evil Centipede": 1,
+    "rosie": 1,
+    "Bee": 1
   },
   "loadout_history": {
-    "0": 17,
-    "1": 12,
-    "167": 1,
+    "0": 35,
+    "1": 27,
+    "167": 2,
     "24": 3,
     "39": 1,
     "6": 2,
     "9": 1,
-    "14": 3,
+    "14": 4,
     "25": 1,
     "10": 1,
-    "5": 1
+    "5": 1,
+    "19": 1,
+    "68": 1
   }
 }

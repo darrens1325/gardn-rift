@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-34",
   "first_seen": 1778543100.295371,
-  "last_seen": 1778548795.545036,
-  "episodes": 15,
-  "score_total": 728,
+  "last_seen": 1778553043.557127,
+  "episodes": 23,
+  "score_total": 931,
   "score_best": 101,
   "best_loadout": [
     1,
@@ -16,18 +16,19 @@
   "killed_by": {
     "bot-100": 2,
     "Cactus": 1,
-    "Wasp": 5,
+    "Wasp": 7,
     "Hornet": 1,
-    "Mantis": 1,
+    "Mantis": 2,
     "bot-96": 1,
-    "thorny": 1
+    "thorny": 1,
+    "Beetle": 1
   },
   "loadout_history": {
-    "0": 13,
-    "1": 11,
+    "0": 21,
+    "1": 16,
     "14": 1,
     "49": 1,
-    "28": 1,
+    "28": 2,
     "5": 1
   }
 }

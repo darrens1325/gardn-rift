@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-42",
   "first_seen": 1778543102.0895848,
-  "last_seen": 1778548778.435755,
-  "episodes": 33,
-  "score_total": 1832,
+  "last_seen": 1778553061.293492,
+  "episodes": 55,
+  "score_total": 2836,
   "score_best": 202,
   "best_loadout": [
     0,
@@ -14,28 +14,35 @@
     1
   ],
   "killed_by": {
-    "Hornet": 7,
-    "Wasp": 9,
-    "Beetle": 1,
+    "Hornet": 15,
+    "Wasp": 12,
+    "Beetle": 2,
     "Leafbug": 1,
-    "Mantis": 3,
+    "Mantis": 4,
     "Cactus": 1,
     "bot-72": 2,
     "bot-84": 2,
-    "Bee": 3
+    "Bee": 3,
+    "Sandstorm": 2,
+    "bot-130": 1,
+    "bot-81": 1,
+    "bot-129": 1,
+    "Ladybug": 1
   },
   "loadout_history": {
-    "0": 25,
-    "1": 28,
-    "14": 3,
+    "0": 45,
+    "1": 44,
+    "14": 5,
     "5": 3,
-    "6": 1,
+    "6": 2,
     "167": 1,
-    "24": 4,
+    "24": 5,
     "46": 1,
     "15": 1,
     "10": 1,
-    "29": 1,
-    "34": 1
+    "29": 2,
+    "34": 1,
+    "69": 1,
+    "35": 1
   }
 }

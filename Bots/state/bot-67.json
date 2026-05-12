@@ -2,10 +2,10 @@
   "schema": 1,
   "name": "bot-67",
   "first_seen": 1778543575.9812841,
-  "last_seen": 1778545873.156938,
-  "episodes": 21,
-  "score_total": 1416,
-  "score_best": 263,
+  "last_seen": 1778552131.690773,
+  "episodes": 39,
+  "score_total": 2501,
+  "score_best": 280,
   "best_loadout": [
     0,
     0,
@@ -16,24 +16,30 @@
   ],
   "killed_by": {
     "Sandstorm": 2,
-    "Mantis": 2,
-    "Beetle": 2,
+    "Mantis": 4,
+    "Beetle": 3,
     "Bee": 2,
     "Cactus": 1,
     "Ladybug": 1,
-    "Wasp": 5,
+    "Wasp": 11,
     "Evil Centipede": 4,
-    "Centipede": 1
+    "Centipede": 1,
+    "bot-133": 1,
+    "bot-109": 1,
+    "bot-55": 1,
+    "Hornet": 4
   },
   "loadout_history": {
-    "0": 19,
-    "1": 16,
+    "0": 35,
+    "1": 30,
     "29": 1,
     "5": 1,
     "167": 1,
     "20": 1,
     "9": 1,
     "6": 1,
-    "117": 1
+    "117": 1,
+    "14": 1,
+    "10": 1
   }
 }

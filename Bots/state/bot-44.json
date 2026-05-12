@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-44",
   "first_seen": 1778543471.38784,
-  "last_seen": 1778548782.049945,
-  "episodes": 28,
-  "score_total": 1969,
+  "last_seen": 1778553030.4440808,
+  "episodes": 48,
+  "score_total": 2708,
   "score_best": 155,
   "best_loadout": [
     14,
@@ -14,28 +14,32 @@
     0
   ],
   "killed_by": {
-    "Hornet": 6,
-    "Sandstorm": 2,
+    "Hornet": 11,
+    "Sandstorm": 3,
     "Rock": 1,
-    "Mantis": 4,
-    "Wasp": 7,
+    "Mantis": 7,
+    "Wasp": 12,
     "Cactus": 1,
     "bot-61": 1,
     "bot-56": 2,
-    "bot-86": 1
+    "bot-86": 1,
+    "bot-33": 1,
+    "bot-53": 1,
+    "Centipede": 1
   },
   "loadout_history": {
-    "0": 23,
-    "1": 23,
-    "46": 1,
+    "0": 42,
+    "1": 35,
+    "46": 2,
     "9": 1,
-    "14": 2,
+    "14": 3,
     "5": 1,
     "49": 1,
     "167": 2,
     "15": 2,
     "21": 1,
     "19": 1,
-    "18": 1
+    "18": 2,
+    "24": 1
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-49",
   "first_seen": 1778543477.210536,
-  "last_seen": 1778548777.678338,
-  "episodes": 18,
-  "score_total": 965,
+  "last_seen": 1778552131.7060711,
+  "episodes": 38,
+  "score_total": 1797,
   "score_best": 154,
   "best_loadout": [
     14,
@@ -14,24 +14,31 @@
     23
   ],
   "killed_by": {
-    "Hornet": 5,
+    "Hornet": 8,
     "bot-107": 1,
-    "Beetle": 1,
-    "Mantis": 2,
+    "Beetle": 2,
+    "Mantis": 7,
     "Leafbug": 1,
     "bot-53": 2,
     "Evil Centipede": 1,
     "prickly": 1,
-    "bot-134": 1
+    "bot-134": 1,
+    "Wasp": 5,
+    "Desert Centipede": 1,
+    "Ladybug": 1,
+    "Bee": 1,
+    "thornbloom": 1
   },
   "loadout_history": {
-    "1": 13,
-    "0": 15,
+    "1": 27,
+    "0": 35,
     "28": 1,
-    "18": 3,
+    "18": 4,
     "5": 3,
-    "14": 1,
+    "14": 2,
     "23": 1,
-    "24": 1
+    "24": 1,
+    "45": 1,
+    "15": 2
   }
 }

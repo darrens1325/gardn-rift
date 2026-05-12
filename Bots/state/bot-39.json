@@ -2,10 +2,10 @@
   "schema": 1,
   "name": "bot-39",
   "first_seen": 1778543776.3914711,
-  "last_seen": 1778545818.035713,
-  "episodes": 14,
-  "score_total": 811,
-  "score_best": 154,
+  "last_seen": 1778553044.913957,
+  "episodes": 35,
+  "score_total": 1974,
+  "score_best": 161,
   "best_loadout": [
     0,
     0,
@@ -15,16 +15,27 @@
   ],
   "killed_by": {
     "Beetle": 1,
-    "Wasp": 2,
-    "Hornet": 3,
+    "Wasp": 9,
+    "Hornet": 10,
     "Ladybug": 1,
-    "Mantis": 3,
+    "Mantis": 4,
     "Evil Centipede": 1,
-    "Rock": 1
+    "Rock": 1,
+    "Spider": 1,
+    "bot-74": 1,
+    "Cactus": 1
   },
   "loadout_history": {
-    "0": 13,
-    "1": 11,
-    "15": 1
+    "0": 33,
+    "1": 24,
+    "15": 2,
+    "34": 1,
+    "6": 1,
+    "46": 1,
+    "22": 1,
+    "14": 3,
+    "24": 2,
+    "92": 1,
+    "167": 1
   }
 }

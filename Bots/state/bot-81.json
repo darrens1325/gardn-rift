@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-81",
   "first_seen": 1778543697.56103,
-  "last_seen": 1778545853.219438,
-  "episodes": 23,
-  "score_total": 1132,
+  "last_seen": 1778552131.680439,
+  "episodes": 42,
+  "score_total": 2360,
   "score_best": 209,
   "best_loadout": [
     0,
@@ -14,20 +14,28 @@
     0
   ],
   "killed_by": {
-    "Wasp": 7,
-    "Hornet": 7,
-    "Mantis": 4,
+    "Wasp": 11,
+    "Hornet": 12,
+    "Mantis": 7,
     "gardn": 1,
     "leafy": 1,
-    "bot-122": 1
+    "bot-122": 1,
+    "Bee": 1,
+    "Beetle": 1,
+    "bot-67": 1,
+    "Worker Ant": 1,
+    "Spider": 1
   },
   "loadout_history": {
-    "0": 21,
-    "1": 17,
+    "0": 38,
+    "1": 29,
     "14": 3,
     "10": 1,
     "45": 1,
     "9": 3,
-    "5": 2
+    "5": 2,
+    "25": 2,
+    "15": 1,
+    "6": 1
   }
 }

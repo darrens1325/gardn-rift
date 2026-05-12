@@ -2,36 +2,43 @@
   "schema": 1,
   "name": "bot-87",
   "first_seen": 1778543145.8908741,
-  "last_seen": 1778545842.212702,
-  "episodes": 14,
-  "score_total": 754,
-  "score_best": 95,
+  "last_seen": 1778553048.806123,
+  "episodes": 39,
+  "score_total": 1890,
+  "score_best": 101,
   "best_loadout": [
     0,
     0,
-    0,
+    1,
     0,
     0
   ],
   "killed_by": {
-    "Wasp": 2,
+    "Wasp": 8,
     "aa": 2,
-    "Mantis": 3,
-    "Hornet": 3,
+    "Mantis": 7,
+    "Hornet": 11,
     "bot-94": 1,
-    "Bee": 1
+    "Bee": 1,
+    "Desert Centipede": 1,
+    "Evil Centipede": 1,
+    "Beetle": 1,
+    "Cactus": 1
   },
   "loadout_history": {
-    "0": 11,
-    "1": 10,
+    "0": 34,
+    "1": 31,
     "51": 1,
     "69": 1,
-    "14": 4,
+    "14": 5,
     "9": 2,
     "25": 2,
     "15": 1,
     "49": 1,
     "6": 1,
-    "17": 1
+    "17": 1,
+    "18": 2,
+    "167": 1,
+    "26": 1
   }
 }

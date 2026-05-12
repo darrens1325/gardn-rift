@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-31",
   "first_seen": 1778543460.086347,
-  "last_seen": 1778548763.1829472,
-  "episodes": 21,
-  "score_total": 1857,
+  "last_seen": 1778553048.6589282,
+  "episodes": 41,
+  "score_total": 3012,
   "score_best": 197,
   "best_loadout": [
     14,
@@ -16,23 +16,32 @@
   "killed_by": {
     "Scorpion": 1,
     "bot-63": 1,
-    "Hornet": 6,
+    "Hornet": 14,
     "Wasp": 1,
     "Cactus": 4,
     "bot-71": 1,
-    "Beetle": 2,
+    "Beetle": 3,
     "Rock": 1,
-    "bot-137": 1
+    "bot-137": 1,
+    "Spider": 1,
+    "Sandstorm": 1,
+    "Mantis": 2,
+    "Centipede": 1,
+    "bot-131": 1,
+    "flower": 1,
+    "bot-43": 1
   },
   "loadout_history": {
-    "0": 15,
-    "1": 13,
+    "0": 33,
+    "1": 26,
     "49": 2,
-    "5": 3,
-    "14": 2,
+    "5": 4,
+    "14": 3,
     "23": 1,
     "15": 2,
     "28": 2,
-    "79": 1
+    "79": 1,
+    "46": 1,
+    "9": 1
   }
 }

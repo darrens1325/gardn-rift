@@ -54,6 +54,12 @@ namespace TiledMap {
     // padding by `radius` keeps the entity body outside the rect.
     void resolve_collision(float &x, float &y, float radius);
 
+    // True iff a straight line from (x0,y0) to (x1,y1) is interrupted by
+    // any collision geometry. Polygons are approximated by their AABB —
+    // exact enough for AI sight checks, cheap enough to run per target
+    // candidate. Used to prevent mobs from aggroing through walls.
+    bool line_of_sight_blocked(float x0, float y0, float x1, float y1);
+
     // Spawn one random mob using the Tiled polygons (density-weighted).
     // Returns true if a spawn was attempted (whether it succeeded or not).
     bool spawn_random_mob(Simulation *sim);

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-71",
   "first_seen": 1778543490.302591,
-  "last_seen": 1778545864.545475,
-  "episodes": 22,
-  "score_total": 1838,
+  "last_seen": 1778553063.392097,
+  "episodes": 41,
+  "score_total": 2836,
   "score_best": 323,
   "best_loadout": [
     0,
@@ -15,26 +15,36 @@
     0
   ],
   "killed_by": {
-    "Wasp": 1,
+    "Wasp": 3,
     "Ladybug": 3,
-    "Hornet": 6,
+    "Hornet": 13,
     "Bee": 1,
     "Centipede": 1,
     "bot-144": 2,
     "Beetle": 1,
     "Spider": 2,
-    "Soldier Ant": 2
+    "Soldier Ant": 2,
+    "Evil Centipede": 1,
+    "root": 1,
+    "Rock": 1,
+    "Mantis": 2,
+    "bot-133": 1,
+    "Cactus": 1
   },
   "loadout_history": {
-    "0": 20,
-    "1": 18,
-    "5": 3,
+    "0": 38,
+    "1": 33,
+    "5": 4,
     "18": 1,
     "9": 3,
     "24": 3,
     "10": 1,
     "15": 1,
     "6": 1,
-    "23": 1
+    "23": 1,
+    "11": 1,
+    "34": 1,
+    "35": 1,
+    "167": 1
   }
 }

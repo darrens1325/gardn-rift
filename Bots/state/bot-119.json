@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-119",
   "first_seen": 1778543486.3239942,
-  "last_seen": 1778545795.834495,
-  "episodes": 13,
-  "score_total": 2232,
+  "last_seen": 1778552131.6473129,
+  "episodes": 38,
+  "score_total": 5209,
   "score_best": 1087,
   "best_loadout": [
     0,
@@ -15,19 +15,28 @@
     0
   ],
   "killed_by": {
-    "Mantis": 2,
+    "Mantis": 8,
     "bot-52": 1,
-    "Hornet": 2,
-    "Wasp": 2,
-    "Cactus": 1,
-    "Beetle": 1
+    "Hornet": 9,
+    "Wasp": 8,
+    "Cactus": 2,
+    "Beetle": 1,
+    "bot-133": 1,
+    "Bee": 1,
+    "bot-143": 1
   },
   "loadout_history": {
-    "0": 12,
-    "1": 9,
+    "0": 37,
+    "1": 25,
     "29": 2,
     "69": 1,
-    "14": 2,
-    "16": 1
+    "14": 3,
+    "16": 1,
+    "5": 1,
+    "23": 1,
+    "24": 3,
+    "18": 1,
+    "15": 2,
+    "7": 1
   }
 }

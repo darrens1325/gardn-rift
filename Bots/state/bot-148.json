@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-148",
   "first_seen": 1778543177.00911,
-  "last_seen": 1778545851.646028,
-  "episodes": 20,
-  "score_total": 1431,
+  "last_seen": 1778552131.6074262,
+  "episodes": 35,
+  "score_total": 2926,
   "score_best": 275,
   "best_loadout": [
     39,
@@ -16,23 +16,30 @@
   ],
   "killed_by": {
     "bot-51": 1,
-    "Wasp": 6,
-    "Hornet": 5,
-    "Mantis": 2,
+    "Wasp": 9,
+    "Hornet": 9,
+    "Mantis": 3,
     "Cactus": 1,
     "Bee": 1,
-    "bot-121": 2
+    "bot-121": 2,
+    "bot-93": 1,
+    "Spider": 1,
+    "Beetle": 3
   },
   "loadout_history": {
-    "0": 18,
-    "9": 3,
-    "1": 19,
+    "0": 33,
+    "9": 5,
+    "1": 29,
     "10": 1,
     "14": 2,
-    "18": 2,
+    "18": 3,
     "19": 2,
-    "24": 2,
+    "24": 3,
     "5": 1,
-    "39": 1
+    "39": 1,
+    "34": 2,
+    "79": 1,
+    "25": 1,
+    "11": 1
   }
 }

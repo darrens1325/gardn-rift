@@ -2,30 +2,33 @@
   "schema": 1,
   "name": "bot-91",
   "first_seen": 1778543185.863652,
-  "last_seen": 1778545851.9076438,
-  "episodes": 21,
-  "score_total": 1182,
-  "score_best": 222,
+  "last_seen": 1778553056.772871,
+  "episodes": 41,
+  "score_total": 2554,
+  "score_best": 322,
   "best_loadout": [
     0,
     0,
     0,
     0,
-    116,
+    0,
     0
   ],
   "killed_by": {
     "Bee": 2,
-    "Wasp": 7,
-    "Hornet": 5,
+    "Wasp": 13,
+    "Hornet": 11,
     "bot-107": 1,
-    "Mantis": 1,
+    "Mantis": 3,
     "bot-131": 1,
-    "Cactus": 1
+    "Cactus": 1,
+    "Beetle": 1,
+    "bot-98": 1,
+    "Desert Centipede": 1
   },
   "loadout_history": {
-    "0": 19,
-    "1": 13,
+    "0": 36,
+    "1": 24,
     "28": 2,
     "204": 1,
     "5": 1,
@@ -33,6 +36,8 @@
     "14": 1,
     "116": 1,
     "34": 1,
-    "79": 1
+    "79": 1,
+    "6": 1,
+    "19": 1
   }
 }

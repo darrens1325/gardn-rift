@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "aa",
   "first_seen": 1778364027.980192,
-  "last_seen": 1778545298.30537,
-  "episodes": 62,
-  "score_total": 1431,
+  "last_seen": 1778553050.039191,
+  "episodes": 81,
+  "score_total": 2615,
   "score_best": 165,
   "best_loadout": [
     0,
@@ -14,30 +14,37 @@
     0
   ],
   "killed_by": {
-    "Beetle": 4,
-    "Hornet": 19,
+    "Beetle": 6,
+    "Hornet": 24,
     "Bee": 2,
     "Massive Beetle": 2,
     "Desert Centipede": 2,
     "Worker Ant": 1,
-    "Cactus": 4,
-    "Centipede": 1,
+    "Cactus": 5,
+    "Centipede": 2,
     "a": 1,
     "Spider": 1,
-    "Wasp": 6,
+    "Wasp": 7,
     "bot-133": 1,
-    "bloom": 1,
+    "bloom": 2,
     "bot-116": 2,
-    "Ladybug": 1
+    "Ladybug": 1,
+    "bot-25": 1,
+    "Mantis": 1,
+    "Evil Centipede": 1
   },
   "loadout_history": {
-    "0": 42,
-    "1": 49,
-    "48": 1,
-    "14": 3,
+    "0": 61,
+    "1": 62,
+    "48": 2,
+    "14": 4,
     "5": 1,
     "7": 1,
     "9": 1,
-    "167": 1
+    "167": 1,
+    "25": 1,
+    "10": 2,
+    "17": 1,
+    "18": 1
   }
 }

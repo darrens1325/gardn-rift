@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-61",
   "first_seen": 1778543183.323554,
-  "last_seen": 1778545862.9649332,
-  "episodes": 17,
-  "score_total": 2072,
+  "last_seen": 1778552131.694728,
+  "episodes": 38,
+  "score_total": 3836,
   "score_best": 366,
   "best_loadout": [
     24,
@@ -15,22 +15,37 @@
     0
   ],
   "killed_by": {
-    "Hornet": 7,
+    "Hornet": 11,
     "thornbloom": 1,
-    "Beetle": 1,
+    "Beetle": 2,
     "Spider": 1,
-    "Mantis": 3,
-    "Bee": 2
+    "Mantis": 5,
+    "Bee": 3,
+    "Desert Centipede": 1,
+    "Cactus": 1,
+    "Ladybug": 2,
+    "Wasp": 4,
+    "Centipede": 2,
+    "bot-36": 1
   },
   "loadout_history": {
-    "0": 14,
-    "1": 7,
+    "0": 35,
+    "1": 20,
     "14": 7,
     "9": 9,
     "48": 1,
-    "10": 3,
+    "10": 4,
     "46": 1,
     "24": 3,
-    "116": 3
+    "116": 3,
+    "28": 1,
+    "5": 2,
+    "23": 1,
+    "20": 1,
+    "19": 1,
+    "25": 1,
+    "17": 1,
+    "7": 1,
+    "15": 1
   }
 }

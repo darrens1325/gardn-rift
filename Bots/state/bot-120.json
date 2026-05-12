@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-120",
   "first_seen": 1778543185.1745331,
-  "last_seen": 1778545859.17994,
-  "episodes": 23,
-  "score_total": 2562,
+  "last_seen": 1778552131.646712,
+  "episodes": 39,
+  "score_total": 3043,
   "score_best": 599,
   "best_loadout": [
     28,
@@ -15,22 +15,28 @@
     0
   ],
   "killed_by": {
-    "Hornet": 4,
-    "Wasp": 5,
+    "Hornet": 11,
+    "Wasp": 8,
     "Beetle": 2,
     "Mantis": 5,
     "bot-58": 1,
     "Rock": 1,
-    "Bee": 1,
-    "bot-95": 2
+    "Bee": 2,
+    "bot-95": 2,
+    "Evil Centipede": 1,
+    "bot-53": 1,
+    "thorn": 1
   },
   "loadout_history": {
-    "0": 21,
-    "1": 19,
+    "0": 35,
+    "1": 28,
     "34": 1,
-    "14": 3,
+    "14": 4,
     "28": 1,
     "19": 3,
-    "18": 1
+    "18": 2,
+    "5": 3,
+    "25": 1,
+    "6": 1
   }
 }

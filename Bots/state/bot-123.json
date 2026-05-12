@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-123",
   "first_seen": 1778543584.912252,
-  "last_seen": 1778545842.987809,
-  "episodes": 24,
-  "score_total": 1358,
+  "last_seen": 1778552131.644638,
+  "episodes": 43,
+  "score_total": 1965,
   "score_best": 224,
   "best_loadout": [
     0,
@@ -15,19 +15,28 @@
     0
   ],
   "killed_by": {
-    "Hornet": 6,
+    "Hornet": 10,
     "Cactus": 4,
-    "Wasp": 4,
+    "Wasp": 9,
     "bot-73": 1,
-    "Beetle": 1,
+    "Beetle": 2,
     "bot-120": 2,
     "Desert Centipede": 2,
-    "bot-80": 1
+    "bot-80": 1,
+    "bot-102": 1,
+    "Mantis": 3,
+    "bot-45": 1,
+    "Sandstorm": 1
   },
   "loadout_history": {
-    "0": 24,
-    "1": 19,
-    "14": 2,
-    "46": 1
+    "0": 41,
+    "1": 34,
+    "14": 3,
+    "46": 1,
+    "24": 2,
+    "62": 1,
+    "18": 1,
+    "116": 1,
+    "168": 1
   }
 }

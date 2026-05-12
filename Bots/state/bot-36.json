@@ -2,38 +2,41 @@
   "schema": 1,
   "name": "bot-36",
   "first_seen": 1778543098.195971,
-  "last_seen": 1778548774.8676229,
-  "episodes": 23,
-  "score_total": 978,
-  "score_best": 112,
+  "last_seen": 1778553035.86524,
+  "episodes": 38,
+  "score_total": 2863,
+  "score_best": 659,
   "best_loadout": [
-    1,
-    10,
-    1,
-    1,
-    9
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
-    "Hornet": 4,
-    "Bee": 1,
-    "Wasp": 6,
-    "Cactus": 1,
-    "Mantis": 2,
+    "Hornet": 8,
+    "Bee": 2,
+    "Wasp": 8,
+    "Cactus": 2,
+    "Mantis": 5,
     "bot-70": 1,
     "Centipede": 1,
     "Bush": 1,
     "bot-111": 1,
-    "Beetle": 1
+    "Beetle": 2
   },
   "loadout_history": {
-    "0": 19,
-    "1": 19,
-    "24": 2,
-    "9": 3,
+    "0": 34,
+    "1": 29,
+    "24": 3,
+    "9": 4,
     "5": 1,
     "28": 1,
     "14": 1,
     "79": 2,
-    "10": 2
+    "10": 3,
+    "116": 1,
+    "11": 1
   }
 }

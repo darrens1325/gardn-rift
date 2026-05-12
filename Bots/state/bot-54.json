@@ -2,33 +2,43 @@
   "schema": 1,
   "name": "bot-54",
   "first_seen": 1778543110.4872751,
-  "last_seen": 1778545776.298437,
-  "episodes": 21,
-  "score_total": 914,
-  "score_best": 87,
+  "last_seen": 1778553040.2924001,
+  "episodes": 45,
+  "score_total": 4389,
+  "score_best": 1067,
   "best_loadout": [
-    0,
-    0,
     1,
+    1,
+    5,
     0,
+    5,
     0
   ],
   "killed_by": {
-    "Wasp": 2,
-    "Hornet": 11,
+    "Wasp": 5,
+    "Hornet": 21,
     "gardn": 1,
-    "Mantis": 1,
+    "Mantis": 2,
     "bot-66": 1,
-    "Bee": 2,
-    "Bush": 1
+    "Bee": 4,
+    "Bush": 1,
+    "bot-94": 1,
+    "Centipede": 1,
+    "bot-59": 1,
+    "bot-51": 1
   },
   "loadout_history": {
-    "0": 17,
-    "1": 15,
-    "14": 2,
+    "0": 38,
+    "1": 33,
+    "14": 3,
     "11": 1,
     "24": 2,
     "33": 1,
-    "5": 2
+    "5": 8,
+    "8": 2,
+    "6": 3,
+    "34": 1,
+    "10": 1,
+    "25": 2
   }
 }

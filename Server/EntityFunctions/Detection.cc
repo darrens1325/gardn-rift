@@ -1,5 +1,6 @@
 #include <Server/EntityFunctions.hh>
 
+#include <Server/TiledMap.hh>
 #include <Shared/Simulation.hh>
 #include <Shared/Entity.hh>
 #include <Shared/Vector.hh>
@@ -20,7 +21,9 @@ EntityID find_nearest_enemy(Simulation *simulation, Entity const &entity, float 
             if (dist > SUMMON_RETREAT_RADIUS) return;
         }
         float dist = Vector(ent.x-entity.x,ent.y-entity.y).magnitude();
-        if (dist < min_dist) { min_dist = dist; ret = ent.id; }
+        if (dist >= min_dist) return;
+        if (TiledMap::line_of_sight_blocked(entity.x, entity.y, ent.x, ent.y)) return;
+        min_dist = dist; ret = ent.id;
     });
     return ret;
 }

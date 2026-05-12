@@ -909,6 +909,44 @@ void parse_mobs_layer(Json const &layer) {
 
 namespace TiledMap {
 
+// Liang–Barsky segment-vs-AABB clipping. Returns true iff the segment
+// from (x0,y0) to (x1,y1) intersects the axis-aligned box
+// [ax,bx] × [ay,by].
+static bool segment_hits_aabb(float x0, float y0, float x1, float y1,
+                              float ax, float ay, float bx, float by) {
+    float dx = x1 - x0, dy = y1 - y0;
+    float t_enter = 0.0f, t_exit = 1.0f;
+    float p[4] = { -dx, dx, -dy, dy };
+    float q[4] = { x0 - ax, bx - x0, y0 - ay, by - y0 };
+    for (int i = 0; i < 4; ++i) {
+        if (p[i] == 0.0f) {
+            if (q[i] < 0.0f) return false;
+            continue;
+        }
+        float t = q[i] / p[i];
+        if (p[i] < 0.0f) {
+            if (t > t_exit) return false;
+            if (t > t_enter) t_enter = t;
+        } else {
+            if (t < t_enter) return false;
+            if (t < t_exit) t_exit = t;
+        }
+    }
+    return t_enter <= t_exit;
+}
+
+bool line_of_sight_blocked(float x0, float y0, float x1, float y1) {
+    for (auto const &r : collision_rects) {
+        if (segment_hits_aabb(x0, y0, x1, y1,
+                              r.x, r.y, r.x + r.w, r.y + r.h)) return true;
+    }
+    for (auto const &p : collision_polys) {
+        if (segment_hits_aabb(x0, y0, x1, y1,
+                              p.min_x, p.min_y, p.max_x, p.max_y)) return true;
+    }
+    return false;
+}
+
 bool point_in_polygon(TiledSpawnPolygon const &poly, float x, float y) {
     if (x < poly.min_x || x > poly.max_x || y < poly.min_y || y > poly.max_y) return false;
     bool inside = false;

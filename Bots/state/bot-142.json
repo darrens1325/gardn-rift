@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-142",
   "first_seen": 1778543492.261076,
-  "last_seen": 1778545564.2613661,
-  "episodes": 10,
-  "score_total": 615,
+  "last_seen": 1778552131.6208692,
+  "episodes": 30,
+  "score_total": 1178,
   "score_best": 114,
   "best_loadout": [
     0,
@@ -14,17 +14,23 @@
     0
   ],
   "killed_by": {
-    "Beetle": 1,
-    "Hornet": 2,
+    "Beetle": 3,
+    "Hornet": 5,
     "Evil Centipede": 1,
-    "Mantis": 1,
+    "Mantis": 4,
     "Bee": 1,
-    "Wasp": 2,
-    "Scorpion": 1
+    "Wasp": 8,
+    "Scorpion": 1,
+    "Bush": 1,
+    "bot-140": 1,
+    "bot-23": 1
   },
   "loadout_history": {
-    "0": 10,
-    "1": 7,
-    "14": 1
+    "0": 27,
+    "1": 20,
+    "14": 2,
+    "45": 1,
+    "5": 1,
+    "167": 1
   }
 }

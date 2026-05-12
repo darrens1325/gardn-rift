@@ -2,35 +2,40 @@
   "schema": 1,
   "name": "bot-25",
   "first_seen": 1778543109.5578072,
-  "last_seen": 1778548797.133718,
-  "episodes": 16,
-  "score_total": 574,
-  "score_best": 77,
+  "last_seen": 1778553034.7815611,
+  "episodes": 37,
+  "score_total": 1673,
+  "score_best": 149,
   "best_loadout": [
     0,
     0,
     0,
     0,
-    1
+    0
   ],
   "killed_by": {
-    "Hornet": 2,
-    "Wasp": 2,
+    "Hornet": 5,
+    "Wasp": 7,
     "Scorpion": 2,
     "Evil Centipede": 1,
     "Sandstorm": 1,
-    "Bee": 1,
+    "Bee": 2,
     "bot-39": 2,
     "Cactus": 1,
-    "Beetle": 1
+    "Beetle": 2,
+    "Leafbug": 1,
+    "bot-124": 1,
+    "Mantis": 3,
+    "bot-58": 1,
+    "bot-133": 1
   },
   "loadout_history": {
-    "0": 13,
-    "1": 12,
+    "0": 34,
+    "1": 25,
     "5": 1,
     "28": 1,
     "21": 1,
-    "14": 1,
+    "14": 2,
     "29": 1
   }
 }

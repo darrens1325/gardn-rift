@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-130",
   "first_seen": 1778543146.9524028,
-  "last_seen": 1778545771.040481,
-  "episodes": 15,
-  "score_total": 2753,
+  "last_seen": 1778552131.6370409,
+  "episodes": 28,
+  "score_total": 4429,
   "score_best": 1076,
   "best_loadout": [
     1,
@@ -15,22 +15,34 @@
     30
   ],
   "killed_by": {
-    "Wasp": 2,
+    "Wasp": 3,
     "Evil Centipede": 1,
     "bot-124": 1,
-    "Hornet": 5,
-    "Beetle": 2,
-    "Mantis": 1,
-    "bot-88": 1
+    "Hornet": 7,
+    "Beetle": 3,
+    "Mantis": 3,
+    "bot-88": 1,
+    "Cactus": 1,
+    "bot-33": 1,
+    "bot-44": 1,
+    "Spider": 1,
+    "Baby Ant": 1
   },
   "loadout_history": {
-    "1": 12,
-    "0": 14,
+    "1": 18,
+    "0": 26,
     "14": 1,
     "30": 1,
     "7": 1,
     "25": 1,
     "15": 1,
-    "49": 1
+    "49": 1,
+    "33": 1,
+    "10": 1,
+    "47": 1,
+    "29": 1,
+    "79": 1,
+    "48": 2,
+    "6": 1
   }
 }

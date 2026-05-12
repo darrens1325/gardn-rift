@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-66",
   "first_seen": 1778543167.1696079,
-  "last_seen": 1778545649.280968,
-  "episodes": 17,
-  "score_total": 1251,
+  "last_seen": 1778553052.6924531,
+  "episodes": 26,
+  "score_total": 1647,
   "score_best": 267,
   "best_loadout": [
     0,
@@ -15,15 +15,19 @@
     0
   ],
   "killed_by": {
-    "Hornet": 6,
+    "Hornet": 7,
     "Wasp": 2,
     "Spider": 2,
     "Centipede": 2,
-    "bot-140": 1
+    "bot-140": 1,
+    "Mantis": 1,
+    "bot-83": 1,
+    "blossom-v2": 1,
+    "Cactus": 1
   },
   "loadout_history": {
-    "0": 14,
-    "1": 10,
+    "0": 21,
+    "1": 14,
     "14": 3,
     "25": 1,
     "24": 1,
@@ -31,6 +35,7 @@
     "34": 1,
     "6": 2,
     "15": 2,
-    "18": 1
+    "18": 1,
+    "79": 1
   }
 }

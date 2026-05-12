@@ -28,6 +28,39 @@ EM_JS(void, tiled_map_init_js, (), {
 
     const M = Module["tiledMap"];
 
+    // Resolve `rel` relative to dir(base) as an absolute MEMFS path.
+    // Used to mirror the URL-based tileset/image resolution against the
+    // --embed-file MEMFS layout (Map/main/main.tmj → /Map/main/main.tmj,
+    // tileset "../../tiles/tileset.tsj" → /tiles/tileset.tsj).
+    function memfsResolve(base, rel) {
+        const baseDir = base.substring(0, base.lastIndexOf("/"));
+        const parts = (baseDir + "/" + rel).split("/");
+        const out = [];
+        for (let i = 0; i < parts.length; i++) {
+            const p = parts[i];
+            if (p === "" || p === ".") continue;
+            if (p === "..") { out.pop(); continue; }
+            out.push(p);
+        }
+        return "/" + out.join("/");
+    }
+
+    // Read an asset as text. In the bundle build (--embed-file) the
+    // file is in MEMFS and we read it directly — required because
+    // `fetch()` against a file:// page hits CORS, and a deployed page
+    // typically doesn't ship the .tmj/.svg files alongside it (404).
+    // In the standalone client, MEMFS has no embed so the readFile
+    // throws and we fall back to the normal HTTP fetch.
+    async function readAssetText(memPath, urlPath) {
+        if (Module["FS"]) {
+            try { return Module["FS"].readFile(memPath, { "encoding": "utf8" }); }
+            catch (e) { /* not in MEMFS; fall through to fetch */ }
+        }
+        const r = await fetch(urlPath);
+        if (!r.ok) throw new Error("http " + r.status + " for " + urlPath);
+        return r.text();
+    }
+
     async function loadTileset(mapJson, mapPath) {
         const tsList = mapJson["tilesets"];
         const tsRef = tsList && tsList[0];
@@ -37,11 +70,12 @@ EM_JS(void, tiled_map_init_js, (), {
         const baseHref = location.href.replace(/[^/]*$/, "");
         const tsUrl = new URL(tsRef["source"], baseHref + mapDir + "/");
         const tsPath = tsUrl.pathname;
-        console.log("[TiledMap] fetching tileset " + tsPath);
-        const r = await fetch(tsPath);
-        if (!r.ok) throw new Error("tileset http " + r.status + " for " + tsPath);
-        const ts = await r.json();
+        const tsMemPath = memfsResolve("/" + mapPath, tsRef["source"]);
+        console.log("[TiledMap] loading tileset " + tsMemPath + " (url " + tsPath + ")");
+        const tsText = await readAssetText(tsMemPath, tsPath);
+        const ts = JSON.parse(tsText);
         const tsDir = tsPath.substring(0, tsPath.lastIndexOf("/"));
+        const tsMemDir = tsMemPath.substring(0, tsMemPath.lastIndexOf("/"));
         const tilesArr = ts["tiles"] || [];
         // Why we don't just `img.src = url` here:
         // The shipped SVGs have a root element of `<svg xml:space="preserve"
@@ -57,17 +91,14 @@ EM_JS(void, tiled_map_init_js, (), {
             const t = tilesArr[i];
             const gid = firstgid + ((t["id"] | 0));
             const url = tsDir + "/" + t["image"];
+            const memUrl = memfsResolve(tsMemDir + "/_", t["image"]);
             const img = new Image();
             M["tileImages"][gid] = img;
             names[gid] = t["image"];
-            (function (g, im, u) {
+            (function (g, im, u, mu) {
                 im.addEventListener("load", function () { ready[g] = true; });
                 im.addEventListener("error", function () { ready[g] = false; });
-                fetch(u)
-                    .then(function (r) {
-                        if (!r.ok) throw new Error("http " + r.status);
-                        return r.text();
-                    })
+                readAssetText(mu, u)
                     .then(function (txt) {
                         // \\s in C source → \s in the JS regex at runtime.
                         // (Single-backslash \s isn't a recognised C escape;
@@ -83,10 +114,10 @@ EM_JS(void, tiled_map_init_js, (), {
                         ready[g] = false;
                         if (!Module["_tiledLoggedFirstErr"]) {
                             Module["_tiledLoggedFirstErr"] = 1;
-                            console.warn("[TiledMap] first tile fetch failed: " + u + " — " + e.message);
+                            console.warn("[TiledMap] first tile load failed: " + u + " — " + e.message);
                         }
                     });
-            })(gid, img, url);
+            })(gid, img, url, memUrl);
         }
         M["tileSize"] = (ts["tilewidth"] | 0) || 256;
         console.log("[TiledMap] tileset loaded: " + tilesArr.length + " tiles");
@@ -116,9 +147,8 @@ EM_JS(void, tiled_map_init_js, (), {
         const mapPath = "Map/main/main.tmj";
         let mapJson;
         try {
-            const r = await fetch(mapPath);
-            if (!r.ok) throw new Error("http " + r.status);
-            mapJson = await r.json();
+            const txt = await readAssetText("/" + mapPath, mapPath);
+            mapJson = JSON.parse(txt);
         } catch (e) {
             console.warn("[TiledMap] could not load " + mapPath + ": " + e.message);
             return;

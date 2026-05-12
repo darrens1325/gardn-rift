@@ -2,32 +2,38 @@
   "schema": 1,
   "name": "bot-127",
   "first_seen": 1778543800.252141,
-  "last_seen": 1778544937.011395,
-  "episodes": 13,
-  "score_total": 628,
-  "score_best": 75,
+  "last_seen": 1778552131.641137,
+  "episodes": 25,
+  "score_total": 1021,
+  "score_best": 83,
   "best_loadout": [
-    1,
-    1,
-    1,
-    1,
+    0,
+    0,
+    0,
+    0,
     0
   ],
   "killed_by": {
     "bot-22": 1,
     "Beetle": 2,
-    "Hornet": 3,
+    "Hornet": 10,
     "Wasp": 4,
     "Cactus": 1,
-    "bot-142": 1
+    "bot-142": 1,
+    "bot-55": 1,
+    "bot-23": 1
   },
   "loadout_history": {
-    "0": 11,
+    "0": 23,
     "49": 1,
     "28": 1,
     "39": 1,
-    "1": 9,
+    "1": 12,
     "18": 1,
-    "79": 1
+    "79": 2,
+    "5": 1,
+    "24": 1,
+    "11": 1,
+    "15": 1
   }
 }

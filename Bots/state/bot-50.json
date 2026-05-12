@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-50",
   "first_seen": 1778543631.3822532,
-  "last_seen": 1778548783.949688,
-  "episodes": 19,
-  "score_total": 1140,
+  "last_seen": 1778552131.705638,
+  "episodes": 46,
+  "score_total": 2176,
   "score_best": 129,
   "best_loadout": [
     0,
@@ -17,22 +17,32 @@
     "bot-147": 1,
     "Cactus": 2,
     "Sandstorm": 1,
-    "Beetle": 2,
+    "Beetle": 4,
     "bot-148": 1,
-    "Hornet": 4,
+    "Hornet": 8,
     "Centipede": 2,
     "bot-46": 2,
     "Scorpion": 1,
-    "Wasp": 1
+    "Wasp": 11,
+    "Mantis": 3,
+    "Bee": 1,
+    "bot-93": 1,
+    "Rock": 1,
+    "bot-95": 1,
+    "bot-111": 1
   },
   "loadout_history": {
-    "0": 17,
-    "1": 17,
+    "0": 41,
+    "1": 40,
     "69": 1,
-    "14": 2,
+    "14": 3,
     "45": 1,
-    "5": 2,
+    "5": 4,
     "204": 1,
-    "20": 1
+    "20": 1,
+    "7": 1,
+    "18": 2,
+    "24": 2,
+    "9": 1
   }
 }

@@ -2,33 +2,40 @@
   "schema": 1,
   "name": "bot-144",
   "first_seen": 1778543568.926228,
-  "last_seen": 1778545813.778987,
-  "episodes": 16,
-  "score_total": 609,
-  "score_best": 79,
+  "last_seen": 1778552131.617619,
+  "episodes": 35,
+  "score_total": 1788,
+  "score_best": 151,
   "best_loadout": [
+    5,
     0,
     0,
-    0,
-    0,
-    0
+    1,
+    1
   ],
   "killed_by": {
-    "Centipede": 1,
+    "Centipede": 3,
     "Spider": 1,
-    "Hornet": 2,
-    "Wasp": 4,
+    "Hornet": 10,
+    "Wasp": 7,
     "Cactus": 1,
     "bot-143": 1,
     "Evil Centipede": 1,
     "bot-98": 2,
-    "bot-147": 2
+    "bot-147": 2,
+    "bot-128": 1,
+    "Mantis": 2,
+    "bot-97": 1
   },
   "loadout_history": {
-    "0": 15,
-    "1": 8,
+    "0": 32,
+    "1": 20,
     "79": 1,
     "6": 1,
-    "14": 1
+    "14": 4,
+    "18": 2,
+    "24": 1,
+    "5": 4,
+    "16": 1
   }
 }

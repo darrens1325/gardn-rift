@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-126",
   "first_seen": 1778543149.715907,
-  "last_seen": 1778545446.304333,
-  "episodes": 15,
-  "score_total": 734,
+  "last_seen": 1778552131.642003,
+  "episodes": 32,
+  "score_total": 1625,
   "score_best": 175,
   "best_loadout": [
     9,
@@ -14,17 +14,28 @@
     0
   ],
   "killed_by": {
-    "Wasp": 2,
+    "Wasp": 6,
     "bot-56": 1,
-    "Mantis": 3,
+    "Mantis": 4,
     "gardn": 1,
     "Bee": 2,
-    "Sandstorm": 2
+    "Sandstorm": 2,
+    "Hornet": 3,
+    "bot-60": 1,
+    "bot-41": 1,
+    "Desert Centipede": 1,
+    "Cactus": 3,
+    "Beetle": 1
   },
   "loadout_history": {
-    "0": 15,
-    "1": 12,
-    "14": 2,
-    "9": 1
+    "0": 32,
+    "1": 23,
+    "14": 4,
+    "9": 3,
+    "19": 1,
+    "28": 1,
+    "48": 1,
+    "5": 1,
+    "45": 1
   }
 }

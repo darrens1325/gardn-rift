@@ -2,34 +2,43 @@
   "schema": 1,
   "name": "bot-84",
   "first_seen": 1778543489.42082,
-  "last_seen": 1778545795.330688,
-  "episodes": 15,
-  "score_total": 1191,
-  "score_best": 202,
+  "last_seen": 1778552131.676834,
+  "episodes": 44,
+  "score_total": 3005,
+  "score_best": 270,
   "best_loadout": [
-    5,
-    39,
+    0,
+    1,
     0,
     0,
-    1
+    0,
+    0
   ],
   "killed_by": {
     "bot-62": 1,
-    "Hornet": 6,
+    "Hornet": 17,
     "Beetle": 2,
-    "Worker Ant": 1,
-    "Mantis": 1,
-    "bot-81": 1
+    "Worker Ant": 2,
+    "Mantis": 8,
+    "bot-81": 1,
+    "Wasp": 6,
+    "a": 1,
+    "Bee": 1
   },
   "loadout_history": {
-    "0": 14,
-    "1": 7,
-    "24": 2,
+    "0": 42,
+    "1": 33,
+    "24": 4,
     "19": 1,
     "5": 4,
-    "14": 6,
-    "9": 4,
+    "14": 8,
+    "9": 7,
     "39": 1,
-    "23": 1
+    "23": 1,
+    "18": 1,
+    "37": 1,
+    "7": 2,
+    "10": 1,
+    "34": 1
   }
 }

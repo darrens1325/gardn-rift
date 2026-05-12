@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-51",
   "first_seen": 1778543104.996141,
-  "last_seen": 1778548792.033386,
-  "episodes": 27,
-  "score_total": 1441,
+  "last_seen": 1778552131.705117,
+  "episodes": 48,
+  "score_total": 2589,
   "score_best": 172,
   "best_loadout": [
     16,
@@ -15,26 +15,35 @@
   ],
   "killed_by": {
     "Evil Centipede": 1,
-    "Hornet": 7,
-    "Wasp": 5,
+    "Hornet": 13,
+    "Wasp": 10,
     "bot-122": 1,
     "bot-125": 1,
     "bot": 2,
     "thorny": 2,
     "Beetle": 1,
     "bot-126": 2,
-    "Mantis": 1
+    "Mantis": 5,
+    "Bee": 1,
+    "Sandstorm": 1,
+    "bot-61": 1,
+    "bot-29": 1
   },
   "loadout_history": {
-    "0": 24,
-    "1": 24,
+    "0": 44,
+    "1": 40,
     "116": 2,
     "6": 2,
-    "14": 2,
-    "24": 3,
+    "14": 3,
+    "24": 4,
     "36": 1,
     "9": 2,
     "16": 1,
-    "19": 1
+    "19": 1,
+    "5": 4,
+    "33": 1,
+    "15": 2,
+    "18": 1,
+    "35": 1
   }
 }

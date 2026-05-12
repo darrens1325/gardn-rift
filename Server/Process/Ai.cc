@@ -9,51 +9,6 @@
 
 #include <cmath>
 
-// Liang–Barsky segment-vs-AABB clipping. Returns true iff the open
-// segment from (x0,y0) to (x1,y1) intersects the axis-aligned box
-// [ax,bx] × [ay,by]. Used for the line-of-sight aggro drop below —
-// only tests whether *something* is between mob and target, so we
-// don't need the actual entry/exit parameters.
-static bool _segment_hits_aabb(float x0, float y0, float x1, float y1,
-                               float ax, float ay, float bx, float by) {
-    float dx = x1 - x0, dy = y1 - y0;
-    float t_enter = 0.0f, t_exit = 1.0f;
-    float p[4] = { -dx, dx, -dy, dy };
-    float q[4] = { x0 - ax, bx - x0, y0 - ay, by - y0 };
-    for (int i = 0; i < 4; ++i) {
-        if (p[i] == 0.0f) {
-            if (q[i] < 0.0f) return false;  // parallel and outside slab
-            continue;
-        }
-        float t = q[i] / p[i];
-        if (p[i] < 0.0f) {
-            if (t > t_exit) return false;
-            if (t > t_enter) t_enter = t;
-        } else {
-            if (t < t_enter) return false;
-            if (t < t_exit) t_exit = t;
-        }
-    }
-    return t_enter <= t_exit;
-}
-
-// True iff the straight line from (x0,y0) to (x1,y1) is interrupted by
-// any TiledMap collision geometry. Solid-tile polygons are approximated
-// by their AABB — losing pixel-accurate edge cases but cutting the
-// per-check cost from O(verts) to O(1) per poly, which is what makes
-// the whole sweep cheap enough to run at the cadence below.
-static bool line_of_sight_blocked(float x0, float y0, float x1, float y1) {
-    for (auto const &r : TiledMap::collision_rects) {
-        if (_segment_hits_aabb(x0, y0, x1, y1,
-                               r.x, r.y, r.x + r.w, r.y + r.h)) return true;
-    }
-    for (auto const &p : TiledMap::collision_polys) {
-        if (_segment_hits_aabb(x0, y0, x1, y1,
-                               p.min_x, p.min_y, p.max_x, p.max_y)) return true;
-    }
-    return false;
-}
-
 static void _focus_lose_clause(Simulation *sim, Entity &ent, Vector const &v) {
     if (v.magnitude() > 1.5 * MOB_DATA[ent.mob_id].attributes.aggro_radius) {
         ent.target = NULL_ENTITY;
@@ -73,7 +28,7 @@ static void _focus_lose_clause(Simulation *sim, Entity &ent, Vector const &v) {
     if (ent.lifetime % (SIM_RATE / 4) != 0) return;
     if (!sim->ent_alive(ent.target)) return;
     Entity const &t = sim->get_ent(ent.target);
-    if (line_of_sight_blocked(ent.x, ent.y, t.x, t.y)) {
+    if (TiledMap::line_of_sight_blocked(ent.x, ent.y, t.x, t.y)) {
         ent.target = NULL_ENTITY;
     }
 }

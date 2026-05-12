@@ -2,36 +2,41 @@
   "schema": 1,
   "name": "bot-28",
   "first_seen": 1778543489.99513,
-  "last_seen": 1778545673.738335,
-  "episodes": 20,
-  "score_total": 1002,
-  "score_best": 119,
+  "last_seen": 1778553029.927822,
+  "episodes": 32,
+  "score_total": 1527,
+  "score_best": 230,
   "best_loadout": [
-    18,
-    14,
-    1,
-    1,
-    1
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Baby Ant": 1,
-    "Hornet": 7,
+    "Hornet": 9,
     "Ladybug": 1,
-    "Mantis": 3,
-    "Cactus": 1,
-    "Wasp": 2,
+    "Mantis": 4,
+    "Cactus": 3,
+    "Wasp": 4,
     "Beetle": 1,
     "bot-40": 2,
-    "Bee": 1
+    "Bee": 1,
+    "Sandstorm": 1,
+    "bot-134": 1
   },
   "loadout_history": {
-    "0": 19,
-    "1": 17,
-    "5": 1,
-    "14": 3,
+    "0": 29,
+    "1": 24,
+    "5": 3,
+    "14": 4,
     "15": 1,
-    "18": 1,
+    "18": 2,
     "24": 1,
-    "19": 1
+    "19": 1,
+    "9": 1,
+    "167": 1
   }
 }
