@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-27",
   "first_seen": 1778543097.324739,
-  "last_seen": 1778552131.723962,
-  "episodes": 31,
-  "score_total": 2066,
+  "last_seen": 1778556800.330197,
+  "episodes": 54,
+  "score_total": 3083,
   "score_best": 321,
   "best_loadout": [
     0,
@@ -15,24 +15,32 @@
     0
   ],
   "killed_by": {
-    "Hornet": 10,
-    "Wasp": 3,
+    "Hornet": 18,
+    "Wasp": 8,
     "Evil Centipede": 2,
-    "Mantis": 3,
+    "Mantis": 5,
     "Cactus": 2,
-    "Beetle": 1,
+    "Beetle": 3,
     "florrio": 1,
-    "bot-133": 1
+    "bot-133": 1,
+    "Bee": 1,
+    "Spider": 1,
+    "bot-87": 1
   },
   "loadout_history": {
-    "0": 27,
-    "1": 22,
+    "0": 48,
+    "1": 41,
     "34": 2,
     "15": 1,
     "28": 1,
-    "9": 2,
+    "9": 3,
     "24": 1,
     "12": 1,
-    "14": 1
+    "14": 2,
+    "116": 1,
+    "167": 1,
+    "39": 1,
+    "5": 1,
+    "18": 1
   }
 }

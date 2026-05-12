@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-40",
   "first_seen": 1778543185.6563919,
-  "last_seen": 1778552131.713878,
-  "episodes": 60,
-  "score_total": 3777,
+  "last_seen": 1778556748.553868,
+  "episodes": 76,
+  "score_total": 4357,
   "score_best": 360,
   "best_loadout": [
     0,
@@ -15,36 +15,39 @@
     0
   ],
   "killed_by": {
-    "Hornet": 14,
+    "Hornet": 15,
     "bot-90": 1,
-    "Wasp": 12,
-    "Cactus": 1,
+    "Wasp": 18,
+    "Cactus": 2,
     "Mantis": 5,
     "Ladybug": 1,
     "Bee": 5,
     "Evil Centipede": 1,
-    "Beetle": 5,
+    "Beetle": 6,
     "Centipede": 1,
     "67": 2,
     "bot-28": 2,
     "Spider": 2,
     "Sandstorm": 1,
-    "Rock": 1
+    "Rock": 1,
+    "prickly": 1
   },
   "loadout_history": {
-    "0": 55,
-    "1": 48,
+    "0": 69,
+    "1": 58,
     "16": 2,
     "48": 2,
-    "14": 3,
+    "14": 4,
     "59": 1,
     "18": 1,
-    "9": 6,
+    "9": 7,
     "24": 3,
     "15": 1,
     "28": 1,
     "5": 1,
     "116": 1,
-    "20": 1
+    "20": 1,
+    "6": 1,
+    "51": 1
   }
 }

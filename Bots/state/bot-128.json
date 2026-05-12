@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-128",
   "first_seen": 1778543746.502754,
-  "last_seen": 1778552131.640658,
-  "episodes": 45,
-  "score_total": 2412,
+  "last_seen": 1778556766.8312051,
+  "episodes": 64,
+  "score_total": 3365,
   "score_best": 352,
   "best_loadout": [
     0,
@@ -15,10 +15,10 @@
     0
   ],
   "killed_by": {
-    "Beetle": 5,
-    "Hornet": 14,
-    "Wasp": 8,
-    "Mantis": 1,
+    "Beetle": 6,
+    "Hornet": 18,
+    "Wasp": 11,
+    "Mantis": 6,
     "bot-35": 1,
     "bot-83": 2,
     "Evil Centipede": 1,
@@ -28,20 +28,26 @@
     "Bush": 2,
     "Desert Centipede": 1,
     "Cactus": 3,
-    "Bee": 1
+    "Bee": 1,
+    "bot-111": 1,
+    "Leafbug": 1,
+    "bot-29": 1
   },
   "loadout_history": {
-    "0": 41,
+    "0": 59,
     "28": 2,
-    "1": 35,
-    "14": 3,
+    "1": 47,
+    "14": 6,
     "204": 1,
-    "5": 3,
+    "5": 5,
     "9": 3,
     "25": 1,
     "19": 1,
     "15": 1,
     "69": 2,
-    "49": 1
+    "49": 1,
+    "79": 1,
+    "18": 1,
+    "24": 1
   }
 }

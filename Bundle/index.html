@@ -62,11 +62,15 @@ function setStatus(s) { STATUS.textContent = s; console.log("[bundle]", s); }
 // Number of bots to spawn after the harness comes up. The QNet checkpoint
 // in Bots/model.pt is shared across the swarm, so this scales linearly.
 // Override via ?bots=N (e.g. ?bots=0 for solo play against mob AI).
+// Default kept modest so the per-tick batched ORT inference comfortably
+// fits within the 50 ms tick budget on average laptops — when the batch
+// run overruns the tick, the inflight guard further down skips entire
+// bot updates, which presents as sluggish/stale bot reactions.
 const NUM_BOTS = (() => {
     const q = new URLSearchParams(location.search).get("bots");
-    if (q === null || q === "") return 150;
+    if (q === null || q === "") return 50;
     const n = parseInt(q, 10);
-    return Number.isFinite(n) && n >= 0 ? n : 150;
+    return Number.isFinite(n) && n >= 0 ? n : 50;
 })();
 // Tick rate for the server (must match Server's TPS at build time).
 const TPS = 20;
@@ -259,8 +263,14 @@ const PLAYER_WS_ID = 0;
         } else {
             // ORT.create accepts a Uint8Array; the bytes are consumed
             // synchronously and don't need to outlive this call.
+            // Prefer WebGPU when the browser supports it: the bot inference
+            // then runs off-thread on the GPU, freeing the main JS thread
+            // for the server tick + render loop. Falls back to wasm
+            // automatically when WebGPU isn't available (older browsers,
+            // headless test runners, or a page that didn't pass --enable-
+            // unsafe-webgpu).
             session = await ort.InferenceSession.create(modelBytes, {
-                executionProviders: ["wasm"],
+                executionProviders: ["webgpu", "wasm"],
             });
             console.log(`[bundle] ONNX ready (${modelBytes.byteLength} bytes from MEMFS)`);
         }
@@ -308,6 +318,16 @@ const PLAYER_WS_ID = 0;
     };
 
     const NUM_MOVEMENT_ACTIONS = 18;  // matches Bundle/BotDriver.cc
+
+    // ε-greedy floor — mirrors Bots/agent.py::epsilon()'s eps_end (0.05).
+    // The trained QNet was consumed throughout training with this much
+    // uniform-random exploration mixed in, so pure-argmax inference at
+    // deployment puts the policy out of distribution: when several bots
+    // share a near-empty observation (no peers visible, no hostiles in
+    // their AABB, identical loadout), every one of them picks the same
+    // argmax and the swarm marches in unison. 5% random ticks de-correlate
+    // the bots and match what bot.py does at eps_decay completion.
+    const EPS = 0.05;
 
     // Batched-inference scratch. With 150 bots, running ORT one at a time
     // would call session.run 150× per tick (3000× / sec at TPS=20) — each
@@ -367,13 +387,21 @@ const PLAYER_WS_ID = 0;
         inflight = false;
 
         const logits = Object.values(out)[0].data;
-        // Logits is row-major [N, numActions]. Argmax row-by-row, dispatch.
+        // Logits is row-major [N, numActions]. ε-greedy per-bot: with
+        // probability EPS pick a uniformly random action across all
+        // numActions (matches bot.py); otherwise argmax row-by-row.
         for (let i = 0; i < obsBuffers.length; ++i) {
-            const off = i * numActions;
-            let bestA = 0, bestV = -Infinity;
-            for (let a = 0; a < numActions; ++a) {
-                const v = logits[off + a];
-                if (v > bestV) { bestV = v; bestA = a; }
+            let bestA;
+            if (Math.random() < EPS) {
+                bestA = (Math.random() * numActions) | 0;
+            } else {
+                const off = i * numActions;
+                bestA = 0;
+                let bestV = -Infinity;
+                for (let a = 0; a < numActions; ++a) {
+                    const v = logits[off + a];
+                    if (v > bestV) { bestV = v; bestA = a; }
+                }
             }
             serverMod._bot_apply_action(obsBuffers[i].wsId, bestA);
         }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-85",
   "first_seen": 1778543482.814843,
-  "last_seen": 1778552131.676311,
-  "episodes": 34,
-  "score_total": 1987,
+  "last_seen": 1778556781.672791,
+  "episodes": 54,
+  "score_total": 3118,
   "score_best": 269,
   "best_loadout": [
     1,
@@ -16,26 +16,28 @@
   ],
   "killed_by": {
     "Sandstorm": 1,
-    "Hornet": 7,
+    "Hornet": 15,
     "bot-33": 1,
-    "Mantis": 3,
+    "Mantis": 4,
     "bot-111": 1,
     "Cactus": 1,
-    "Wasp": 5,
+    "Wasp": 9,
     "Bee": 1,
     "Scorpion": 1,
-    "Ladybug": 1,
+    "Ladybug": 2,
     "Spider": 2,
     "Beetle": 1,
     "florrio": 1,
     "bot-140": 1,
     "bloom": 1,
-    "bot-73": 1
+    "bot-73": 1,
+    "Leafbug": 1,
+    "Bush": 1
   },
   "loadout_history": {
-    "0": 32,
-    "1": 24,
-    "15": 1,
+    "0": 50,
+    "1": 34,
+    "15": 2,
     "5": 3,
     "35": 1,
     "18": 1,
@@ -43,7 +45,11 @@
     "47": 1,
     "116": 1,
     "28": 1,
-    "14": 1,
-    "12": 1
+    "14": 2,
+    "12": 1,
+    "25": 1,
+    "19": 1,
+    "24": 1,
+    "9": 1
   }
 }

@@ -2,21 +2,22 @@
   "schema": 1,
   "name": "bot-118",
   "first_seen": 1778364743.2131178,
-  "last_seen": 1778552131.6478121,
-  "episodes": 58,
-  "score_total": 1593,
-  "score_best": 129,
+  "last_seen": 1778556608.600063,
+  "episodes": 73,
+  "score_total": 2569,
+  "score_best": 227,
   "best_loadout": [
-    1,
     0,
     0,
     0,
-    1
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Baby Ant": 1,
     "bot-208": 1,
-    "Hornet": 11,
+    "Hornet": 17,
     "Ladybug": 3,
     "Cactus": 3,
     "Bee": 2,
@@ -24,22 +25,28 @@
     "67": 1,
     "Mantis": 3,
     "bot-61": 1,
-    "Wasp": 11,
+    "Wasp": 13,
     "bot-74": 1,
     "bot-79": 1,
     "Rock": 1,
-    "bot-59": 1
+    "bot-59": 1,
+    "bot-62": 1,
+    "Desert Centipede": 1,
+    "bot-68": 1,
+    "bot-97": 1,
+    "bot-72": 1
   },
   "loadout_history": {
-    "0": 54,
-    "1": 46,
+    "0": 69,
+    "1": 56,
     "34": 1,
-    "9": 3,
-    "14": 2,
+    "9": 5,
+    "14": 3,
     "6": 1,
     "15": 1,
     "75": 1,
     "25": 1,
-    "18": 2
+    "18": 2,
+    "5": 1
   }
 }

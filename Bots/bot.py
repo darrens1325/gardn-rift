@@ -83,9 +83,9 @@ DEFAULT_CONTROL_HZ = 20   # sane default for stock TPS=20; bump when server runs
 NEAREST_K = 3             # number of hostiles encoded in the observation
 
 # Reward weights
-W_SCORE = 0.4
+W_SCORE = 1.2
 W_HP = 10.0
-IDLE_PENALTY = 0.1
+IDLE_PENALTY = 0.05
 DEATH_PENALTY = 18.0
 
 # PvP reward shaping. Encourages the policy to seek out other bots rather
@@ -113,7 +113,7 @@ PROXIMITY_RANGE = 600.0
 # us when a mob attacks the same target simultaneously, but the gradient
 # direction (be in petal-overlap range + attack + enemy HP drops → reward)
 # is exactly what we want the policy to learn.
-W_DAMAGE = 8.0         # per HP-ratio point of damage attributed to us
+W_DAMAGE = 10.0         # per HP-ratio point of damage attributed to us
 # Additional reward stacked on top of W_DAMAGE for damage dealt by *our
 # petals*. Every credited damage point in `_decide_and_learn` already comes
 # from a confirmed petal-vs-enemy overlap (mob or player), so this bonus

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bloom",
   "first_seen": 1778543095.178931,
-  "last_seen": 1778553032.7192378,
-  "episodes": 37,
-  "score_total": 1728,
+  "last_seen": 1778556757.182268,
+  "episodes": 58,
+  "score_total": 2701,
   "score_best": 166,
   "best_loadout": [
     0,
@@ -14,28 +14,35 @@
     0
   ],
   "killed_by": {
-    "Hornet": 7,
-    "Cactus": 1,
-    "Wasp": 6,
+    "Hornet": 11,
+    "Cactus": 2,
+    "Wasp": 9,
     "bot-100": 1,
-    "Bee": 3,
+    "Bee": 4,
     "bot-77": 2,
     "bot-67": 2,
-    "Sandstorm": 1,
+    "Sandstorm": 3,
     "bot-139": 1,
     "Leafbug": 1,
-    "Mantis": 2,
-    "Beetle": 1
+    "Mantis": 4,
+    "Beetle": 1,
+    "bot-85": 1,
+    "bot-35": 1,
+    "Centipede": 1,
+    "Worker Ant": 1
   },
   "loadout_history": {
-    "0": 33,
-    "1": 30,
+    "0": 51,
+    "1": 47,
     "9": 1,
-    "18": 2,
-    "167": 1,
-    "24": 2,
+    "18": 3,
+    "167": 2,
+    "24": 4,
     "29": 1,
-    "14": 1,
-    "10": 1
+    "14": 2,
+    "10": 1,
+    "6": 1,
+    "58": 1,
+    "5": 1
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-38",
   "first_seen": 1778543153.680154,
-  "last_seen": 1778553038.3045812,
-  "episodes": 40,
-  "score_total": 2057,
+  "last_seen": 1778556523.264873,
+  "episodes": 55,
+  "score_total": 3345,
   "score_best": 180,
   "best_loadout": [
     14,
@@ -14,29 +14,32 @@
     0
   ],
   "killed_by": {
-    "Hornet": 13,
+    "Hornet": 20,
     "Mantis": 2,
     "Bee": 4,
     "Beetle": 2,
     "Centipede": 2,
-    "Ladybug": 1,
+    "Ladybug": 2,
     "bot-24": 2,
     "bot-107": 1,
-    "Wasp": 4,
+    "Wasp": 7,
     "Cactus": 2,
-    "bot-143": 1
+    "bot-143": 1,
+    "bot-60": 1,
+    "bloomy": 1
   },
   "loadout_history": {
-    "0": 37,
-    "1": 31,
-    "9": 5,
-    "5": 6,
+    "0": 52,
+    "1": 37,
+    "9": 6,
+    "5": 8,
     "19": 1,
     "15": 2,
-    "24": 1,
+    "24": 2,
     "14": 6,
     "34": 2,
     "181": 1,
-    "79": 1
+    "79": 1,
+    "18": 1
   }
 }

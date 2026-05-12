@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-121",
   "first_seen": 1778543527.275145,
-  "last_seen": 1778552131.6462662,
-  "episodes": 35,
-  "score_total": 1485,
+  "last_seen": 1778556762.14594,
+  "episodes": 55,
+  "score_total": 3078,
   "score_best": 267,
   "best_loadout": [
     0,
@@ -15,22 +15,29 @@
     0
   ],
   "killed_by": {
-    "Wasp": 9,
+    "Wasp": 12,
     "Sandstorm": 1,
-    "Hornet": 7,
+    "Hornet": 13,
     "Evil Centipede": 3,
     "bot-24": 1,
-    "Cactus": 3,
-    "Mantis": 5,
+    "Cactus": 4,
+    "Mantis": 7,
     "bot-77": 1,
     "bot-87": 1,
-    "Bee": 1
+    "Bee": 1,
+    "bot-122": 1,
+    "Beetle": 1,
+    "bot-130": 1,
+    "bot-67": 1
   },
   "loadout_history": {
-    "0": 33,
-    "1": 25,
-    "68": 1,
+    "0": 50,
+    "1": 35,
+    "68": 2,
     "9": 1,
-    "5": 2
+    "5": 3,
+    "24": 1,
+    "39": 1,
+    "6": 1
   }
 }

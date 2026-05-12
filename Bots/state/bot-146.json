@@ -2,32 +2,41 @@
   "schema": 1,
   "name": "bot-146",
   "first_seen": 1778543136.504431,
-  "last_seen": 1778552131.6099641,
-  "episodes": 18,
-  "score_total": 895,
-  "score_best": 129,
+  "last_seen": 1778556770.580092,
+  "episodes": 34,
+  "score_total": 2484,
+  "score_best": 357,
   "best_loadout": [
-    5,
+    0,
+    0,
     0,
     0,
     0,
     0
   ],
   "killed_by": {
-    "Hornet": 4,
+    "Hornet": 9,
     "Scorpion": 1,
     "Wasp": 3,
     "Ladybug": 1,
-    "Mantis": 1,
+    "Mantis": 4,
     "bot-112": 1,
-    "Beetle": 1
+    "Beetle": 1,
+    "Bush": 1,
+    "Bee": 2,
+    "Evil Centipede": 1,
+    "bot-121": 1,
+    "Cactus": 1
   },
   "loadout_history": {
-    "0": 16,
-    "1": 11,
-    "5": 3,
+    "0": 31,
+    "1": 20,
+    "5": 6,
     "10": 1,
-    "28": 1,
-    "79": 1
+    "28": 2,
+    "79": 1,
+    "18": 1,
+    "19": 1,
+    "15": 1
   }
 }

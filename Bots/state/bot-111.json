@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-111",
   "first_seen": 1778364754.971021,
-  "last_seen": 1778552131.6531641,
-  "episodes": 60,
-  "score_total": 3188,
+  "last_seen": 1778556762.708117,
+  "episodes": 77,
+  "score_total": 4259,
   "score_best": 244,
   "best_loadout": [
     0,
@@ -15,33 +15,39 @@
     0
   ],
   "killed_by": {
-    "Hornet": 17,
+    "Hornet": 21,
     "Scorpion": 1,
     "Spider": 3,
-    "Cactus": 2,
-    "Wasp": 6,
+    "Cactus": 3,
+    "Wasp": 10,
     "Bee": 4,
     "bot-304": 1,
-    "Mantis": 1,
-    "bot-107": 1,
+    "Mantis": 3,
+    "bot-107": 2,
     "Beetle": 4,
     "bot-71": 2,
     "bot-99": 1,
     "Evil Centipede": 1,
     "bot-128": 1,
-    "bot-122": 1
+    "bot-122": 1,
+    "Rock": 1,
+    "Centipede": 1,
+    "bot-134": 1
   },
   "loadout_history": {
-    "0": 57,
-    "1": 41,
+    "0": 71,
+    "1": 52,
     "15": 3,
     "23": 2,
     "59": 1,
     "5": 5,
-    "14": 4,
+    "14": 6,
     "24": 2,
     "6": 1,
     "20": 1,
-    "10": 1
+    "10": 1,
+    "34": 1,
+    "9": 2,
+    "18": 1
   }
 }

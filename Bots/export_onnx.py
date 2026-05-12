@@ -34,7 +34,7 @@ from agent import DQNAgent, STATE_DIM, NUM_ACTIONS
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--checkpoint", default=os.path.join(os.path.dirname(__file__), "model.pt"))
+    ap.add_argument("--checkpoint", default=os.path.join(os.path.dirname(__file__), "model.pt.best"))
     ap.add_argument("--out",        default=os.path.join(os.path.dirname(__file__), "model.onnx"))
     ap.add_argument("--opset",      type=int, default=17,
                     help="ONNX opset (onnxruntime-web 1.18 supports up to 20)")

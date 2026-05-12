@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-97",
   "first_seen": 1778543161.996654,
-  "last_seen": 1778552131.665559,
-  "episodes": 37,
-  "score_total": 1936,
+  "last_seen": 1778556800.3251579,
+  "episodes": 58,
+  "score_total": 3201,
   "score_best": 212,
   "best_loadout": [
     0,
@@ -16,26 +16,34 @@
   "killed_by": {
     "bot-132": 1,
     "Ladybug": 2,
-    "Beetle": 1,
-    "Wasp": 10,
+    "Beetle": 2,
+    "Wasp": 12,
     "bot-101": 1,
-    "Hornet": 10,
+    "Hornet": 17,
     "Bee": 2,
     "Sandstorm": 1,
     "bot-76": 1,
-    "Mantis": 2
+    "Mantis": 3,
+    "bot-124": 1,
+    "Leafbug": 1,
+    "bot-92": 1,
+    "Centipede": 1,
+    "bot-133": 1,
+    "Evil Centipede": 2
   },
   "loadout_history": {
-    "0": 34,
-    "1": 29,
-    "14": 4,
+    "0": 51,
+    "1": 44,
+    "14": 6,
     "10": 1,
     "11": 1,
-    "5": 1,
+    "5": 3,
     "18": 1,
     "46": 1,
-    "28": 1,
+    "28": 2,
     "117": 1,
-    "15": 1
+    "15": 2,
+    "16": 1,
+    "9": 1
   }
 }

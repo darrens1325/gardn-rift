@@ -207,7 +207,11 @@ void bot_make_obs_impl(int ws_id, float *out) {
 
     float mx = (float)me.x, my = (float)me.y;
     EntityID me_id = me.id;
-    EntityID me_team = me.team;
+    // Mirror bot.py: the team used for friend/foe is the *camera's* team,
+    // not the player's. In current Spawn.cc they're equal because
+    // alloc_player(sim, camera.team) is what sets player.team, but
+    // bot.py reads `cam["team"]` so we do the same here for parity.
+    EntityID me_team = camera.team;
 
     // [HP + 3 hostiles × 4]
     out[OFF_HP] = (float)me.health_ratio;
@@ -218,12 +222,30 @@ void bot_make_obs_impl(int ws_id, float *out) {
     struct DropFeat { float d2, dx, dy; int drop_id; };
     DropFeat drops[K_DROPS] = { {1e30f,0,0,0}, {1e30f,0,0,0}, {1e30f,0,0,0} };
 
-    sim->for_each_entity([&](Simulation *, Entity &e) {
+    // Critical: the Python bot's observation is built from `self.entities`,
+    // which is populated from each kClientUpdate packet — and that packet
+    // only carries entities within the camera's visible AABB (see
+    // Server/Game.cc::_update_client). Hostiles outside that rectangle
+    // are simply NOT in the Python bot's world view. Iterating
+    // `sim->for_each_entity` here exposes the *entire* arena, so the
+    // nearest-hostile slot picks up flowers/mobs at e.g. 5000 units
+    // (dx/OBS_SCALE ≈ 3.3) — values the trained model never saw, since
+    // the camera AABB caps any visible hostile near ±(960/fov+50,
+    // 540/fov+50) ≈ ±(1117, 650). The model then picks pseudo-random
+    // actions on those out-of-distribution inputs and the bots act
+    // "sluggish / slow to react." Use the same spatial_hash.query the
+    // server uses to assemble in_view, against the *camera* position
+    // and view extents, so the observation set matches exactly.
+    float cam_x = (float)camera.camera_x;
+    float cam_y = (float)camera.camera_y;
+    float view_w = 960.0f / (float)camera.fov + 50.0f;
+    float view_h = 540.0f / (float)camera.fov + 50.0f;
+    sim->spatial_hash.query(cam_x, cam_y, view_w, view_h, [&](Simulation *, Entity &e) {
         if (e.id == me_id) return;
         if (!e.has_component(kPhysics)) return;
         // Match bot.py: skip entities flagged for deletion this tick.
-        // They still appear in for_each_entity until post_tick clears
-        // them, but bot.py drops them via `ent.get("_pending_delete")`.
+        // They still appear in the world until post_tick clears them,
+        // but bot.py drops them via `ent.get("_pending_delete")`.
         // Without this filter the bundle observation can include a
         // just-killed hostile as the nearest target, perturbing the
         // model relative to its training-time inputs.

@@ -2,36 +2,41 @@
   "schema": 1,
   "name": "bot-89",
   "first_seen": 1778543490.895394,
-  "last_seen": 1778552131.6727,
-  "episodes": 38,
-  "score_total": 2369,
-  "score_best": 162,
+  "last_seen": 1778556788.9957051,
+  "episodes": 55,
+  "score_total": 3480,
+  "score_best": 232,
   "best_loadout": [
-    29,
-    24,
-    14,
+    33,
     1,
-    1
+    6,
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Bush": 1,
-    "Hornet": 12,
+    "Hornet": 17,
     "Desert Centipede": 1,
-    "Mantis": 1,
+    "Mantis": 2,
     "bot-140": 1,
     "Cactus": 5,
     "blossom": 1,
-    "Wasp": 5,
+    "Wasp": 9,
     "bot-86": 1,
     "Worker Ant": 1,
     "bot-67": 1,
-    "Beetle": 1,
+    "Beetle": 2,
     "Bee": 2,
-    "Centipede": 1
+    "Centipede": 1,
+    "Spider": 1,
+    "bot-73": 1,
+    "bot-41": 1,
+    "Evil Centipede": 1
   },
   "loadout_history": {
-    "0": 33,
-    "1": 21,
+    "0": 49,
+    "1": 31,
     "5": 6,
     "69": 1,
     "45": 1,
@@ -45,6 +50,8 @@
     "32": 1,
     "15": 1,
     "7": 1,
-    "79": 1
+    "79": 1,
+    "33": 1,
+    "6": 1
   }
 }

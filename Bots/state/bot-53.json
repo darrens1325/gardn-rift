@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-53",
   "first_seen": 1778543125.842199,
-  "last_seen": 1778553046.0376709,
-  "episodes": 35,
-  "score_total": 1999,
+  "last_seen": 1778556795.9290292,
+  "episodes": 59,
+  "score_total": 3117,
   "score_best": 263,
   "best_loadout": [
     0,
@@ -15,30 +15,36 @@
     0
   ],
   "killed_by": {
-    "Hornet": 9,
-    "Wasp": 5,
+    "Hornet": 19,
+    "Wasp": 11,
     "bot-113": 1,
-    "Bee": 1,
+    "Bee": 2,
     "Spider": 3,
     "bot-137": 1,
-    "Mantis": 3,
+    "Mantis": 5,
     "bot-51": 1,
     "Sandstorm": 2,
-    "Cactus": 1,
+    "Cactus": 2,
     "flower": 1,
-    "bot-62": 1
+    "bot-62": 1,
+    "Beetle": 1,
+    "Centipede": 1
   },
   "loadout_history": {
-    "0": 34,
-    "1": 24,
+    "0": 58,
+    "1": 41,
     "9": 2,
     "14": 2,
     "16": 1,
-    "5": 1,
+    "5": 3,
     "46": 1,
-    "18": 2,
+    "18": 3,
     "167": 1,
-    "28": 1,
-    "116": 1
+    "28": 2,
+    "116": 1,
+    "15": 2,
+    "17": 1,
+    "19": 1,
+    "20": 1
   }
 }

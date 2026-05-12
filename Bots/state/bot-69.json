@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-69",
   "first_seen": 1778543156.027966,
-  "last_seen": 1778553055.310602,
-  "episodes": 46,
-  "score_total": 1866,
+  "last_seen": 1778556781.195647,
+  "episodes": 69,
+  "score_total": 2840,
   "score_best": 139,
   "best_loadout": [
     1,
@@ -15,10 +15,10 @@
   ],
   "killed_by": {
     "Beetle": 1,
-    "Wasp": 12,
-    "Hornet": 10,
+    "Wasp": 18,
+    "Hornet": 17,
     "Leafbug": 1,
-    "Mantis": 4,
+    "Mantis": 9,
     "bot-85": 1,
     "bot-42": 1,
     "Bee": 3,
@@ -27,14 +27,16 @@
     "bot-130": 1,
     "bot-100": 1,
     "bot-147": 1,
-    "Cactus": 1,
-    "hello": 2
+    "Cactus": 2,
+    "hello": 2,
+    "Sandstorm": 1,
+    "Rock": 1
   },
   "loadout_history": {
-    "0": 42,
-    "1": 34,
+    "0": 63,
+    "1": 51,
     "5": 5,
-    "14": 6,
+    "14": 8,
     "18": 4,
     "34": 1,
     "9": 4,
@@ -42,6 +44,8 @@
     "6": 1,
     "10": 1,
     "11": 1,
-    "16": 1
+    "16": 1,
+    "28": 1,
+    "15": 1
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-125",
   "first_seen": 1778543486.094666,
-  "last_seen": 1778552131.642465,
-  "episodes": 38,
-  "score_total": 1974,
+  "last_seen": 1778555485.2049391,
+  "episodes": 50,
+  "score_total": 2426,
   "score_best": 167,
   "best_loadout": [
     0,
@@ -18,21 +18,22 @@
     "Evil Centipede": 1,
     "rosie": 1,
     "Sandstorm": 4,
-    "Mantis": 2,
-    "Hornet": 8,
-    "Wasp": 7,
+    "Mantis": 3,
+    "Hornet": 11,
+    "Wasp": 11,
     "Spider": 1,
-    "Scorpion": 1,
-    "Beetle": 1,
+    "Scorpion": 2,
+    "Beetle": 2,
     "Bee": 3,
     "bot-99": 1,
     "zorr": 1,
     "Cactus": 1,
-    "petalpop": 1
+    "petalpop": 1,
+    "Leafbug": 1
   },
   "loadout_history": {
-    "1": 23,
-    "0": 32,
+    "1": 31,
+    "0": 44,
     "10": 2,
     "6": 2,
     "51": 1,
@@ -41,6 +42,8 @@
     "5": 2,
     "28": 1,
     "49": 1,
-    "9": 1
+    "9": 1,
+    "167": 1,
+    "20": 1
   }
 }

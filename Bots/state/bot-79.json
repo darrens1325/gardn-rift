@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-79",
   "first_seen": 1778543160.249195,
-  "last_seen": 1778552131.6812952,
-  "episodes": 47,
-  "score_total": 2621,
+  "last_seen": 1778556784.279217,
+  "episodes": 70,
+  "score_total": 3954,
   "score_best": 245,
   "best_loadout": [
     0,
@@ -15,29 +15,34 @@
     0
   ],
   "killed_by": {
-    "Beetle": 7,
-    "Hornet": 13,
-    "Wasp": 9,
+    "Beetle": 11,
+    "Hornet": 18,
+    "Wasp": 12,
     "bot-77": 1,
     "Evil Centipede": 2,
     "Leafbug": 1,
     "Soldier Ant": 1,
-    "Mantis": 6,
-    "Bee": 1,
+    "Mantis": 8,
+    "Bee": 2,
     "bot-89": 1,
-    "Ladybug": 1
+    "Ladybug": 2,
+    "bot-103": 1,
+    "Scorpion": 1,
+    "Centipede": 1,
+    "bot-147": 1
   },
   "loadout_history": {
-    "0": 45,
-    "1": 35,
+    "0": 67,
+    "1": 52,
     "34": 1,
     "5": 2,
-    "14": 4,
+    "14": 6,
     "24": 2,
     "9": 1,
     "30": 1,
-    "18": 2,
+    "18": 3,
     "47": 1,
-    "35": 1
+    "35": 2,
+    "15": 1
   }
 }

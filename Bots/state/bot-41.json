@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-41",
   "first_seen": 1778543142.804375,
-  "last_seen": 1778553044.739796,
-  "episodes": 40,
-  "score_total": 4057,
+  "last_seen": 1778556794.660821,
+  "episodes": 64,
+  "score_total": 6209,
   "score_best": 614,
   "best_loadout": [
     0,
@@ -15,26 +15,31 @@
     0
   ],
   "killed_by": {
-    "Hornet": 10,
-    "Mantis": 6,
-    "Bush": 1,
-    "Wasp": 5,
+    "Hornet": 15,
+    "Mantis": 8,
+    "Bush": 3,
+    "Wasp": 8,
     "Scorpion": 1,
-    "Evil Centipede": 3,
-    "Bee": 2,
+    "Evil Centipede": 4,
+    "Bee": 3,
     "bot-26": 1,
-    "Beetle": 1,
-    "bot-113": 1
+    "Beetle": 3,
+    "bot-113": 1,
+    "Cactus": 2,
+    "Spider": 2,
+    "Leafbug": 1
   },
   "loadout_history": {
-    "0": 34,
-    "1": 28,
-    "14": 4,
+    "0": 57,
+    "1": 43,
+    "14": 5,
     "5": 4,
     "9": 5,
     "24": 1,
     "25": 1,
     "32": 1,
-    "6": 1
+    "6": 1,
+    "75": 1,
+    "18": 1
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "petalpop",
   "first_seen": 1778364029.198153,
-  "last_seen": 1778553027.027143,
-  "episodes": 83,
-  "score_total": 2848,
+  "last_seen": 1778556787.2846231,
+  "episodes": 99,
+  "score_total": 3752,
   "score_best": 195,
   "best_loadout": [
     0,
@@ -14,11 +14,11 @@
     0
   ],
   "killed_by": {
-    "Hornet": 24,
+    "Hornet": 28,
     "Cactus": 6,
     "Massive Beetle": 3,
     "Spider": 3,
-    "Beetle": 6,
+    "Beetle": 9,
     "bot-52": 1,
     "bot-47": 3,
     "bot": 1,
@@ -27,24 +27,27 @@
     "Mantis": 3,
     "bot-118": 1,
     "Centipede": 1,
-    "Wasp": 8,
-    "leafy": 1
+    "Wasp": 11,
+    "leafy": 1,
+    "bot-38": 1,
+    "bot-113": 1
   },
   "loadout_history": {
-    "0": 61,
-    "1": 70,
+    "0": 76,
+    "1": 78,
     "25": 2,
     "18": 2,
     "15": 3,
-    "9": 2,
+    "9": 5,
     "63": 1,
     "28": 1,
     "69": 2,
     "167": 1,
     "10": 2,
     "5": 3,
-    "14": 1,
-    "24": 2,
-    "116": 1
+    "14": 2,
+    "24": 5,
+    "116": 1,
+    "46": 1
   }
 }

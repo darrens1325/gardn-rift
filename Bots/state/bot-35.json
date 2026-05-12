@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-35",
   "first_seen": 1778543812.3935318,
-  "last_seen": 1778553035.06464,
-  "episodes": 43,
-  "score_total": 3354,
+  "last_seen": 1778556296.214032,
+  "episodes": 60,
+  "score_total": 4309,
   "score_best": 279,
   "best_loadout": [
     0,
@@ -15,20 +15,25 @@
     18
   ],
   "killed_by": {
-    "Hornet": 9,
-    "Wasp": 10,
-    "Mantis": 6,
+    "Hornet": 13,
+    "Wasp": 13,
+    "Mantis": 7,
     "Beetle": 5,
     "bot-30": 1,
     "bot-86": 2,
     "bot-65": 2,
-    "Bee": 2,
-    "Ladybug": 1
+    "Bee": 4,
+    "Ladybug": 1,
+    "Scorpion": 1,
+    "bot-128": 1,
+    "Desert Centipede": 1,
+    "bloom": 1,
+    "bot-113": 1
   },
   "loadout_history": {
-    "0": 37,
-    "1": 31,
-    "9": 4,
+    "0": 54,
+    "1": 43,
+    "9": 6,
     "5": 2,
     "79": 1,
     "49": 1,
@@ -36,6 +41,7 @@
     "167": 1,
     "28": 1,
     "18": 2,
-    "14": 2
+    "14": 4,
+    "34": 1
   }
 }

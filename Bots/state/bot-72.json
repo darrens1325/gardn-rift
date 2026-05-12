@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-72",
   "first_seen": 1778543134.410288,
-  "last_seen": 1778552131.68725,
-  "episodes": 28,
-  "score_total": 1250,
+  "last_seen": 1778556776.7103539,
+  "episodes": 42,
+  "score_total": 1818,
   "score_best": 284,
   "best_loadout": [
     0,
@@ -15,26 +15,31 @@
     0
   ],
   "killed_by": {
-    "Wasp": 4,
+    "Wasp": 6,
     "Mantis": 5,
-    "Sandstorm": 1,
-    "Hornet": 4,
+    "Sandstorm": 3,
+    "Hornet": 8,
     "bot-48": 2,
     "flower": 2,
     "bot-131": 1,
     "bot-125": 1,
     "Rock": 1,
     "Cactus": 1,
-    "Beetle": 1
+    "Beetle": 1,
+    "prickly": 1,
+    "Evil Centipede": 1,
+    "Bee": 1,
+    "bot-78": 1
   },
   "loadout_history": {
-    "0": 27,
-    "1": 14,
+    "0": 41,
+    "1": 23,
     "14": 1,
     "5": 1,
     "20": 1,
     "79": 1,
     "34": 1,
-    "25": 1
+    "25": 1,
+    "15": 1
   }
 }

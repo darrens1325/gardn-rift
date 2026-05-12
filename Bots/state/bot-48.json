@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-48",
   "first_seen": 1778543455.3588312,
-  "last_seen": 1778552131.706594,
-  "episodes": 45,
-  "score_total": 4853,
+  "last_seen": 1778556799.666912,
+  "episodes": 67,
+  "score_total": 6055,
   "score_best": 1181,
   "best_loadout": [
     0,
@@ -16,20 +16,23 @@
   ],
   "killed_by": {
     "Beetle": 3,
-    "Wasp": 10,
-    "Hornet": 13,
+    "Wasp": 17,
+    "Hornet": 17,
     "Bush": 2,
     "bot-22": 1,
-    "Mantis": 5,
+    "Mantis": 6,
     "Cactus": 5,
     "blossom": 1,
     "bot-141": 1,
-    "Bee": 1
+    "Bee": 2,
+    "Sandstorm": 1,
+    "Soldier Ant": 1,
+    "bot-33": 1
   },
   "loadout_history": {
-    "0": 41,
-    "1": 30,
-    "5": 2,
+    "0": 62,
+    "1": 42,
+    "5": 4,
     "116": 1,
     "18": 1,
     "167": 1,
@@ -37,9 +40,11 @@
     "10": 1,
     "14": 1,
     "46": 1,
-    "9": 1,
+    "9": 5,
     "15": 1,
     "48": 1,
-    "19": 1
+    "19": 1,
+    "28": 1,
+    "29": 1
   }
 }

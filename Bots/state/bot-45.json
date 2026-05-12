@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-45",
   "first_seen": 1778543561.24242,
-  "last_seen": 1778552131.7100449,
-  "episodes": 39,
-  "score_total": 3600,
+  "last_seen": 1778556798.10708,
+  "episodes": 64,
+  "score_total": 5052,
   "score_best": 1063,
   "best_loadout": [
     0,
@@ -15,27 +15,32 @@
     0
   ],
   "killed_by": {
-    "Mantis": 4,
+    "Mantis": 6,
     "bot-147": 1,
     "Sandstorm": 2,
     "Evil Centipede": 2,
-    "Wasp": 8,
+    "Wasp": 14,
     "bot-55": 1,
-    "Beetle": 1,
-    "Hornet": 8,
+    "Beetle": 2,
+    "Hornet": 15,
     "bot-143": 1,
-    "Cactus": 3,
-    "Ladybug": 2,
-    "bot-123": 1
+    "Cactus": 4,
+    "Ladybug": 3,
+    "bot-123": 1,
+    "bot-68": 1,
+    "Leafbug": 1,
+    "Bee": 2
   },
   "loadout_history": {
-    "0": 37,
-    "1": 28,
+    "0": 62,
+    "1": 43,
     "24": 3,
     "19": 1,
     "29": 1,
     "9": 1,
-    "14": 1,
-    "5": 1
+    "14": 2,
+    "5": 1,
+    "25": 1,
+    "15": 1
   }
 }

@@ -2,35 +2,40 @@
   "schema": 1,
   "name": "bot-30",
   "first_seen": 1778543105.570722,
-  "last_seen": 1778553033.055982,
-  "episodes": 35,
-  "score_total": 2412,
-  "score_best": 140,
+  "last_seen": 1778556762.996942,
+  "episodes": 49,
+  "score_total": 4754,
+  "score_best": 1061,
   "best_loadout": [
-    34,
     0,
     0,
-    1,
+    0,
+    0,
+    0,
     0
   ],
   "killed_by": {
     "Centipede": 3,
     "Scorpion": 1,
     "Sandstorm": 1,
-    "Hornet": 13,
+    "Hornet": 17,
     "Bee": 2,
     "Wasp": 3,
     "bot-134": 1,
-    "Cactus": 1,
+    "Cactus": 3,
     "bot-113": 1,
-    "Mantis": 2,
-    "blossom-v2": 1
+    "Mantis": 3,
+    "blossom-v2": 1,
+    "Spider": 1,
+    "petalpop": 1,
+    "bot-24": 1,
+    "bot-50": 1
   },
   "loadout_history": {
-    "0": 31,
-    "1": 22,
+    "0": 43,
+    "1": 29,
     "14": 2,
-    "5": 1,
+    "5": 2,
     "9": 4,
     "6": 2,
     "28": 1,
@@ -39,6 +44,8 @@
     "25": 1,
     "10": 1,
     "32": 1,
-    "107": 1
+    "107": 1,
+    "15": 2,
+    "18": 2
   }
 }

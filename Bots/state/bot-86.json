@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-86",
   "first_seen": 1778543504.339007,
-  "last_seen": 1778552131.675712,
-  "episodes": 32,
-  "score_total": 1425,
+  "last_seen": 1778556774.602398,
+  "episodes": 54,
+  "score_total": 2573,
   "score_best": 171,
   "best_loadout": [
     1,
@@ -14,27 +14,33 @@
     1
   ],
   "killed_by": {
-    "Hornet": 7,
-    "Wasp": 7,
-    "Spider": 1,
+    "Hornet": 15,
+    "Wasp": 10,
+    "Spider": 2,
     "Beetle": 4,
-    "Mantis": 6,
+    "Mantis": 10,
     "Leafbug": 1,
     "bot-119": 1,
-    "root": 1
+    "root": 1,
+    "bot-106": 1,
+    "bot-140": 1,
+    "Bee": 1
   },
   "loadout_history": {
-    "0": 26,
+    "0": 45,
     "9": 1,
-    "1": 24,
-    "14": 1,
+    "1": 39,
+    "14": 2,
     "48": 1,
     "23": 1,
-    "24": 1,
+    "24": 3,
     "175": 1,
     "19": 1,
-    "5": 2,
-    "10": 1,
-    "6": 1
+    "5": 6,
+    "10": 3,
+    "6": 1,
+    "12": 1,
+    "15": 2,
+    "34": 1
   }
 }

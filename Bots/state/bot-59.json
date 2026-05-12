@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-59",
   "first_seen": 1778543498.623895,
-  "last_seen": 1778553053.715198,
-  "episodes": 45,
-  "score_total": 1953,
+  "last_seen": 1778556774.167765,
+  "episodes": 68,
+  "score_total": 3059,
   "score_best": 133,
   "best_loadout": [
     5,
@@ -14,13 +14,13 @@
     0
   ],
   "killed_by": {
-    "Beetle": 2,
-    "Hornet": 12,
-    "Wasp": 6,
-    "Mantis": 6,
+    "Beetle": 3,
+    "Hornet": 16,
+    "Wasp": 14,
+    "Mantis": 8,
     "bot-52": 1,
     "petalpop": 1,
-    "Cactus": 1,
+    "Cactus": 2,
     "bot-106": 1,
     "bot-112": 1,
     "Sandstorm": 1,
@@ -28,21 +28,27 @@
     "Evil Centipede": 2,
     "Leafbug": 1,
     "bot-143": 1,
-    "bot-134": 1
+    "bot-134": 1,
+    "Desert Centipede": 1,
+    "bot-104": 2,
+    "Spider": 1
   },
   "loadout_history": {
-    "0": 41,
-    "1": 33,
+    "0": 63,
+    "1": 47,
     "39": 1,
-    "28": 2,
-    "5": 3,
-    "14": 4,
+    "28": 3,
+    "5": 4,
+    "14": 5,
     "116": 1,
     "18": 1,
     "24": 1,
     "48": 1,
-    "10": 1,
+    "10": 2,
     "6": 1,
-    "56": 1
+    "56": 1,
+    "11": 1,
+    "167": 1,
+    "49": 1
   }
 }

@@ -67,27 +67,27 @@ void Game::render_game() {
         } else {
             TiledMapRender::draw(renderer);
         }
-        renderer.set_stroke(alpha);
-        renderer.set_line_width(0.5);
-        float scale = 1 / (2 * camera.fov * Ui::scale);
-        float leftX = camera.camera_x - renderer.width * scale;
-        float rightX = camera.camera_x + renderer.width * scale;
-        float topY = camera.camera_y - renderer.height * scale;
-        float bottomY = camera.camera_y + renderer.height * scale;
-        float newLeftX = ceilf(leftX / 50) * 50;
-        float newTopY = ceilf(topY / 50) * 50;
-        renderer.begin_path();
-        for (; newLeftX < rightX; newLeftX += 50)
-        {
-            renderer.move_to(newLeftX, topY);
-            renderer.line_to(newLeftX, bottomY);
-        }
-        for (; newTopY < bottomY; newTopY += 50)
-        {
-            renderer.move_to(leftX, newTopY);
-            renderer.line_to(rightX, newTopY);
-        }
-        renderer.stroke();
+        // renderer.set_stroke(alpha);
+        // renderer.set_line_width(0.5);
+        // float scale = 1 / (2 * camera.fov * Ui::scale);
+        // float leftX = camera.camera_x - renderer.width * scale;
+        // float rightX = camera.camera_x + renderer.width * scale;
+        // float topY = camera.camera_y - renderer.height * scale;
+        // float bottomY = camera.camera_y + renderer.height * scale;
+        // float newLeftX = ceilf(leftX / 50) * 50;
+        // float newTopY = ceilf(topY / 50) * 50;
+        // renderer.begin_path();
+        // for (; newLeftX < rightX; newLeftX += 50)
+        // {
+        //     renderer.move_to(newLeftX, topY);
+        //     renderer.line_to(newLeftX, bottomY);
+        // }
+        // for (; newTopY < bottomY; newTopY += 50)
+        // {
+        //     renderer.move_to(leftX, newTopY);
+        //     renderer.line_to(rightX, newTopY);
+        // }
+        // renderer.stroke();
     }
 
     if (alive() && Input::movement_helper && !Input::keyboard_movement) {

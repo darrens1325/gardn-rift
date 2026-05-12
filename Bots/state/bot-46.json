@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-46",
   "first_seen": 1778543096.526817,
-  "last_seen": 1778553039.5566878,
-  "episodes": 44,
-  "score_total": 2769,
+  "last_seen": 1778556765.374453,
+  "episodes": 57,
+  "score_total": 3661,
   "score_best": 280,
   "best_loadout": [
     0,
@@ -15,33 +15,37 @@
     0
   ],
   "killed_by": {
-    "Wasp": 6,
-    "Hornet": 7,
-    "Beetle": 2,
+    "Wasp": 8,
+    "Hornet": 9,
+    "Beetle": 4,
     "Rock": 2,
     "Mantis": 3,
     "Spider": 1,
     "Bee": 4,
-    "Cactus": 3,
+    "Cactus": 4,
     "Baby Ant": 2,
     "Evil Centipede": 1,
-    "Ladybug": 1,
+    "Ladybug": 2,
     "Centipede": 1,
     "bot-41": 1,
     "root": 1,
-    "petalpop": 1
+    "petalpop": 1,
+    "bot-37": 1
   },
   "loadout_history": {
-    "1": 32,
-    "0": 40,
+    "1": 40,
+    "0": 51,
     "14": 3,
     "9": 3,
     "6": 1,
-    "15": 3,
+    "15": 4,
     "24": 1,
-    "5": 3,
+    "5": 7,
     "26": 1,
     "16": 1,
-    "25": 1
+    "25": 1,
+    "7": 1,
+    "10": 1,
+    "19": 1
   }
 }
