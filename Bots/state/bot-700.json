@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-700",
   "first_seen": 1778364752.435858,
-  "last_seen": 1778470877.672009,
-  "episodes": 87,
-  "score_total": 1169,
+  "last_seen": 1778543006.9777431,
+  "episodes": 92,
+  "score_total": 1297,
   "score_best": 82,
   "best_loadout": [
     7,
@@ -15,7 +15,7 @@
   ],
   "killed_by": {
     "Cactus": 7,
-    "Hornet": 39,
+    "Hornet": 42,
     "Beetle": 6,
     "Massive Beetle": 2,
     "bot-505": 5,
@@ -27,11 +27,12 @@
     "Soldier Ant": 1,
     "bot-210": 2,
     "Worker Ant": 1,
-    "Mantis": 1
+    "Mantis": 1,
+    "Bee": 1
   },
   "loadout_history": {
-    "0": 78,
-    "1": 64,
+    "0": 83,
+    "1": 69,
     "25": 1,
     "19": 2,
     "29": 1,

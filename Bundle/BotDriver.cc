@@ -18,12 +18,17 @@
 #include <Server/Client.hh>
 #include <Server/Game.hh>
 #include <Server/Server.hh>
+#include <Server/TiledMap.hh>
 #include <Shared/Binary.hh>
 #include <Shared/Config.hh>
 #include <Shared/Entity.hh>
 #include <Shared/Simulation.hh>
 #include <Shared/StaticData.hh>
 #include <Shared/Vector.hh>
+
+#include <algorithm>
+#include <cmath>
+#include <cstring>
 
 // Mirror agent.py — kept in sync with STATE_DIM and NUM_ACTIONS there.
 static constexpr int BOT_OBS_DIM = 89;
@@ -50,6 +55,127 @@ static const float DIR_TABLE[NUM_DIRECTIONS][2] = {
 
 extern std::unordered_map<int, WebSocket *> WS_MAP;  // defined in Server/Wasm.cc
 
+// Per-bot "ready for next spawn" gate. Mirrors bot.py::_can_respawn —
+// True at connect (so the bot's first life starts immediately), False
+// after each spawn, re-armed True when the server's wave_tick wraps
+// back to 0 (the only thing that resets is end_round in Game.cc, so
+// the wrap is a reliable round-end edge). Without this gate the
+// bundle's bots respawn every tick they're dead, which means the
+// last-man-standing wave system can never resolve — there's always
+// somebody alive.
+static std::unordered_map<int, bool> g_bot_can_respawn;
+static uint32_t g_prev_wave_tick = 0;
+
+// Called once per bot_apply_action. The first bot in a tick detects
+// the wave_tick wrap-to-0 edge and re-arms every bot's gate; the rest
+// see `now == prev` and no-op.
+static void update_round_gate() {
+    uint32_t now = Server::game.wave_tick;
+    if (now < g_prev_wave_tick) {
+        // Round just ended (end_round() set wave_tick = 0). Re-arm
+        // every tracked bot.
+        for (auto &kv : g_bot_can_respawn) kv.second = true;
+    }
+    g_prev_wave_tick = now;
+}
+
+// Mirror of bot.py / protocol.py constants. Kept in sync by hand.
+static constexpr int   K_PEERS          = 2;
+static constexpr int   COMM_PER_PEER    = 6;
+static constexpr int   K_DROPS          = 3;
+static constexpr int   DROP_FEAT_PER    = 4;
+static constexpr float MAX_RARITY_RANK  = 6.0f;   // RARITY_UNIQUE
+static constexpr float PETAL_MAX_BURST  = 150.0f;
+static constexpr float WALL_RAY_CAP     = 2000.0f;
+static constexpr int NUM_PETAL_TYPES_INC_NONE = 6;   // matches protocol.py
+
+// State-vector offsets (cumulative, append-only — must match agent.py).
+// [HP, hostile×12, loadout_rank×16, peer_comm×12, loadout_type×16,
+//  drops×12, loadout_burst×16, wall_rays×4]
+static constexpr int OFF_HP             = 0;
+static constexpr int OFF_HOSTILE        = 1;
+static constexpr int OFF_LOADOUT_RANK   = 13;
+static constexpr int OFF_PEER_COMM      = 29;
+static constexpr int OFF_LOADOUT_TYPE   = 41;
+static constexpr int OFF_DROPS          = 57;
+static constexpr int OFF_LOADOUT_BURST  = 69;
+static constexpr int OFF_WALL_RAYS      = 85;
+
+// Mirror of protocol.py PETAL_TYPE_*: 0=NONE 1=DAMAGE 2=TANK 3=HEAL 4=POISON 5=UTILITY.
+enum PetalTypeCat { PT_NONE=0, PT_DAMAGE=1, PT_TANK=2, PT_HEAL=3, PT_POISON=4, PT_UTILITY=5 };
+
+// Classify a petal by inspecting its PETAL_DATA entry. Mirrors the
+// hand-authored protocol.py PETAL_TYPE table:
+//   1. attributes.constant_heal > 0 or attributes.burst_heal > 0 → HEAL
+//   2. attributes.poison_damage.damage > 0 → POISON
+//   3. names matching the TANK / DAMAGE lists below → that category
+//   4. everything else → UTILITY (flag-style petals: Antennae, Bubble,
+//      Missile, Web, Wing, Faster, Egg variants, Stick, Salt, ThirdEye,
+//      Observer, Lotus, Cutter, YinYang, Yggdrasil, Square, Root, …)
+static int classify_petal_type(PetalID::T id) {
+    if (id == PetalID::kNone || id >= PetalID::kNumPetals) return PT_NONE;
+    PetalData const &d = PETAL_DATA[id];
+    if (d.attributes.constant_heal > 0 || d.attributes.burst_heal > 0) return PT_HEAL;
+    if (d.attributes.poison_damage.damage > 0) return PT_POISON;
+    char const *n = d.name;
+    // TANK: chunky high-HP defensive petals.
+    if (!std::strcmp(n, "Heavy") || !std::strcmp(n, "Rock") || !std::strcmp(n, "Cactus")
+        || !std::strcmp(n, "Tricac") || !std::strcmp(n, "Heaviest") || !std::strcmp(n, "Moon")
+        || !std::strcmp(n, "Bone") || !std::strcmp(n, "Corn")) return PT_TANK;
+    // DAMAGE: offensive petals with no special role.
+    if (!std::strcmp(n, "Basic") || !std::strcmp(n, "Fast") || !std::strcmp(n, "Stinger")
+        || !std::strcmp(n, "Twin") || !std::strcmp(n, "Triplet") || !std::strcmp(n, "Peas")
+        || !std::strcmp(n, "Sand") || !std::strcmp(n, "Rice") || !std::strcmp(n, "Square")
+        || !std::strcmp(n, "Tringer")) return PT_DAMAGE;
+    return PT_UTILITY;
+}
+
+// 4 cardinal-direction wall-distance rays. Mirrors Bots/wall_map.py —
+// the cardinal-ray AABB check collapses to a 1-D containment test:
+// vertical rays only care about walls whose x-span contains px, etc.
+// Reads TiledMap::collision_rects + collision_polys (the latter via
+// their bounding boxes — exact polygon vs ray is overkill for a
+// cardinal sensor). Output order matches WALL_FEAT layout in
+// wall_map.py: [N, E, S, W].
+static void wall_ray_features(float px, float py, float *out) {
+    float north = py;
+    float south = (float)ARENA_HEIGHT - py;
+    float west  = px;
+    float east  = (float)ARENA_WIDTH  - px;
+    if (north < 0) north = 0;
+    if (south < 0) south = 0;
+    if (west  < 0) west  = 0;
+    if (east  < 0) east  = 0;
+    auto consider_rect = [&](float rx, float ry, float rw, float rh) {
+        if (rx <= px && px <= rx + rw) {
+            if (ry + rh <= py) {
+                float d = py - (ry + rh);
+                if (d < north) north = d;
+            } else if (ry >= py) {
+                float d = ry - py;
+                if (d < south) south = d;
+            }
+        }
+        if (ry <= py && py <= ry + rh) {
+            if (rx + rw <= px) {
+                float d = px - (rx + rw);
+                if (d < west) west = d;
+            } else if (rx >= px) {
+                float d = rx - px;
+                if (d < east) east = d;
+            }
+        }
+    };
+    for (auto const &r : TiledMap::collision_rects)
+        consider_rect(r.x, r.y, r.w, r.h);
+    for (auto const &p : TiledMap::collision_polys)
+        consider_rect(p.min_x, p.min_y, p.max_x - p.min_x, p.max_y - p.min_y);
+    out[0] = std::min(north / WALL_RAY_CAP, 1.0f);
+    out[1] = std::min(east  / WALL_RAY_CAP, 1.0f);
+    out[2] = std::min(south / WALL_RAY_CAP, 1.0f);
+    out[3] = std::min(west  / WALL_RAY_CAP, 1.0f);
+}
+
 static Client *client_for_ws(int ws_id) {
     auto it = WS_MAP.find(ws_id);
     if (it == WS_MAP.end() || it->second == nullptr) return nullptr;
@@ -59,6 +185,16 @@ static Client *client_for_ws(int ws_id) {
 // Encode a 89-dim observation from the current sim state for the bot at
 // ws_id. Out-of-bound / dead-bot calls just zero-fill so the model
 // produces deterministic output (typically biased toward action 0 = stay).
+//
+// Layout matches agent.py exactly:
+//   [0..0]    self HP                                         (1)
+//   [1..12]   3 nearest hostiles × (dx,dy,is_player,hp)       (12)
+//   [13..28]  loadout slots × rank_norm                        (16)
+//   [29..40]  peer comm (left zero — no in-bundle blackboard)  (12)
+//   [41..56]  loadout slots × type_norm                        (16)
+//   [57..68]  3 nearest drops × (dx,dy,rank_norm,type_norm)    (12)
+//   [69..84]  loadout slots × burst_norm                       (16)
+//   [85..88]  4 cardinal wall-ray distances (N,E,S,W)          (4)
 void bot_make_obs_impl(int ws_id, float *out) {
     for (int i = 0; i < BOT_OBS_DIM; ++i) out[i] = 0.0f;
     Client *client = client_for_ws(ws_id);
@@ -69,24 +205,47 @@ void bot_make_obs_impl(int ws_id, float *out) {
     if (!sim->ent_alive(camera.player)) return;
     Entity &me = sim->get_ent(camera.player);
 
-    // BASE_STATE: self HP (1) + 3 nearest hostiles × 4 features (12).
-    out[0] = (float)me.health_ratio;
-    struct Hostile { float d2, dx, dy, is_player, hp; };
-    Hostile nearest[3] = { {1e30f,0,0,0,0}, {1e30f,0,0,0,0}, {1e30f,0,0,0,0} };
     float mx = (float)me.x, my = (float)me.y;
     EntityID me_id = me.id;
     EntityID me_team = me.team;
 
+    // [HP + 3 hostiles × 4]
+    out[OFF_HP] = (float)me.health_ratio;
+    struct Hostile { float d2, dx, dy, is_player, hp; };
+    Hostile nearest[3] = { {1e30f,0,0,0,0}, {1e30f,0,0,0,0}, {1e30f,0,0,0,0} };
+
+    // [3 nearest drops × 4]
+    struct DropFeat { float d2, dx, dy; int drop_id; };
+    DropFeat drops[K_DROPS] = { {1e30f,0,0,0}, {1e30f,0,0,0}, {1e30f,0,0,0} };
+
     sim->for_each_entity([&](Simulation *, Entity &e) {
         if (e.id == me_id) return;
+        if (!e.has_component(kPhysics)) return;
+        // Match bot.py: skip entities flagged for deletion this tick.
+        // They still appear in for_each_entity until post_tick clears
+        // them, but bot.py drops them via `ent.get("_pending_delete")`.
+        // Without this filter the bundle observation can include a
+        // just-killed hostile as the nearest target, perturbing the
+        // model relative to its training-time inputs.
+        if (e.pending_delete) return;
+        float dx = (float)e.x - mx;
+        float dy = (float)e.y - my;
+        float d2 = dx*dx + dy*dy;
+        if (e.has_component(kDrop)) {
+            for (int k = 0; k < K_DROPS; ++k) {
+                if (d2 < drops[k].d2) {
+                    for (int j = K_DROPS - 1; j > k; --j) drops[j] = drops[j-1];
+                    drops[k] = { d2, dx, dy, (int)e.drop_id };
+                    break;
+                }
+            }
+            return;
+        }
         bool is_mob = e.has_component(kMob);
         bool is_flower = e.has_component(kFlower);
         if (!is_mob && !is_flower) return;
         if (e.team == me_team) return;
-        if (!e.has_component(kPhysics) || !e.has_component(kHealth)) return;
-        float dx = (float)e.x - mx;
-        float dy = (float)e.y - my;
-        float d2 = dx*dx + dy*dy;
+        if (!e.has_component(kHealth)) return;
         for (int k = 0; k < 3; ++k) {
             if (d2 < nearest[k].d2) {
                 for (int j = 2; j > k; --j) nearest[j] = nearest[j-1];
@@ -96,17 +255,56 @@ void bot_make_obs_impl(int ws_id, float *out) {
         }
     });
     for (int k = 0; k < 3; ++k) {
-        int base = 1 + k * 4;
+        int base = OFF_HOSTILE + k * 4;
         out[base + 0] = nearest[k].dx / OBS_SCALE;
         out[base + 1] = nearest[k].dy / OBS_SCALE;
         out[base + 2] = nearest[k].is_player;
         out[base + 3] = nearest[k].hp;
     }
-    // Remaining 76 features (peer comm / loadout rank/type/burst / drops /
-    // wall rays) are zero. The QNet was trained with them populated, so
-    // the bot's policy will be a degraded version of trained behavior —
-    // still legal, but no inventory mgmt, no map-aware navigation. See
-    // Bundle/README.md for the porting punch list.
+
+    // Loadout features (rank / type / burst). One pass over the 16-slot
+    // inventory; populates three parallel state-vector columns. Matches
+    // bot.py::_loadout_features / _loadout_type_features /
+    // _loadout_burst_features.
+    for (int i = 0; i < 16; ++i) {
+        PetalID::T pid = me.loadout_ids[i];
+        if (pid == PetalID::kNone || pid >= PetalID::kNumPetals) continue;
+        PetalData const &pd = PETAL_DATA[pid];
+        // rank: (rarity + 1) / (MAX_RARITY_RANK + 1) → kCommon ≈ 0.14, kUnique = 1.0
+        out[OFF_LOADOUT_RANK + i] = ((float)pd.rarity + 1.0f) / (MAX_RARITY_RANK + 1.0f);
+        // type: classifier / (NUM_TYPES_INC_NONE - 1) so empty=0, utility=1.0
+        int t = classify_petal_type(pid);
+        out[OFF_LOADOUT_TYPE + i] = (float)t / (float)(NUM_PETAL_TYPES_INC_NONE - 1);
+        // burst: damage × count, clamped to 1.0 by PETAL_MAX_BURST.
+        float burst = (float)pd.damage * (float)pd.count;
+        out[OFF_LOADOUT_BURST + i] = std::min(burst / PETAL_MAX_BURST, 1.0f);
+    }
+
+    // Drops: 3 nearest by squared distance, each as (dx, dy, rank, type).
+    for (int k = 0; k < K_DROPS; ++k) {
+        int base = OFF_DROPS + k * DROP_FEAT_PER;
+        if (drops[k].d2 >= 1e29f) continue;  // empty slot — leave zeros
+        out[base + 0] = drops[k].dx / OBS_SCALE;
+        out[base + 1] = drops[k].dy / OBS_SCALE;
+        int did = drops[k].drop_id;
+        if (did > 0 && did < PetalID::kNumPetals) {
+            PetalData const &pd = PETAL_DATA[did];
+            out[base + 2] = ((float)pd.rarity + 1.0f) / (MAX_RARITY_RANK + 1.0f);
+            out[base + 3] = (float)classify_petal_type((PetalID::T)did) / (float)(NUM_PETAL_TYPES_INC_NONE - 1);
+        }
+    }
+
+    // Wall rays. 4 cardinal directions, clamped to WALL_RAY_CAP.
+    wall_ray_features(mx, my, &out[OFF_WALL_RAYS]);
+
+    // Peer comm (OFF_PEER_COMM..OFF_PEER_COMM+11) intentionally left zero.
+    // In the standalone bot.py, peer comm carries the last action chosen
+    // by other bots via an in-process blackboard (agent.publish /
+    // agent.read_peers). The bundle's bots act sequentially and each one
+    // sees only the same sim — no peer-output channel exists to populate
+    // from. Leaving zeros matches "I have no information about peers,"
+    // which is what the trained QNet sees during occasional dropout
+    // anyway.
 }
 
 // Inject a synthetic Serverbound packet into the server as if it came from
@@ -122,6 +320,20 @@ static void send_to_server(int ws_id, uint8_t const *buf, size_t len) {
 
 static void ensure_spawned(int ws_id, Client *client) {
     if (client->alive()) return;
+    // Wave-system respawn gate. Bots that died mid-round wait out the
+    // rest of the round; only kRoundEnd (signalled by wave_tick wrapping
+    // back to 0) re-arms their respawn flag. Without this every bot
+    // respawns next tick and the last-man-standing trigger can never
+    // resolve.
+    auto it = g_bot_can_respawn.find(ws_id);
+    if (it == g_bot_can_respawn.end()) {
+        // First sighting — allow the initial life so the bot enters the
+        // game at all.
+        g_bot_can_respawn[ws_id] = true;
+        it = g_bot_can_respawn.find(ws_id);
+    }
+    if (!it->second) return;  // dead, waiting for round end
+
     // kClientSpawn { string name }. Use a stable name per ws_id.
     uint8_t buf[64] = {0};
     Writer w(buf);
@@ -131,6 +343,10 @@ static void ensure_spawned(int ws_id, Client *client) {
     std::string name(name_buf);
     w.write<std::string>(name);
     send_to_server(ws_id, buf, (size_t)(w.at - w.packet));
+    // Consumed the spawn. The bot can't double-spawn within a round —
+    // the next ensure_spawned call only succeeds once the round-end
+    // edge re-arms the flag.
+    it->second = false;
     std::printf("[botdriver] spawned ws_id=%d as '%s'\n", ws_id, name.c_str());
 }
 
@@ -155,6 +371,10 @@ int bot_alive_count_impl() {
 void bot_apply_action_impl(int ws_id, int action) {
     Client *client = client_for_ws(ws_id);
     if (client == nullptr) return;
+    // Tick the round-end edge detector before any spawn logic. Only the
+    // first bot per tick actually flips state; the rest no-op against
+    // the unchanged wave_tick.
+    update_round_gate();
     // Handshake must be done before anything else. The harness calls
     // _server_on_connect(ws_id), which creates the WebSocket+Client, but the
     // Client only flips to `verified=true` after receiving a kVerify with

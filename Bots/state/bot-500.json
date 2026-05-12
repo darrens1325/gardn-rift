@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-500",
   "first_seen": 1778364745.462504,
-  "last_seen": 1778471636.2903428,
-  "episodes": 89,
-  "score_total": 1819,
+  "last_seen": 1778542928.690007,
+  "episodes": 91,
+  "score_total": 1831,
   "score_best": 1015,
   "best_loadout": [
     0,
@@ -34,7 +34,7 @@
   },
   "loadout_history": {
     "1": 65,
-    "0": 81,
+    "0": 83,
     "14": 2,
     "39": 1,
     "18": 1,

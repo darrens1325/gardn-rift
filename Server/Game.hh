@@ -41,6 +41,15 @@ public:
     // by the main game-loop thread — atomic to keep the cross-thread
     // hand-off honest. See Native.cc for the reader loop.
     std::atomic<int64_t> stdin_wave_tick_override{-1};
+    // Sync-mode bookkeeping. When `sync_mode` is true the wall-clock
+    // timer in Native.cc is left unstarted, and ticks fire only when
+    // every verified client has sent Serverbound::kStep. `pending_step`
+    // is the set of clients that still need to step before the next
+    // tick can run — populated when a client first verifies, cleared
+    // entry-by-entry as `client_requested_step()` is called, and
+    // drained wholesale at the end of every tick.
+    bool sync_mode = false;
+    std::set<Client *> pending_step;
     GameInstance();
     void init();
     void tick();
@@ -49,6 +58,10 @@ public:
     // Send the same byte buffer to every connected, verified client in this
     // instance. Used by chat broadcast.
     void broadcast(uint8_t const *packet, size_t len);
+    // Sync-mode step request. No-op outside sync mode. Marks `client`
+    // as ready; if every verified client is now ready, calls tick()
+    // once and resets the pending set.
+    void client_requested_step(Client *client);
 private:
     // End-of-round: pick the top-scoring living flower as the winner,
     // broadcast kRoundEnd { winner_name, winner_score } to all clients,

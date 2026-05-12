@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "bot-121",
+  "first_seen": 1778543527.275145,
+  "last_seen": 1778545794.5954401,
+  "episodes": 16,
+  "score_total": 919,
+  "score_best": 267,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Wasp": 8,
+    "Sandstorm": 1,
+    "Hornet": 1,
+    "Evil Centipede": 3,
+    "bot-24": 1,
+    "Cactus": 1
+  },
+  "loadout_history": {
+    "0": 15,
+    "1": 11,
+    "68": 1
+  }
+}

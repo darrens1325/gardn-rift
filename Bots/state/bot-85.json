@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "name": "bot-85",
+  "first_seen": 1778543482.814843,
+  "last_seen": 1778545811.726439,
+  "episodes": 17,
+  "score_total": 1238,
+  "score_best": 269,
+  "best_loadout": [
+    1,
+    18,
+    1,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Sandstorm": 1,
+    "Hornet": 2,
+    "bot-33": 1,
+    "Mantis": 2,
+    "bot-111": 1,
+    "Cactus": 1,
+    "Wasp": 2,
+    "Bee": 1,
+    "Scorpion": 1,
+    "Ladybug": 1,
+    "Spider": 1
+  },
+  "loadout_history": {
+    "0": 17,
+    "1": 12,
+    "15": 1,
+    "5": 1,
+    "35": 1,
+    "18": 1,
+    "10": 1,
+    "47": 1,
+    "116": 1
+  }
+}

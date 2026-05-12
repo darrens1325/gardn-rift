@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-60",
+  "first_seen": 1778543152.848855,
+  "last_seen": 1778548768.820928,
+  "episodes": 24,
+  "score_total": 1266,
+  "score_best": 155,
+  "best_loadout": [
+    1,
+    5,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-28": 1,
+    "Leafbug": 1,
+    "Hornet": 6,
+    "Sandstorm": 2,
+    "Rock": 1,
+    "Mantis": 2,
+    "Wasp": 5,
+    "bot-42": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "0": 23,
+    "1": 18,
+    "18": 2,
+    "24": 2,
+    "5": 1,
+    "79": 1
+  }
+}

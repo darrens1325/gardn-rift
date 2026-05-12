@@ -2,15 +2,15 @@
   "schema": 1,
   "name": "bot-217",
   "first_seen": 1778364742.229223,
-  "last_seen": 1778471636.284231,
-  "episodes": 19,
-  "score_total": 265,
-  "score_best": 78,
+  "last_seen": 1778542899.296554,
+  "episodes": 21,
+  "score_total": 394,
+  "score_best": 84,
   "best_loadout": [
     0,
     0,
     0,
-    1,
+    0,
     0
   ],
   "killed_by": {
@@ -18,13 +18,15 @@
     "Bee": 1,
     "Hornet": 5,
     "Evil Centipede": 1,
-    "Desert Centipede": 1
+    "Desert Centipede": 1,
+    "Mantis": 1
   },
   "loadout_history": {
-    "0": 16,
-    "1": 18,
+    "0": 18,
+    "1": 19,
     "7": 1,
     "18": 1,
-    "11": 1
+    "11": 1,
+    "28": 1
   }
 }

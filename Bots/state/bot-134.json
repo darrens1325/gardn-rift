@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "name": "bot-134",
+  "first_seen": 1778543541.314962,
+  "last_seen": 1778545838.559943,
+  "episodes": 25,
+  "score_total": 1698,
+  "score_best": 165,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Beetle": 3,
+    "Bee": 3,
+    "Wasp": 4,
+    "rosie": 2,
+    "Hornet": 5,
+    "Evil Centipede": 1,
+    "Mantis": 3,
+    "bot-116": 1,
+    "Scorpion": 1
+  },
+  "loadout_history": {
+    "0": 20,
+    "1": 23,
+    "69": 1,
+    "79": 2,
+    "28": 3,
+    "9": 2,
+    "14": 1,
+    "167": 1,
+    "15": 2,
+    "6": 1
+  }
+}

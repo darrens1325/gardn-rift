@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-606",
   "first_seen": 1778364750.864934,
-  "last_seen": 1778471639.242507,
-  "episodes": 18,
-  "score_total": 251,
+  "last_seen": 1778542985.9806552,
+  "episodes": 22,
+  "score_total": 336,
   "score_best": 64,
   "best_loadout": [
     0,
@@ -19,11 +19,14 @@
     "Centipede": 1,
     "Cactus": 2,
     "Evil Centipede": 1,
-    "Ladybug": 2
+    "Ladybug": 2,
+    "Wasp": 1,
+    "Mantis": 1,
+    "bot-200": 1
   },
   "loadout_history": {
-    "0": 15,
-    "1": 17,
+    "0": 19,
+    "1": 20,
     "19": 1,
     "33": 1,
     "14": 1

@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-31",
+  "first_seen": 1778543460.086347,
+  "last_seen": 1778548763.1829472,
+  "episodes": 21,
+  "score_total": 1857,
+  "score_best": 197,
+  "best_loadout": [
+    14,
+    0,
+    5,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Scorpion": 1,
+    "bot-63": 1,
+    "Hornet": 6,
+    "Wasp": 1,
+    "Cactus": 4,
+    "bot-71": 1,
+    "Beetle": 2,
+    "Rock": 1,
+    "bot-137": 1
+  },
+  "loadout_history": {
+    "0": 15,
+    "1": 13,
+    "49": 2,
+    "5": 3,
+    "14": 2,
+    "23": 1,
+    "15": 2,
+    "28": 2,
+    "79": 1
+  }
+}

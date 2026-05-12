@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-88",
+  "first_seen": 1778543147.864508,
+  "last_seen": 1778545793.100364,
+  "episodes": 14,
+  "score_total": 651,
+  "score_best": 154,
+  "best_loadout": [
+    10,
+    33,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 1,
+    "Mantis": 4,
+    "bot-135": 1,
+    "Evil Centipede": 1,
+    "Ladybug": 1,
+    "bot-109": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "0": 11,
+    "1": 12,
+    "116": 1,
+    "10": 2,
+    "5": 1,
+    "14": 1,
+    "9": 1,
+    "33": 1
+  }
+}

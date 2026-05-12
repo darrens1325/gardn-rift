@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "name": "bot-54",
+  "first_seen": 1778543110.4872751,
+  "last_seen": 1778545776.298437,
+  "episodes": 21,
+  "score_total": 914,
+  "score_best": 87,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Wasp": 2,
+    "Hornet": 11,
+    "gardn": 1,
+    "Mantis": 1,
+    "bot-66": 1,
+    "Bee": 2,
+    "Bush": 1
+  },
+  "loadout_history": {
+    "0": 17,
+    "1": 15,
+    "14": 2,
+    "11": 1,
+    "24": 2,
+    "33": 1,
+    "5": 2
+  }
+}

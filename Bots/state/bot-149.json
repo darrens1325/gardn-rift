@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-149",
+  "first_seen": 1778543609.035601,
+  "last_seen": 1778545863.095317,
+  "episodes": 15,
+  "score_total": 730,
+  "score_best": 133,
+  "best_loadout": [
+    205,
+    0,
+    0,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Beetle": 2,
+    "Hornet": 2,
+    "Wasp": 4,
+    "bloomy": 2,
+    "Centipede": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "0": 15,
+    "1": 10,
+    "5": 1,
+    "14": 1,
+    "51": 1,
+    "9": 2,
+    "15": 1,
+    "28": 1,
+    "205": 1
+  }
+}

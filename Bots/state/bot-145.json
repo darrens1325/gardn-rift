@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "bot-145",
+  "first_seen": 1778543548.623719,
+  "last_seen": 1778545840.3403552,
+  "episodes": 14,
+  "score_total": 691,
+  "score_best": 243,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 3,
+    "Cactus": 3,
+    "Bee": 3,
+    "bot-123": 2
+  },
+  "loadout_history": {
+    "0": 12,
+    "1": 7,
+    "9": 2,
+    "5": 1,
+    "6": 1,
+    "34": 1
+  }
+}

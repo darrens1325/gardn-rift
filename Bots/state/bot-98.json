@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "bot-98",
+  "first_seen": 1778543168.548741,
+  "last_seen": 1778545785.72454,
+  "episodes": 20,
+  "score_total": 472,
+  "score_best": 48,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 6,
+    "Mantis": 1,
+    "Beetle": 1,
+    "Spider": 1,
+    "bot-121": 2,
+    "Wasp": 4,
+    "bloomy": 1,
+    "bot-149": 2
+  },
+  "loadout_history": {
+    "0": 19,
+    "1": 13,
+    "5": 1,
+    "45": 1,
+    "19": 1
+  }
+}

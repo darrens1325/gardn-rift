@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-305",
   "first_seen": 1778364744.3316932,
-  "last_seen": 1778471628.1097002,
-  "episodes": 86,
-  "score_total": 3193,
+  "last_seen": 1778543042.862723,
+  "episodes": 89,
+  "score_total": 3359,
   "score_best": 1037,
   "best_loadout": [
     0,
@@ -32,11 +32,11 @@
     "Rock": 1,
     "bot-109": 3,
     "bot-600": 2,
-    "Wasp": 1
+    "Wasp": 3
   },
   "loadout_history": {
-    "0": 77,
-    "1": 70,
+    "0": 80,
+    "1": 72,
     "10": 1,
     "24": 3,
     "11": 2,

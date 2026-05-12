@@ -2,32 +2,34 @@
   "schema": 1,
   "name": "bot-316",
   "first_seen": 1778364744.2053618,
-  "last_seen": 1778471631.662188,
-  "episodes": 21,
-  "score_total": 333,
-  "score_best": 59,
+  "last_seen": 1778543019.283838,
+  "episodes": 25,
+  "score_total": 682,
+  "score_best": 145,
   "best_loadout": [
     0,
     0,
-    1,
-    1,
-    1
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Boulder": 1,
     "Evil Centipede": 3,
-    "Beetle": 2,
+    "Beetle": 3,
     "Sandstorm": 1,
     "Hornet": 5,
     "Bee": 1,
-    "Scorpion": 1
+    "Scorpion": 1,
+    "Cactus": 1
   },
   "loadout_history": {
-    "0": 16,
-    "1": 19,
+    "0": 20,
+    "1": 22,
     "7": 1,
     "40": 1,
     "10": 1,
-    "14": 1
+    "14": 2,
+    "45": 1
   }
 }

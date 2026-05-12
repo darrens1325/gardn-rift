@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "bot-33",
+  "first_seen": 1778543101.679935,
+  "last_seen": 1778548795.5772579,
+  "episodes": 24,
+  "score_total": 1091,
+  "score_best": 105,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Cactus": 1,
+    "Mantis": 3,
+    "Hornet": 9,
+    "Wasp": 4,
+    "Bee": 2,
+    "bot-95": 1
+  },
+  "loadout_history": {
+    "0": 23,
+    "1": 19,
+    "5": 3,
+    "14": 2,
+    "15": 1
+  }
+}

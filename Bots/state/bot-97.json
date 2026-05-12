@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "bot-97",
+  "first_seen": 1778543161.996654,
+  "last_seen": 1778545691.5715818,
+  "episodes": 10,
+  "score_total": 564,
+  "score_best": 171,
+  "best_loadout": [
+    0,
+    1,
+    1,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-132": 1,
+    "Ladybug": 1,
+    "Beetle": 1,
+    "Wasp": 1,
+    "bot-101": 1,
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 9,
+    "1": 7,
+    "14": 1,
+    "10": 1,
+    "11": 1
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "name": "bot-43",
+  "first_seen": 1778543460.6414669,
+  "last_seen": 1778548775.5703108,
+  "episodes": 14,
+  "score_total": 1047,
+  "score_best": 286,
+  "best_loadout": [
+    1,
+    0,
+    0,
+    0,
+    5,
+    0
+  ],
+  "killed_by": {
+    "Spider": 1,
+    "bot-55": 1,
+    "bot-67": 1,
+    "Wasp": 1,
+    "Beetle": 4,
+    "Hornet": 2,
+    "Bee": 1,
+    "bot-103": 1,
+    "Mantis": 1
+  },
+  "loadout_history": {
+    "0": 14,
+    "1": 8,
+    "24": 1,
+    "167": 1,
+    "19": 1,
+    "14": 1,
+    "28": 2,
+    "15": 1,
+    "5": 1
+  }
+}

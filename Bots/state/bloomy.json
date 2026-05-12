@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bloomy",
+  "first_seen": 1778543450.633999,
+  "last_seen": 1778548767.600704,
+  "episodes": 22,
+  "score_total": 1084,
+  "score_best": 99,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 6,
+    "Wasp": 3,
+    "Beetle": 1,
+    "Evil Centipede": 1,
+    "Mantis": 5,
+    "Ladybug": 1,
+    "Desert Centipede": 1,
+    "Cactus": 1,
+    "bot-49": 1
+  },
+  "loadout_history": {
+    "0": 19,
+    "1": 20,
+    "9": 3,
+    "29": 1,
+    "18": 1,
+    "6": 1,
+    "14": 1,
+    "15": 1,
+    "79": 1
+  }
+}

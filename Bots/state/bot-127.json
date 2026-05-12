@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "bot-127",
+  "first_seen": 1778543800.252141,
+  "last_seen": 1778544937.011395,
+  "episodes": 13,
+  "score_total": 628,
+  "score_best": 75,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "bot-22": 1,
+    "Beetle": 2,
+    "Hornet": 3,
+    "Wasp": 4,
+    "Cactus": 1,
+    "bot-142": 1
+  },
+  "loadout_history": {
+    "0": 11,
+    "49": 1,
+    "28": 1,
+    "39": 1,
+    "1": 9,
+    "18": 1,
+    "79": 1
+  }
+}

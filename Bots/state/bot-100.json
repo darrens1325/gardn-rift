@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-100",
   "first_seen": 1778364740.804471,
-  "last_seen": 1778471629.765447,
-  "episodes": 87,
-  "score_total": 2063,
+  "last_seen": 1778548787.531658,
+  "episodes": 102,
+  "score_total": 3284,
   "score_best": 1003,
   "best_loadout": [
     0,
@@ -15,14 +15,14 @@
     0
   ],
   "killed_by": {
-    "Hornet": 26,
+    "Hornet": 31,
     "Spider": 2,
-    "Beetle": 8,
+    "Beetle": 11,
     "Cactus": 7,
     "Rock": 1,
     "Soldier Ant": 5,
     "Worker Ant": 1,
-    "Evil Centipede": 2,
+    "Evil Centipede": 3,
     "a": 1,
     "bot-602": 1,
     "Centipede": 6,
@@ -35,20 +35,24 @@
     "Desert Centipede": 2,
     "Ladybug": 3,
     "Baby Ant": 1,
-    "Wasp": 1
+    "Wasp": 2,
+    "Bush": 1,
+    "Mantis": 1
   },
   "loadout_history": {
-    "0": 72,
-    "1": 65,
+    "0": 83,
+    "1": 76,
     "10": 1,
-    "18": 2,
+    "18": 3,
     "15": 1,
     "40": 1,
     "5": 2,
-    "14": 3,
+    "14": 4,
     "20": 1,
     "48": 1,
     "28": 1,
-    "167": 1
+    "167": 1,
+    "69": 1,
+    "39": 1
   }
 }

@@ -2,27 +2,32 @@
   "schema": 1,
   "name": "bot-306",
   "first_seen": 1778364742.660759,
-  "last_seen": 1778470880.574053,
-  "episodes": 17,
-  "score_total": 214,
-  "score_best": 29,
+  "last_seen": 1778543055.867979,
+  "episodes": 26,
+  "score_total": 571,
+  "score_best": 65,
   "best_loadout": [
-    1,
     0,
     0,
-    1,
-    1
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Bee": 3,
-    "Hornet": 5,
+    "Hornet": 7,
     "Beetle": 2,
-    "Cactus": 1
+    "Cactus": 1,
+    "bot-405": 1,
+    "Evil Centipede": 2,
+    "Wasp": 2
   },
   "loadout_history": {
-    "1": 15,
-    "0": 13,
+    "1": 23,
+    "0": 21,
     "15": 1,
-    "116": 1
+    "116": 1,
+    "29": 1,
+    "5": 1
   }
 }

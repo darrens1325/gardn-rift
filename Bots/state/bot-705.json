@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-705",
   "first_seen": 1778364747.217209,
-  "last_seen": 1778470939.315395,
-  "episodes": 89,
-  "score_total": 2988,
+  "last_seen": 1778542892.0661771,
+  "episodes": 91,
+  "score_total": 3044,
   "score_best": 1059,
   "best_loadout": [
     0,
@@ -30,16 +30,18 @@
     "Rock": 2,
     "Desert Centipede": 1,
     "Massive Beetle": 1,
-    "Spider": 1
+    "Spider": 1,
+    "Bush": 1
   },
   "loadout_history": {
-    "1": 62,
-    "0": 77,
+    "1": 63,
+    "0": 78,
     "40": 2,
     "30": 1,
     "5": 1,
     "48": 1,
     "9": 1,
-    "34": 1
+    "34": 1,
+    "28": 2
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-704",
   "first_seen": 1778364752.326335,
-  "last_seen": 1778471645.2462778,
-  "episodes": 89,
-  "score_total": 2088,
+  "last_seen": 1778542896.1613078,
+  "episodes": 91,
+  "score_total": 2191,
   "score_best": 1020,
   "best_loadout": [
     0,
@@ -15,7 +15,7 @@
     0
   ],
   "killed_by": {
-    "Cactus": 4,
+    "Cactus": 5,
     "Worker Ant": 1,
     "Desert Centipede": 1,
     "Centipede": 5,
@@ -37,8 +37,8 @@
     "Wasp": 1
   },
   "loadout_history": {
-    "0": 82,
-    "1": 65,
+    "0": 84,
+    "1": 66,
     "28": 1,
     "9": 2,
     "34": 1,
@@ -46,6 +46,9 @@
     "6": 1,
     "15": 1,
     "18": 1,
-    "20": 1
+    "20": 1,
+    "69": 1,
+    "5": 1,
+    "10": 1
   }
 }

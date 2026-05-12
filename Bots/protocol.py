@@ -18,6 +18,12 @@ S_CLIENT_SPAWN = 2
 S_PETAL_SWAP = 3
 S_PETAL_DELETE = 4
 S_CLIENT_CHAT = 5     # { u8 op, string text }; server validates + rebroadcasts
+# { u8: S_STEP } — sync-mode only. Each verified client raises a
+# "ready for next tick" flag on the server; when every verified client
+# has raised it, the server runs exactly one tick and clears the flags.
+# A no-op in wall-clock mode (server doesn't enter sync_mode unless
+# launched with GARDN_SYNC=1).
+S_STEP = 6
 
 # Inventory layout (Shared/EntityDef.hh): loadout_ids has 2 * MAX_SLOT_COUNT
 # entries. The first `loadout_count` are the active orbital slots (loadout
@@ -248,6 +254,16 @@ PETAL_RARITY = [
     RARITY_LEGENDARY,  # 200 kLegendaryCorn
     RARITY_MYTHIC,     # 201 kMythicCorn
     RARITY_UNIQUE,     # 202 kUniqueCorn
+    # ---- post-expansion appends (kept at the tail to preserve all IDs
+    # below for trained checkpoints) ----
+    RARITY_EPIC,       # 203 kEpicPeas
+    RARITY_COMMON,     # 204 kCommonRoot
+    RARITY_UNUSUAL,    # 205 kUnusualRoot
+    RARITY_RARE,       # 206 kRoot
+    RARITY_EPIC,       # 207 kEpicRoot
+    RARITY_LEGENDARY,  # 208 kLegendaryRoot
+    RARITY_MYTHIC,     # 209 kMythicRoot
+    RARITY_UNIQUE,     # 210 kUniqueRoot
 ]
 
 PETAL_NONE = 0
@@ -477,6 +493,15 @@ PETAL_TYPE = [
     PETAL_TYPE_TANK,     # 200 kLegendaryCorn
     PETAL_TYPE_TANK,     # 201 kMythicCorn
     PETAL_TYPE_TANK,     # 202 kUniqueCorn
+    # ---- post-expansion appends ----
+    PETAL_TYPE_DAMAGE,   # 203 kEpicPeas
+    PETAL_TYPE_UTILITY,  # 204 kCommonRoot     (defend_only, stacking armor)
+    PETAL_TYPE_UTILITY,  # 205 kUnusualRoot
+    PETAL_TYPE_UTILITY,  # 206 kRoot
+    PETAL_TYPE_UTILITY,  # 207 kEpicRoot
+    PETAL_TYPE_UTILITY,  # 208 kLegendaryRoot
+    PETAL_TYPE_UTILITY,  # 209 kMythicRoot
+    PETAL_TYPE_UTILITY,  # 210 kUniqueRoot
 ]
 
 
@@ -693,6 +718,16 @@ PETAL_BURST = [
     4,    # 200 kLegendaryCorn
     6,    # 201 kMythicCorn
     8,    # 202 kUniqueCorn
+    # ---- post-expansion appends. Root has count=1 and damage = 10 ×
+    # 1.5^Δ from kEpicRoot (rank 3); kEpicPeas is 12 dmg × 4 count = 48. ----
+    48,   # 203 kEpicPeas        (12 × 4)
+    3,    # 204 kCommonRoot      (10 / 3.375)
+    4,    # 205 kUnusualRoot     (10 / 2.25)
+    7,    # 206 kRoot            (10 / 1.5)
+    10,   # 207 kEpicRoot
+    15,   # 208 kLegendaryRoot
+    22,   # 209 kMythicRoot      (10 × 2.25)
+    33,   # 210 kUniqueRoot      (10 × 3.375)
 ]
 
 

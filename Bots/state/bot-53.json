@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-53",
+  "first_seen": 1778543125.842199,
+  "last_seen": 1778545681.27748,
+  "episodes": 18,
+  "score_total": 732,
+  "score_best": 91,
+  "best_loadout": [
+    0,
+    0,
+    18,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 4,
+    "Wasp": 2,
+    "bot-113": 1,
+    "Bee": 1,
+    "Spider": 3,
+    "bot-137": 1,
+    "Mantis": 3
+  },
+  "loadout_history": {
+    "0": 18,
+    "1": 12,
+    "9": 1,
+    "14": 1,
+    "16": 1,
+    "5": 1,
+    "46": 1,
+    "18": 2
+  }
+}

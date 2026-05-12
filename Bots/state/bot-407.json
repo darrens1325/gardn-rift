@@ -2,28 +2,32 @@
   "schema": 1,
   "name": "bot-407",
   "first_seen": 1778364745.217207,
-  "last_seen": 1778471642.200607,
-  "episodes": 17,
-  "score_total": 130,
-  "score_best": 33,
+  "last_seen": 1778543068.605435,
+  "episodes": 21,
+  "score_total": 313,
+  "score_best": 75,
   "best_loadout": [
-    1,
-    1,
-    1,
-    1,
-    1
+    0,
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Beetle": 1,
     "Cactus": 2,
     "Hornet": 4,
     "Massive Beetle": 1,
-    "Evil Centipede": 2
+    "Evil Centipede": 2,
+    "Mantis": 1,
+    "Bush": 1,
+    "Wasp": 1
   },
   "loadout_history": {
-    "0": 13,
-    "1": 16,
+    "0": 16,
+    "1": 19,
     "5": 1,
-    "16": 1
+    "16": 1,
+    "204": 1
   }
 }

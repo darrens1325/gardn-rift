@@ -3,6 +3,7 @@
 #include <Server/EntityFunctions.hh>
 #include <Server/PetalTracker.hh>
 #include <Server/Server.hh>
+#include <Server/TiledMap.hh>
 #include <Shared/Helpers.hh>
 #include <Shared/Map.hh>
 #include <Shared/Simulation.hh>
@@ -274,11 +275,25 @@ void player_spawn(Simulation *sim, Entity &camera, Entity &player) {
     player.set_parent(camera.id);
     player.set_color(camera.color);
     uint32_t power = Map::difficulty_at_level(camera.respawn_level);
-    // ZoneDefinition const &zone = MAP[Map::get_suitable_difficulty_zone(power)];
-    // float spawn_x = lerp(zone.left, zone.right, frand());
-    // float spawn_y = lerp(zone.top, zone.bottom, frand());
-    float spawn_x = lerp(ARENA_WIDTH * 0.1, ARENA_WIDTH * 0.9, frand());
-    float spawn_y = lerp(ARENA_HEIGHT * 0.1, ARENA_HEIGHT * 0.9, frand());
+    // Retry the random spawn point against the Tiled map's collision
+    // geometry — without this, spawn lands inside a wall ~10–20% of the
+    // time (the map has 1500+ solid-cell polys plus a few hand-placed
+    // collision rects). TiledMap::resolve_collision push-out is the
+    // post-tick fallback, but spawning *visually* in the wall and only
+    // then sliding out feels broken to players. Reject up to 30 picks
+    // that need any push, falling back to the push-out path if every
+    // sample lands in geometry (e.g. a degenerate map config).
+    float spawn_x = 0.0f, spawn_y = 0.0f;
+    for (int attempt = 0; attempt < 30; ++attempt) {
+        spawn_x = lerp(ARENA_WIDTH * 0.1, ARENA_WIDTH * 0.9, frand());
+        spawn_y = lerp(ARENA_HEIGHT * 0.1, ARENA_HEIGHT * 0.9, frand());
+        float orig_x = spawn_x, orig_y = spawn_y;
+        TiledMap::resolve_collision(spawn_x, spawn_y, BASE_FLOWER_RADIUS);
+        // No push needed → position was free.
+        if (std::fabs(spawn_x - orig_x) < 0.5f && std::fabs(spawn_y - orig_y) < 0.5f) break;
+        // Otherwise fall through and re-roll. After exhausting attempts
+        // we'll keep the last resolved (= pushed-to-edge) position.
+    }
     camera.set_camera_x(spawn_x);
     camera.set_camera_y(spawn_y);
     player.set_x(spawn_x);

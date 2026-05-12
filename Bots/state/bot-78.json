@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "bot-78",
+  "first_seen": 1778543550.690562,
+  "last_seen": 1778548787.65172,
+  "episodes": 16,
+  "score_total": 970,
+  "score_best": 230,
+  "best_loadout": [
+    0,
+    0,
+    14,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 2,
+    "Ladybug": 1,
+    "Wasp": 3,
+    "Cactus": 1,
+    "Bee": 1,
+    "Mantis": 1,
+    "bot-58": 1,
+    "Beetle": 1,
+    "bot-97": 1,
+    "Evil Centipede": 1
+  },
+  "loadout_history": {
+    "0": 13,
+    "1": 12,
+    "14": 2,
+    "29": 1,
+    "6": 1,
+    "5": 1
+  }
+}

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-116",
   "first_seen": 1778364742.0010629,
-  "last_seen": 1778471630.2589529,
-  "episodes": 21,
-  "score_total": 1363,
+  "last_seen": 1778548797.0441248,
+  "episodes": 43,
+  "score_total": 2644,
   "score_best": 1049,
   "best_loadout": [
     68,
@@ -16,15 +16,24 @@
   ],
   "killed_by": {
     "Ladybug": 1,
-    "Hornet": 5,
-    "Beetle": 4,
-    "Bee": 1,
-    "Mantis": 2
+    "Hornet": 8,
+    "Beetle": 6,
+    "Bee": 5,
+    "Mantis": 2,
+    "Wasp": 4,
+    "Centipede": 1,
+    "bot-414": 1,
+    "Cactus": 1,
+    "Evil Centipede": 1,
+    "Sandstorm": 1
   },
   "loadout_history": {
-    "0": 15,
-    "1": 17,
+    "0": 36,
+    "1": 33,
     "68": 1,
-    "116": 1
+    "116": 1,
+    "14": 1,
+    "5": 1,
+    "9": 1
   }
 }

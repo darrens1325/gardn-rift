@@ -22,9 +22,7 @@ import asyncio
 import gc
 import json
 import os
-import random
 import statistics
-import string
 import subprocess
 import sys
 import time
@@ -198,6 +196,10 @@ def _spawn_workers(args: argparse.Namespace) -> int:
             cmd += ["--checkpoint", args.checkpoint]
         else:
             cmd += ["--checkpoint", ""]
+        if args.fast_start:
+            cmd.append("--fast-start")
+        if args.sync:
+            cmd.append("--sync")
         children.append(subprocess.Popen(cmd, env=worker_env))
     rc = 0
     try:
@@ -474,13 +476,67 @@ def main() -> int:
              "cycles fine, it just doesn't fire at random mid-tick moments "
              "the way CPython's default gen-2 sweep does.",
     )
+    p.add_argument(
+        "--fast-start", action="store_true",
+        help="optimise for visible progress in the first few minutes of a "
+             "from-scratch run. Overrides --warmup, --eps-decay, and the "
+             "round-end respawn gate so episode turnover is ~100× the "
+             "default. Use this to validate the training pipeline; turn it "
+             "off for production runs where you want the full wave mechanic.",
+    )
+    p.add_argument(
+        "--sync", action="store_true",
+        help="lockstep mode. Bot and server take alternating turns: the "
+             "server ticks only after every verified client sends S_STEP, "
+             "and the bot only decides after receiving the resulting world "
+             "update. No wall-clock pacing — the simulation runs as fast as "
+             "the bot script can compute decisions. Requires the server to "
+             "have been launched with GARDN_SYNC=1; otherwise the kStep "
+             "opcode is processed but doesn't drive the tick loop.",
+    )
     args = p.parse_args()
     if args.checkpoint == "":
         args.checkpoint = None
 
+    # --fast-start preset. Tuned so a from-scratch run hits visible
+    # signs of life inside 5 wall-clock minutes:
+    #   - warmup=500   → first gradient step at ~5 sec into training
+    #     (vs 80 sec at default), so the first ε-greedy actions
+    #     immediately feed a learning loop.
+    #   - eps_decay=5000 → ε crosses 0.5 around 50 sec, 0.1 around
+    #     5 min. The bot transitions from "purely random" to "mostly
+    #     argmax" inside the window.
+    #   - respawn_immediately → bots no longer wait for kRoundEnd to
+    #     re-enter. A bot that dies in second 5 starts a new episode in
+    #     second 6, instead of sitting out the rest of a 6-min round.
+    # We override the user's explicit --warmup / --eps-decay only if
+    # they left the defaults — if the user passes their own, those win.
+    if args.fast_start:
+        if args.warmup == 2_000:
+            args.warmup = 500
+        if args.eps_decay == 30_000:
+            args.eps_decay = 5_000
+        LearningBot.respawn_immediately = True
+        print(
+            "[run] --fast-start: warmup=", args.warmup,
+            " eps_decay=", args.eps_decay,
+            " respawn_immediately=True",
+            sep="", flush=True,
+        )
+    if args.sync:
+        LearningBot.sync_mode = True
+        print(
+            "[run] --sync: lockstep with server. Bot drives server tick rate "
+            "via S_STEP. Make sure the server was launched with GARDN_SYNC=1.",
+            flush=True,
+        )
+
     # Parent mode: fork workers and wait. Children re-enter main() with
     # --workers 1 --worker-id N and fall through to the asyncio path.
     if args.workers > 1 and args.worker_id is None:
+        # Make sure children also get fast-start. Argparse forwards it
+        # via the explicit Popen cmd-line; nothing to do here besides
+        # confirming the flag propagates (it does, see _spawn_workers).
         return _spawn_workers(args)
 
     try:

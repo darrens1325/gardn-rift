@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-41",
+  "first_seen": 1778543142.804375,
+  "last_seen": 1778548785.381342,
+  "episodes": 18,
+  "score_total": 1613,
+  "score_best": 523,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 5,
+    "Mantis": 4,
+    "Bush": 1,
+    "Wasp": 2,
+    "Scorpion": 1,
+    "Evil Centipede": 1
+  },
+  "loadout_history": {
+    "0": 14,
+    "1": 13,
+    "14": 1,
+    "5": 1,
+    "9": 2,
+    "24": 1,
+    "25": 1,
+    "32": 1
+  }
+}

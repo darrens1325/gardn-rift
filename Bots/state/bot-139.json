@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "bot-139",
+  "first_seen": 1778543547.0881379,
+  "last_seen": 1778545512.130978,
+  "episodes": 13,
+  "score_total": 1989,
+  "score_best": 873,
+  "best_loadout": [
+    14,
+    9,
+    0,
+    64,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Spider": 1,
+    "Hornet": 6,
+    "Bee": 1,
+    "Wasp": 2
+  },
+  "loadout_history": {
+    "24": 1,
+    "0": 12,
+    "1": 8,
+    "9": 4,
+    "12": 2,
+    "14": 4,
+    "64": 1,
+    "32": 1
+  }
+}

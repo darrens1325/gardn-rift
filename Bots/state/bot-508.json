@@ -2,29 +2,29 @@
   "schema": 1,
   "name": "bot-508",
   "first_seen": 1778364745.490823,
-  "last_seen": 1778471627.0614269,
-  "episodes": 19,
-  "score_total": 202,
-  "score_best": 31,
+  "last_seen": 1778543053.1122382,
+  "episodes": 23,
+  "score_total": 319,
+  "score_best": 42,
   "best_loadout": [
-    1,
-    1,
-    1,
-    1,
-    1
+    0,
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Evil Centipede": 1,
     "Beetle": 2,
     "Spider": 1,
-    "Hornet": 4,
-    "Cactus": 1,
+    "Hornet": 6,
+    "Cactus": 2,
     "bot-116": 3,
     "Mantis": 1
   },
   "loadout_history": {
-    "1": 16,
-    "0": 12,
+    "1": 18,
+    "0": 16,
     "15": 1,
     "14": 1
   }

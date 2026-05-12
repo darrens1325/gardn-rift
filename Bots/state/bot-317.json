@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-317",
   "first_seen": 1778364746.691415,
-  "last_seen": 1778471648.351119,
-  "episodes": 18,
-  "score_total": 604,
+  "last_seen": 1778542969.6512032,
+  "episodes": 23,
+  "score_total": 743,
   "score_best": 409,
   "best_loadout": [
     1,
@@ -19,14 +19,17 @@
     "Soldier Ant": 1,
     "Cactus": 1,
     "Beetle": 1,
-    "Hornet": 7
+    "Hornet": 8,
+    "Bee": 1,
+    "Wasp": 2
   },
   "loadout_history": {
-    "0": 15,
-    "1": 16,
+    "0": 19,
+    "1": 21,
     "24": 1,
     "9": 1,
     "18": 1,
-    "69": 1
+    "69": 1,
+    "48": 1
   }
 }

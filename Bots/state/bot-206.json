@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-206",
   "first_seen": 1778364743.097614,
-  "last_seen": 1778471653.230582,
-  "episodes": 21,
-  "score_total": 353,
+  "last_seen": 1778543044.102415,
+  "episodes": 24,
+  "score_total": 480,
   "score_best": 71,
   "best_loadout": [
     0,
@@ -14,16 +14,18 @@
     0
   ],
   "killed_by": {
-    "Hornet": 4,
+    "Hornet": 5,
     "Cactus": 1,
     "Beetle": 5,
-    "Centipede": 1
+    "Centipede": 1,
+    "Evil Centipede": 1
   },
   "loadout_history": {
-    "0": 17,
-    "1": 17,
+    "0": 20,
+    "1": 18,
     "79": 1,
     "5": 1,
-    "7": 1
+    "7": 1,
+    "14": 1
   }
 }

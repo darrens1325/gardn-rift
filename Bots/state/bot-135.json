@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "name": "bot-135",
+  "first_seen": 1778543148.358541,
+  "last_seen": 1778548792.014913,
+  "episodes": 22,
+  "score_total": 3326,
+  "score_best": 1056,
+  "best_loadout": [
+    24,
+    0,
+    14,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Mantis": 4,
+    "Scorpion": 1,
+    "Wasp": 4,
+    "Hornet": 4,
+    "Evil Centipede": 2,
+    "bot-77": 1,
+    "rosie": 1,
+    "Bee": 2
+  },
+  "loadout_history": {
+    "0": 18,
+    "1": 18,
+    "24": 1,
+    "14": 4,
+    "5": 1,
+    "18": 2,
+    "28": 1,
+    "15": 2,
+    "12": 1,
+    "7": 1,
+    "10": 1,
+    "51": 1
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "thornbloom",
+  "first_seen": 1778543138.6650062,
+  "last_seen": 1778548772.681482,
+  "episodes": 16,
+  "score_total": 530,
+  "score_best": 73,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 4,
+    "Beetle": 3,
+    "Sandstorm": 1,
+    "bot-117": 1,
+    "bot-43": 2,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "0": 13,
+    "1": 11,
+    "47": 1,
+    "167": 1,
+    "18": 1,
+    "5": 1,
+    "23": 1
+  }
+}

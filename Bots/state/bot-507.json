@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-507",
   "first_seen": 1778364748.529471,
-  "last_seen": 1778470883.538774,
-  "episodes": 18,
-  "score_total": 308,
+  "last_seen": 1778542960.907043,
+  "episodes": 19,
+  "score_total": 351,
   "score_best": 90,
   "best_loadout": [
     5,
@@ -20,7 +20,7 @@
     "Cactus": 1
   },
   "loadout_history": {
-    "0": 14,
+    "0": 15,
     "1": 15,
     "16": 1,
     "5": 1

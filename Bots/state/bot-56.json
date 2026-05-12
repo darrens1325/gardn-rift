@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "name": "bot-56",
+  "first_seen": 1778543482.436189,
+  "last_seen": 1778548783.9761589,
+  "episodes": 27,
+  "score_total": 3583,
+  "score_best": 1102,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Beetle": 2,
+    "Bee": 1,
+    "Mantis": 3,
+    "Hornet": 8,
+    "bot-108": 1,
+    "Ladybug": 2,
+    "Wasp": 2,
+    "bot-71": 2,
+    "bot-90": 2,
+    "Worker Ant": 1,
+    "Scorpion": 1
+  },
+  "loadout_history": {
+    "0": 23,
+    "1": 24,
+    "167": 1,
+    "116": 1,
+    "18": 1,
+    "5": 1,
+    "9": 1
+  }
+}

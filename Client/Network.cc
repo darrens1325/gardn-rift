@@ -33,6 +33,25 @@ void Game::on_message(uint8_t *ptr, uint32_t len) {
             simulation.arena_info.read(&reader, reader.read<uint8_t>());
             break;
         }
+        case Clientbound::kRoundEnd: {
+            // { string winner_name, u32 winner_score }. The server fires
+            // this when the wave times out, all flowers die, or the
+            // last-man-standing trigger hits (Server/Game.cc::tick).
+            // We just store the result for the banner — the actual
+            // respawn happens naturally as the server's end_round()
+            // wipes loadouts and the player's death screen re-appears.
+            // Reader::read has only the out-param form for std::string
+            // (see Shared/Binary.cc:216), so we can't use the templated
+            // return-by-value variant here.
+            std::string winner;
+            reader.read<std::string>(winner);
+            uint32_t winner_score = reader.read<uint32_t>();
+            Game::round_end_winner_name = winner;
+            Game::round_end_winner_score = winner_score;
+            Game::round_end_was_me = (winner == Game::nickname && !winner.empty()) ? 1 : 0;
+            Game::round_end_anim = 6.0f;  // seconds of banner display
+            break;
+        }
         default:
             break;
     }

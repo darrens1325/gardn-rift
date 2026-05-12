@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-69",
+  "first_seen": 1778543156.027966,
+  "last_seen": 1778545841.932784,
+  "episodes": 27,
+  "score_total": 1051,
+  "score_best": 113,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Beetle": 1,
+    "Wasp": 7,
+    "Hornet": 6,
+    "Leafbug": 1,
+    "Mantis": 4,
+    "bot-85": 1,
+    "bot-42": 1,
+    "Bee": 2,
+    "thorny": 1,
+    "bot-126": 1
+  },
+  "loadout_history": {
+    "0": 23,
+    "1": 22,
+    "5": 1,
+    "14": 5,
+    "18": 4,
+    "34": 1,
+    "9": 1,
+    "25": 1
+  }
+}

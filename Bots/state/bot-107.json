@@ -2,28 +2,47 @@
   "schema": 1,
   "name": "bot-107",
   "first_seen": 1778364741.645498,
-  "last_seen": 1778471627.875668,
-  "episodes": 21,
-  "score_total": 202,
-  "score_best": 31,
+  "last_seen": 1778545838.372221,
+  "episodes": 54,
+  "score_total": 2961,
+  "score_best": 341,
   "best_loadout": [
+    0,
+    0,
+    0,
+    0,
     1,
-    1,
-    1,
-    1,
-    1
+    0
   ],
   "killed_by": {
-    "Beetle": 1,
-    "Hornet": 6,
-    "Evil Centipede": 3,
+    "Beetle": 4,
+    "Hornet": 13,
+    "Evil Centipede": 6,
     "Cactus": 1,
     "Spider": 1,
-    "Wasp": 4
+    "Wasp": 8,
+    "Sandstorm": 1,
+    "bot-49": 1,
+    "Bee": 1,
+    "Mantis": 5,
+    "blossom": 1,
+    "bot-137": 1,
+    "bot-130": 2
   },
   "loadout_history": {
-    "1": 21,
-    "14": 1,
-    "0": 13
+    "1": 48,
+    "14": 2,
+    "0": 44,
+    "28": 1,
+    "5": 4,
+    "23": 1,
+    "24": 3,
+    "18": 1,
+    "19": 1,
+    "9": 5,
+    "15": 1,
+    "64": 1,
+    "79": 1,
+    "21": 1
   }
 }

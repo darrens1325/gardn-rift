@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-400",
   "first_seen": 1778364744.414997,
-  "last_seen": 1778470876.258145,
-  "episodes": 88,
-  "score_total": 1286,
+  "last_seen": 1778543012.3893812,
+  "episodes": 93,
+  "score_total": 1352,
   "score_best": 225,
   "best_loadout": [
     0,
@@ -16,7 +16,7 @@
   ],
   "killed_by": {
     "Beetle": 9,
-    "Hornet": 21,
+    "Hornet": 22,
     "Cactus": 11,
     "Spider": 10,
     "Evil Centipede": 5,
@@ -31,11 +31,12 @@
     "bot-509": 1,
     "Worker Ant": 2,
     "Desert Centipede": 1,
-    "Wasp": 1
+    "Wasp": 1,
+    "Mantis": 3
   },
   "loadout_history": {
-    "1": 72,
-    "0": 74,
+    "1": 75,
+    "0": 78,
     "34": 1,
     "5": 1,
     "6": 1,

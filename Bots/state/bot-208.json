@@ -2,30 +2,33 @@
   "schema": 1,
   "name": "bot-208",
   "first_seen": 1778364742.787324,
-  "last_seen": 1778471648.7540638,
-  "episodes": 20,
-  "score_total": 250,
-  "score_best": 60,
+  "last_seen": 1778542844.366286,
+  "episodes": 23,
+  "score_total": 367,
+  "score_best": 69,
   "best_loadout": [
-    1,
     0,
-    1,
+    14,
+    0,
     1,
     1
   ],
   "killed_by": {
-    "Hornet": 4,
+    "Hornet": 5,
     "Spider": 3,
     "Beetle": 2,
     "bot-218": 1,
     "Boulder": 1,
     "Wasp": 2,
     "Scorpion": 1,
-    "Bee": 1
+    "Bee": 1,
+    "Evil Centipede": 1
   },
   "loadout_history": {
-    "0": 17,
-    "1": 20,
-    "24": 1
+    "0": 20,
+    "1": 23,
+    "24": 1,
+    "19": 1,
+    "14": 1
   }
 }

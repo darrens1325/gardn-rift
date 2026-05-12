@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-713",
   "first_seen": 1778364749.495064,
-  "last_seen": 1778471642.005614,
-  "episodes": 19,
-  "score_total": 221,
+  "last_seen": 1778542841.906721,
+  "episodes": 21,
+  "score_total": 267,
   "score_best": 34,
   "best_loadout": [
     1,
@@ -17,11 +17,12 @@
     "Hornet": 4,
     "Spider": 1,
     "Evil Centipede": 2,
-    "Wasp": 2
+    "Wasp": 2,
+    "Ladybug": 1
   },
   "loadout_history": {
-    "1": 16,
-    "0": 12,
+    "1": 18,
+    "0": 14,
     "36": 1,
     "9": 1,
     "5": 1,

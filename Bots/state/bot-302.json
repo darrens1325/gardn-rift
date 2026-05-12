@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-302",
   "first_seen": 1778364744.096798,
-  "last_seen": 1778470894.420091,
-  "episodes": 86,
-  "score_total": 1073,
+  "last_seen": 1778543000.048963,
+  "episodes": 90,
+  "score_total": 1240,
   "score_best": 200,
   "best_loadout": [
     0,
@@ -23,27 +23,29 @@
     "Baby Ant": 3,
     "Bee": 4,
     "Scorpion": 1,
-    "Evil Centipede": 3,
+    "Evil Centipede": 4,
     "bot-500": 2,
     "bot-105": 2,
     "Spider": 2,
     "Boulder": 2,
     "bot-103": 2,
-    "Sandstorm": 1,
+    "Sandstorm": 2,
     "Ladybug": 2,
     "Mantis": 1,
-    "Wasp": 1
+    "Wasp": 2
   },
   "loadout_history": {
-    "0": 75,
-    "1": 67,
+    "0": 79,
+    "1": 70,
     "14": 2,
     "7": 1,
     "9": 1,
     "39": 1,
     "18": 1,
     "19": 1,
-    "5": 1,
-    "15": 1
+    "5": 2,
+    "15": 1,
+    "24": 1,
+    "32": 1
   }
 }

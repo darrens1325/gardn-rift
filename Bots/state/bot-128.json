@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "name": "bot-128",
+  "first_seen": 1778543746.502754,
+  "last_seen": 1778545861.2041442,
+  "episodes": 31,
+  "score_total": 1525,
+  "score_best": 217,
+  "best_loadout": [
+    69,
+    1,
+    1,
+    0,
+    1,
+    49
+  ],
+  "killed_by": {
+    "Beetle": 4,
+    "Hornet": 8,
+    "Wasp": 8,
+    "Mantis": 1,
+    "bot-35": 1,
+    "bot-83": 2,
+    "Evil Centipede": 1,
+    "bot-46": 1,
+    "bot-32": 1,
+    "bot-149": 1,
+    "Bush": 2
+  },
+  "loadout_history": {
+    "0": 27,
+    "28": 2,
+    "1": 25,
+    "14": 2,
+    "204": 1,
+    "5": 3,
+    "9": 3,
+    "25": 1,
+    "19": 1,
+    "15": 1,
+    "69": 2,
+    "49": 1
+  }
+}

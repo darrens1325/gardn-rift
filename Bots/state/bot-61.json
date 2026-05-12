@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "name": "bot-61",
+  "first_seen": 1778543183.323554,
+  "last_seen": 1778545862.9649332,
+  "episodes": 17,
+  "score_total": 2072,
+  "score_best": 366,
+  "best_loadout": [
+    24,
+    0,
+    9,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 7,
+    "thornbloom": 1,
+    "Beetle": 1,
+    "Spider": 1,
+    "Mantis": 3,
+    "Bee": 2
+  },
+  "loadout_history": {
+    "0": 14,
+    "1": 7,
+    "14": 7,
+    "9": 9,
+    "48": 1,
+    "10": 3,
+    "46": 1,
+    "24": 3,
+    "116": 3
+  }
+}

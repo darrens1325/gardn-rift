@@ -32,6 +32,13 @@ namespace Game {
 
     double timestamp = 0;
 
+    // Round-end banner state. See Game.hh; set by Network.cc on receipt of
+    // Clientbound::kRoundEnd, ticked down by Game::tick() each frame.
+    float round_end_anim = 0;
+    uint8_t round_end_was_me = 0;
+    std::string round_end_winner_name;
+    uint32_t round_end_winner_score = 0;
+
     double score = 0;
     float overlevel_timer = 0;
     float slot_indicator_opacity = 0;
@@ -103,6 +110,9 @@ void Game::init() {
         Ui::make_overlevel_indicator()
     );
     game_ui_window.add_child(
+        Ui::make_round_end_banner()
+    );
+    game_ui_window.add_child(
         Ui::make_stat_screen()
     );
     game_ui_window.add_child(
@@ -158,6 +168,12 @@ void Game::tick(double time) {
     Ui::dt = time - g_last_time;
     Ui::lerp_amount = 1 - pow(1 - 0.2, Ui::dt * 60 / 1000);
     g_last_time = time;
+    // Round-end banner countdown. Ui::dt is in milliseconds — convert to
+    // seconds so round_end_anim is measured in "seconds remaining."
+    if (Game::round_end_anim > 0) {
+        Game::round_end_anim -= (float)(Ui::dt / 1000.0);
+        if (Game::round_end_anim < 0) Game::round_end_anim = 0;
+    }
     simulation.tick();
     
     renderer.reset();

@@ -2,30 +2,32 @@
   "schema": 1,
   "name": "bot-518",
   "first_seen": 1778364749.102036,
-  "last_seen": 1778471629.366221,
-  "episodes": 17,
-  "score_total": 186,
-  "score_best": 25,
+  "last_seen": 1778543068.502413,
+  "episodes": 20,
+  "score_total": 242,
+  "score_best": 31,
   "best_loadout": [
-    1,
-    1,
-    1,
-    1,
-    1
+    28,
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Evil Centipede": 1,
     "Beetle": 3,
     "Hornet": 4,
-    "Wasp": 2
+    "Wasp": 2,
+    "Desert Centipede": 1
   },
   "loadout_history": {
-    "0": 9,
-    "1": 17,
+    "0": 12,
+    "1": 18,
     "5": 1,
     "19": 1,
     "116": 1,
     "9": 1,
-    "14": 1
+    "14": 1,
+    "28": 1
   }
 }

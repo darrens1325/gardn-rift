@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "name": "bot-74",
+  "first_seen": 1778543473.4266272,
+  "last_seen": 1778548788.2697332,
+  "episodes": 15,
+  "score_total": 988,
+  "score_best": 141,
+  "best_loadout": [
+    62,
+    10,
+    7,
+    24,
+    0
+  ],
+  "killed_by": {
+    "Beetle": 1,
+    "Wasp": 2,
+    "Hornet": 3,
+    "bot-46": 2,
+    "Cactus": 1,
+    "Sandstorm": 1,
+    "bot-129": 1,
+    "Mantis": 1
+  },
+  "loadout_history": {
+    "0": 14,
+    "1": 10,
+    "45": 1,
+    "25": 1,
+    "7": 1,
+    "10": 1,
+    "24": 2,
+    "62": 1,
+    "15": 1
+  }
+}

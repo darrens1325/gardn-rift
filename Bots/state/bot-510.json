@@ -2,27 +2,30 @@
   "schema": 1,
   "name": "bot-510",
   "first_seen": 1778364744.9234161,
-  "last_seen": 1778471636.2879841,
-  "episodes": 19,
-  "score_total": 228,
-  "score_best": 45,
+  "last_seen": 1778543016.077624,
+  "episodes": 23,
+  "score_total": 377,
+  "score_best": 68,
   "best_loadout": [
     0,
-    1,
-    1,
-    1,
-    1
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Hornet": 6,
-    "Spider": 4,
+    "Spider": 5,
     "rosie": 1,
-    "Mantis": 4
+    "Mantis": 4,
+    "Wasp": 1,
+    "Sandstorm": 1
   },
   "loadout_history": {
-    "1": 17,
-    "0": 13,
+    "1": 20,
+    "0": 17,
     "14": 2,
-    "19": 1
+    "19": 1,
+    "30": 1
   }
 }

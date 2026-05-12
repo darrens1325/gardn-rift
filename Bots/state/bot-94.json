@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-94",
+  "first_seen": 1778543122.142706,
+  "last_seen": 1778548784.795327,
+  "episodes": 17,
+  "score_total": 556,
+  "score_best": 77,
+  "best_loadout": [
+    14,
+    1,
+    0,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Sandstorm": 1,
+    "Hornet": 2,
+    "Centipede": 1,
+    "bot-34": 2,
+    "Mantis": 1,
+    "Wasp": 2,
+    "bot-131": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "0": 15,
+    "1": 12,
+    "35": 1,
+    "14": 1,
+    "28": 1,
+    "79": 1,
+    "10": 1
+  }
+}

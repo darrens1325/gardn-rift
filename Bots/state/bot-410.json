@@ -2,26 +2,29 @@
   "schema": 1,
   "name": "bot-410",
   "first_seen": 1778364745.81043,
-  "last_seen": 1778471640.124268,
-  "episodes": 18,
-  "score_total": 180,
-  "score_best": 31,
+  "last_seen": 1778542885.080429,
+  "episodes": 22,
+  "score_total": 366,
+  "score_best": 71,
   "best_loadout": [
     1,
-    1,
     0,
+    1,
     1,
     1
   ],
   "killed_by": {
-    "Hornet": 6,
-    "Beetle": 4
+    "Hornet": 7,
+    "Beetle": 5,
+    "Bee": 1
   },
   "loadout_history": {
-    "0": 16,
-    "1": 15,
+    "0": 20,
+    "1": 18,
     "10": 1,
     "12": 1,
-    "5": 1
+    "5": 1,
+    "46": 1,
+    "14": 1
   }
 }

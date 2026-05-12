@@ -2,32 +2,33 @@
   "schema": 1,
   "name": "bot-511",
   "first_seen": 1778364745.4601338,
-  "last_seen": 1778470875.367222,
-  "episodes": 18,
-  "score_total": 196,
-  "score_best": 58,
+  "last_seen": 1778543030.422799,
+  "episodes": 22,
+  "score_total": 397,
+  "score_best": 109,
   "best_loadout": [
     0,
-    24,
     0,
-    1,
+    0,
+    0,
     0
   ],
   "killed_by": {
     "Beetle": 1,
     "Evil Centipede": 1,
-    "Hornet": 2,
+    "Hornet": 4,
     "Spider": 2,
     "bot-505": 1,
     "Worker Ant": 1,
     "bot-707": 1,
-    "bot-504": 1
+    "bot-504": 1,
+    "bot-715": 1
   },
   "loadout_history": {
-    "0": 12,
-    "1": 17,
+    "0": 16,
+    "1": 20,
     "24": 2,
-    "9": 1,
+    "9": 2,
     "15": 1
   }
 }

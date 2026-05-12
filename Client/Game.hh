@@ -29,7 +29,18 @@ namespace Game {
     extern std::array<std::array<uint8_t, RarityID::kNumRarities>, MobID::kNumMobs> seen_mobs;
     
     extern double timestamp;
-    
+
+    // Round-end banner state. Set by Network.cc on receipt of
+    // Clientbound::kRoundEnd; ticked down each frame by Game::tick(). When
+    // round_end_anim > 0 the banner UI renders centered on screen:
+    //   - "VICTORY!" if the player's name matches the winner_name
+    //   - "{winner_name} wins!" otherwise
+    // Cleared back to zero by the countdown so the banner auto-hides.
+    extern float round_end_anim;
+    extern uint8_t round_end_was_me;
+    extern std::string round_end_winner_name;
+    extern uint32_t round_end_winner_score;
+
     extern double score;
     extern float overlevel_timer;
     extern float slot_indicator_opacity;

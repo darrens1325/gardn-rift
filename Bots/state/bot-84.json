@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-84",
+  "first_seen": 1778543489.42082,
+  "last_seen": 1778545795.330688,
+  "episodes": 15,
+  "score_total": 1191,
+  "score_best": 202,
+  "best_loadout": [
+    5,
+    39,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {
+    "bot-62": 1,
+    "Hornet": 6,
+    "Beetle": 2,
+    "Worker Ant": 1,
+    "Mantis": 1,
+    "bot-81": 1
+  },
+  "loadout_history": {
+    "0": 14,
+    "1": 7,
+    "24": 2,
+    "19": 1,
+    "5": 4,
+    "14": 6,
+    "9": 4,
+    "39": 1,
+    "23": 1
+  }
+}

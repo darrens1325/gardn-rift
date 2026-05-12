@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "name": "bot-59",
+  "first_seen": 1778543498.623895,
+  "last_seen": 1778548784.945357,
+  "episodes": 18,
+  "score_total": 790,
+  "score_best": 133,
+  "best_loadout": [
+    5,
+    5,
+    28,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Beetle": 2,
+    "Hornet": 7,
+    "Wasp": 2,
+    "Mantis": 2,
+    "bot-52": 1
+  },
+  "loadout_history": {
+    "0": 17,
+    "1": 14,
+    "39": 1,
+    "28": 1,
+    "5": 2,
+    "14": 1,
+    "116": 1
+  }
+}

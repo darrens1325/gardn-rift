@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-48",
+  "first_seen": 1778543455.3588312,
+  "last_seen": 1778545861.789729,
+  "episodes": 25,
+  "score_total": 1548,
+  "score_best": 301,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Beetle": 2,
+    "Wasp": 7,
+    "Hornet": 8,
+    "Bush": 2,
+    "bot-22": 1,
+    "Mantis": 2,
+    "Cactus": 1,
+    "blossom": 1
+  },
+  "loadout_history": {
+    "0": 23,
+    "1": 18,
+    "5": 2,
+    "116": 1,
+    "18": 1,
+    "167": 1,
+    "16": 2,
+    "10": 1,
+    "14": 1
+  }
+}

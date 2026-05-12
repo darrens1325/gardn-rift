@@ -152,6 +152,12 @@ void Client::on_message(WebSocket *ws, std::string_view message, uint64_t code) 
             player.set_loadout_ids(pos2, tmp);
             break;
         }
+        case Serverbound::kStep: {
+            // Sync-mode pacing. The handler is a no-op outside sync
+            // mode (client_requested_step early-outs on !sync_mode).
+            client->game->client_requested_step(client);
+            break;
+        }
         case Serverbound::kClientChat: {
             // Sender identity comes from the player attached to the camera —
             // dropping chat from spectators avoids unauthenticated/anonymous

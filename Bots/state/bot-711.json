@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-711",
   "first_seen": 1778364749.3819032,
-  "last_seen": 1778471629.0270898,
-  "episodes": 19,
-  "score_total": 315,
+  "last_seen": 1778542954.5803032,
+  "episodes": 21,
+  "score_total": 361,
   "score_best": 70,
   "best_loadout": [
     1,
@@ -14,15 +14,16 @@
     0
   ],
   "killed_by": {
-    "Hornet": 7,
+    "Hornet": 8,
     "Spider": 1,
     "Cactus": 1,
     "Beetle": 3,
     "Mantis": 1
   },
   "loadout_history": {
-    "0": 16,
+    "0": 18,
     "1": 18,
-    "14": 1
+    "14": 1,
+    "18": 1
   }
 }

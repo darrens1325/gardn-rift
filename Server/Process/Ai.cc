@@ -2,14 +2,80 @@
 
 #include <Server/EntityFunctions.hh>
 #include <Server/Spawn.hh>
+#include <Server/TiledMap.hh>
 #include <Shared/Entity.hh>
 #include <Shared/Simulation.hh>
 #include <Shared/StaticData.hh>
 
 #include <cmath>
 
-static void _focus_lose_clause(Entity &ent, Vector const &v) {
-    if (v.magnitude() > 1.5 * MOB_DATA[ent.mob_id].attributes.aggro_radius) ent.target = NULL_ENTITY;
+// Liang–Barsky segment-vs-AABB clipping. Returns true iff the open
+// segment from (x0,y0) to (x1,y1) intersects the axis-aligned box
+// [ax,bx] × [ay,by]. Used for the line-of-sight aggro drop below —
+// only tests whether *something* is between mob and target, so we
+// don't need the actual entry/exit parameters.
+static bool _segment_hits_aabb(float x0, float y0, float x1, float y1,
+                               float ax, float ay, float bx, float by) {
+    float dx = x1 - x0, dy = y1 - y0;
+    float t_enter = 0.0f, t_exit = 1.0f;
+    float p[4] = { -dx, dx, -dy, dy };
+    float q[4] = { x0 - ax, bx - x0, y0 - ay, by - y0 };
+    for (int i = 0; i < 4; ++i) {
+        if (p[i] == 0.0f) {
+            if (q[i] < 0.0f) return false;  // parallel and outside slab
+            continue;
+        }
+        float t = q[i] / p[i];
+        if (p[i] < 0.0f) {
+            if (t > t_exit) return false;
+            if (t > t_enter) t_enter = t;
+        } else {
+            if (t < t_enter) return false;
+            if (t < t_exit) t_exit = t;
+        }
+    }
+    return t_enter <= t_exit;
+}
+
+// True iff the straight line from (x0,y0) to (x1,y1) is interrupted by
+// any TiledMap collision geometry. Solid-tile polygons are approximated
+// by their AABB — losing pixel-accurate edge cases but cutting the
+// per-check cost from O(verts) to O(1) per poly, which is what makes
+// the whole sweep cheap enough to run at the cadence below.
+static bool line_of_sight_blocked(float x0, float y0, float x1, float y1) {
+    for (auto const &r : TiledMap::collision_rects) {
+        if (_segment_hits_aabb(x0, y0, x1, y1,
+                               r.x, r.y, r.x + r.w, r.y + r.h)) return true;
+    }
+    for (auto const &p : TiledMap::collision_polys) {
+        if (_segment_hits_aabb(x0, y0, x1, y1,
+                               p.min_x, p.min_y, p.max_x, p.max_y)) return true;
+    }
+    return false;
+}
+
+static void _focus_lose_clause(Simulation *sim, Entity &ent, Vector const &v) {
+    if (v.magnitude() > 1.5 * MOB_DATA[ent.mob_id].attributes.aggro_radius) {
+        ent.target = NULL_ENTITY;
+        return;
+    }
+    // Line-of-sight aggro drop. Throttled to once every ~0.25 game-
+    // seconds per mob so the swarm-wide cost stays bounded — the LoS
+    // check is O(walls + polys) ≈ 1500 work per call, and we'd burn
+    // far too much sim time running it on every aggro tick.
+    //
+    // The clause triggers if a wall sits between us and the target.
+    // Without it, mobs path-through-wall toward the player and stack
+    // up against the geometry they can't traverse, looking glitchy
+    // and trivially exploitable. With it, mobs return to passive AI
+    // once line-of-sight is broken — the next find_nearest_enemy()
+    // call can re-acquire if the player rounds the corner.
+    if (ent.lifetime % (SIM_RATE / 4) != 0) return;
+    if (!sim->ent_alive(ent.target)) return;
+    Entity const &t = sim->get_ent(ent.target);
+    if (line_of_sight_blocked(ent.x, ent.y, t.x, t.y)) {
+        ent.target = NULL_ENTITY;
+    }
 }
 
 static void default_tick_idle(Simulation *sim, Entity &ent) {
@@ -96,7 +162,7 @@ static void tick_default_aggro(Simulation *sim, Entity &ent, float speed) {
     if (sim->ent_alive(ent.target)) {
         Entity &target = sim->get_ent(ent.target);
         Vector v(target.x - ent.x, target.y - ent.y);
-        _focus_lose_clause(ent, v);
+        _focus_lose_clause(sim, ent, v);
         v.set_magnitude(PLAYER_ACCELERATION * speed);
         ent.acceleration = v;
         ent.set_angle(v.angle());
@@ -145,7 +211,7 @@ static void tick_hornet_aggro(Simulation *sim, Entity &ent) {
     if (sim->ent_alive(ent.target)) {
         Entity &target = sim->get_ent(ent.target);
         Vector v(target.x - ent.x, target.y - ent.y);
-        _focus_lose_clause(ent, v);
+        _focus_lose_clause(sim, ent, v);
         float dist = v.magnitude();
         if (dist > 300) {
             v.set_magnitude(PLAYER_ACCELERATION * 0.975);
@@ -190,7 +256,7 @@ static void tick_wasp_aggro(Simulation *sim, Entity &ent) {
     if (sim->ent_alive(ent.target)) {
         Entity &target = sim->get_ent(ent.target);
         Vector v(target.x - ent.x, target.y - ent.y);
-        _focus_lose_clause(ent, v);
+        _focus_lose_clause(sim, ent, v);
         float dist = v.magnitude();
         if (dist > 300) {
             v.set_magnitude(PLAYER_ACCELERATION * 0.975);
@@ -235,7 +301,7 @@ static void tick_mantis_aggro(Simulation *sim, Entity &ent) {
     if (sim->ent_alive(ent.target)) {
         Entity &target = sim->get_ent(ent.target);
         Vector v(target.x - ent.x, target.y - ent.y);
-        _focus_lose_clause(ent, v);
+        _focus_lose_clause(sim, ent, v);
         float dist = v.magnitude();
         if (dist > 300) {
             v.set_magnitude(PLAYER_ACCELERATION * 0.975);
@@ -341,7 +407,7 @@ static void tick_centipede_aggro(Simulation *sim, Entity &ent) {
     if (sim->ent_alive(ent.target)) {
         Entity &target = sim->get_ent(ent.target);
         Vector v(target.x - ent.x, target.y - ent.y);
-        _focus_lose_clause(ent, v);
+        _focus_lose_clause(sim, ent, v);
         v.set_magnitude(PLAYER_ACCELERATION * 0.95);
         ent.acceleration = v;
         ent.set_angle(v.angle());
@@ -428,7 +494,7 @@ static void tick_digger(Simulation *sim, Entity &ent) {
     if (sim->ent_alive(ent.target)) {
         Entity &target = sim->get_ent(ent.target);
         Vector v(target.x - ent.x, target.y - ent.y);
-        _focus_lose_clause(ent, v);
+        _focus_lose_clause(sim, ent, v);
         v.set_magnitude(PLAYER_ACCELERATION * 0.95);
         if (ent.health / ent.max_health > 0.1) {
             BIT_SET(ent.input, InputFlags::kAttacking);

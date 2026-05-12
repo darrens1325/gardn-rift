@@ -29,6 +29,14 @@ enum Serverbound {
     // camera's active player and rebroadcasts as Clientbound::kChat. Rejected
     // if the player isn't alive or the rate-limit hasn't elapsed.
     kClientChat,
+    // { u8: kStep } — used in sync mode only. Each verified client raises
+    // its "ready for next tick" flag. When every verified client has
+    // raised the flag, GameInstance ticks once and clears them all. In
+    // wall-clock mode (the default — server runs its own us_timer_set
+    // driver in Native.cc) this opcode is a no-op. The mode is enabled
+    // by the env var GARDN_SYNC=1 at server startup; bots opt in with
+    // run.py's `--sync` flag.
+    kStep,
 };
 
 class Writer {

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-712",
   "first_seen": 1778364746.5778902,
-  "last_seen": 1778471662.774744,
-  "episodes": 20,
-  "score_total": 401,
+  "last_seen": 1778542922.639196,
+  "episodes": 22,
+  "score_total": 465,
   "score_best": 84,
   "best_loadout": [
     0,
@@ -17,15 +17,16 @@
     "Evil Centipede": 2,
     "Bee": 1,
     "Beetle": 2,
-    "Hornet": 2,
+    "Hornet": 3,
     "Wasp": 1
   },
   "loadout_history": {
-    "0": 16,
-    "1": 19,
+    "0": 18,
+    "1": 20,
     "12": 1,
     "9": 1,
-    "34": 1,
-    "24": 1
+    "34": 2,
+    "24": 2,
+    "25": 1
   }
 }

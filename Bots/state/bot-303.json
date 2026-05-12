@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-303",
   "first_seen": 1778364742.611978,
-  "last_seen": 1778471636.746977,
-  "episodes": 87,
-  "score_total": 2403,
+  "last_seen": 1778543029.1512718,
+  "episodes": 92,
+  "score_total": 2511,
   "score_best": 1009,
   "best_loadout": [
     1,
@@ -21,7 +21,7 @@
     "Massive Beetle": 2,
     "florrio": 1,
     "Cactus": 5,
-    "Evil Centipede": 5,
+    "Evil Centipede": 6,
     "Ant Hole": 1,
     "bot-411": 2,
     "Soldier Ant": 4,
@@ -32,14 +32,18 @@
     "bot-408": 2,
     "bot-308": 3,
     "Centipede": 2,
-    "Wasp": 1
+    "Wasp": 2,
+    "Mantis": 1,
+    "Spider": 1
   },
   "loadout_history": {
-    "0": 79,
-    "1": 61,
+    "0": 84,
+    "1": 65,
     "26": 2,
     "6": 1,
     "9": 1,
-    "45": 1
+    "45": 1,
+    "24": 2,
+    "18": 1
   }
 }

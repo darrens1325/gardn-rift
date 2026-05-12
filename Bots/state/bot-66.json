@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "name": "bot-66",
+  "first_seen": 1778543167.1696079,
+  "last_seen": 1778545649.280968,
+  "episodes": 17,
+  "score_total": 1251,
+  "score_best": 267,
+  "best_loadout": [
+    0,
+    6,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 6,
+    "Wasp": 2,
+    "Spider": 2,
+    "Centipede": 2,
+    "bot-140": 1
+  },
+  "loadout_history": {
+    "0": 14,
+    "1": 10,
+    "14": 3,
+    "25": 1,
+    "24": 1,
+    "9": 2,
+    "34": 1,
+    "6": 2,
+    "15": 2,
+    "18": 1
+  }
+}

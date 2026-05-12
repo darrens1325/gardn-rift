@@ -100,6 +100,7 @@ set(CLIENT_SRCS
     Client/Ui/InGame/LoadoutSlot.cc
     Client/Ui/InGame/Map.cc
     Client/Ui/InGame/OverlevelTimer.cc
+    Client/Ui/InGame/RoundEndBanner.cc
     Client/Ui/InGame/Tooltip.cc
     Client/Ui/TitleScreen/Changelog.cc
     Client/Ui/TitleScreen/DeathScreen.cc
@@ -226,6 +227,25 @@ if (TPS)
     target_compile_options(gardn_server_obj PRIVATE -DGARDN_TPS=${TPS})
 endif()
 
+# --- Bundled ONNX policy ------------------------------------------------------
+#
+# Bots/model.onnx (when present) is embedded INSIDE the wasm via --embed-file
+# below. Two CMake variables — defined here, used twice — drive the staging
+# pipeline:
+#   STAGED_MODEL: the always-existing copy we hand to file_packager.
+#   MODEL_PHONY:  a "touched-every-build" marker that forces stage_model.cmake
+#                 to re-run on every `make` (so a new model produced after
+#                 `cmake ..` still gets picked up).
+# See the "Bundled ONNX policy — staging pipeline" block lower down for the
+# actual rules.
+set(STAGED_MODEL "${CMAKE_CURRENT_BINARY_DIR}/embed/model.onnx")
+# Force STAGED_MODEL to exist before configure finishes — otherwise the
+# linker's --embed-file resolution on the first build hits a missing file.
+execute_process(COMMAND ${CMAKE_COMMAND}
+                -DSRC=${REPO_ROOT}/Bots/model.onnx
+                -DDST=${STAGED_MODEL}
+                -P ${CMAKE_CURRENT_SOURCE_DIR}/stage_model.cmake)
+
 # Bridge.cc is global-scope (no namespace wrapper).
 add_executable(gardn-bundle
     Bridge.cc
@@ -283,7 +303,17 @@ target_link_options(gardn-bundle PRIVATE
     # generators is to give them as two distinct tokens.
     "SHELL:--embed-file ${REPO_ROOT}/Map/main/main.tmj@/Map/main/main.tmj"
     "SHELL:--embed-file ${REPO_ROOT}/tiles@/tiles"
+    # The trained DQN policy is bundled INTO the wasm — index.html reads
+    # it from MEMFS at boot and hands the bytes to onnxruntime-web. When
+    # no policy is exported, the staged file is empty (0 bytes) and the
+    # bots fall back to uniform-random movement actions.
+    "SHELL:--embed-file ${STAGED_MODEL}@/model.onnx"
 )
+# Re-link the bundle whenever the embedded model bytes change. stage_model
+# only bumps STAGED_MODEL's mtime on actual content change, so unchanged
+# builds skip the link.
+set_property(TARGET gardn-bundle APPEND PROPERTY LINK_DEPENDS "${STAGED_MODEL}")
+add_dependencies(gardn-bundle gardn-bundle-stage-model)
 target_link_libraries(gardn-bundle PRIVATE)
 
 if (NOT DEBUG)
@@ -315,17 +345,39 @@ add_custom_command(
 add_custom_target(gardn-bundle-html ALL
     DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/index.html"
 )
-# Stage Bots/model.onnx next to the bundle on every `make`. Without this,
-# running `python Bots/export_onnx.py` after `cmake ..` requires a
-# reconfigure to make the .onnx land in build/ — surprising and easy to
-# miss. We use a target with no OUTPUT so the staging script runs every
-# build invocation; the script itself no-ops when the source is absent
-# or unchanged.
-add_custom_target(gardn-bundle-model ALL
+# Embed Bots/model.onnx inside the wasm via --embed-file so the deliverable
+# is a single file. Subtlety: we want
+#   (a) the .onnx to be picked up by the next `make` even if it was produced
+#       AFTER `cmake ..` (so user can do `python export_onnx.py && make`),
+#   (b) the wasm to RE-LINK when the .onnx changes (so bundling actually
+#       captures the new bytes), and
+#   (c) NO relink when the .onnx is unchanged (relinks are ~2s).
+#
+# Mechanism: a "phony" custom command output forces stage_model.cmake to
+# run on every `make`. That script writes build/embed/model.onnx — either
+# the real bytes or an empty placeholder — only when content changes (via
+# file(COPY_FILE ONLY_IF_DIFFERENT)). The bundle's LINK_DEPENDS on the
+# staged file then drives relink-on-change.
+# --- Bundled ONNX policy — staging pipeline ----------------------------------
+# Mechanism: gardn-bundle-stage-model is a custom_target with ALL, so make
+# invokes its COMMAND on every build — even when no inputs changed. The
+# command runs stage_model.cmake, which only bumps STAGED_MODEL's mtime if
+# the contents actually changed (file(COPY_FILE ... ONLY_IF_DIFFERENT) for
+# present models; bare file(WRITE) skipped when an empty placeholder is
+# already in place). LINK_DEPENDS on STAGED_MODEL then triggers a relink
+# IFF the model changed. Cost: ~50 ms script run per `make`; benefit:
+# `python export_onnx.py && make` Just Works without `cmake ..` between.
+#
+# A custom_command(OUTPUT) would NOT work here: CMake only re-runs OUTPUT
+# commands when the file is missing or older than DEPENDS, and there's no
+# native "always stale" attribute, so freshly-produced models would be
+# silently skipped.
+add_custom_target(gardn-bundle-stage-model ALL
     COMMAND ${CMAKE_COMMAND}
             -DSRC=${REPO_ROOT}/Bots/model.onnx
-            -DDST=${CMAKE_CURRENT_BINARY_DIR}/model.onnx
+            -DDST=${STAGED_MODEL}
             -P ${CMAKE_CURRENT_SOURCE_DIR}/stage_model.cmake
-    COMMENT "Stage Bots/model.onnx (if present)"
+    BYPRODUCTS "${STAGED_MODEL}"
+    COMMENT "Stage model.onnx for --embed-file"
     VERBATIM
 )

@@ -59,6 +59,7 @@ from protocol import (
     S_CLIENT_SPAWN,
     S_PETAL_DELETE,
     S_PETAL_SWAP,
+    S_STEP,
     S_VERIFY,
     Writer,
     build_chat_packet,
@@ -75,7 +76,7 @@ from protocol import (
     petal_type_norm,
 )
 
-VERSION_HASH = 4728567265382326  # bumped: mob_rarity is now a synced FIELDS_Mob field
+VERSION_HASH = 4728567265382327  # bumped: added Serverbound::kStep for sync mode
 
 MOVE_MAG = 260.0          # server clamps to PLAYER_ACCELERATION above 200
 DEFAULT_CONTROL_HZ = 20   # sane default for stock TPS=20; bump when server runs faster
@@ -457,6 +458,18 @@ _ZERO_STATE = [0.0] * STATE_DIM
 
 
 class LearningBot:
+    # Class-level flag, set by run.py at startup. When True, the bot
+    # bypasses the round-end respawn gate and re-enters the game
+    # immediately on death. Trades the "all respawn together" wave
+    # mechanic for ~100× higher episode rate during early training.
+    respawn_immediately = False
+    # Class-level flag, set by run.py at startup when --sync is passed.
+    # In sync mode the control loop runs lockstep with the server: the
+    # bot sends S_STEP after each input, then awaits the next world
+    # update before deciding again. The wall-clock `control_hz` pacing
+    # is disabled — both sides run as fast as the slower one can manage.
+    sync_mode = False
+
     def __init__(
         self,
         name: str,
@@ -604,6 +617,15 @@ class LearningBot:
 
     async def _send_petal_delete(self, ws, pos: int) -> None:
         w = Writer(); w.w_u8(S_PETAL_DELETE); w.w_u8(pos)
+        await ws.send(w.to_bytes())
+
+    async def _send_step(self, ws) -> None:
+        """Sync-mode pacer: tells the server we're ready for the next
+        tick. A no-op on the server in wall-clock mode, so this is safe
+        to call unconditionally — but `control_loop` only emits it
+        when `sync_mode` is set, since otherwise every step request
+        would be wasted bandwidth."""
+        w = Writer(); w.w_u8(S_STEP)
         await ws.send(w.to_bytes())
 
     # -- watchdog ---------------------------------------------------------
@@ -1164,6 +1186,23 @@ class LearningBot:
             # the next kRoundEnd re-arms us.
             self._can_respawn = False
             stop = asyncio.Event()
+            # Sync-mode rendezvous: every C_CLIENT_UPDATE flips this
+            # event so the control loop can `await update_event.wait()`
+            # in place of `asyncio.sleep(period)`. Lockstep cadence is
+            # then: server tick → broadcast update → bot receives →
+            # event set → control_loop wakes → decide → send input +
+            # S_STEP → server collects steps, ticks again. The event is
+            # cleared inside the control loop after each consumption.
+            update_event = asyncio.Event()
+            # Bootstrap S_STEP for sync mode. The server doesn't tick
+            # until every verified client has stepped at least once, so
+            # without this kick-off the bot would dead-lock waiting for
+            # an update that never comes.
+            if self.sync_mode:
+                try:
+                    await self._send_step(ws)
+                except websockets.ConnectionClosed:
+                    return
 
             async def recv_loop():
                 try:
@@ -1182,6 +1221,7 @@ class LearningBot:
                                 print(f"[{self.name}] parse error: {e}")
                                 self.entities.clear()
                                 self.camera_id = None
+                            update_event.set()
                         elif op == C_OUTDATED:
                             print(f"[{self.name}] server says client is outdated; bump VERSION_HASH")
                             stop.set()
@@ -1227,7 +1267,19 @@ class LearningBot:
                 period = 1.0 / self.control_hz
                 last_spawn = 0.0
                 while not stop.is_set():
-                    await asyncio.sleep(period)
+                    if self.sync_mode:
+                        # Lockstep: wait until the next world update lands.
+                        # Clear immediately after awaiting so we won't
+                        # re-fire if multiple updates arrived between
+                        # iterations (shouldn't happen in sync mode but
+                        # is harmless to guard against).
+                        try:
+                            await update_event.wait()
+                        except asyncio.CancelledError:
+                            return
+                        update_event.clear()
+                    else:
+                        await asyncio.sleep(period)
                     # Mark when this tick's work starts so we can measure
                     # whether the loop is keeping up with `control_hz`.
                     # The asyncio scheduler clamps `sleep` to "at least
@@ -1236,8 +1288,22 @@ class LearningBot:
                     # exceeds period, the next tick fires immediately and
                     # the realised env_step rate falls below configured.
                     tick_start = asyncio.get_event_loop().time()
+
+                    # In sync mode we MUST send S_STEP every iteration —
+                    # otherwise a dead bot stops responding to the barrier
+                    # and the whole server hangs. This nested helper does
+                    # nothing in wall-clock mode and one packet in sync mode;
+                    # called from each `continue` path below.
+                    async def _maybe_step():
+                        if self.sync_mode:
+                            try:
+                                await self._send_step(ws)
+                            except websockets.ConnectionClosed:
+                                pass
+
                     cam = self._my_camera()
                     if cam is None:
+                        await _maybe_step()
                         self._record_tick_work(
                             asyncio.get_event_loop().time() - tick_start, period
                         )
@@ -1253,13 +1319,20 @@ class LearningBot:
                         # kRoundEnd, then back to False here when we
                         # actually fire the spawn — so a bot can't quietly
                         # double-spawn within a round.
-                        if self._can_respawn and now - last_spawn > 1.0:
+                        # `respawn_immediately` is the --fast-start override:
+                        # ignore the round gate and re-spawn as soon as we
+                        # can. Crucial for early DQN training, where episode
+                        # turnover is the dominant learning signal.
+                        gate_ok = self.respawn_immediately or self._can_respawn
+                        if gate_ok and now - last_spawn > 1.0:
                             try:
                                 await self._send_spawn(ws)
                             except websockets.ConnectionClosed:
                                 return
                             last_spawn = now
-                            self._can_respawn = False
+                            if not self.respawn_immediately:
+                                self._can_respawn = False
+                        await _maybe_step()
                         self._record_tick_work(
                             asyncio.get_event_loop().time() - tick_start, period
                         )
@@ -1267,6 +1340,7 @@ class LearningBot:
                     just_respawned = self._prev_player_id is None
                     decision = self._decide_and_learn()
                     if decision is None:
+                        await _maybe_step()
                         self._record_tick_work(
                             asyncio.get_event_loop().time() - tick_start, period
                         )
@@ -1342,6 +1416,17 @@ class LearningBot:
                         except websockets.ConnectionClosed:
                             return
                         self._pending_inventory_action = None
+
+                    # Sync-mode pacer: tell the server we're done thinking
+                    # and ready for the next tick. Sent *after* the input
+                    # so the server processes our action this tick rather
+                    # than the next one. In wall-clock mode this is
+                    # skipped (the server's auto-timer is driving).
+                    if self.sync_mode:
+                        try:
+                            await self._send_step(ws)
+                        except websockets.ConnectionClosed:
+                            return
 
                     # End of the busy iteration: record how long the work
                     # actually took. Includes state-build, agent.act,

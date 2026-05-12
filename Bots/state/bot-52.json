@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "name": "bot-52",
+  "first_seen": 1778543101.238882,
+  "last_seen": 1778548796.037157,
+  "episodes": 24,
+  "score_total": 1463,
+  "score_best": 117,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    79,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 4,
+    "Mantis": 2,
+    "Beetle": 4,
+    "Bee": 1,
+    "Spider": 2,
+    "bot-100": 1,
+    "Wasp": 3,
+    "bot-59": 1,
+    "Cactus": 2,
+    "bot-24": 1
+  },
+  "loadout_history": {
+    "1": 20,
+    "0": 19,
+    "14": 1,
+    "69": 1,
+    "29": 2,
+    "79": 3,
+    "28": 2,
+    "24": 1,
+    "16": 1,
+    "15": 1,
+    "12": 1,
+    "5": 1
+  }
+}

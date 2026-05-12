@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-601",
   "first_seen": 1778364745.462831,
-  "last_seen": 1778471636.5217779,
-  "episodes": 90,
-  "score_total": 1272,
+  "last_seen": 1778543028.760555,
+  "episodes": 92,
+  "score_total": 1427,
   "score_best": 207,
   "best_loadout": [
     0,
@@ -30,17 +30,18 @@
     "Soldier Ant": 1,
     "bot-404": 1,
     "bot-312": 2,
-    "Wasp": 1,
+    "Wasp": 2,
     "Mantis": 2,
     "Evil Centipede": 1
   },
   "loadout_history": {
-    "0": 81,
-    "1": 65,
+    "0": 83,
+    "1": 66,
     "15": 1,
     "10": 1,
     "25": 1,
     "5": 2,
-    "39": 1
+    "39": 1,
+    "46": 1
   }
 }

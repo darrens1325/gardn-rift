@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-501",
   "first_seen": 1778364744.039598,
-  "last_seen": 1778470873.618933,
-  "episodes": 86,
-  "score_total": 950,
+  "last_seen": 1778542975.427427,
+  "episodes": 91,
+  "score_total": 1131,
   "score_best": 65,
   "best_loadout": [
     0,
@@ -19,7 +19,7 @@
     "Beetle": 2,
     "Scorpion": 2,
     "Massive Beetle": 3,
-    "Bee": 6,
+    "Bee": 7,
     "bot-605": 1,
     "Sandstorm": 2,
     "bot-112": 1,
@@ -31,20 +31,23 @@
     "bot-501": 1,
     "Spider": 3,
     "bot-502": 1,
-    "Mantis": 1
+    "Mantis": 2,
+    "Wasp": 2
   },
   "loadout_history": {
-    "1": 66,
-    "0": 75,
+    "1": 69,
+    "0": 80,
     "5": 2,
     "14": 1,
     "48": 1,
     "40": 1,
-    "9": 1,
+    "9": 2,
     "29": 1,
     "79": 4,
     "49": 1,
     "10": 1,
-    "24": 1
+    "24": 1,
+    "204": 1,
+    "6": 1
   }
 }

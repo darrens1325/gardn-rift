@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "name": "bot-132",
+  "first_seen": 1778543156.484498,
+  "last_seen": 1778545855.2171679,
+  "episodes": 24,
+  "score_total": 1403,
+  "score_best": 131,
+  "best_loadout": [
+    15,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Desert Centipede": 2,
+    "Hornet": 7,
+    "Spider": 1,
+    "Beetle": 2,
+    "gardn": 1,
+    "a": 1,
+    "Evil Centipede": 1,
+    "Wasp": 3,
+    "Mantis": 2,
+    "Cactus": 1
+  },
+  "loadout_history": {
+    "0": 21,
+    "1": 18,
+    "15": 1,
+    "5": 1,
+    "10": 1,
+    "14": 2,
+    "24": 2,
+    "6": 1,
+    "17": 1
+  }
+}

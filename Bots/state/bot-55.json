@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-55",
+  "first_seen": 1778543456.409951,
+  "last_seen": 1778548767.544737,
+  "episodes": 13,
+  "score_total": 662,
+  "score_best": 93,
+  "best_loadout": [
+    9,
+    0,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Beetle": 1,
+    "Hornet": 4,
+    "Mantis": 2,
+    "Wasp": 2,
+    "Scorpion": 2
+  },
+  "loadout_history": {
+    "1": 9,
+    "0": 10,
+    "9": 2,
+    "5": 2,
+    "25": 1,
+    "6": 1,
+    "8": 1,
+    "10": 1,
+    "46": 1,
+    "18": 2
+  }
+}

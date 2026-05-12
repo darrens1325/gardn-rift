@@ -197,6 +197,25 @@ void GameInstance::broadcast(uint8_t const *packet, size_t len) {
     }
 }
 
+void GameInstance::client_requested_step(Client *client) {
+    if (!sync_mode) return;
+    if (!client->verified) return;
+    pending_step.erase(client);
+    // Tick when every verified client has stepped. Disconnected /
+    // unverified clients don't block — they were removed from
+    // pending_step by remove_client / never added there in the first
+    // place.
+    if (pending_step.empty()) {
+        tick();
+        // Re-arm: every verified client must step again before the
+        // next tick. New clients joining mid-stride get added to the
+        // pending set inside add_client below.
+        for (Client *c : clients) {
+            if (c->verified) pending_step.insert(c);
+        }
+    }
+}
+
 void GameInstance::add_client(Client *client) {
     DEBUG_ONLY(assert(client->game != this);)
     if (client->game != nullptr)
@@ -225,11 +244,16 @@ void GameInstance::add_client(Client *client) {
         PetalTracker::add_petal(&simulation, ent.inventory[i]);
     client->camera = ent.id;
     client->seen_arena = 0;
+    // In sync mode, every verified client must step before the next
+    // tick can fire. Brand-new clients are added to pending_step so
+    // they're counted in the barrier from their first tick onward.
+    if (sync_mode) pending_step.insert(client);
 }
 
 void GameInstance::remove_client(Client *client) {
     DEBUG_ONLY(assert(client->game == this);)
     clients.erase(client);
+    pending_step.erase(client);  // sync-mode barrier shouldn't wait on a dead client
     if (simulation.ent_exists(client->camera)) {
         Entity &c = simulation.get_ent(client->camera);
         if (simulation.ent_exists(c.player))

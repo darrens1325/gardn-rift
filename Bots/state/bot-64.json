@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-64",
+  "first_seen": 1778543168.082931,
+  "last_seen": 1778548793.5116968,
+  "episodes": 17,
+  "score_total": 611,
+  "score_best": 112,
+  "best_loadout": [
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 4,
+    "Wasp": 3,
+    "Scorpion": 1,
+    "bot-27": 1,
+    "Cactus": 2,
+    "Bush": 1,
+    "bot-42": 1
+  },
+  "loadout_history": {
+    "0": 17,
+    "1": 14,
+    "14": 1,
+    "167": 1,
+    "15": 1,
+    "116": 1,
+    "5": 1,
+    "9": 1
+  }
+}

@@ -2,23 +2,23 @@
   "schema": 1,
   "name": "bot-502",
   "first_seen": 1778364747.952054,
-  "last_seen": 1778471645.1096802,
-  "episodes": 87,
-  "score_total": 970,
-  "score_best": 58,
+  "last_seen": 1778542956.023747,
+  "episodes": 92,
+  "score_total": 1240,
+  "score_best": 72,
   "best_loadout": [
     0,
-    0,
-    0,
+    24,
+    10,
     0,
     0
   ],
   "killed_by": {
-    "Hornet": 41,
+    "Hornet": 42,
     "Spider": 2,
     "Cactus": 8,
     "Massive Beetle": 3,
-    "Beetle": 8,
+    "Beetle": 9,
     "Sandstorm": 1,
     "Ant Hole": 4,
     "Worker Ant": 3,
@@ -28,17 +28,19 @@
     "Soldier Ant": 4,
     "bot-501": 1,
     "bot-405": 1,
-    "Bee": 1
+    "Bee": 1,
+    "Wasp": 2
   },
   "loadout_history": {
-    "0": 80,
-    "1": 62,
-    "10": 1,
+    "0": 85,
+    "1": 65,
+    "10": 2,
     "49": 2,
     "50": 1,
     "28": 1,
     "11": 2,
     "25": 1,
-    "9": 1
+    "9": 1,
+    "24": 2
   }
 }

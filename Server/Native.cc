@@ -7,6 +7,7 @@
 #include <Shared/StaticDefinitions.hh>
 
 #include <atomic>
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -118,6 +119,19 @@ static void _stdin_loop() {
 }
 
 void Server::run() {
+    // Sync (lockstep) mode: tick fires only when every verified client
+    // sends Serverbound::kStep. The wall-clock timer below is left
+    // unstarted so the simulation can't tick on its own. Net effect: the
+    // bot script and the server alternate turns at whatever rate the
+    // bot can produce decisions; the TPS knob is irrelevant in this mode.
+    char const *sync_env = std::getenv("GARDN_SYNC");
+    bool sync_mode = (sync_env != nullptr && sync_env[0] != '\0' && sync_env[0] != '0');
+    Server::game.sync_mode = sync_mode;
+    if (sync_mode) {
+        std::cout << "[server] GARDN_SYNC=1 — running in lockstep mode "
+                     "(tick on kStep from all verified clients; TPS knob ignored)\n";
+    }
+
     struct us_loop_t *loop = (struct us_loop_t *) uWS::Loop::get();
     struct us_timer_t *delayTimer = us_create_timer(loop, 0, 0);
 
@@ -130,9 +144,11 @@ void Server::run() {
     // thread owns the uSockets event loop and can't block on getline.
     std::thread(_stdin_loop).detach();
 
-    us_timer_set(delayTimer, [](us_timer_t *x){
-        for (uint32_t i = 0; i < TICKS_PER_FIRE; ++i) Server::tick();
-    }, interval_ms, interval_ms);
+    if (!sync_mode) {
+        us_timer_set(delayTimer, [](us_timer_t *x){
+            for (uint32_t i = 0; i < TICKS_PER_FIRE; ++i) Server::tick();
+        }, interval_ms, interval_ms);
+    }
     Server::server.run();
 }
 

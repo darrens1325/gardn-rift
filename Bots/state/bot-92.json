@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "name": "bot-92",
+  "first_seen": 1778543531.2506518,
+  "last_seen": 1778545751.304429,
+  "episodes": 16,
+  "score_total": 2578,
+  "score_best": 1061,
+  "best_loadout": [
+    1,
+    0,
+    1,
+    1,
+    1,
+    49
+  ],
+  "killed_by": {
+    "Wasp": 4,
+    "Hornet": 5,
+    "Mantis": 2,
+    "Beetle": 2,
+    "Scorpion": 1
+  },
+  "loadout_history": {
+    "0": 13,
+    "1": 12,
+    "167": 1,
+    "49": 1,
+    "9": 1,
+    "18": 1
+  }
+}

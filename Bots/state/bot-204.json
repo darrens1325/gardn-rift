@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-204",
   "first_seen": 1778364742.189085,
-  "last_seen": 1778470912.825027,
-  "episodes": 88,
-  "score_total": 1841,
+  "last_seen": 1778542923.742294,
+  "episodes": 90,
+  "score_total": 1981,
   "score_best": 1001,
   "best_loadout": [
     0,
@@ -32,12 +32,13 @@
     "Scorpion": 3,
     "Worker Ant": 1,
     "Massive Beetle": 2,
-    "bot-100": 1
+    "bot-100": 1,
+    "Desert Centipede": 1
   },
   "loadout_history": {
-    "1": 59,
+    "1": 60,
     "18": 2,
-    "0": 78,
+    "0": 80,
     "14": 1,
     "24": 1,
     "5": 1,
@@ -46,6 +47,7 @@
     "34": 1,
     "79": 1,
     "9": 1,
-    "6": 1
+    "6": 1,
+    "30": 1
   }
 }

@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "name": "bot-90",
+  "first_seen": 1778543621.4822998,
+  "last_seen": 1778545866.325459,
+  "episodes": 14,
+  "score_total": 890,
+  "score_best": 263,
+  "best_loadout": [
+    0,
+    0,
+    25,
+    1,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 2,
+    "bot-72": 1,
+    "Wasp": 6,
+    "Desert Centipede": 1,
+    "Mantis": 2,
+    "Sandstorm": 1
+  },
+  "loadout_history": {
+    "0": 14,
+    "1": 11,
+    "14": 1,
+    "47": 1,
+    "25": 1
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "name": "bot-71",
+  "first_seen": 1778543490.302591,
+  "last_seen": 1778545864.545475,
+  "episodes": 22,
+  "score_total": 1838,
+  "score_best": 323,
+  "best_loadout": [
+    0,
+    24,
+    0,
+    0,
+    1,
+    0
+  ],
+  "killed_by": {
+    "Wasp": 1,
+    "Ladybug": 3,
+    "Hornet": 6,
+    "Bee": 1,
+    "Centipede": 1,
+    "bot-144": 2,
+    "Beetle": 1,
+    "Spider": 2,
+    "Soldier Ant": 2
+  },
+  "loadout_history": {
+    "0": 20,
+    "1": 18,
+    "5": 3,
+    "18": 1,
+    "9": 3,
+    "24": 3,
+    "10": 1,
+    "15": 1,
+    "6": 1,
+    "23": 1
+  }
+}

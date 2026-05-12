@@ -2,27 +2,28 @@
   "schema": 1,
   "name": "bot-616",
   "first_seen": 1778364751.3876638,
-  "last_seen": 1778470896.780007,
-  "episodes": 18,
-  "score_total": 231,
-  "score_best": 28,
+  "last_seen": 1778543064.382449,
+  "episodes": 21,
+  "score_total": 467,
+  "score_best": 115,
   "best_loadout": [
-    1,
-    1,
-    1,
-    1,
+    0,
+    0,
+    0,
+    0,
     0
   ],
   "killed_by": {
     "Hornet": 7,
     "Sandstorm": 2,
     "Spider": 2,
-    "Beetle": 2,
-    "Mantis": 1
+    "Beetle": 3,
+    "Mantis": 1,
+    "Wasp": 1
   },
   "loadout_history": {
-    "0": 12,
-    "1": 14,
+    "0": 15,
+    "1": 16,
     "14": 2,
     "24": 1,
     "5": 1

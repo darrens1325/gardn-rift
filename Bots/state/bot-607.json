@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-607",
   "first_seen": 1778364747.9670122,
-  "last_seen": 1778471650.925945,
-  "episodes": 18,
-  "score_total": 181,
+  "last_seen": 1778543072.2082272,
+  "episodes": 22,
+  "score_total": 246,
   "score_best": 34,
   "best_loadout": [
     1,
@@ -19,10 +19,13 @@
     "Hornet": 4,
     "Spider": 1,
     "Mantis": 1,
-    "Wasp": 2
+    "Wasp": 2,
+    "Cactus": 1,
+    "Sandstorm": 1,
+    "bot-609": 1
   },
   "loadout_history": {
-    "1": 17,
-    "0": 14
+    "1": 20,
+    "0": 18
   }
 }

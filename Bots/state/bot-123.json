@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "bot-123",
+  "first_seen": 1778543584.912252,
+  "last_seen": 1778545842.987809,
+  "episodes": 24,
+  "score_total": 1358,
+  "score_best": 224,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 6,
+    "Cactus": 4,
+    "Wasp": 4,
+    "bot-73": 1,
+    "Beetle": 1,
+    "bot-120": 2,
+    "Desert Centipede": 2,
+    "bot-80": 1
+  },
+  "loadout_history": {
+    "0": 24,
+    "1": 19,
+    "14": 2,
+    "46": 1
+  }
+}

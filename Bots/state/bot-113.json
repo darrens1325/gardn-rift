@@ -2,30 +2,45 @@
   "schema": 1,
   "name": "bot-113",
   "first_seen": 1778364741.6980858,
-  "last_seen": 1778471639.633739,
-  "episodes": 20,
-  "score_total": 248,
-  "score_best": 51,
+  "last_seen": 1778545764.550241,
+  "episodes": 41,
+  "score_total": 2566,
+  "score_best": 285,
   "best_loadout": [
     0,
     0,
     0,
-    0,
-    0
+    18,
+    1,
+    18
   ],
   "killed_by": {
-    "Spider": 4,
+    "Spider": 5,
     "Bee": 3,
-    "Hornet": 3,
-    "Cactus": 1,
-    "Beetle": 1,
+    "Hornet": 8,
+    "Cactus": 2,
+    "Beetle": 2,
     "Evil Centipede": 1,
-    "Wasp": 1
+    "Wasp": 5,
+    "Centipede": 1,
+    "bot-24": 1,
+    "bot-100": 1,
+    "bot-42": 2
   },
   "loadout_history": {
-    "0": 15,
-    "1": 17,
+    "0": 34,
+    "1": 27,
     "16": 1,
-    "9": 1
+    "9": 3,
+    "5": 6,
+    "79": 1,
+    "48": 1,
+    "18": 4,
+    "24": 2,
+    "6": 2,
+    "117": 1,
+    "28": 2,
+    "25": 1,
+    "14": 1
   }
 }

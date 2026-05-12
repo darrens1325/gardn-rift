@@ -36,4 +36,8 @@ namespace Ui {
     Element *make_level_bar();
     Element *make_minimap();
     Element *make_overlevel_indicator();
+    // Top-of-screen banner shown for a few seconds after Clientbound::kRoundEnd.
+    // Reads Game::round_end_anim / round_end_was_me / round_end_winner_*; the
+    // element itself just renders text, the lifetime is the global state.
+    Element *make_round_end_banner();
 }

@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-99",
+  "first_seen": 1778543502.017312,
+  "last_seen": 1778545792.681878,
+  "episodes": 20,
+  "score_total": 950,
+  "score_best": 116,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 9,
+    "Beetle": 2,
+    "bot-122": 1,
+    "Cactus": 3,
+    "Mantis": 1,
+    "Wasp": 1,
+    "gardn": 2
+  },
+  "loadout_history": {
+    "0": 20,
+    "1": 13,
+    "14": 2,
+    "34": 1,
+    "20": 1,
+    "79": 1,
+    "5": 1,
+    "9": 1
+  }
+}

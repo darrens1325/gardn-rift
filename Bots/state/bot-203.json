@@ -2,19 +2,19 @@
   "schema": 1,
   "name": "bot-203",
   "first_seen": 1778364742.146689,
-  "last_seen": 1778471658.199452,
-  "episodes": 89,
-  "score_total": 708,
-  "score_best": 62,
+  "last_seen": 1778542999.519542,
+  "episodes": 92,
+  "score_total": 913,
+  "score_best": 105,
   "best_loadout": [
-    0,
+    24,
     0,
     0,
     0,
     0
   ],
   "killed_by": {
-    "Hornet": 43,
+    "Hornet": 44,
     "bot-615": 1,
     "Evil Centipede": 7,
     "Cactus": 7,
@@ -29,14 +29,14 @@
     "hello": 2
   },
   "loadout_history": {
-    "0": 83,
-    "1": 63,
+    "0": 86,
+    "1": 64,
     "29": 1,
     "7": 1,
     "18": 1,
     "14": 1,
     "5": 1,
-    "24": 1,
+    "24": 2,
     "9": 1
   }
 }

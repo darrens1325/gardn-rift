@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "name": "bot-40",
+  "first_seen": 1778543185.6563919,
+  "last_seen": 1778548790.347283,
+  "episodes": 35,
+  "score_total": 1848,
+  "score_best": 157,
+  "best_loadout": [
+    0,
+    18,
+    1,
+    0,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 6,
+    "bot-90": 1,
+    "Wasp": 8,
+    "Cactus": 1,
+    "Mantis": 4,
+    "Ladybug": 1,
+    "Bee": 2,
+    "Evil Centipede": 1,
+    "Beetle": 1,
+    "Centipede": 1,
+    "67": 2,
+    "bot-28": 2,
+    "Spider": 2
+  },
+  "loadout_history": {
+    "0": 32,
+    "1": 31,
+    "16": 1,
+    "48": 1,
+    "14": 2,
+    "59": 1,
+    "18": 1,
+    "9": 4,
+    "24": 1,
+    "15": 1
+  }
+}

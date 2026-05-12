@@ -2,14 +2,14 @@
   "schema": 1,
   "name": "bot-406",
   "first_seen": 1778364745.567152,
-  "last_seen": 1778471628.1039722,
-  "episodes": 20,
-  "score_total": 178,
-  "score_best": 30,
+  "last_seen": 1778542986.699502,
+  "episodes": 23,
+  "score_total": 245,
+  "score_best": 34,
   "best_loadout": [
+    14,
     0,
-    1,
-    1,
+    0,
     1,
     1
   ],
@@ -19,15 +19,16 @@
     "bot-118": 1,
     "bot-313": 1,
     "Evil Centipede": 5,
-    "Hornet": 1,
+    "Hornet": 3,
     "Cactus": 2,
     "Ladybug": 1
   },
   "loadout_history": {
-    "1": 18,
+    "1": 20,
     "49": 1,
-    "0": 16,
+    "0": 19,
     "18": 1,
-    "5": 1
+    "5": 1,
+    "14": 1
   }
 }

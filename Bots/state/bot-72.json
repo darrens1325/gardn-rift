@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "name": "bot-72",
+  "first_seen": 1778543134.410288,
+  "last_seen": 1778545832.9295712,
+  "episodes": 13,
+  "score_total": 579,
+  "score_best": 284,
+  "best_loadout": [
+    0,
+    5,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Wasp": 1,
+    "Mantis": 3,
+    "Sandstorm": 1,
+    "Hornet": 1,
+    "bot-48": 2,
+    "flower": 2
+  },
+  "loadout_history": {
+    "0": 12,
+    "1": 8,
+    "14": 1,
+    "5": 1,
+    "20": 1
+  }
+}

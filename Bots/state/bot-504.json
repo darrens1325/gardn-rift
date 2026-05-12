@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-504",
   "first_seen": 1778364744.4048488,
-  "last_seen": 1778471627.494299,
-  "episodes": 87,
-  "score_total": 1167,
+  "last_seen": 1778542833.6829598,
+  "episodes": 89,
+  "score_total": 1294,
   "score_best": 216,
   "best_loadout": [
     59,
@@ -20,7 +20,7 @@
     "Worker Ant": 4,
     "Centipede": 4,
     "Bee": 9,
-    "Cactus": 6,
+    "Cactus": 7,
     "bot-306": 2,
     "Soldier Ant": 1,
     "Evil Centipede": 5,
@@ -34,14 +34,15 @@
     "Wasp": 1
   },
   "loadout_history": {
-    "1": 64,
+    "1": 66,
     "79": 1,
-    "0": 76,
+    "0": 78,
     "39": 1,
     "46": 1,
     "29": 1,
     "10": 1,
     "59": 1,
-    "24": 1
+    "24": 1,
+    "14": 1
   }
 }

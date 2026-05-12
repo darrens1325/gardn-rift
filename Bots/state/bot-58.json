@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "name": "bot-58",
+  "first_seen": 1778543475.5813,
+  "last_seen": 1778545640.2614322,
+  "episodes": 16,
+  "score_total": 1243,
+  "score_best": 189,
+  "best_loadout": [
+    18,
+    28,
+    1,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Mantis": 4,
+    "Hornet": 2,
+    "bot-146": 1,
+    "Wasp": 1,
+    "Desert Centipede": 1,
+    "Scorpion": 1,
+    "bot-76": 2,
+    "bot-133": 2
+  },
+  "loadout_history": {
+    "0": 16,
+    "1": 9,
+    "5": 2,
+    "15": 1,
+    "18": 3,
+    "23": 2,
+    "28": 1,
+    "14": 1
+  }
+}

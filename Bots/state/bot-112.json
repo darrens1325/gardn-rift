@@ -2,29 +2,44 @@
   "schema": 1,
   "name": "bot-112",
   "first_seen": 1778364741.9860768,
-  "last_seen": 1778471634.1714911,
-  "episodes": 20,
-  "score_total": 191,
-  "score_best": 25,
+  "last_seen": 1778545831.098965,
+  "episodes": 49,
+  "score_total": 1451,
+  "score_best": 143,
   "best_loadout": [
-    1,
-    1,
-    1,
-    1,
-    1
+    0,
+    0,
+    0,
+    0,
+    0
   ],
   "killed_by": {
-    "Bee": 1,
+    "Bee": 3,
     "Spider": 1,
-    "Hornet": 3,
-    "Evil Centipede": 1,
+    "Hornet": 10,
+    "Evil Centipede": 2,
     "Worker Ant": 1,
     "Beetle": 1,
-    "Mantis": 3
+    "Mantis": 6,
+    "bot-115": 1,
+    "Cactus": 1,
+    "Wasp": 8,
+    "Sandstorm": 1,
+    "Centipede": 2,
+    "bot-87": 1
   },
   "loadout_history": {
-    "1": 17,
-    "0": 13,
-    "40": 1
+    "1": 41,
+    "0": 40,
+    "40": 1,
+    "34": 1,
+    "29": 1,
+    "24": 1,
+    "19": 1,
+    "15": 1,
+    "79": 1,
+    "14": 1,
+    "9": 1,
+    "175": 1
   }
 }

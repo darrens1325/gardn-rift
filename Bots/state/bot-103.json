@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-103",
   "first_seen": 1778364740.526263,
-  "last_seen": 1778470887.945545,
-  "episodes": 89,
-  "score_total": 1403,
+  "last_seen": 1778545777.0215292,
+  "episodes": 109,
+  "score_total": 1953,
   "score_best": 284,
   "best_loadout": [
     0,
@@ -16,7 +16,7 @@
   ],
   "killed_by": {
     "Beetle": 11,
-    "Hornet": 30,
+    "Hornet": 35,
     "Cactus": 6,
     "bot-703": 2,
     "Soldier Ant": 2,
@@ -31,19 +31,27 @@
     "Sandstorm": 1,
     "bot-308": 2,
     "bot-307": 1,
-    "Wasp": 1
+    "Wasp": 5,
+    "Evil Centipede": 1,
+    "bot-201": 1,
+    "thornbloom": 1,
+    "prickly": 1,
+    "bot-100": 1,
+    "bot-117": 1,
+    "bot-137": 1
   },
   "loadout_history": {
-    "1": 62,
-    "0": 79,
-    "49": 1,
+    "1": 77,
+    "0": 98,
+    "49": 2,
     "9": 1,
     "24": 1,
-    "5": 1,
+    "5": 2,
     "79": 1,
     "46": 1,
     "28": 1,
-    "14": 1,
-    "10": 1
+    "14": 2,
+    "10": 2,
+    "18": 2
   }
 }

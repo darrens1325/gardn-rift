@@ -2,11 +2,12 @@
   "schema": 1,
   "name": "thorn",
   "first_seen": 1778364031.4844868,
-  "last_seen": 1778471653.3555279,
-  "episodes": 42,
-  "score_total": 371,
-  "score_best": 32,
+  "last_seen": 1778548757.095146,
+  "episodes": 62,
+  "score_total": 3221,
+  "score_best": 1043,
   "best_loadout": [
+    1,
     0,
     0,
     0,
@@ -14,21 +15,27 @@
     0
   ],
   "killed_by": {
-    "Hornet": 8,
+    "Hornet": 10,
     "bot-145": 1,
     "Spider": 2,
-    "Cactus": 3,
+    "Cactus": 7,
     "Massive Beetle": 3,
-    "Evil Centipede": 2,
-    "Beetle": 7,
+    "Evil Centipede": 3,
+    "Beetle": 8,
     "Worker Ant": 1,
     "Bee": 1,
-    "Wasp": 2,
-    "Rock": 1
+    "Wasp": 4,
+    "Rock": 1,
+    "bot-717": 1,
+    "zorr": 1,
+    "bot-107": 1,
+    "Mantis": 2
   },
   "loadout_history": {
-    "0": 19,
-    "1": 38,
-    "25": 1
+    "0": 34,
+    "1": 53,
+    "25": 1,
+    "14": 1,
+    "23": 1
   }
 }

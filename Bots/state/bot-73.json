@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "name": "bot-73",
+  "first_seen": 1778543181.8947861,
+  "last_seen": 1778545800.4598908,
+  "episodes": 13,
+  "score_total": 791,
+  "score_best": 131,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    28,
+    1
+  ],
+  "killed_by": {
+    "Wasp": 1,
+    "bot-89": 1,
+    "bot-64": 2,
+    "Mantis": 2,
+    "bot-119": 2,
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 11,
+    "1": 9,
+    "69": 2,
+    "24": 2,
+    "28": 1,
+    "49": 1
+  }
+}

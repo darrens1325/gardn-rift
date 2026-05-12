@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-211",
   "first_seen": 1778364747.5951622,
-  "last_seen": 1778470877.497664,
-  "episodes": 18,
-  "score_total": 355,
+  "last_seen": 1778542979.240942,
+  "episodes": 21,
+  "score_total": 443,
   "score_best": 110,
   "best_loadout": [
     0,
@@ -14,15 +14,16 @@
     0
   ],
   "killed_by": {
-    "Beetle": 2,
+    "Beetle": 3,
     "Hornet": 4,
     "Ladybug": 1,
     "Desert Centipede": 1,
-    "Cactus": 2
+    "Cactus": 2,
+    "Wasp": 1
   },
   "loadout_history": {
-    "0": 13,
-    "1": 15,
+    "0": 16,
+    "1": 17,
     "9": 1,
     "79": 1
   }

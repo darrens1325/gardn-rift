@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "name": "bot-141",
+  "first_seen": 1778543160.7167108,
+  "last_seen": 1778545755.775109,
+  "episodes": 23,
+  "score_total": 911,
+  "score_best": 71,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 8,
+    "Mantis": 3,
+    "Wasp": 2,
+    "Cactus": 1,
+    "Desert Centipede": 1,
+    "Evil Centipede": 2,
+    "Scorpion": 2,
+    "Beetle": 1
+  },
+  "loadout_history": {
+    "0": 21,
+    "1": 18,
+    "15": 1,
+    "167": 1
+  }
+}

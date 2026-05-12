@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "bot-81",
+  "first_seen": 1778543697.56103,
+  "last_seen": 1778545853.219438,
+  "episodes": 23,
+  "score_total": 1132,
+  "score_best": 209,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Wasp": 7,
+    "Hornet": 7,
+    "Mantis": 4,
+    "gardn": 1,
+    "leafy": 1,
+    "bot-122": 1
+  },
+  "loadout_history": {
+    "0": 21,
+    "1": 17,
+    "14": 3,
+    "10": 1,
+    "45": 1,
+    "9": 3,
+    "5": 2
+  }
+}

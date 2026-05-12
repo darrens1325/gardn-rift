@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-50",
+  "first_seen": 1778543631.3822532,
+  "last_seen": 1778548783.949688,
+  "episodes": 19,
+  "score_total": 1140,
+  "score_best": 129,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    1
+  ],
+  "killed_by": {
+    "bot-147": 1,
+    "Cactus": 2,
+    "Sandstorm": 1,
+    "Beetle": 2,
+    "bot-148": 1,
+    "Hornet": 4,
+    "Centipede": 2,
+    "bot-46": 2,
+    "Scorpion": 1,
+    "Wasp": 1
+  },
+  "loadout_history": {
+    "0": 17,
+    "1": 17,
+    "69": 1,
+    "14": 2,
+    "45": 1,
+    "5": 2,
+    "204": 1,
+    "20": 1
+  }
+}

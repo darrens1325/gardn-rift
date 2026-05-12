@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "name": "bot-23",
+  "first_seen": 1778543448.6881092,
+  "last_seen": 1778548775.0553842,
+  "episodes": 22,
+  "score_total": 2935,
+  "score_best": 1064,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Mantis": 3,
+    "Wasp": 2,
+    "Hornet": 8,
+    "Desert Centipede": 2,
+    "bot-139": 1,
+    "Bee": 1,
+    "bot-60": 1
+  },
+  "loadout_history": {
+    "0": 20,
+    "1": 18,
+    "9": 2,
+    "5": 2,
+    "18": 1,
+    "24": 1,
+    "14": 1,
+    "7": 1
+  }
+}

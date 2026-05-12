@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-715",
   "first_seen": 1778364748.133724,
-  "last_seen": 1778471636.7618759,
-  "episodes": 18,
-  "score_total": 306,
+  "last_seen": 1778542985.673002,
+  "episodes": 21,
+  "score_total": 398,
   "score_best": 78,
   "best_loadout": [
     0,
@@ -14,17 +14,19 @@
     0
   ],
   "killed_by": {
-    "Hornet": 4,
+    "Hornet": 5,
     "Cactus": 2,
     "bot-615": 1,
     "Boulder": 1,
     "Massive Beetle": 2,
     "Sandstorm": 1,
-    "Mantis": 1
+    "Mantis": 1,
+    "Desert Centipede": 1
   },
   "loadout_history": {
-    "1": 14,
+    "1": 15,
     "34": 1,
-    "0": 11
+    "0": 14,
+    "24": 1
   }
 }

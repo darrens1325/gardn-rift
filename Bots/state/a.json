@@ -2,30 +2,44 @@
   "schema": 1,
   "name": "a",
   "first_seen": 1778364028.324828,
-  "last_seen": 1778471664.358089,
-  "episodes": 40,
-  "score_total": 474,
-  "score_best": 55,
+  "last_seen": 1778548786.606396,
+  "episodes": 81,
+  "score_total": 3185,
+  "score_best": 342,
   "best_loadout": [
+    9,
+    24,
     0,
     0,
-    0,
-    0,
+    1,
     0
   ],
   "killed_by": {
-    "Hornet": 9,
+    "Hornet": 21,
     "Beetle": 4,
     "Evil Centipede": 1,
     "Cactus": 6,
     "Scorpion": 3,
     "Ladybug": 2,
-    "Spider": 2
+    "Spider": 2,
+    "Wasp": 15,
+    "Mantis": 5,
+    "bot-114": 1,
+    "blossom-v2": 1,
+    "bloom": 1
   },
   "loadout_history": {
-    "0": 24,
-    "1": 36,
-    "10": 1,
-    "28": 1
+    "0": 60,
+    "1": 68,
+    "10": 3,
+    "28": 1,
+    "204": 1,
+    "5": 2,
+    "18": 3,
+    "167": 2,
+    "9": 4,
+    "24": 2,
+    "14": 5,
+    "116": 1
   }
 }

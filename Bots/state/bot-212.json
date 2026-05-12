@@ -2,27 +2,32 @@
   "schema": 1,
   "name": "bot-212",
   "first_seen": 1778364742.201698,
-  "last_seen": 1778471632.027219,
-  "episodes": 20,
-  "score_total": 211,
-  "score_best": 36,
+  "last_seen": 1778542999.78572,
+  "episodes": 28,
+  "score_total": 618,
+  "score_best": 125,
   "best_loadout": [
     0,
+    0,
+    0,
     1,
-    0,
-    0,
     0
   ],
   "killed_by": {
-    "Evil Centipede": 3,
+    "Evil Centipede": 5,
     "Cactus": 3,
-    "Hornet": 4,
+    "Hornet": 5,
     "bot-209": 1,
     "Ladybug": 2,
-    "Scorpion": 1
+    "Scorpion": 1,
+    "Spider": 2,
+    "Wasp": 1,
+    "Desert Centipede": 1
   },
   "loadout_history": {
-    "1": 16,
-    "0": 15
+    "1": 24,
+    "0": 22,
+    "14": 1,
+    "39": 1
   }
 }
