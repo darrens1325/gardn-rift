@@ -332,6 +332,18 @@ const PLAYER_WS_ID = 0;
     // their AABB, identical loadout), every one of them picks the same
     // argmax and the swarm marches in unison. 5% random ticks de-correlate
     // the bots and match what bot.py does at eps_decay completion.
+    //
+    // Restricted to the 18 movement actions — *not* uniform across all 42.
+    // Diverges from bot.py's random.randrange(NUM_ACTIONS) on purpose:
+    // - the cost of a bad random *movement* is one wasted tick;
+    // - the cost of a bad random *delete* is a petal you lose for the rest
+    //   of the round (the wave-system respawn gate keeps the bot dead
+    //   without spawn until kRoundEnd, so deleted petals never replenish).
+    // With 16/42 = 38% of the action space being delete, 5% × 38% × 20 Hz
+    // strips a full primary loadout within a few minutes — exactly the
+    // "delete all petals then camp" behaviour we were seeing. The trained
+    // policy can still issue swap/delete on its own via argmax when it
+    // wants to; exploration just doesn't gamble with them.
     const EPS = 0.05;
 
     // Batched-inference scratch. With 150 bots, running ORT one at a time
@@ -419,7 +431,9 @@ const PLAYER_WS_ID = 0;
         for (let i = 0; i < obsBuffers.length; ++i) {
             let bestA;
             if (Math.random() < EPS) {
-                bestA = (Math.random() * numActions) | 0;
+                // Movement-only random — see the EPS comment above for why
+                // we deviate from bot.py's full-action-space draw.
+                bestA = (Math.random() * NUM_MOVEMENT_ACTIONS) | 0;
             } else {
                 const off = i * numActions;
                 bestA = 0;

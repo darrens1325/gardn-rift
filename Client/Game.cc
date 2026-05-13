@@ -63,7 +63,7 @@ void Game::init() {
     TiledMapRender::init();
     title_ui_window.add_child(
         [](){ 
-            Ui::Element *elt = new Ui::StaticText(60, "the gardn project");
+            Ui::Element *elt = new Ui::StaticText(60, "rift test v1");
             elt->x = 0;
             elt->y = -270;
             return elt;
