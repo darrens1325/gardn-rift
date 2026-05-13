@@ -263,14 +263,18 @@ const PLAYER_WS_ID = 0;
         } else {
             // ORT.create accepts a Uint8Array; the bytes are consumed
             // synchronously and don't need to outlive this call.
-            // Prefer WebGPU when the browser supports it: the bot inference
-            // then runs off-thread on the GPU, freeing the main JS thread
-            // for the server tick + render loop. Falls back to wasm
-            // automatically when WebGPU isn't available (older browsers,
-            // headless test runners, or a page that didn't pass --enable-
-            // unsafe-webgpu).
+            // WASM-only on purpose: WebGPU ran ~10× faster but produced
+            // numerically different logits from PyTorch CPU on the exact
+            // same 89-float observation (verified via Bots/inspect_obs.py
+            // against a dumped obs — Python picked atk_W, WebGPU picked
+            // the neighboring atk_SW, both within 0.01 of each other in
+            // their respective logit spaces). The MLP is tiny (4 hidden
+            // Linear layers, ~80K params) so WASM SIMD is plenty fast
+            // for a 50-bot batch, and the logits then match the trained
+            // policy's numerics instead of whatever shader/FP16 path
+            // WebGPU compiled.
             session = await ort.InferenceSession.create(modelBytes, {
-                executionProviders: ["webgpu", "wasm"],
+                executionProviders: ["wasm"],
             });
             console.log(`[bundle] ONNX ready (${modelBytes.byteLength} bytes from MEMFS)`);
         }
@@ -301,9 +305,10 @@ const PLAYER_WS_ID = 0;
         obsBuffers.push({ wsId, ptr });
         serverMod._server_on_connect(wsId);
     }
-    setStatus(session
-        ? `running — ${NUM_BOTS} bots (ONNX policy)`
-        : `running — ${NUM_BOTS} bots (random actions; provide model.onnx for trained policy)`);
+    const baseStatus = session
+        ? `${NUM_BOTS} bots (ONNX policy)`
+        : `${NUM_BOTS} bots (random actions; provide model.onnx for trained policy)`;
+    setStatus(`running — ${baseStatus}`);
 
     // Diagnostic hook for headless tests / curious users in DevTools:
     //   __gardn.aliveBots()        → number of bot flowers currently alive
@@ -341,12 +346,29 @@ const PLAYER_WS_ID = 0;
     // Bot tick at TPS — matches the agent's training-time control_hz.
     // The loop is async (ORT.run returns a Promise) but we deliberately
     // do NOT await between bots: a single batched run handles them all.
+    //
+    // Diagnostics: count inferences that *completed* vs ticks that fired
+    // while a previous inference was still inflight (skipped). The
+    // setInterval timer below converts those to an effective bot tick
+    // rate and the latest inference latency, which it surfaces in the
+    // status overlay so it's obvious when ORT is bottlenecking bot
+    // responsiveness below the configured TPS.
     let inflight = false;
+    let botTicksThisWindow = 0;
+    let botSkipsThisWindow = 0;
+    let lastInferenceMs = 0;
+    let lastBotHz = 0;
+    let lastBotSkips = 0;
+    window.__gardn.botStats = () => ({
+        hz: lastBotHz,
+        inferenceMs: lastInferenceMs,
+        skipsPerSec: lastBotSkips,
+    });
     setInterval(async () => {
         // Drop a tick rather than queue, if the previous batched inference
         // hasn't returned yet. Avoids unbounded promise pileup if the
         // host machine is slow.
-        if (inflight) return;
+        if (inflight) { botSkipsThisWindow++; return; }
 
         if (!session) {
             // Random movement action per bot. Skipping inventory swap/delete
@@ -358,6 +380,7 @@ const PLAYER_WS_ID = 0;
                     wsId, (Math.random() * NUM_MOVEMENT_ACTIONS) | 0
                 );
             }
+            botTicksThisWindow++;
             return;
         }
 
@@ -374,6 +397,7 @@ const PLAYER_WS_ID = 0;
         const tensor = new ort.Tensor("float32", batchedObs.slice(),
                                       [obsBuffers.length, obsDim]);
         inflight = true;
+        const inferStart = performance.now();
         let out;
         try {
             // Input name "state" must match what Bots/export_onnx.py
@@ -385,6 +409,8 @@ const PLAYER_WS_ID = 0;
             return;
         }
         inflight = false;
+        lastInferenceMs = performance.now() - inferStart;
+        botTicksThisWindow++;
 
         const logits = Object.values(out)[0].data;
         // Logits is row-major [N, numActions]. ε-greedy per-bot: with
@@ -405,7 +431,63 @@ const PLAYER_WS_ID = 0;
             }
             serverMod._bot_apply_action(obsBuffers[i].wsId, bestA);
         }
+
+        // Per-second debug dump for the side-by-side check against bot.py.
+        // Picks the first bot's observation and the top-3 logits, prints
+        // them in a copy-paste-ready format so you can feed the same
+        // 89-float vector into Bots/inspect_obs.py and see whether the
+        // Python q_inference picks the same argmax. If both pick the
+        // same action on the same input, the bundle's behaviour matches
+        // the trained policy and any remaining "weirdness" is a property
+        // of the model itself, not the bundle.
+        const now = performance.now();
+        if (now - dumpLastT > 1000) {
+            dumpLastT = now;
+            const obs = Array.from(batchedObs.subarray(0, obsDim));
+            const off = 0;  // bot index 0
+            const ranked = [];
+            for (let a = 0; a < numActions; ++a) {
+                ranked.push([a, logits[off + a]]);
+            }
+            ranked.sort((p, q) => q[1] - p[1]);
+            const top = ranked.slice(0, 3).map(
+                ([a, v]) => `${a}(${actionName(a)})=${v.toFixed(3)}`
+            ).join("  ");
+            console.log(`[obs-dump] wsId=${obsBuffers[0].wsId} argmax=${ranked[0][0]} (${actionName(ranked[0][0])})  top3: ${top}`);
+            console.log(`[obs-dump] obs=[${obs.map(v => v.toFixed(4)).join(",")}]`);
+        }
     }, 1000 / TPS);
+    let dumpLastT = 0;
+    function actionName(a) {
+        if (a < 18) {
+            // gardn uses screen-space coordinates (+y is down), so
+            // agent.py's k*π/4 angles map to: 0=E, 1=SE, 2=S, 3=SW,
+            // 4=W, 5=NW, 6=N, 7=NE.
+            const dir = ["stay","E","SE","S","SW","W","NW","N","NE"][a % 9];
+            return (a < 9 ? "atk_" : "def_") + dir;
+        }
+        const rel = a - 18;
+        if (rel < 8) return `swap[${rel}↔${rel + 8}]`;
+        return `del[${rel - 8}]`;
+    }
+
+    // Surface the bot tick rate / latency / skip count in the status
+    // overlay, refreshed once per second. The configured TPS is the
+    // upper bound; lower realised Hz means ORT inference is overrunning
+    // the 50 ms tick budget and the loop above is dropping ticks via
+    // the inflight guard. Skips/sec tracks the *count* of those drops
+    // directly so the source of any shortfall is obvious without
+    // opening DevTools (compare to numerical: configured TPS = 20).
+    setInterval(() => {
+        lastBotHz = botTicksThisWindow;
+        lastBotSkips = botSkipsThisWindow;
+        botTicksThisWindow = 0;
+        botSkipsThisWindow = 0;
+        const parts = [`${lastBotHz}/${TPS} Hz`];
+        if (session) parts.push(`inf ${lastInferenceMs.toFixed(1)} ms`);
+        if (lastBotSkips > 0) parts.push(`${lastBotSkips} skipped`);
+        setStatus(`running — ${baseStatus} · bots ${parts.join(" · ")}`);
+    }, 1000);
 })().catch((e) => {
     console.error(e);
     setStatus("error: " + e.message);
