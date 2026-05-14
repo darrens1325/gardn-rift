@@ -172,6 +172,17 @@ RARITY_PRESENT_SCALE = 0.5
 # just "no positive reward" — same as standing still — and the policy had
 # no direct cost signal for staying empty after a delete spree.
 W_EMPTY_PRIMARY_PENALTY = 0.25
+# Per-tick value of a non-empty *storage* slot, expressed as a multiplier
+# on the primary slot's W_PETAL_PRESENT. Storage petals can't damage anyone
+# (they only orbit once swapped into primary), so we don't pay them the
+# full primary rate — but we *do* pay them something so the policy has a
+# gradient to fetch drops even when its primary row is already full.
+# Without this term, `_petal_having` rewarded only primary slots, and an
+# Epic petal lying on the ground next to a level-1 bot with a full primary
+# row was worth zero per-tick → the policy never bothered walking over it.
+# Half the primary rate keeps "fill primary first" preferred without
+# making storage worthless.
+W_PETAL_STORAGE_RATIO = 0.5
 # One-shot penalty that fires the tick we send a kPetalDelete packet —
 # attached to the *action*, not the resulting state, so the credit
 # flows back to the action that caused it without waiting for the
@@ -550,6 +561,19 @@ class LearningBot:
         self.engagement_ticks = 0
         self.damage_dealt = 0.0
         self.damage_dealt_lifetime = 0.0
+        # Per-life counters fed to agent.record_episode_extras on death.
+        # Cumulative-lifetime versions live above (pvp_kills,
+        # damage_dealt_lifetime); these reset each life so the rolling
+        # window run.py reads is a mean of single-episode performance,
+        # not a swarm-total trend that monotonically increases.
+        #
+        # `_prev_nonempty_slots` is the per-tick snapshot used to detect
+        # pickups: when count(loadout_ids != kNone) increases between
+        # ticks, that delta is credited as drops_picked_up_this_life.
+        # Swaps don't change the count so they don't false-positive.
+        self.pvp_kills_this_life = 0
+        self.drops_picked_up_this_life = 0
+        self._prev_nonempty_slots = 0
 
         # Snapshot of last-seen (hp, x, y, radius) per hostile EntityID. Used
         # for damage attribution against per-petal collision. Position is
@@ -764,6 +788,27 @@ class LearningBot:
             if isinstance(kb, str) and kb:
                 killed_by = kb
         primary_loadout = list(self.episodic.last_primary_loadout)
+
+        # Auxiliary per-episode metrics so run.py can maintain separate
+        # `<base>.best.<metric>` checkpoints alongside the score-based
+        # one. `damage` is read from this life's accumulator (it'll be
+        # reset to 0.0 a few lines down); `petal_rarity` is the mean rank
+        # of the non-empty primary slots at the moment of death, so a
+        # bot that died with a kEpic + kRare loadout scores higher than
+        # one that died bare-handed. Must read `primary_loadout` after
+        # it's been assigned above — keep this block below that line.
+        avg_rarity = 0.0
+        if primary_loadout:
+            ranks = [petal_rank(int(p)) for p in primary_loadout]
+            ranks = [r for r in ranks if r >= 0]
+            if ranks:
+                avg_rarity = sum(ranks) / len(ranks)
+        self.agent.record_episode_extras({
+            "kills": float(self.pvp_kills_this_life),
+            "drops": float(self.drops_picked_up_this_life),
+            "damage": float(self.damage_dealt),
+            "petal_rarity": avg_rarity,
+        })
         try:
             self.persistent.record_episode(
                 score=self._prev_score,
@@ -795,6 +840,10 @@ class LearningBot:
         # doesn't register as a huge "moved away" penalty next tick.
         self._prev_nearest_hostile_dist = None
         self.approach_reward_total = 0.0
+        # Reset per-life extras counters for the next episode.
+        self.pvp_kills_this_life = 0
+        self.drops_picked_up_this_life = 0
+        self._prev_nonempty_slots = 0
 
     def _decide_and_learn(self) -> tuple[float, float, int] | None:
         """Returns (ax, ay, flags) or None if we have nothing to do this tick."""
@@ -1026,6 +1075,7 @@ class LearningBot:
             if confirmed_pvp_kills:
                 reward += W_PLAYER_KILL_BONUS * confirmed_pvp_kills
             self.pvp_kills += confirmed_pvp_kills
+            self.pvp_kills_this_life += confirmed_pvp_kills
             # Approach shaping: dense per-tick gradient toward "any hostile."
             # Computes change in the nearest-hostile distance vs. last tick;
             # capped so a target swap (kill, target despawn, or a closer
@@ -1050,15 +1100,30 @@ class LearningBot:
                 # a spurious closing reward when one re-enters.
                 self._prev_nearest_hostile_dist = None
             # Petal-having reward / empty-slot penalty. Two-sided gradient
-            # on the active primary loadout: every non-empty slot pays a
-            # per-tick bonus, every kNone slot pays a per-tick penalty.
-            # Combined: deleting a useful petal both removes the bonus and
-            # adds the penalty, so the cost shows up immediately rather
-            # than only via missed kills several ticks later.
+            # on the loadout: every non-empty primary slot pays the full
+            # rarity-scaled per-tick bonus, every kNone primary slot pays
+            # a per-tick penalty, and every non-empty *storage* slot pays
+            # W_PETAL_STORAGE_RATIO × the primary rate. The storage half
+            # is what gives the policy a gradient to walk over a drop even
+            # when its primary row is already full — without it, an Epic
+            # petal on the ground next to a full-primary bot was worth
+            # zero per-tick and the model never bothered with it.
             loadout_ids = player.get("loadout_ids")
             loadout_count = int(player.get("loadout_count", 0))
             if loadout_ids and loadout_count > 0:
-                end = min(loadout_count, len(loadout_ids))
+                primary_end = min(loadout_count, len(loadout_ids))
+                total_end = len(loadout_ids)
+                # Drop-pickup detector: pickup automatically fills the
+                # first empty loadout slot (Server/Process/Collision.cc),
+                # so count(non-kNone) increases by 1 per pickup. Swaps
+                # don't change the count, so they don't false-positive.
+                # Credited per-life and pushed into the rolling extras
+                # window via record_episode_extras() on death — that's
+                # the signal run.py uses to maintain .best.drops.
+                cur_nonempty = sum(1 for pid in loadout_ids if int(pid) != PETAL_NONE)
+                if cur_nonempty > self._prev_nonempty_slots:
+                    self.drops_picked_up_this_life += cur_nonempty - self._prev_nonempty_slots
+                self._prev_nonempty_slots = cur_nonempty
                 # Per-slot rarity-scaled bonus. A slot with kCommon pays
                 # 1.0× W_PETAL_PRESENT; a slot with kUnique pays
                 # (1 + 0.5 × 6) = 4.0×. This gives a direct, immediate
@@ -1066,7 +1131,7 @@ class LearningBot:
                 # flat sum couldn't express.
                 slot_value = 0.0
                 empty_primary = 0
-                for i in range(end):
+                for i in range(primary_end):
                     pid = int(loadout_ids[i])
                     if pid == PETAL_NONE:
                         empty_primary += 1
@@ -1076,8 +1141,24 @@ class LearningBot:
                         slot_value += 1.0
                     else:
                         slot_value += 1.0 + RARITY_PRESENT_SCALE * rank
+                # Storage slots — same rarity scaling but discounted by
+                # W_PETAL_STORAGE_RATIO so primary stays the preferred
+                # destination for new pickups. Empty storage slots are
+                # *not* penalised (only primary emptiness costs).
+                storage_value = 0.0
+                for i in range(primary_end, total_end):
+                    pid = int(loadout_ids[i])
+                    if pid == PETAL_NONE:
+                        continue
+                    rank = petal_rank(pid)
+                    if rank < 0:
+                        storage_value += 1.0
+                    else:
+                        storage_value += 1.0 + RARITY_PRESENT_SCALE * rank
                 if slot_value > 0.0:
                     reward += W_PETAL_PRESENT * slot_value
+                if storage_value > 0.0:
+                    reward += W_PETAL_PRESENT * W_PETAL_STORAGE_RATIO * storage_value
                 if empty_primary > 0:
                     reward -= W_EMPTY_PRIMARY_PENALTY * empty_primary
             self.episode_reward += reward

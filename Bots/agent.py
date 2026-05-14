@@ -277,6 +277,15 @@ class DQNAgent:
         # bot is too noisy because every death overwrites it.
         self._episode_scores: deque[int] = deque(maxlen=200)
         self._episode_rewards: deque[float] = deque(maxlen=200)
+        # Auxiliary per-episode metrics (kills, drops picked up, damage,
+        # avg loadout rarity at death, …). Bots push values in via
+        # `record_episode_extras` on death; run.py reads the per-metric
+        # mean to maintain a separate `<base>.best.<metric>` checkpoint
+        # alongside the score-based `<base>.best`, so we can keep multiple
+        # candidate models and pick whichever metric best matches the
+        # behavior we're trying to improve. Auto-creates deques on first
+        # write so adding a new metric doesn't need any agent-side change.
+        self._episode_extras: dict[str, deque[float]] = {}
 
         # In-process inter-agent comm path: every bot writes its own latest
         # state+action here when it decides, and other bots read the K
@@ -357,6 +366,30 @@ class DQNAgent:
             sum(self._episode_rewards) / n,
             float(max(self._episode_rewards)),
         )
+
+    def record_episode_extras(self, extras: dict[str, float]) -> None:
+        """Push per-episode auxiliary metrics. Auto-creates a 200-deep
+        rolling deque per metric name on first write. Called by
+        `LearningBot._on_death` after the primary `record_episode`."""
+        for name, value in extras.items():
+            dq = self._episode_extras.get(name)
+            if dq is None:
+                dq = deque(maxlen=200)
+                self._episode_extras[name] = dq
+            dq.append(float(value))
+
+    def extra_window_mean(self, name: str) -> tuple[int, float]:
+        """Mean of the rolling window for a named extra metric. Returns
+        (sample_count, mean). `(0, 0.0)` if no samples yet."""
+        dq = self._episode_extras.get(name)
+        if not dq:
+            return 0, 0.0
+        return len(dq), sum(dq) / len(dq)
+
+    def extra_metric_names(self) -> list[str]:
+        """Names of extras the bots have reported at least once. Lets
+        run.py iterate without hardcoding the metric list."""
+        return list(self._episode_extras.keys())
 
     def epsilon(self) -> float:
         ratio = min(1.0, self.env_steps / max(1, self.eps_decay_steps))

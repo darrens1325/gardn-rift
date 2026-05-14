@@ -60,12 +60,14 @@ def _make_name(i: int) -> str:
 # -----------------------------------------------------------------------------
 
 
-def _best_path(base: str) -> str:
-    return base + ".best"
+def _best_path(base: str, metric: str | None = None) -> str:
+    if metric is None:
+        return base + ".best"
+    return f"{base}.best.{metric}"
 
 
-def _best_meta_path(base: str) -> str:
-    return base + ".best.meta"
+def _best_meta_path(base: str, metric: str | None = None) -> str:
+    return _best_path(base, metric) + ".meta"
 
 
 def _worker_path(base: str, worker_id: int | None) -> str:
@@ -74,43 +76,64 @@ def _worker_path(base: str, worker_id: int | None) -> str:
     return f"{base}.W{worker_id}"
 
 
-def _read_best_metric(base: str | None) -> float:
+def _read_best_metric(base: str | None, metric: str | None = None) -> float:
+    """Read the recorded value for a named best-slot. `metric=None` reads
+    the score-based primary `<base>.best.meta`; otherwise reads
+    `<base>.best.<metric>.meta`. Returns -inf if no record exists."""
     if base is None:
         return float("-inf")
-    meta = _best_meta_path(base)
+    meta = _best_meta_path(base, metric)
     if not os.path.exists(meta):
         return float("-inf")
     try:
         with open(meta) as f:
             data = json.load(f)
-        return float(data.get("score_mean", float("-inf")))
+        # Backwards-compat: the original schema stored the value under
+        # "score_mean"; new per-metric files use "value".
+        if metric is None:
+            return float(data.get("score_mean", data.get("value", float("-inf"))))
+        return float(data.get("value", float("-inf")))
     except (OSError, json.JSONDecodeError):
         return float("-inf")
 
 
-def _maybe_update_best(base: str | None, agent: DQNAgent, my_metric: float, worker_id: int | None) -> bool:
-    """Atomically promote the agent's current weights to <base>.best if
-    `my_metric` exceeds whatever score is recorded in <base>.best.meta.
-    Returns True if the promotion happened."""
+def _maybe_update_best(
+    base: str | None,
+    agent: DQNAgent,
+    my_metric: float,
+    worker_id: int | None,
+    metric_name: str | None = None,
+) -> bool:
+    """Atomically promote the agent's current weights to
+    `<base>.best[.<metric_name>]` if `my_metric` exceeds whatever value is
+    recorded in the matching `.meta`. `metric_name=None` writes to the
+    score-based primary slot; otherwise to a per-metric slot. Returns
+    True if the promotion happened."""
     if base is None:
         return False
-    existing = _read_best_metric(base)
+    existing = _read_best_metric(base, metric_name)
     if my_metric <= existing:
         return False
-    best = _best_path(base)
+    best = _best_path(base, metric_name)
     tmp = best + ".tmp"
     agent.save_to(tmp)
     os.replace(tmp, best)
-    meta = _best_meta_path(base)
+    meta = _best_meta_path(base, metric_name)
     tmp_meta = meta + ".tmp"
+    record = {
+        "value": my_metric,
+        "metric": metric_name or "score_mean",
+        "saved_at": time.time(),
+        "worker_id": worker_id if worker_id is not None else -1,
+        "env_steps": agent.env_steps,
+        "train_steps": agent.train_steps,
+    }
+    # Keep the legacy "score_mean" key on the primary slot's meta so any
+    # external tool that read the old schema still works unchanged.
+    if metric_name is None:
+        record["score_mean"] = my_metric
     with open(tmp_meta, "w") as f:
-        json.dump({
-            "score_mean": my_metric,
-            "saved_at": time.time(),
-            "worker_id": worker_id if worker_id is not None else -1,
-            "env_steps": agent.env_steps,
-            "train_steps": agent.train_steps,
-        }, f)
+        json.dump(record, f)
     os.replace(tmp_meta, meta)
     return True
 
@@ -274,6 +297,14 @@ async def _stats_loop(
         rounds_won = sum(b.rounds_won for b in bots)
         if rounds_seen > 0:
             line += f"  rounds={rounds_seen} wins={rounds_won}"
+        # Auxiliary per-episode metrics — kills, drops, damage, petal
+        # rarity at death. Printed next to the score line so progress on
+        # each is visible without having to swap the .best slot to
+        # observe it.
+        for name in agent.extra_metric_names():
+            n_extra, mean_extra = agent.extra_window_mean(name)
+            if n_extra > 0:
+                line += f"  {name}={mean_extra:.2f}"
         print(line, flush=True)
 
         # Compete for the swarm-wide best slot. Only fires once we have a
@@ -287,6 +318,26 @@ async def _stats_loop(
                     f"(env_steps={agent.env_steps}); saved to {_best_path(base_checkpoint)}",
                     flush=True,
                 )
+            # Per-metric best slots. Each runs the same atomic-rename
+            # promotion against `<base>.best.<name>.meta`, so the
+            # weights file at `<base>.best.<name>` always reflects
+            # whichever set of weights produced the highest rolling
+            # mean for that metric. Load path stays `<base>.best`
+            # (score-based); to test a different metric's model in the
+            # bundle, copy the matching `.best.<name>` over `.best`.
+            for name in agent.extra_metric_names():
+                n_extra, mean_extra = agent.extra_window_mean(name)
+                if n_extra <= 0:
+                    continue
+                if _maybe_update_best(
+                    base_checkpoint, agent, mean_extra, worker_id, metric_name=name
+                ):
+                    print(
+                        f"{prefix}new BEST {name}={mean_extra:.2f} "
+                        f"(env_steps={agent.env_steps}); saved to "
+                        f"{_best_path(base_checkpoint, name)}",
+                        flush=True,
+                    )
 
         # Deterministic GC sweep, paired with `gc.disable()` at startup.
         # Runs once per stats interval so cycle-collection pauses happen
