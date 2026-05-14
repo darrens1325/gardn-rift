@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-59",
   "first_seen": 1778543498.623895,
-  "last_seen": 1778718429.6337512,
-  "episodes": 1223,
-  "score_total": 226506,
+  "last_seen": 1778727227.440118,
+  "episodes": 1232,
+  "score_total": 226847,
   "score_best": 10000,
   "best_loadout": [
     0,
@@ -17,13 +17,13 @@
     0
   ],
   "killed_by": {
-    "Beetle": 46,
-    "Hornet": 279,
+    "Beetle": 47,
+    "Hornet": 284,
     "Wasp": 248,
     "Mantis": 102,
     "bot-52": 1,
     "petalpop": 1,
-    "Cactus": 59,
+    "Cactus": 61,
     "bot-106": 2,
     "bot-112": 1,
     "Sandstorm": 21,
@@ -125,10 +125,10 @@
     "root": 1
   },
   "loadout_history": {
-    "0": 1026,
-    "1": 866,
+    "0": 1035,
+    "1": 869,
     "39": 1,
-    "28": 6,
+    "28": 7,
     "5": 20,
     "14": 14,
     "116": 4,

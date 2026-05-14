@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-92",
   "first_seen": 1778543531.2506518,
-  "last_seen": 1778718407.9773471,
-  "episodes": 1247,
-  "score_total": 227749,
+  "last_seen": 1778727449.207991,
+  "episodes": 1257,
+  "score_total": 227998,
   "score_best": 10948,
   "best_loadout": [
     19,
@@ -17,13 +17,13 @@
     0
   ],
   "killed_by": {
-    "Wasp": 205,
-    "Hornet": 291,
+    "Wasp": 207,
+    "Hornet": 295,
     "Mantis": 128,
-    "Beetle": 39,
+    "Beetle": 41,
     "Scorpion": 9,
     "bot-111": 5,
-    "Evil Centipede": 6,
+    "Evil Centipede": 7,
     "Cactus": 88,
     "bot-64": 3,
     "flower": 2,
@@ -139,8 +139,8 @@
     "bot": 1
   },
   "loadout_history": {
-    "0": 1060,
-    "1": 874,
+    "0": 1070,
+    "1": 882,
     "167": 5,
     "49": 2,
     "9": 19,

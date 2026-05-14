@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-804",
+  "first_seen": 1778366119.5338767,
+  "last_seen": 1778366119.5338767,
+  "episodes": 1,
+  "score_total": 9,
+  "score_best": 9,
+  "best_loadout": [
+    1,
+    0,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "0": 1,
+    "1": 1
+  }
+}

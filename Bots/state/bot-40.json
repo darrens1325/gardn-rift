@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-40",
   "first_seen": 1778543185.6563919,
-  "last_seen": 1778722198.3212469,
-  "episodes": 1371,
-  "score_total": 185574,
+  "last_seen": 1778727173.4281933,
+  "episodes": 1379,
+  "score_total": 185674,
   "score_best": 5628,
   "best_loadout": [
     0,
@@ -16,11 +16,11 @@
     0
   ],
   "killed_by": {
-    "Hornet": 330,
+    "Hornet": 333,
     "bot-90": 1,
     "Wasp": 286,
-    "Cactus": 78,
-    "Mantis": 98,
+    "Cactus": 79,
+    "Mantis": 99,
     "Ladybug": 57,
     "Bee": 107,
     "Evil Centipede": 17,
@@ -136,8 +136,8 @@
     "bot-82": 1
   },
   "loadout_history": {
-    "0": 1126,
-    "1": 997,
+    "0": 1134,
+    "1": 1002,
     "16": 6,
     "48": 4,
     "14": 20,

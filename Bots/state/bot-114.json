@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-114",
   "first_seen": 1778364741.28893,
-  "last_seen": 1778718408.1647282,
-  "episodes": 1261,
-  "score_total": 223851,
+  "last_seen": 1778726922.4908273,
+  "episodes": 1270,
+  "score_total": 224055,
   "score_best": 6038,
   "best_loadout": [
     0,
@@ -16,11 +16,11 @@
     0
   ],
   "killed_by": {
-    "Beetle": 48,
-    "Spider": 51,
+    "Beetle": 49,
+    "Spider": 52,
     "Boulder": 1,
-    "Hornet": 301,
-    "Wasp": 205,
+    "Hornet": 305,
+    "Wasp": 206,
     "Cactus": 69,
     "Sandstorm": 11,
     "Mantis": 101,
@@ -45,7 +45,7 @@
     "not bot": 1,
     "Rock": 15,
     "Bush": 15,
-    "Evil Centipede": 15,
+    "Evil Centipede": 16,
     "bot-49": 2,
     "Soldier Ant": 4,
     "bot-51": 2,
@@ -136,13 +136,13 @@
     "bot-25": 1
   },
   "loadout_history": {
-    "1": 878,
-    "0": 1038,
+    "1": 886,
+    "0": 1047,
     "18": 7,
-    "14": 19,
-    "28": 4,
+    "14": 20,
+    "28": 5,
     "6": 18,
-    "9": 13,
+    "9": 14,
     "5": 17,
     "38": 1,
     "29": 3,
@@ -179,6 +179,7 @@
     "48": 1,
     "47": 1,
     "49": 1,
-    "8": 1
+    "8": 1,
+    "33": 1
   }
 }

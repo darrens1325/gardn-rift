@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "aa",
   "first_seen": 1778364027.980192,
-  "last_seen": 1778722185.917234,
-  "episodes": 1203,
-  "score_total": 215652,
+  "last_seen": 1778727211.7397835,
+  "episodes": 1212,
+  "score_total": 216006,
   "score_best": 5758,
   "best_loadout": [
     1,
@@ -16,8 +16,8 @@
     0
   ],
   "killed_by": {
-    "Beetle": 50,
-    "Hornet": 296,
+    "Beetle": 52,
+    "Hornet": 299,
     "Bee": 76,
     "Massive Beetle": 2,
     "Desert Centipede": 15,
@@ -32,7 +32,7 @@
     "bot-116": 2,
     "Ladybug": 42,
     "bot-25": 3,
-    "Mantis": 90,
+    "Mantis": 93,
     "Evil Centipede": 9,
     "Sandstorm": 18,
     "Bush": 18,
@@ -116,8 +116,8 @@
     "bot-26": 1
   },
   "loadout_history": {
-    "0": 1017,
-    "1": 846,
+    "0": 1026,
+    "1": 853,
     "48": 6,
     "14": 14,
     "5": 17,

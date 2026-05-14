@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "name": "bot-806",
+  "first_seen": 1778366118.2564209,
+  "last_seen": 1778366118.2564209,
+  "episodes": 1,
+  "score_total": 24,
+  "score_best": 24,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Bee": 1
+  },
+  "loadout_history": {
+    "1": 1
+  }
+}

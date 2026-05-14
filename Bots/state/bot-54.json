@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-54",
   "first_seen": 1778543110.4872751,
-  "last_seen": 1778718411.841877,
-  "episodes": 1237,
-  "score_total": 197115,
+  "last_seen": 1778727507.878832,
+  "episodes": 1247,
+  "score_total": 197269,
   "score_best": 6841,
   "best_loadout": [
     0,
@@ -17,8 +17,8 @@
     0
   ],
   "killed_by": {
-    "Wasp": 220,
-    "Hornet": 294,
+    "Wasp": 221,
+    "Hornet": 300,
     "gardn": 1,
     "Mantis": 116,
     "bot-66": 2,
@@ -36,8 +36,8 @@
     "bot-44": 2,
     "Baby Ant": 2,
     "bot-97": 3,
-    "Ladybug": 62,
-    "Evil Centipede": 12,
+    "Ladybug": 63,
+    "Evil Centipede": 13,
     "bot-40": 7,
     "Spider": 27,
     "Leafbug": 20,
@@ -136,8 +136,8 @@
     "bot-57": 1
   },
   "loadout_history": {
-    "0": 1024,
-    "1": 868,
+    "0": 1034,
+    "1": 874,
     "14": 16,
     "11": 9,
     "24": 18,
@@ -176,6 +176,7 @@
     "35": 1,
     "32": 1,
     "13": 1,
-    "69": 1
+    "69": 1,
+    "28": 1
   }
 }

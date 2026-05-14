@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "name": "bot-1005",
+  "first_seen": 1778366119.1892622,
+  "last_seen": 1778366119.1892622,
+  "episodes": 1,
+  "score_total": 19,
+  "score_best": 19,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Spider": 1
+  },
+  "loadout_history": {
+    "1": 1
+  }
+}

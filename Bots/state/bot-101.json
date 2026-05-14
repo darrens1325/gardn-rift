@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-101",
   "first_seen": 1778364740.6258051,
-  "last_seen": 1778718432.294716,
-  "episodes": 1321,
-  "score_total": 171107,
+  "last_seen": 1778727546.957527,
+  "episodes": 1331,
+  "score_total": 171338,
   "score_best": 5547,
   "best_loadout": [
     1,
@@ -18,7 +18,7 @@
   "killed_by": {
     "Beetle": 61,
     "Spider": 36,
-    "Hornet": 286,
+    "Hornet": 293,
     "Cactus": 69,
     "Rock": 15,
     "Sandstorm": 17,
@@ -36,7 +36,7 @@
     "bot": 2,
     "Wasp": 226,
     "bot-500": 1,
-    "Mantis": 105,
+    "Mantis": 107,
     "bot-60": 1,
     "rosie": 2,
     "bot-41": 1,
@@ -143,8 +143,8 @@
     "prickly": 1
   },
   "loadout_history": {
-    "0": 1136,
-    "1": 917,
+    "0": 1145,
+    "1": 922,
     "79": 3,
     "29": 5,
     "7": 4,

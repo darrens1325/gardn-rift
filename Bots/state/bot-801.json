@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "name": "bot-801",
+  "first_seen": 1778366116.8673325,
+  "last_seen": 1778366116.8673325,
+  "episodes": 1,
+  "score_total": 35,
+  "score_best": 35,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "1": 1
+  }
+}

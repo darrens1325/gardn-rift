@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "root",
   "first_seen": 1778364027.520142,
-  "last_seen": 1778722214.354919,
-  "episodes": 1351,
-  "score_total": 220204,
+  "last_seen": 1778727461.59789,
+  "episodes": 1361,
+  "score_total": 220298,
   "score_best": 12803,
   "best_loadout": [
     0,
@@ -17,7 +17,7 @@
     0
   ],
   "killed_by": {
-    "Hornet": 368,
+    "Hornet": 374,
     "Beetle": 59,
     "Ladybug": 35,
     "Cactus": 73,
@@ -27,7 +27,7 @@
     "Soldier Ant": 3,
     "bot-501": 1,
     "Bee": 89,
-    "Evil Centipede": 16,
+    "Evil Centipede": 19,
     "bot-602": 1,
     "bot-403": 2,
     "bot-212": 1,
@@ -148,14 +148,14 @@
     "bot-95": 2
   },
   "loadout_history": {
-    "1": 955,
-    "0": 1131,
+    "1": 965,
+    "0": 1141,
     "47": 1,
     "20": 2,
     "39": 2,
     "79": 3,
     "48": 3,
-    "14": 16,
+    "14": 17,
     "18": 10,
     "34": 4,
     "19": 8,

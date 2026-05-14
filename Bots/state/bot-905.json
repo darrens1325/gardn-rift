@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "name": "bot-905",
+  "first_seen": 1778366118.4818597,
+  "last_seen": 1778366118.4818597,
+  "episodes": 1,
+  "score_total": 4,
+  "score_best": 4,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "1": 1
+  }
+}

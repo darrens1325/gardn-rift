@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "name": "bot-1000",
+  "first_seen": 1778366119.034878,
+  "last_seen": 1778366119.034878,
+  "episodes": 1,
+  "score_total": 18,
+  "score_best": 18,
+  "best_loadout": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "killed_by": {
+    "Hornet": 1
+  },
+  "loadout_history": {
+    "1": 1
+  }
+}

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-63",
   "first_seen": 1778543126.068172,
-  "last_seen": 1778718373.042173,
-  "episodes": 1235,
-  "score_total": 215530,
+  "last_seen": 1778727583.2807252,
+  "episodes": 1245,
+  "score_total": 215590,
   "score_best": 10135,
   "best_loadout": [
     0,
@@ -17,12 +17,12 @@
     0
   ],
   "killed_by": {
-    "Hornet": 281,
-    "Mantis": 97,
+    "Hornet": 284,
+    "Mantis": 98,
     "Sandstorm": 26,
-    "Wasp": 219,
+    "Wasp": 221,
     "bot-50": 5,
-    "Beetle": 62,
+    "Beetle": 65,
     "bot-41": 2,
     "Cactus": 99,
     "Ladybug": 50,
@@ -125,8 +125,8 @@
     "bot-44": 1
   },
   "loadout_history": {
-    "0": 1040,
-    "1": 892,
+    "0": 1050,
+    "1": 895,
     "29": 4,
     "11": 3,
     "15": 14,
