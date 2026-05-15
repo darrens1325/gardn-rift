@@ -133,6 +133,7 @@ set(CLIENT_SRCS
     Shared/EntityDef.cc
     Shared/Helpers.cc
     Shared/Map.cc
+    Shared/MapDimensions.cc
     Shared/Simulation.cc
     Shared/StaticData.cc
     Shared/Vector.cc
@@ -172,6 +173,7 @@ set(SERVER_SRCS
     Shared/EntityDef.cc
     Shared/Helpers.cc
     Shared/Map.cc
+    Shared/MapDimensions.cc
     Shared/Simulation.cc
     Shared/StaticData.cc
     Shared/Vector.cc

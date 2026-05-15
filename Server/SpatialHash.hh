@@ -11,12 +11,19 @@ class Simulation;
 class Entity;
 
 static const uint32_t GRID_SIZE = 100 * 2;
-static const uint32_t MAX_GRID_X = div_round_up(ARENA_WIDTH, GRID_SIZE);
-static const uint32_t MAX_GRID_Y = div_round_up(ARENA_HEIGHT, GRID_SIZE);
 
 class SpatialHash {
     Simulation *simulation;
-    std::vector<EntityID> cells[MAX_GRID_X][MAX_GRID_Y];
+    // Flat row-major grid: cells[x * grid_y_cap + y]. The capacity grows
+    // monotonically — it tracks the largest arena we've seen since startup
+    // so re-allocating the backing vector (and invalidating x*y_cap
+    // indexing) only happens when the arena actually grows past a prior
+    // high-water mark. ARENA_WIDTH / ARENA_HEIGHT are runtime now (see
+    // Shared/MapDimensions.hh) because TiledMap::load() derives them from
+    // whatever .tmj it reads at startup.
+    std::vector<std::vector<EntityID>> cells;
+    uint32_t grid_x_cap;
+    uint32_t grid_y_cap;
     uint32_t width;
     uint32_t height;
 public:

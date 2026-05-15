@@ -88,10 +88,21 @@ EM_JS(void, tiled_map_init_js, (), {
         return "";
     }
 
-    async function loadTileset(mapJson, mapPath) {
-        const tsList = mapJson["tilesets"];
-        const tsRef = tsList && tsList[0];
-        if (!tsRef) { console.warn("[TiledMap] map has no tilesets"); return; }
+    // Load every external tileset the .tmj references, merging their tiles
+    // into M["tileImages"] keyed by absolute gid (firstgid + tile.id). Maps
+    // with multiple tilesets used to silently lose every tile from
+    // tilesets[1..] — this loops the array and lets a single tileset failure
+    // log without aborting the rest.
+    async function loadTilesets(mapJson, mapPath) {
+        const tsList = mapJson["tilesets"] || [];
+        if (!tsList.length) { console.warn("[TiledMap] map has no tilesets"); return; }
+        for (let ti = 0; ti < tsList.length; ti++) {
+            try { await loadOneTileset(tsList[ti], mapPath); }
+            catch (e) { console.warn("[TiledMap] tileset " + ti + " failed: " + e.message); }
+        }
+    }
+
+    async function loadOneTileset(tsRef, mapPath) {
         const firstgid = (tsRef["firstgid"] | 0);
         const mapDir = mapPath.substring(0, mapPath.lastIndexOf("/"));
         const baseHref = location.href.replace(/[^/]*$/, "");
@@ -172,8 +183,11 @@ EM_JS(void, tiled_map_init_js, (), {
                 }
             })(gid, img, url, memUrl, mime);
         }
+        // tileSize is informational; drawing uses the MAP's tilewidth/
+        // tileheight, not the tileset's. With multiple tilesets the last
+        // one wins here — fine because nothing in the draw path reads it.
         M["tileSize"] = (ts["tilewidth"] | 0) || 256;
-        console.log("[TiledMap] tileset loaded: " + tilesArr.length + " tiles");
+        console.log("[TiledMap] tileset loaded (firstgid " + firstgid + "): " + tilesArr.length + " tiles");
     }
 
     async function decompressTileLayer(layer) {
@@ -218,7 +232,7 @@ EM_JS(void, tiled_map_init_js, (), {
         M["tileHeight"] = mapJson["tileheight"] | 0;
 
         try {
-            await loadTileset(mapJson, mapPath);
+            await loadTilesets(mapJson, mapPath);
         } catch (e) {
             console.warn("[TiledMap] tileset load failed: " + e.message);
         }

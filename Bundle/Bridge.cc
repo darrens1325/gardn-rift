@@ -23,6 +23,12 @@ namespace gardn::client {
     void wheel_event(float wheel);
     void loop(double d, float width, float height);
     int main();
+
+    // Runtime arena dims (Shared/MapDimensions.hh, included by each side's
+    // wrapped Shared/MapDimensions.cc). Lives in the client's namespace —
+    // the bridge copies from the server's after server init below.
+    extern uint32_t ARENA_WIDTH;
+    extern uint32_t ARENA_HEIGHT;
 }
 
 namespace gardn::server {
@@ -33,6 +39,9 @@ namespace gardn::server {
     uint8_t *get_incoming_buffer_ptr();
     uint32_t get_incoming_buffer_cap();
     int main();
+
+    extern uint32_t ARENA_WIDTH;
+    extern uint32_t ARENA_HEIGHT;
 
     // BotDriver.cc surface — see Bundle/BotDriver.cc.
     void bot_make_obs_impl(int ws_id, float *out);
@@ -49,6 +58,14 @@ extern "C" {
 // once after both modules are instantiated and the bridge is wired up.
 int bundle_main() {
     gardn::server::main();
+    // Server::main → GameInstance::init → TiledMap::load, which sets
+    // gardn::server::ARENA_{WIDTH,HEIGHT} from whatever .tmj it actually
+    // loaded. The client side has its own copy of those globals (each side
+    // is in its own namespace, so they're distinct symbols) — propagate
+    // the server's values into the client's so the minimap, etc. use the
+    // same arena dimensions.
+    gardn::client::ARENA_WIDTH  = gardn::server::ARENA_WIDTH;
+    gardn::client::ARENA_HEIGHT = gardn::server::ARENA_HEIGHT;
     // The standalone client's `main()` calls `main_loop()` which under
     // GARDN_BUNDLE is a no-op (the JS harness drives the render loop via
     // requestAnimationFrame → _client_loop). So we can run the full

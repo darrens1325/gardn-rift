@@ -109,6 +109,7 @@ set(SRCS
     ../Shared/EntityDef.cc
     ../Shared/Helpers.cc
     ../Shared/Map.cc
+    ../Shared/MapDimensions.cc
     ../Shared/Simulation.cc
     ../Shared/StaticData.cc
     ../Shared/Vector.cc

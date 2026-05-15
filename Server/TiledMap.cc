@@ -707,15 +707,16 @@ static bool gunzip(std::vector<uint8_t> const &in, std::vector<uint8_t> &out) {
 // collision rect for every non-zero cell. Tiles are 512×512 in world
 // units (set by `tilewidth` in the .tmj). We strip the upper 3 flip bits
 // before checking; flip flags don't change whether a cell is solid.
-// gid → svg filename. Built once from the tileset JSON when the map loads.
-static std::unordered_map<uint32_t, std::string> g_gid_to_svg;
-// Tile image native size (square in this tileset); used to scale image
-// coords to world coords.
-static float g_image_w = 256.0f;
-static float g_image_h = 256.0f;
-// Directory the SVGs live in. We need to fetch this when we know the
-// tileset's source path.
-static std::string g_tileset_dir;
+// Per-gid info derived from every tileset the map references. Maps can
+// have multiple tilesets, each with its own firstgid offset, source dir,
+// and tile size — so we resolve the full SVG path and image dimensions
+// per gid here instead of caching one tileset's values globally.
+struct TilesetEntry {
+    std::string svg_path;   // full path to the SVG, including tileset dir
+    float image_w = 256.0f; // tileset's tilewidth (source image size)
+    float image_h = 256.0f; // tileset's tileheight
+};
+static std::unordered_map<uint32_t, TilesetEntry> g_gid_to_entry;
 
 static std::string resolve_tileset_path(std::string const &map_path,
                                         std::string const &src) {
@@ -746,13 +747,9 @@ static std::string resolve_tileset_path(std::string const &map_path,
     return out;
 }
 
-static void load_tileset(std::string const &map_path, Json const &map_root) {
-    g_gid_to_svg.clear();
-    Json const *tilesets = map_root.find("tilesets");
-    if (!tilesets || tilesets->type != Json::kArr || tilesets->arr.empty()) return;
-    Json const *ts_ref = &tilesets->arr[0];
-    int firstgid = (int)(ts_ref->find("firstgid") ? ts_ref->find("firstgid")->as_num() : 1);
-    Json const *src = ts_ref->find("source");
+static void load_one_tileset(std::string const &map_path, Json const &ts_ref) {
+    int firstgid = (int)(ts_ref.find("firstgid") ? ts_ref.find("firstgid")->as_num() : 1);
+    Json const *src = ts_ref.find("source");
     if (!src || src->type != Json::kStr) return;
     std::string ts_path = resolve_tileset_path(map_path, src->as_str());
     std::ifstream f(ts_path);
@@ -761,17 +758,16 @@ static void load_tileset(std::string const &map_path, Json const &map_root) {
         return;
     }
     size_t slash = ts_path.find_last_of("/\\");
-    g_tileset_dir = (slash == std::string::npos) ? "" : ts_path.substr(0, slash + 1);
+    std::string tileset_dir = (slash == std::string::npos) ? "" : ts_path.substr(0, slash + 1);
 
     std::stringstream ss; ss << f.rdbuf();
     std::string text = ss.str();
     try {
         Parser parser(text.data(), text.data() + text.size());
         Json ts = parser.parse();
-        Json const *tw = ts.find("tilewidth");
-        Json const *th = ts.find("tileheight");
-        if (tw) g_image_w = (float)tw->as_num();
-        if (th) g_image_h = (float)th->as_num();
+        float image_w = 256.0f, image_h = 256.0f;
+        if (Json const *tw = ts.find("tilewidth")) image_w = (float)tw->as_num();
+        if (Json const *th = ts.find("tileheight")) image_h = (float)th->as_num();
         Json const *tiles = ts.find("tiles");
         if (!tiles || tiles->type != Json::kArr) return;
         for (auto const &t : tiles->arr) {
@@ -779,10 +775,26 @@ static void load_tileset(std::string const &map_path, Json const &map_root) {
             Json const *img = t.find("image");
             if (!id || !img) continue;
             uint32_t gid = (uint32_t)(firstgid + (int)id->as_num());
-            g_gid_to_svg[gid] = img->as_str();
+            g_gid_to_entry[gid] = TilesetEntry{
+                tileset_dir + img->as_str(),
+                image_w,
+                image_h
+            };
         }
     } catch (std::exception const &e) {
-        std::cerr << "[TiledMap] tileset parse error: " << e.what() << "\n";
+        std::cerr << "[TiledMap] tileset parse error (" << ts_path << "): " << e.what() << "\n";
+    }
+}
+
+static void load_tileset(std::string const &map_path, Json const &map_root) {
+    g_gid_to_entry.clear();
+    Json const *tilesets = map_root.find("tilesets");
+    if (!tilesets || tilesets->type != Json::kArr || tilesets->arr.empty()) return;
+    // Walk every tileset the .tmj references — the map's gids span all of
+    // them (each tileset has its own firstgid offset), so loading just the
+    // first one silently drops every tile from tilesets[1..].
+    for (auto const &ts_ref : tilesets->arr) {
+        load_one_tileset(map_path, ts_ref);
     }
 }
 
@@ -820,13 +832,16 @@ void parse_solid_tile_layer(Json const &layer, uint32_t tile_w, uint32_t tile_h)
 
         // Try to load this tile's SVG polygon; fall back to a full-tile
         // rectangle if the SVG file is missing or has no solid shape.
-        auto svg_it = g_gid_to_svg.find(base_gid);
+        auto entry_it = g_gid_to_entry.find(base_gid);
         std::vector<TiledPolyVert> const *poly = nullptr;
-        if (svg_it != g_gid_to_svg.end()) {
-            poly = load_tile_shape(base_gid, g_tileset_dir + svg_it->second);
+        float image_w = 256.0f, image_h = 256.0f;
+        if (entry_it != g_gid_to_entry.end()) {
+            poly = load_tile_shape(base_gid, entry_it->second.svg_path);
+            image_w = entry_it->second.image_w;
+            image_h = entry_it->second.image_h;
         }
         if (poly) {
-            build_cell_polygon(col, row, tile_w, tile_h, *poly, raw_gid, g_image_w, g_image_h);
+            build_cell_polygon(col, row, tile_w, tile_h, *poly, raw_gid, image_w, image_h);
         } else {
             TiledCollisionRect r;
             r.x = (float)(col * tile_w);
@@ -1112,6 +1127,18 @@ bool load(std::string const &path) {
         }
         uint32_t tile_w = (uint32_t)(root.find("tilewidth") ? root.find("tilewidth")->as_num() : 512);
         uint32_t tile_h = (uint32_t)(root.find("tileheight") ? root.find("tileheight")->as_num() : 512);
+        // The map's tile grid dimensions × tile size determine the arena.
+        // Push these into the runtime ARENA_WIDTH / ARENA_HEIGHT globals so
+        // the spatial hash, motion clamps, spawn sampling, etc. all use the
+        // dimensions of the .tmj we actually loaded — not whatever was baked
+        // in at CMake configure time. INITIAL_* (in Shared/MapDimensions.hh)
+        // is the configure-time fallback if the .tmj omits a field.
+        uint32_t map_w_tiles = (uint32_t)(root.find("width") ? root.find("width")->as_num() : 0);
+        uint32_t map_h_tiles = (uint32_t)(root.find("height") ? root.find("height")->as_num() : 0);
+        if (map_w_tiles > 0 && map_h_tiles > 0) {
+            ARENA_WIDTH  = map_w_tiles * tile_w;
+            ARENA_HEIGHT = map_h_tiles * tile_h;
+        }
         for (auto const &layer : layers->arr) {
             Json const *type = layer.find("type");
             Json const *name = layer.find("name");
@@ -1140,7 +1167,8 @@ bool load(std::string const &path) {
     mob_counts.assign(spawn_polygons.size(), 0);
     loaded = true;
     std::cout << "[TiledMap] loaded " << path
-              << " — " << spawn_polygons.size() << " spawn polygons, "
+              << " — arena " << ARENA_WIDTH << "x" << ARENA_HEIGHT << ", "
+              << spawn_polygons.size() << " spawn polygons, "
               << collision_rects.size() << " collision rects, "
               << collision_polys.size() << " collision polygons\n";
     return true;
