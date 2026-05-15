@@ -65,6 +65,13 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 include_directories(${REPO_ROOT})
 
+# Derive ARENA_WIDTH / ARENA_HEIGHT from Map/main/main.tmj at configure
+# time. Writes Shared/MapDimensions.hh into the build tree; the include
+# path below makes <Shared/MapDimensions.hh> resolve to it.
+include(${REPO_ROOT}/Shared/MapDims.cmake)
+gardn_derive_arena_dims("${REPO_ROOT}/Map/main/main.tmj")
+include_directories(${GARDN_MAP_DIMS_INCLUDE_DIR})
+
 # --- Client-side wrapped sources (CLIENTSIDE=1) -------------------------------
 set(CLIENT_SRCS
     Client/Assets/Flower.cc
@@ -286,10 +293,11 @@ target_link_options(gardn-bundle PRIVATE
     -sMODULARIZE=1
     -sEXPORT_NAME=GardnBundle
     -sSINGLE_FILE=1
+    -g
     # Force base64-encoded inline data instead of Emscripten's default
     # "bytes-as-latin1-chars" trick, which produces a binary-looking .js
     # that doesn't survive UTF-8-only servers / tooling.
-    -sSINGLE_FILE_BINARY_ENCODE=0
+    -sSINGLE_FILE_BINARY_ENCODE=1
     # FS is exported so the harness can pull embedded files (Map/, tiles/)
     # out of MEMFS and serve them in JS-level fetch() calls (the client's
     # TiledMapRender uses fetch, not std::ifstream).

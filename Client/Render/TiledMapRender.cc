@@ -61,6 +61,33 @@ EM_JS(void, tiled_map_init_js, (), {
         return r.text();
     }
 
+    // Binary equivalent for bitmap tiles (PNG/JPG/etc.). Reading these
+    // as utf-8 text — what readAssetText does — silently mangles the
+    // bytes and the resulting Image fails to decode. MEMFS readFile
+    // returns a Uint8Array when called without an encoding option.
+    async function readAssetBinary(memPath, urlPath) {
+        if (Module["FS"]) {
+            try { return Module["FS"].readFile(memPath); }
+            catch (e) { /* not in MEMFS; fall through to fetch */ }
+        }
+        const r = await fetch(urlPath);
+        if (!r.ok) throw new Error("http " + r.status + " for " + urlPath);
+        const buf = await r.arrayBuffer();
+        return new Uint8Array(buf);
+    }
+
+    function mimeFromExt(name) {
+        const i = name.lastIndexOf(".");
+        const ext = i >= 0 ? name.substring(i + 1).toLowerCase() : "";
+        if (ext === "svg") return "image/svg+xml";
+        if (ext === "png") return "image/png";
+        if (ext === "jpg" || ext === "jpeg") return "image/jpeg";
+        if (ext === "gif") return "image/gif";
+        if (ext === "webp") return "image/webp";
+        if (ext === "bmp") return "image/bmp";
+        return "";
+    }
+
     async function loadTileset(mapJson, mapPath) {
         const tsList = mapJson["tilesets"];
         const tsRef = tsList && tsList[0];
@@ -95,29 +122,55 @@ EM_JS(void, tiled_map_init_js, (), {
             const img = new Image();
             M["tileImages"][gid] = img;
             names[gid] = t["image"];
-            (function (g, im, u, mu) {
+            const mime = mimeFromExt(t["image"]);
+            (function (g, im, u, mu, mt) {
                 im.addEventListener("load", function () { ready[g] = true; });
                 im.addEventListener("error", function () { ready[g] = false; });
-                readAssetText(mu, u)
-                    .then(function (txt) {
-                        // \\s in C source → \s in the JS regex at runtime.
-                        // (Single-backslash \s isn't a recognised C escape;
-                        // the preprocessor drops the backslash so the regex
-                        // becomes /<svg(s|>)/ which never matches anything
-                        // useful. Same warning trap I hit earlier with \/.)
-                        if (txt.indexOf("xmlns=") < 0) {
-                            txt = txt.replace(/<svg(\\s|>)/, '<svg xmlns="http://www.w3.org/2000/svg"$1');
-                        }
-                        im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(txt);
-                    })
-                    .catch(function (e) {
-                        ready[g] = false;
-                        if (!Module["_tiledLoggedFirstErr"]) {
-                            Module["_tiledLoggedFirstErr"] = 1;
-                            console.warn("[TiledMap] first tile load failed: " + u + " — " + e.message);
-                        }
-                    });
-            })(gid, img, url, memUrl);
+                if (mt === "image/svg+xml" || mt === "") {
+                    // SVG path: fetch as text and inject the xmlns
+                    // attribute if missing — the shipped SVGs omit it
+                    // and browsers refuse to decode them through <img>
+                    // without it. Also covers extension-less files by
+                    // assuming SVG (the historical default here).
+                    readAssetText(mu, u)
+                        .then(function (txt) {
+                            // \\s in C source → \s in the JS regex at runtime.
+                            // (Single-backslash \s isn't a recognised C escape;
+                            // the preprocessor drops the backslash so the regex
+                            // becomes /<svg(s|>)/ which never matches anything
+                            // useful. Same warning trap I hit earlier with \/.)
+                            if (txt.indexOf("xmlns=") < 0) {
+                                txt = txt.replace(/<svg(\\s|>)/, '<svg xmlns="http://www.w3.org/2000/svg"$1');
+                            }
+                            im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(txt);
+                        })
+                        .catch(function (e) {
+                            ready[g] = false;
+                            if (!Module["_tiledLoggedFirstErr"]) {
+                                Module["_tiledLoggedFirstErr"] = 1;
+                                console.warn("[TiledMap] first tile load failed: " + u + " — " + e.message);
+                            }
+                        });
+                } else {
+                    // Bitmap path: read the bytes verbatim and wrap
+                    // them in a Blob URL. The old text-based path
+                    // corrupted binary data (utf-8 decode) and stamped
+                    // the wrong svg+xml MIME on the data URL, so PNG/
+                    // JPG tiles silently failed to decode.
+                    readAssetBinary(mu, u)
+                        .then(function (bytes) {
+                            const blob = new Blob([bytes], { "type": mt });
+                            im.src = URL.createObjectURL(blob);
+                        })
+                        .catch(function (e) {
+                            ready[g] = false;
+                            if (!Module["_tiledLoggedFirstErr"]) {
+                                Module["_tiledLoggedFirstErr"] = 1;
+                                console.warn("[TiledMap] first tile load failed: " + u + " — " + e.message);
+                            }
+                        });
+                }
+            })(gid, img, url, memUrl, mime);
         }
         M["tileSize"] = (ts["tilewidth"] | 0) || 256;
         console.log("[TiledMap] tileset loaded: " + tilesArr.length + " tiles");

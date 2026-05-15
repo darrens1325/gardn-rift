@@ -42,6 +42,13 @@ project(gardn-client)
 include_directories(..)
 set(CMAKE_C_COMPILER "emcc")
 
+# Derive ARENA_WIDTH / ARENA_HEIGHT from Map/main/main.tmj at configure
+# time. Writes Shared/MapDimensions.hh into the build tree; the include
+# path below makes <Shared/MapDimensions.hh> resolve to it.
+include(${CMAKE_CURRENT_SOURCE_DIR}/../Shared/MapDims.cmake)
+gardn_derive_arena_dims("${CMAKE_CURRENT_SOURCE_DIR}/../Map/main/main.tmj")
+include_directories(${GARDN_MAP_DIMS_INCLUDE_DIR})
+
 set(SRCS
     Assets/Flower.cc
     Assets/Mob.cc
