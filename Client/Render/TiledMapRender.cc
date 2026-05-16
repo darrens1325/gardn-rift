@@ -24,7 +24,7 @@ EM_JS(void, tiled_map_init_js, (), {
     // unquoted ones, but our subsequent reads (M["layers"], etc.) are
     // quoted, so they'd look up the original names on a renamed object
     // and get back undefined.
-    Module["tiledMap"] = { "ready": false, "layers": [], "tileImages": {}, "objects": [] };
+    Module["tiledMap"] = { "ready": false, "layers": [], "tileImages": {}, "objects": [], "warps": [] };
 
     const M = Module["tiledMap"];
 
@@ -156,6 +156,8 @@ EM_JS(void, tiled_map_init_js, (), {
         // markup to the Image via a data: URL.
         const ready = (M["tileReady"] = M["tileReady"] || {});
         const names = (M["tileNames"] = M["tileNames"] || {});
+        const tileShapes = (M["tileShapes"] = M["tileShapes"] || {});
+        const tileImageSize = (M["tileImageSize"] = M["tileImageSize"] || {});
         for (let i = 0; i < tilesArr.length; i++) {
             const t = tilesArr[i];
             const gid = firstgid + ((t["id"] | 0));
@@ -164,6 +166,46 @@ EM_JS(void, tiled_map_init_js, (), {
             const img = new Image();
             M["tileImages"][gid] = img;
             names[gid] = t["image"];
+            // Capture this tile's per-tile collision shapes (the boxes
+            // and polygons that show up in the Tiled editor as the
+            // tile's "collision" objectgroup). These are in image-local
+            // pixel coords against (imagewidth, imageheight).
+            const og = t["objectgroup"];
+            if (og && og["objects"]) {
+                const objs = og["objects"];
+                const shapes = [];
+                for (let oi = 0; oi < objs.length; oi++) {
+                    const o = objs[oi];
+                    const ox = +o["x"] || 0;
+                    const oy = +o["y"] || 0;
+                    if (o["polygon"]) {
+                        const poly = o["polygon"];
+                        const verts = [];
+                        for (let pi = 0; pi < poly.length; pi++)
+                            verts.push({ x: ox + (+poly[pi]["x"] || 0), y: oy + (+poly[pi]["y"] || 0) });
+                        if (verts.length >= 3) shapes.push({ type: "poly", verts: verts });
+                    } else {
+                        // Rect (and ellipse fallback) → 4 corners. A
+                        // flipped rect can rotate corner order, so we
+                        // always emit it as a polygon to share code.
+                        const ow = +o["width"] || 0;
+                        const oh = +o["height"] || 0;
+                        if (ow > 0 && oh > 0) {
+                            shapes.push({ type: "poly", verts: [
+                                { x: ox,      y: oy      },
+                                { x: ox + ow, y: oy      },
+                                { x: ox + ow, y: oy + oh },
+                                { x: ox,      y: oy + oh }
+                            ]});
+                        }
+                    }
+                }
+                if (shapes.length) tileShapes[gid] = shapes;
+            }
+            tileImageSize[gid] = {
+                w: +t["imagewidth"] || 0,
+                h: +t["imageheight"] || 0
+            };
             const mime = mimeFromExt(t["image"]);
             (function (g, im, u, mu, mt) {
                 im.addEventListener("load", function () { ready[g] = true; });
@@ -249,7 +291,12 @@ EM_JS(void, tiled_map_init_js, (), {
         M["tileImages"] = {};
         M["objects"] = [];
         M["collisionRects"] = [];
+        M["collisionPolys"] = [];
+        M["warps"] = [];
         M["mapPath"] = mapPath;
+        // Reset cached minimap bitmap so the next draw rebakes it.
+        M["minimapBitmap"] = null;
+        M["minimapKey"] = "";
         let mapJson;
         try {
             const txt = await readAssetText("/" + mapPath, mapPath);
@@ -294,14 +341,79 @@ EM_JS(void, tiled_map_init_js, (), {
                     if (ln === "cliff" || ln === "water" || ln === "dirt" || ln === "castle" || ln === "bush") {
                         const tw_ = M["tileWidth"] | 0;
                         const th_ = M["tileHeight"] | 0;
+                        const tileShapes = M["tileShapes"] || {};
+                        const tileImgSize = M["tileImageSize"] || {};
                         M["collisionRects"] = M["collisionRects"] || [];
+                        M["collisionPolys"] = M["collisionPolys"] || [];
+                        const FLIP_H_ = 0x80000000;
+                        const FLIP_V_ = 0x40000000;
+                        const FLIP_D_ = 0x20000000;
+                        const GID_MASK_ = 0x1fffffff;
+                        // Matches Server/TiledMap.cc::apply_flip — Tiled's
+                        // CellRenderer flip composition with D as a 90°
+                        // rotation about the tile centre, then H/V mirrors.
+                        function flipPt(u, v, iw, ih, fH, fV, fD) {
+                            if (fD) {
+                                const sx = fV ? -1 : 1;
+                                const sy = fH ? 1 : -1;
+                                return {
+                                    x: 0.5 * iw + sy * (0.5 * iw - v),
+                                    y: 0.5 * ih + sx * (u - 0.5 * ih)
+                                };
+                            }
+                            return {
+                                x: fH ? (iw - u) : u,
+                                y: fV ? (ih - v) : v
+                            };
+                        }
                         for (let r = 0; r < lh; r++) {
                             for (let cc = 0; cc < lw; cc++) {
-                                const v = data[r * lw + cc] & 0x1fffffff;
-                                if (!v) continue;
-                                M["collisionRects"].push({
-                                    x: cc * tw_, y: r * th_, w: tw_, h: th_
-                                });
+                                const rawg = data[r * lw + cc];
+                                if (!rawg) continue;
+                                const gid = rawg & GID_MASK_;
+                                if (!gid) continue;
+                                const fH = (rawg & FLIP_H_) !== 0;
+                                const fV = (rawg & FLIP_V_) !== 0;
+                                const fD = (rawg & FLIP_D_) !== 0;
+                                const shapes = tileShapes[gid];
+                                const ox = cc * tw_;
+                                const oy = r * th_;
+                                if (!shapes || !shapes.length) {
+                                    // No per-tile shape authored — treat
+                                    // the whole tile as solid (matches
+                                    // the old fallback behaviour).
+                                    M["collisionRects"].push({
+                                        x: ox, y: oy, w: tw_, h: th_
+                                    });
+                                    continue;
+                                }
+                                const sz = tileImgSize[gid];
+                                const iw = (sz && sz.w > 0) ? sz.w : tw_;
+                                const ih = (sz && sz.h > 0) ? sz.h : th_;
+                                const sxw = tw_ / iw;
+                                const syw = th_ / ih;
+                                for (let si = 0; si < shapes.length; si++) {
+                                    const sh = shapes[si];
+                                    const out = [];
+                                    let minx = Infinity, miny = Infinity;
+                                    let maxx = -Infinity, maxy = -Infinity;
+                                    for (let pi = 0; pi < sh.verts.length; pi++) {
+                                        const p = sh.verts[pi];
+                                        const fp = flipPt(p.x, p.y, iw, ih, fH, fV, fD);
+                                        const wx = ox + fp.x * sxw;
+                                        const wy = oy + fp.y * syw;
+                                        out.push({ x: wx, y: wy });
+                                        if (wx < minx) minx = wx;
+                                        if (wy < miny) miny = wy;
+                                        if (wx > maxx) maxx = wx;
+                                        if (wy > maxy) maxy = wy;
+                                    }
+                                    M["collisionPolys"].push({
+                                        verts: out,
+                                        minx: minx, miny: miny,
+                                        maxx: maxx, maxy: maxy
+                                    });
+                                }
                             }
                         }
                     }
@@ -330,13 +442,43 @@ EM_JS(void, tiled_map_init_js, (), {
                 // are captured here — the server *also* derives walls
                 // from solid tile layers (cliff), so the in-game wall
                 // set is a superset of this list.
+                //
+                // Mirror Server/TiledMap.cc::object_kind: newer Tiled
+                // (1.10+) emits `class`; older versions emit `type`.
+                // Maps in this repo mix both — fields3 uses `class`.
                 const cobjs = layer["objects"] || [];
                 M["collisionRects"] = M["collisionRects"] || [];
                 for (let j = 0; j < cobjs.length; j++) {
                     const o = cobjs[j];
-                    if (o["type"] !== "collision") continue;
+                    const kind = (o["type"] && o["type"].length) ? o["type"] : (o["class"] || "");
+                    if (kind !== "collision") continue;
                     M["collisionRects"].push({
                         x: +o["x"], y: +o["y"], w: +o["width"], h: +o["height"]
+                    });
+                }
+            } else if (lt === "objectgroup" && (layer["name"] === "warps" || layer["name"] === "checkpoints")) {
+                // Mirror Server/TiledMap.cc::parse_warps_layer — only
+                // objects of kind "warp" are portals. The server scans
+                // both `warps` and `checkpoints` layers for warp
+                // destinations (see read_warp_points_from_map at
+                // TiledMap.cc:1091); some maps author the outbound warps
+                // under `checkpoints` too, so we apply the same pair of
+                // layer names here. Radius matches server:
+                // max(96, max(w, h) * 0.5) so point-warps still have a
+                // visible footprint. See `object_kind` above for the
+                // type-vs-class detection.
+                const wobjs = layer["objects"] || [];
+                M["warps"] = M["warps"] || [];
+                for (let j = 0; j < wobjs.length; j++) {
+                    const o = wobjs[j];
+                    const kind = (o["type"] && o["type"].length) ? o["type"] : (o["class"] || "");
+                    if (kind !== "warp") continue;
+                    const ww = +o["width"] || 0;
+                    const wh = +o["height"] || 0;
+                    M["warps"].push({
+                        x: +o["x"], y: +o["y"],
+                        radius: Math.max(96, Math.max(ww, wh) * 0.5),
+                        name: o["name"] || ""
                     });
                 }
             }
@@ -589,9 +731,10 @@ EM_JS(void, tiled_map_draw_js, (int ctx_id), {
         c.restore();
     }
 
-    // Debug overlay: translucent red boxes over every collision rect
-    // (explicit `collision` objectgroup + derived from solid tile layers).
-    // Toggle via `Module._tiledDebug = false` in the console to hide.
+    // Debug overlay: translucent red over every collision rect
+    // (explicit `collision` objectgroup + full-tile fallbacks) and
+    // every per-tile collision polygon. Toggle via
+    // `Module._tiledDebug = false` in the console to hide.
     if (Module["_tiledDebug"] !== false) {
         const rects = M["collisionRects"] || [];
         c.save();
@@ -603,6 +746,19 @@ EM_JS(void, tiled_map_draw_js, (int ctx_id), {
             if (r.x + r.w < lx || r.x > rx || r.y + r.h < topY || r.y > by) continue;
             c.fillRect(r.x, r.y, r.w, r.h);
             c.strokeRect(r.x, r.y, r.w, r.h);
+        }
+        const polys = M["collisionPolys"] || [];
+        for (let i = 0; i < polys.length; i++) {
+            const p = polys[i];
+            if (p.maxx < lx || p.minx > rx || p.maxy < topY || p.miny > by) continue;
+            const v = p.verts;
+            if (!v || v.length < 3) continue;
+            c.beginPath();
+            c.moveTo(v[0].x, v[0].y);
+            for (let j = 1; j < v.length; j++) c.lineTo(v[j].x, v[j].y);
+            c.closePath();
+            c.fill();
+            c.stroke();
         }
         c.restore();
     }
@@ -620,6 +776,113 @@ EM_JS(void, tiled_map_draw_js, (int ctx_id), {
         try { c.drawImage(img, o.x, o.y, o.w, o.h); }
         catch (e) { tileReady[ogid2] = false; }
     }
+
+    // Portals: flat green disc with a darker rim, matching the game's
+    // flower/petal aesthetic (flat fill + HSV-darkened stroke). Static
+    // shape, no pulse — the colour is what reads as "interactable".
+    const warps = M["warps"] || [];
+    if (warps.length) {
+        c.save();
+        for (let wi = 0; wi < warps.length; wi++) {
+            const w = warps[wi];
+            if (w.x + w.radius < lx || w.x - w.radius > rx) continue;
+            if (w.y + w.radius < topY || w.y - w.radius > by) continue;
+            const r = w.radius;
+            c.lineWidth = Math.max(4, r * 0.15);
+            c.lineJoin = "round";
+            c.fillStyle = "#3fc26b";
+            c.strokeStyle = "#2a8c4d";
+            c.beginPath();
+            c.arc(w.x, w.y, r, 0, Math.PI * 2);
+            c.fill();
+            c.stroke();
+        }
+        c.restore();
+    }
+});
+
+// Minimap-side draw. Caller has set up the transform so world coords
+// land inside the minimap rect. We bake the entire minimap (white
+// background, black collision rects, green portal dots) into an
+// offscreen canvas once per map and then draw that bitmap — drawing
+// hundreds of small rects through the world->minimap transform every
+// frame produces fuzzy anti-aliased edges at fractional pixel offsets;
+// pre-rasterising at a fixed high resolution sidesteps that and lets
+// the browser do a single clean downsample to the minimap.
+//
+// Zones are intentionally NOT drawn — when a tiled map is present, the
+// map silhouette is the more accurate guide.
+EM_JS(void, tiled_map_draw_minimap_js, (int ctx_id, float arena_w, float arena_h), {
+    const M = Module["tiledMap"];
+    if (!M || !M["ready"]) return;
+    const c = Module.ctxs[ctx_id];
+    if (!c) return;
+    if (!(arena_w > 0) || !(arena_h > 0)) return;
+
+    const cacheKey = M["mapPath"] + "|" + arena_w + "x" + arena_h;
+    let bmp = M["minimapBitmap"];
+    if (!bmp || M["minimapKey"] !== cacheKey) {
+        // Bake at a fixed pixel budget on the long edge so the bitmap is
+        // crisp regardless of map size. 1024 is well above any reasonable
+        // minimap display size, so downsampling stays clean on retina.
+        const longEdge = 1024;
+        const ratio = arena_w >= arena_h ? 1 : arena_h / arena_w;
+        const bmpW = arena_w >= arena_h ? longEdge : Math.round(longEdge * (arena_w / arena_h));
+        const bmpH = arena_w >= arena_h ? Math.round(longEdge * (arena_h / arena_w)) : longEdge;
+        const off = (typeof OffscreenCanvas !== "undefined")
+            ? new OffscreenCanvas(bmpW, bmpH)
+            : (function () { const cv = document.createElement("canvas"); cv.width = bmpW; cv.height = bmpH; return cv; })();
+        const oc = off.getContext("2d");
+        // World -> bitmap-pixel scale. fillRect at integer-ish bitmap
+        // coords stays edge-aligned because the map's tile grid is a
+        // simple divisor of arena_w/arena_h.
+        const sx = bmpW / arena_w;
+        const sy = bmpH / arena_h;
+        oc.setTransform(sx, 0, 0, sy, 0, 0);
+        oc.fillStyle = "#ffffff";
+        oc.fillRect(0, 0, arena_w, arena_h);
+        oc.fillStyle = "#000000";
+        const rects = M["collisionRects"] || [];
+        for (let i = 0; i < rects.length; i++) {
+            const r = rects[i];
+            oc.fillRect(r.x, r.y, r.w, r.h);
+        }
+        const polys = M["collisionPolys"] || [];
+        for (let i = 0; i < polys.length; i++) {
+            const p = polys[i];
+            const v = p.verts;
+            if (!v || v.length < 3) continue;
+            oc.beginPath();
+            oc.moveTo(v[0].x, v[0].y);
+            for (let j = 1; j < v.length; j++) oc.lineTo(v[j].x, v[j].y);
+            oc.closePath();
+            oc.fill();
+        }
+        const warps = M["warps"] || [];
+        if (warps.length) {
+            const dotR = Math.max(arena_w, arena_h) / 70;
+            oc.fillStyle = "#3fc26b";
+            oc.strokeStyle = "#2a8c4d";
+            oc.lineWidth = Math.max(arena_w, arena_h) / 400;
+            for (let i = 0; i < warps.length; i++) {
+                const w = warps[i];
+                oc.beginPath();
+                oc.arc(w.x, w.y, dotR, 0, Math.PI * 2);
+                oc.fill();
+                oc.stroke();
+            }
+        }
+        M["minimapBitmap"] = off;
+        M["minimapKey"] = cacheKey;
+        bmp = off;
+    }
+    // Browser smoothing handles the downsample to the actual minimap
+    // size — much cleaner than the raw transformed fillRect path.
+    c.save();
+    c.imageSmoothingEnabled = true;
+    c.imageSmoothingQuality = "high";
+    c.drawImage(bmp, 0, 0, arena_w, arena_h);
+    c.restore();
 });
 
 EM_JS(int, tiled_map_is_ready_js, (), {
@@ -644,6 +907,10 @@ void init() {
 void set_map(std::string const &map_path) { tiled_map_set_map_js(map_path.c_str()); }
 
 void draw(Renderer &ctx) { tiled_map_draw_js(ctx.id); }
+
+void draw_minimap(Renderer &ctx, float arena_w, float arena_h) {
+    tiled_map_draw_minimap_js(ctx.id, arena_w, arena_h);
+}
 
 bool is_ready() { return tiled_map_is_ready_js() != 0; }
 

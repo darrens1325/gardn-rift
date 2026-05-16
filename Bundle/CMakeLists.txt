@@ -60,6 +60,7 @@ set(WRAP_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/wrap_sources.py")
 set(WRAP_DIR "${CMAKE_CURRENT_BINARY_DIR}/wrapped")
 set(CMAKE_C_COMPILER "emcc")
 set(CMAKE_CXX_COMPILER "em++")
+option(USE_MEMORY64 "Enable 64-bit memory support" OFF)
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
@@ -306,6 +307,7 @@ target_link_options(gardn-bundle PRIVATE
     -sEXPORTED_RUNTIME_METHODS=HEAPU8,HEAPF32,ccall,cwrap,UTF8ToString,FS
     -sEXPORTED_FUNCTIONS=${EXPORTED_FUNCS_CSV}
     -sUSE_ZLIB=1
+    -sMEMORY64=0
     # Emscripten's --embed-file takes a single argv "src@dst" token. CMake
     # joins target_link_options entries with spaces unless we pass each
     # multi-word flag as two separate list items via SHELL: (which avoids
@@ -319,6 +321,11 @@ target_link_options(gardn-bundle PRIVATE
     # bots fall back to uniform-random movement actions.
     "SHELL:--embed-file ${STAGED_MODEL}@/model.onnx"
 )
+if(USE_MEMORY64)
+    add_link_options("-sMEMORY64=1")
+    # memory64 often requires WASM_BIGINT for i64 JS integration
+    add_link_options("-sWASM_BIGINT") 
+endif()
 # Re-link the bundle whenever the embedded model bytes change. stage_model
 # only bumps STAGED_MODEL's mtime on actual content change, so unchanged
 # builds skip the link.

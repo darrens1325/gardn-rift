@@ -11,7 +11,7 @@
 #include <functional>
 #include <string>
 
-inline uint32_t const ENTITY_CAP = 8192;
+inline uint32_t const ENTITY_CAP = 32768;
 
 class Simulation {
     uint8_t entity_tracker[div_round_up(ENTITY_CAP, 8)];

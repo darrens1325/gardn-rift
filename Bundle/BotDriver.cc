@@ -410,6 +410,16 @@ void bot_apply_action_impl(int ws_id, int action) {
     }
     ensure_spawned(ws_id, client);
 
+    // If still dead after the spawn attempt, the round-end gate is
+    // closed and we're waiting out the wave. Don't dispatch any
+    // action: the server rejects every kClientInput/kPetalSwap/
+    // kPetalDelete from a dead client anyway (see
+    // Server/Client.cc::on_message), and the trained policy run on
+    // an all-zero observation tends to issue movement actions
+    // every tick — pure server-side churn that the user sees as
+    // dead bots "running" between rounds.
+    if (!client->alive()) return;
+
     if (action < NUM_MOVEMENT_ACTIONS) {
         int dir = action % NUM_DIRECTIONS;
         bool use_defend = action >= NUM_DIRECTIONS;
