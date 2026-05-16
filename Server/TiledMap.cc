@@ -17,6 +17,7 @@
 #include <iostream>
 #include <sstream>
 #include <unordered_map>
+#include <unordered_set>
 #include <zlib.h>
 
 namespace TiledMap {
@@ -30,6 +31,10 @@ namespace TiledMap {
     static std::vector<uint32_t> mob_counts;
     static std::unordered_map<uint32_t, game_tick_t> warp_cooldowns;
     static std::unordered_map<std::string, TiledPolyVert> warp_points;
+    // Maps that have received their initial dense fill. Entries are removed
+    // when a map drops out of the active set so a future re-activation
+    // refills the world.
+    static std::unordered_set<std::string> bulk_filled_maps;
 
     struct CachedMap {
         bool loaded = false;
@@ -954,6 +959,10 @@ void parse_mobs_layer(Json const &layer) {
                     if (!name || !val) continue;
                     if (name->as_str() == "density") p.density = (float)val->as_num(1.0);
                     else if (name->as_str() == "mobs") mobs_str = val->as_str();
+                    else if (name->as_str() == "difficulty") {
+                        p.has_difficulty = true;
+                        p.difficulty = (float)val->as_num(0.0);
+                    }
                 }
             }
         }
@@ -1536,6 +1545,8 @@ uint32_t arena_height(std::string const &path) {
     return map ? map->height : ARENA_HEIGHT;
 }
 
+static void update_bulk_fills(Simulation *, std::vector<std::string> const &);
+
 static std::vector<std::string> active_player_maps(Simulation *sim) {
     std::vector<std::string> active_maps;
     sim->for_each<kFlower>([&](Simulation *, Entity &ent) {
@@ -1636,17 +1647,18 @@ void apply_warps(Simulation *sim) {
                 ent.map_path = target_map->path;
         });
     }
+
+    // After warps applied, the active set may have changed. Bulk-fill any
+    // map that just gained its first player so the world is already
+    // populated when the player arrives, instead of trickling in at the
+    // ~10/sec runtime spawn rate.
+    if (!pending.empty()) {
+        std::vector<std::string> post_warp_active = active_player_maps(sim);
+        update_bulk_fills(sim, post_warp_active);
+    }
 }
 
-bool spawn_random_mob(Simulation *sim) {
-    if (!loaded) return false;
-
-    std::vector<std::string> active_maps = active_player_maps(sim);
-    if (active_maps.empty()) return false;
-    cleanup_inactive_map_entities(sim, active_maps);
-
-    std::string const map_path = active_maps[(uint32_t)(frand() * active_maps.size()) % active_maps.size()];
-    CachedMap *map = map_for_mut(map_path);
+static bool spawn_one_on_map(Simulation *sim, CachedMap *map) {
     if (!map || map->spawn_polygons.empty()) return false;
 
     // Pick a polygon weighted by area × density, but reject any polygon
@@ -1660,12 +1672,12 @@ bool spawn_random_mob(Simulation *sim) {
         total += (double)p.area * p.density;
         cum[i] = total;
     }
-    if (total <= 0) return true; // nothing to spawn into right now
+    if (total <= 0) return false; // every polygon is saturated
 
     double pick = frand() * total;
     size_t idx = 0;
     for (; idx < cum.size(); ++idx) if (pick <= cum[idx]) break;
-    if (idx >= map->spawn_polygons.size()) return true;
+    if (idx >= map->spawn_polygons.size()) return false;
     auto const &p = map->spawn_polygons[idx];
 
     // Rejection sampling for a point inside the polygon. The bounding box
@@ -1678,7 +1690,7 @@ bool spawn_random_mob(Simulation *sim) {
         y = p.min_y + frand() * (p.max_y - p.min_y);
         if (point_in_polygon(p, x, y)) { ok = true; break; }
     }
-    if (!ok) return true;
+    if (!ok) return false;
 
     // Avoid spawning inside a wall.
     float r = 30;
@@ -1686,13 +1698,13 @@ bool spawn_random_mob(Simulation *sim) {
     resolve_collision_in(*map, x, y, r);
     if (x != ox || y != oy) {
         // If collision shoved us out of the polygon, skip this tick.
-        if (!point_in_polygon(p, x, y)) return true;
+        if (!point_in_polygon(p, x, y)) return false;
     }
 
     // Weighted roll over mob entries.
     double sum = 0;
     for (auto const &s : p.spawns) sum += s.chance;
-    if (sum <= 0) return true;
+    if (sum <= 0) return false;
     double r2 = frand() * sum;
     MobID::T chosen = p.spawns.back().id;
     for (auto const &s : p.spawns) {
@@ -1700,11 +1712,99 @@ bool spawn_random_mob(Simulation *sim) {
         if (r2 <= 0) { chosen = s.id; break; }
     }
 
-    Entity &ent = alloc_mob_on_map(sim, map->path, chosen, x, y, NULL_ENTITY);
+    // Per-polygon difficulty disables the wave ramp and pins rarity to an
+    // exponential function of `difficulty`. Anchors: -2.5 → Common(0),
+    // 75 → Unique(6). Each rarity step multiplies (difficulty + 2.5) by
+    // 1.3, so the difficulty cost of climbing one rarity grows the higher
+    // up you are — e.g. d=17 sits between Rare and Epic, d=36.25 near
+    // Legendary. Non-integer rarity blends the two neighbours: at 2.58,
+    // 42% of spawns are Rare and 58% Epic.
+    int forced_rarity = -1;
+    if (p.has_difficulty) {
+        float const kDMin = -2.5f;
+        float const kDMax = 75.0f;
+        float const kBase = 1.3f;
+        float const max_rarity = (float)(RarityID::kNumRarities - 1);
+        // K chosen so kBase^max_rarity − 1 spans the full d-range:
+        // (d − kDMin) / K + 1 = kBase^r ⇒ at d=kDMax, r=max_rarity.
+        float const K = (kDMax - kDMin) / (std::pow(kBase, max_rarity) - 1.0f);
+        float ratio = (p.difficulty - kDMin) / K + 1.0f;
+        if (ratio < 1.0f) ratio = 1.0f; // clamp below: r ≥ 0
+        float f = std::log(ratio) / std::log(kBase);
+        if (f > max_rarity) f = max_rarity;
+        int lower = (int)f;
+        float frac = f - (float)lower;
+        forced_rarity = (lower < (int)max_rarity && frand() < frac) ? lower + 1 : lower;
+    }
+
+    Entity &ent = alloc_mob_on_map(sim, map->path, chosen, x, y, NULL_ENTITY, forced_rarity);
     ent.zone = (uint8_t)(idx < 255 ? idx : 255);
     ent.immunity_ticks = SIM_RATE;
     BIT_SET(ent.flags, EntityFlags::kSpawnedFromZone);
     map->mob_counts[idx]++;
+    return true;
+}
+
+// One-shot dense fill for a map that's just become active. Mirrors the
+// init-time loop in GameInstance::init for the default map, but targeted at a
+// single map. Iteration self-terminates once every polygon hits its density
+// cap (spawn_one_on_map returns false).
+static void bulk_fill_map(Simulation *sim, std::string const &map_path) {
+    CachedMap *map = map_for_mut(map_path);
+    if (!map || map->spawn_polygons.empty()) return;
+    for (uint32_t i = 0; i < ENTITY_CAP / 2; ++i) {
+        if (!spawn_one_on_map(sim, map)) {
+            // Distinguish saturation from a transient rejection (point in
+            // wall, polygon too thin). If anything is still under cap, keep
+            // trying; otherwise we're done.
+            bool any_under_cap = false;
+            for (size_t j = 0; j < map->spawn_polygons.size(); ++j) {
+                auto const &p = map->spawn_polygons[j];
+                double cap = (double)p.density * p.area / (500.0 * 500.0);
+                if ((double)map->mob_counts[j] < cap) { any_under_cap = true; break; }
+            }
+            if (!any_under_cap) break;
+        }
+    }
+}
+
+// Maintain bulk_filled_maps against the currently active set. A map that
+// just entered active_maps gets a dense fill; a map that left it is forgotten
+// so a future re-activation refills cleanly (its mobs are removed separately
+// by cleanup_inactive_map_entities).
+static void update_bulk_fills(Simulation *sim, std::vector<std::string> const &active_maps) {
+    for (auto const &m : active_maps) {
+        if (bulk_filled_maps.find(m) == bulk_filled_maps.end()) {
+            bulk_fill_map(sim, m);
+            bulk_filled_maps.insert(m);
+        }
+    }
+    for (auto it = bulk_filled_maps.begin(); it != bulk_filled_maps.end(); ) {
+        if (std::find(active_maps.begin(), active_maps.end(), *it) == active_maps.end())
+            it = bulk_filled_maps.erase(it);
+        else
+            ++it;
+    }
+}
+
+bool spawn_random_mob(Simulation *sim) {
+    if (!loaded) return false;
+
+    std::vector<std::string> active_maps = active_player_maps(sim);
+    if (active_maps.empty()) {
+        // No flowers exist yet (e.g. GameInstance::init's initial fill, or
+        // between rounds). Fall back to the default map so the world is
+        // populated by the time a player joins. Skip cleanup in this case —
+        // there's no "inactive map" concept without players.
+        active_maps.push_back(default_map_path());
+    } else {
+        cleanup_inactive_map_entities(sim, active_maps);
+    }
+    update_bulk_fills(sim, active_maps);
+
+    std::string const map_path = active_maps[(uint32_t)(frand() * active_maps.size()) % active_maps.size()];
+    CachedMap *map = map_for_mut(map_path);
+    spawn_one_on_map(sim, map);
     return true;
 }
 

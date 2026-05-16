@@ -35,6 +35,12 @@ struct TiledSpawnPolygon {
     float min_x, min_y, max_x, max_y;
     float area;
     float density;
+    // Optional fixed-rarity override. When set, mobs spawned in this
+    // polygon ignore the wave ramp and instead derive their rarity from
+    // `difficulty` linearly: -2.5 → Common, 75 → Unique. Non-integer
+    // positions blend the two adjacent rarities proportionally.
+    bool has_difficulty = false;
+    float difficulty = 0.f;
     std::vector<TiledSpawnEntry> spawns;
 };
 
