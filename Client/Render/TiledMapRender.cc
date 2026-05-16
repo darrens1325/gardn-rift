@@ -456,17 +456,15 @@ EM_JS(void, tiled_map_init_js, (), {
                         x: +o["x"], y: +o["y"], w: +o["width"], h: +o["height"]
                     });
                 }
-            } else if (lt === "objectgroup" && (layer["name"] === "warps" || layer["name"] === "checkpoints")) {
-                // Mirror Server/TiledMap.cc::parse_warps_layer — only
-                // objects of kind "warp" are portals. The server scans
-                // both `warps` and `checkpoints` layers for warp
-                // destinations (see read_warp_points_from_map at
-                // TiledMap.cc:1091); some maps author the outbound warps
-                // under `checkpoints` too, so we apply the same pair of
-                // layer names here. Radius matches server:
-                // max(96, max(w, h) * 0.5) so point-warps still have a
-                // visible footprint. See `object_kind` above for the
-                // type-vs-class detection.
+            } else if (lt === "objectgroup") {
+                // Mirror Server/TiledMap.cc — warp-typed objects are
+                // authored across several layers in this map set
+                // (`warps`, `checkpoints`, and `mobs` for a few maps
+                // like centralia_fields1). Filter by object kind here
+                // rather than layer name so every warp gets picked
+                // up regardless of where the map author placed it.
+                // Radius matches server's parse_warps_layer:
+                // max(96, max(w, h) * 0.5).
                 const wobjs = layer["objects"] || [];
                 M["warps"] = M["warps"] || [];
                 for (let j = 0; j < wobjs.length; j++) {

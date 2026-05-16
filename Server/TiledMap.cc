@@ -1086,10 +1086,12 @@ bool read_warp_points_from_map(std::string const &path,
 
     for (auto const &layer : layers->arr) {
         Json const *type = layer.find("type");
-        Json const *name = layer.find("name");
-        if (!type || !name || type->as_str() != "objectgroup") continue;
-        if (name->as_str() != "warps" && name->as_str() != "checkpoints") continue;
-
+        if (!type || type->as_str() != "objectgroup") continue;
+        // Named warps live in `warps`, `checkpoints`, and a few maps'
+        // `mobs` layers (e.g. centralia_fields1's `to_south_desert1`).
+        // Scan every objectgroup so any named destination is findable
+        // regardless of which layer the author placed it under —
+        // matches the parse_warps_layer pass in load() below.
         Json const *objs = layer.find("objects");
         if (!objs || objs->type != Json::kArr) continue;
         for (auto const &o : objs->arr) {
@@ -1474,12 +1476,20 @@ bool load(std::string const &path) {
             if (type->as_str() == "objectgroup") {
                 if (name->as_str() == "collision") parse_collision_layer(layer);
                 else if (name->as_str() == "mobs") parse_mobs_layer(layer);
-                else if (name->as_str() == "warps") {
-                    parse_warp_points_layer(layer);
-                    parse_warps_layer(layer);
-                } else if (name->as_str() == "checkpoints") {
-                    parse_warp_points_layer(layer);
-                }
+                // Warp-typed objects and named destination points are
+                // authored across several layers in this map set —
+                // most live under `warps`, some under `checkpoints`,
+                // and a handful under `mobs` (e.g. centralia_fields1's
+                // to_south_desert1, which is the actual destination
+                // referenced by south_desert2's `to_south_desert1`
+                // warp). parse_warps_layer filters by
+                // object_kind == "warp" so it's safe to run on every
+                // objectgroup, and parse_warp_points_layer's leak of
+                // named non-warps as warp_points is harmless (no warp
+                // references them). Keeps the in-memory warp_points
+                // list and read_warp_points_from_map's scan in sync.
+                parse_warp_points_layer(layer);
+                parse_warps_layer(layer);
             } else if (type->as_str() == "tilelayer") {
                 // Layers whose tiles act as walls. The authored
                 // `collision` objectgroup only covers a few special
@@ -1606,7 +1616,12 @@ void apply_warps(Simulation *sim) {
     for (auto const &p : pending) {
         if (!sim->ent_alive(p.player_id)) continue;
         CachedMap const *target_map = map_for(p.warp.map_path);
-        if (!target_map) continue;
+        if (!target_map) {
+            std::cerr << "[TiledMap] warp '" << warp_name(p.warp)
+                      << "' from " << p.from_map << " → " << p.warp.map_path
+                      << " skipped: target map not loaded (file missing or parse failed)\n";
+            continue;
+        }
 
         Entity &player = sim->get_ent(p.player_id);
         float x = player.x;
