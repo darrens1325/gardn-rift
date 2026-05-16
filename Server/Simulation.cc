@@ -6,6 +6,7 @@
 #include <Server/Server.hh>
 #include <Server/Spawn.hh>
 #include <Server/SpatialHash.hh>
+#include <Server/TiledMap.hh>
 
 #include <Shared/Map.hh>
 
@@ -49,6 +50,7 @@ void Simulation::tick() {
     for_each<kHealth>(tick_health_behavior);
     spatial_hash.collide(on_collide);
     for_each<kPhysics>(tick_entity_motion);
+    TiledMap::apply_warps(this);
     for_each<kSegmented>(tick_segment_behavior);
     for_each<kCamera>(tick_camera_behavior);
     for_each<kScore>(tick_score_behavior);

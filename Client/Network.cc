@@ -1,9 +1,13 @@
 #include <Client/Game.hh>
+#include <Client/Render/TiledMapRender.hh>
 
 #include <Client/Ui/Ui.hh>
 
 #include <Shared/Binary.hh>
 #include <Shared/Config.hh>
+#include <Shared/MapDimensions.hh>
+
+#include <string>
 
 using namespace Game;
 
@@ -30,7 +34,12 @@ void Game::on_message(uint8_t *ptr, uint32_t len) {
                 if (BIT_AT(create, 1)) ent.pending_delete = 1;
                 curr_id = reader.read<EntityID>();
             }
+            std::string old_map_path = simulation.arena_info.map_path;
             simulation.arena_info.read(&reader, reader.read<uint8_t>());
+            if (simulation.arena_info.arena_width > 0) ARENA_WIDTH = simulation.arena_info.arena_width;
+            if (simulation.arena_info.arena_height > 0) ARENA_HEIGHT = simulation.arena_info.arena_height;
+            if (simulation.arena_info.map_path != old_map_path && !simulation.arena_info.map_path.empty())
+                TiledMapRender::set_map(simulation.arena_info.map_path);
             break;
         }
         case Clientbound::kRoundEnd: {

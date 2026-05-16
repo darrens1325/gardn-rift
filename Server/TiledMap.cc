@@ -8,6 +8,7 @@
 #include <Shared/Simulation.hh>
 #include <Shared/StaticData.hh>
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -20,10 +21,32 @@
 
 namespace TiledMap {
     bool loaded = false;
+    std::string current_map_path;
+    static std::string initial_map_path;
     std::vector<TiledCollisionRect> collision_rects;
     std::vector<TiledCollisionPoly> collision_polys;
     std::vector<TiledSpawnPolygon> spawn_polygons;
+    std::vector<TiledWarp> warps;
     static std::vector<uint32_t> mob_counts;
+    static std::unordered_map<uint32_t, game_tick_t> warp_cooldowns;
+    static std::unordered_map<std::string, TiledPolyVert> warp_points;
+
+    struct CachedMap {
+        bool loaded = false;
+        std::string path;
+        uint32_t width = INITIAL_ARENA_WIDTH;
+        uint32_t height = INITIAL_ARENA_HEIGHT;
+        std::vector<TiledCollisionRect> collision_rects;
+        std::vector<TiledCollisionPoly> collision_polys;
+        std::vector<TiledSpawnPolygon> spawn_polygons;
+        std::vector<TiledWarp> warps;
+        std::vector<uint32_t> mob_counts;
+        std::unordered_map<std::string, TiledPolyVert> warp_points;
+    };
+
+    static std::unordered_map<std::string, CachedMap> map_cache;
+    static uint32_t spatial_width = INITIAL_ARENA_WIDTH;
+    static uint32_t spatial_height = INITIAL_ARENA_HEIGHT;
 
     // Cache of per-tile polygons in image-local 0..1 coords, keyed by base
     // gid (flags stripped). Populated on demand from the SVG files in the
@@ -747,14 +770,42 @@ static std::string resolve_tileset_path(std::string const &map_path,
     return out;
 }
 
+static std::vector<std::string> tileset_path_candidates(std::string const &path) {
+    std::vector<std::string> out;
+    auto add = [&](std::string const &candidate) {
+        if (!candidate.empty() && std::find(out.begin(), out.end(), candidate) == out.end())
+            out.push_back(candidate);
+    };
+    auto add_tsj_variant = [&](std::string const &candidate) {
+        if (candidate.size() >= 4 && candidate.substr(candidate.size() - 4) == ".tsx")
+            add(candidate.substr(0, candidate.size() - 4) + ".tsj");
+        add(candidate);
+    };
+
+    add_tsj_variant(path);
+    std::string const map_tiles = "Map/tiles/";
+    if (path.rfind(map_tiles, 0) == 0)
+        add_tsj_variant("tiles/" + path.substr(map_tiles.size()));
+    return out;
+}
+
 static void load_one_tileset(std::string const &map_path, Json const &ts_ref) {
     int firstgid = (int)(ts_ref.find("firstgid") ? ts_ref.find("firstgid")->as_num() : 1);
     Json const *src = ts_ref.find("source");
     if (!src || src->type != Json::kStr) return;
-    std::string ts_path = resolve_tileset_path(map_path, src->as_str());
-    std::ifstream f(ts_path);
-    if (!f) {
-        std::cerr << "[TiledMap] could not open tileset " << ts_path << "\n";
+    std::string ts_path;
+    std::ifstream f;
+    for (auto const &candidate : tileset_path_candidates(resolve_tileset_path(map_path, src->as_str()))) {
+        f.open(candidate);
+        if (f) {
+            ts_path = candidate;
+            break;
+        }
+        f.clear();
+    }
+    if (ts_path.empty()) {
+        std::cerr << "[TiledMap] could not open tileset "
+                  << resolve_tileset_path(map_path, src->as_str()) << "\n";
         return;
     }
     size_t slash = ts_path.find_last_of("/\\");
@@ -798,32 +849,46 @@ static void load_tileset(std::string const &map_path, Json const &map_root) {
     }
 }
 
+std::string object_kind(Json const &obj);
+
 void parse_solid_tile_layer(Json const &layer, uint32_t tile_w, uint32_t tile_h) {
     Json const *encoding = layer.find("encoding");
     Json const *compression = layer.find("compression");
     Json const *data = layer.find("data");
     Json const *widthJ = layer.find("width");
-    if (!data || data->type != Json::kStr) return;
+    if (!data) return;
     if (!widthJ) return;
-    if (!encoding || encoding->as_str() != "base64") return;
-    if (!compression || compression->as_str() != "gzip") return;
 
-    std::vector<uint8_t> raw;
-    if (!base64_decode(data->str, raw)) return;
-    std::vector<uint8_t> gids_bytes;
-    if (!gunzip(raw, gids_bytes)) return;
-    if (gids_bytes.size() % 4 != 0) return;
+    std::vector<uint32_t> gids;
+    if (data->type == Json::kArr) {
+        gids.reserve(data->arr.size());
+        for (auto const &gid : data->arr)
+            gids.push_back((uint32_t)gid.as_num());
+    } else if (data->type == Json::kStr) {
+        if (!encoding || encoding->as_str() != "base64") return;
+        if (!compression || compression->as_str() != "gzip") return;
+        std::vector<uint8_t> raw;
+        if (!base64_decode(data->str, raw)) return;
+        std::vector<uint8_t> gids_bytes;
+        if (!gunzip(raw, gids_bytes)) return;
+        if (gids_bytes.size() % 4 != 0) return;
+        gids.reserve(gids_bytes.size() / 4);
+        for (size_t i = 0; i < gids_bytes.size() / 4; ++i) {
+            gids.push_back((uint32_t)gids_bytes[i * 4 + 0] |
+                           ((uint32_t)gids_bytes[i * 4 + 1] << 8) |
+                           ((uint32_t)gids_bytes[i * 4 + 2] << 16) |
+                           ((uint32_t)gids_bytes[i * 4 + 3] << 24));
+        }
+    } else {
+        return;
+    }
 
     uint32_t width = (uint32_t)widthJ->as_num();
     if (width == 0) return;
-    uint32_t count = (uint32_t)(gids_bytes.size() / 4);
+    uint32_t count = (uint32_t)gids.size();
     uint32_t height = count / width;
     for (uint32_t i = 0; i < count; ++i) {
-        uint32_t raw_gid =
-            (uint32_t)gids_bytes[i * 4 + 0] |
-            ((uint32_t)gids_bytes[i * 4 + 1] << 8) |
-            ((uint32_t)gids_bytes[i * 4 + 2] << 16) |
-            ((uint32_t)gids_bytes[i * 4 + 3] << 24);
+        uint32_t raw_gid = gids[i];
         uint32_t base_gid = raw_gid & 0x1fffffff;
         if (!base_gid) continue;
         uint32_t col = i % width;
@@ -857,8 +922,7 @@ void parse_collision_layer(Json const &layer) {
     Json const *objs = layer.find("objects");
     if (!objs || objs->type != Json::kArr) return;
     for (auto const &o : objs->arr) {
-        Json const *typ = o.find("type");
-        if (!typ || typ->as_str() != "collision") continue;
+        if (object_kind(o) != "collision") continue;
         TiledCollisionRect r;
         r.x = (float)(o.find("x") ? o.find("x")->as_num() : 0);
         r.y = (float)(o.find("y") ? o.find("y")->as_num() : 0);
@@ -872,12 +936,12 @@ void parse_mobs_layer(Json const &layer) {
     Json const *objs = layer.find("objects");
     if (!objs || objs->type != Json::kArr) return;
     for (auto const &o : objs->arr) {
-        Json const *typ = o.find("type");
-        if (!typ || typ->as_str() != "spawn_mobs") continue;
+        if (object_kind(o) != "spawn_mobs") continue;
         Json const *poly = o.find("polygon");
-        if (!poly || poly->type != Json::kArr || poly->arr.size() < 3) continue;
         float ox = (float)(o.find("x") ? o.find("x")->as_num() : 0);
         float oy = (float)(o.find("y") ? o.find("y")->as_num() : 0);
+        float ow = (float)(o.find("width") ? o.find("width")->as_num() : 0);
+        float oh = (float)(o.find("height") ? o.find("height")->as_num() : 0);
 
         TiledSpawnPolygon p;
         p.density = 1.0f;
@@ -897,15 +961,26 @@ void parse_mobs_layer(Json const &layer) {
         if (p.spawns.empty()) continue;
 
         p.min_x = p.min_y = 1e30f; p.max_x = p.max_y = -1e30f;
-        for (auto const &v : poly->arr) {
-            float vx = ox + (float)(v.find("x") ? v.find("x")->as_num() : 0);
-            float vy = oy + (float)(v.find("y") ? v.find("y")->as_num() : 0);
+        auto add_spawn_vertex = [&](float vx, float vy) {
             p.vx.push_back(vx);
             p.vy.push_back(vy);
             if (vx < p.min_x) p.min_x = vx;
             if (vy < p.min_y) p.min_y = vy;
             if (vx > p.max_x) p.max_x = vx;
             if (vy > p.max_y) p.max_y = vy;
+        };
+        if (poly && poly->type == Json::kArr && poly->arr.size() >= 3) {
+            for (auto const &v : poly->arr) {
+                add_spawn_vertex(ox + (float)(v.find("x") ? v.find("x")->as_num() : 0),
+                                 oy + (float)(v.find("y") ? v.find("y")->as_num() : 0));
+            }
+        } else if (ow > 0 && oh > 0) {
+            add_spawn_vertex(ox, oy);
+            add_spawn_vertex(ox + ow, oy);
+            add_spawn_vertex(ox + ow, oy + oh);
+            add_spawn_vertex(ox, oy + oh);
+        } else {
+            continue;
         }
         // shoelace area (absolute)
         double a = 0;
@@ -920,9 +995,227 @@ void parse_mobs_layer(Json const &layer) {
     }
 }
 
+std::string tiled_property_string(Json const &obj, char const *prop_name) {
+    Json const *props = obj.find("properties");
+    if (!props || props->type != Json::kArr) return "";
+    for (auto const &pr : props->arr) {
+        Json const *name = pr.find("name");
+        Json const *val = pr.find("value");
+        if (!name || !val || name->as_str() != prop_name) continue;
+        return val->as_str();
+    }
+    return "";
+}
+
+std::string map_value_to_path(std::string const &map_value) {
+    if (map_value.empty()) return "";
+    if (map_value == "br/main") return "Map/main/br.tmj";
+    if (map_value.rfind("Map/", 0) == 0) {
+        if (map_value.size() >= 4 && map_value.substr(map_value.size() - 4) == ".tmj")
+            return map_value;
+        return map_value + ".tmj";
+    }
+    if (map_value.size() >= 4 && map_value.substr(map_value.size() - 4) == ".tmj")
+        return "Map/" + map_value;
+    return "Map/" + map_value + ".tmj";
+}
+
+std::string object_kind(Json const &obj) {
+    if (Json const *typ = obj.find("type")) {
+        if (!typ->as_str().empty()) return typ->as_str();
+    }
+    if (Json const *klass = obj.find("class")) return klass->as_str();
+    return "";
+}
+
+std::vector<std::string> split_warp_points(std::string const &value) {
+    std::vector<std::string> out;
+    size_t i = 0;
+    while (i <= value.size()) {
+        size_t j = value.find(',', i);
+        if (j == std::string::npos) j = value.size();
+        std::string part = value.substr(i, j - i);
+        size_t first = part.find_first_not_of(" \t\r\n");
+        size_t last = part.find_last_not_of(" \t\r\n");
+        if (first != std::string::npos)
+            out.push_back(part.substr(first, last - first + 1));
+        if (j == value.size()) break;
+        i = j + 1;
+    }
+    return out;
+}
+
+char const *warp_name(TiledWarp const &warp) {
+    return warp.name.empty() ? "<unnamed>" : warp.name.c_str();
+}
+
+void parse_warp_points_layer(Json const &layer) {
+    Json const *objs = layer.find("objects");
+    if (!objs || objs->type != Json::kArr) return;
+    for (auto const &o : objs->arr) {
+        Json const *name = o.find("name");
+        if (!name || name->as_str().empty()) continue;
+        float x = (float)(o.find("x") ? o.find("x")->as_num() : 0);
+        float y = (float)(o.find("y") ? o.find("y")->as_num() : 0);
+        TiledMap::warp_points[name->as_str()] = {x, y};
+    }
+}
+
+bool read_warp_points_from_map(std::string const &path,
+                               std::unordered_map<std::string, TiledPolyVert> &points) {
+    std::ifstream f(path);
+    if (!f) return false;
+
+    std::stringstream ss;
+    ss << f.rdbuf();
+    std::string text = ss.str();
+
+    Parser parser(text.data(), text.data() + text.size());
+    Json root = parser.parse();
+    Json const *layers = root.find("layers");
+    if (!layers || layers->type != Json::kArr) return true;
+
+    for (auto const &layer : layers->arr) {
+        Json const *type = layer.find("type");
+        Json const *name = layer.find("name");
+        if (!type || !name || type->as_str() != "objectgroup") continue;
+        if (name->as_str() != "warps" && name->as_str() != "checkpoints") continue;
+
+        Json const *objs = layer.find("objects");
+        if (!objs || objs->type != Json::kArr) continue;
+        for (auto const &o : objs->arr) {
+            Json const *obj_name = o.find("name");
+            if (!obj_name || obj_name->as_str().empty()) continue;
+            float x = (float)(o.find("x") ? o.find("x")->as_num() : 0);
+            float y = (float)(o.find("y") ? o.find("y")->as_num() : 0);
+            points[obj_name->as_str()] = {x, y};
+        }
+    }
+    return true;
+}
+
+std::unordered_map<std::string, TiledPolyVert> const *cached_warp_points_for_map(std::string const &path,
+                                                                                 bool &file_exists) {
+    static std::unordered_map<std::string, std::unordered_map<std::string, TiledPolyVert>> cache;
+    static std::unordered_map<std::string, bool> exists_cache;
+
+    auto existing = cache.find(path);
+    if (existing != cache.end()) {
+        file_exists = true;
+        return &existing->second;
+    }
+    auto missing = exists_cache.find(path);
+    if (missing != exists_cache.end() && !missing->second) {
+        file_exists = false;
+        return nullptr;
+    }
+
+    std::unordered_map<std::string, TiledPolyVert> points;
+    try {
+        file_exists = read_warp_points_from_map(path, points);
+    } catch (std::exception const &e) {
+        file_exists = true;
+        std::cerr << "[TiledMap] warp validation warning: could not parse target map "
+                  << path << ": " << e.what() << "\n";
+        cache.emplace(path, std::move(points));
+        return &cache.find(path)->second;
+    }
+
+    exists_cache[path] = file_exists;
+    if (!file_exists) return nullptr;
+    auto [it, _] = cache.emplace(path, std::move(points));
+    return &it->second;
+}
+
+void validate_warps(std::string const &map_path) {
+    for (auto const &warp : TiledMap::warps) {
+        if (warp.map_path.empty()) {
+            std::cerr << "[TiledMap] warp validation warning: " << map_path
+                      << " warp '" << warp_name(warp) << "' is missing a map property\n";
+            continue;
+        }
+        if (warp.warp_point.empty()) {
+            std::cerr << "[TiledMap] warp validation warning: " << map_path
+                      << " warp '" << warp_name(warp) << "' to " << warp.map_path
+                      << " is missing a warp_point property\n";
+            continue;
+        }
+
+        bool target_exists = false;
+        auto const *target_points = cached_warp_points_for_map(warp.map_path, target_exists);
+        if (!target_exists) {
+            std::cerr << "[TiledMap] warp validation warning: " << map_path
+                      << " warp '" << warp_name(warp) << "' points to missing map "
+                      << warp.map_path << "\n";
+            continue;
+        }
+        bool found_point = false;
+        for (auto const &point_name : split_warp_points(warp.warp_point)) {
+            if (target_points && target_points->find(point_name) != target_points->end()) {
+                found_point = true;
+                break;
+            }
+        }
+        if (!found_point) {
+            std::cerr << "[TiledMap] warp validation warning: " << map_path
+                      << " warp '" << warp_name(warp) << "' points to "
+                      << warp.map_path << " warp_point '" << warp.warp_point
+                      << "', but that point does not exist\n";
+        }
+    }
+}
+
+void parse_warps_layer(Json const &layer) {
+    Json const *objs = layer.find("objects");
+    if (!objs || objs->type != Json::kArr) return;
+    for (auto const &o : objs->arr) {
+        if (object_kind(o) != "warp") continue;
+        TiledWarp w {};
+        if (Json const *name = o.find("name")) w.name = name->as_str();
+        w.map_path = map_value_to_path(tiled_property_string(o, "map"));
+        w.warp_point = tiled_property_string(o, "warp_point");
+        w.x = (float)(o.find("x") ? o.find("x")->as_num() : 0);
+        w.y = (float)(o.find("y") ? o.find("y")->as_num() : 0);
+        float width = (float)(o.find("width") ? o.find("width")->as_num() : 0);
+        float height = (float)(o.find("height") ? o.find("height")->as_num() : 0);
+        w.radius = std::max(96.0f, std::max(width, height) * 0.5f);
+        TiledMap::warps.push_back(std::move(w));
+    }
+}
+
 } // namespace
 
 namespace TiledMap {
+
+static uint32_t entity_key(EntityID const &id) {
+    return ((uint32_t)id.hash << 16) | (uint32_t)id.id;
+}
+
+static CachedMap const *find_cached(std::string const &path) {
+    auto it = map_cache.find(path);
+    if (it == map_cache.end() || !it->second.loaded) return nullptr;
+    return &it->second;
+}
+
+static CachedMap *find_cached_mut(std::string const &path) {
+    auto it = map_cache.find(path);
+    if (it == map_cache.end() || !it->second.loaded) return nullptr;
+    return &it->second;
+}
+
+static CachedMap const *map_for(std::string const &path) {
+    std::string p = path.empty() ? current_map_path : path;
+    if (p.empty()) return nullptr;
+    if (!find_cached(p)) ensure_loaded(p);
+    return find_cached(p);
+}
+
+static CachedMap *map_for_mut(std::string const &path) {
+    std::string p = path.empty() ? current_map_path : path;
+    if (p.empty()) return nullptr;
+    if (!find_cached(p)) ensure_loaded(p);
+    return find_cached_mut(p);
+}
 
 // Liang–Barsky segment-vs-AABB clipping. Returns true iff the segment
 // from (x0,y0) to (x1,y1) intersects the axis-aligned box
@@ -950,16 +1243,25 @@ static bool segment_hits_aabb(float x0, float y0, float x1, float y1,
     return t_enter <= t_exit;
 }
 
-bool line_of_sight_blocked(float x0, float y0, float x1, float y1) {
-    for (auto const &r : collision_rects) {
+static bool line_of_sight_blocked_in(CachedMap const &map, float x0, float y0, float x1, float y1) {
+    for (auto const &r : map.collision_rects) {
         if (segment_hits_aabb(x0, y0, x1, y1,
                               r.x, r.y, r.x + r.w, r.y + r.h)) return true;
     }
-    for (auto const &p : collision_polys) {
+    for (auto const &p : map.collision_polys) {
         if (segment_hits_aabb(x0, y0, x1, y1,
                               p.min_x, p.min_y, p.max_x, p.max_y)) return true;
     }
     return false;
+}
+
+bool line_of_sight_blocked(std::string const &map_path, float x0, float y0, float x1, float y1) {
+    CachedMap const *map = map_for(map_path);
+    return map ? line_of_sight_blocked_in(*map, x0, y0, x1, y1) : false;
+}
+
+bool line_of_sight_blocked(float x0, float y0, float x1, float y1) {
+    return line_of_sight_blocked(current_map_path, x0, y0, x1, y1);
 }
 
 bool point_in_polygon(TiledSpawnPolygon const &poly, float x, float y) {
@@ -1018,11 +1320,10 @@ static float closest_on_segment(float ax, float ay, float bx, float by,
     return nd2;
 }
 
-void resolve_collision(float &x, float &y, float radius) {
-    if (!loaded) return;
+static void resolve_collision_in(CachedMap const &map, float &x, float &y, float radius) {
 
     // Authored `collision` objectgroup → simple AABB push-out.
-    for (auto const &r : collision_rects) {
+    for (auto const &r : map.collision_rects) {
         float l = r.x - radius;
         float t = r.y - radius;
         float ri = r.x + r.w + radius;
@@ -1051,7 +1352,7 @@ void resolve_collision(float &x, float &y, float radius) {
     //      along (center − closest_point).
     //   2. Center inside polygon (deep penetration) → push toward the
     //      nearest edge so the entity ends up just outside with clearance.
-    for (auto const &p : collision_polys) {
+    for (auto const &p : map.collision_polys) {
         // Early-out via expanded bbox.
         if (x < p.min_x - radius || x > p.max_x + radius ||
             y < p.min_y - radius || y > p.max_y + radius) continue;
@@ -1099,6 +1400,16 @@ void resolve_collision(float &x, float &y, float radius) {
     }
 }
 
+void resolve_collision(std::string const &map_path, float &x, float &y, float radius) {
+    CachedMap const *map = map_for(map_path);
+    if (!map) return;
+    resolve_collision_in(*map, x, y, radius);
+}
+
+void resolve_collision(float &x, float &y, float radius) {
+    resolve_collision(current_map_path, x, y, radius);
+}
+
 bool load(std::string const &path) {
     std::ifstream f(path);
     if (!f) {
@@ -1113,7 +1424,11 @@ bool load(std::string const &path) {
     collision_polys.clear();
     tile_shape_cache.clear();
     spawn_polygons.clear();
+    warps.clear();
+    warp_points.clear();
 
+    uint32_t map_width = INITIAL_ARENA_WIDTH;
+    uint32_t map_height = INITIAL_ARENA_HEIGHT;
     try {
         Parser parser(text.data(), text.data() + text.size());
         Json root = parser.parse();
@@ -1136,8 +1451,12 @@ bool load(std::string const &path) {
         uint32_t map_w_tiles = (uint32_t)(root.find("width") ? root.find("width")->as_num() : 0);
         uint32_t map_h_tiles = (uint32_t)(root.find("height") ? root.find("height")->as_num() : 0);
         if (map_w_tiles > 0 && map_h_tiles > 0) {
-            ARENA_WIDTH  = map_w_tiles * tile_w;
-            ARENA_HEIGHT = map_h_tiles * tile_h;
+            map_width  = map_w_tiles * tile_w;
+            map_height = map_h_tiles * tile_h;
+            spatial_width = std::max(spatial_width, map_width);
+            spatial_height = std::max(spatial_height, map_height);
+            ARENA_WIDTH = spatial_width;
+            ARENA_HEIGHT = spatial_height;
         }
         for (auto const &layer : layers->arr) {
             Json const *type = layer.find("type");
@@ -1146,6 +1465,12 @@ bool load(std::string const &path) {
             if (type->as_str() == "objectgroup") {
                 if (name->as_str() == "collision") parse_collision_layer(layer);
                 else if (name->as_str() == "mobs") parse_mobs_layer(layer);
+                else if (name->as_str() == "warps") {
+                    parse_warp_points_layer(layer);
+                    parse_warps_layer(layer);
+                } else if (name->as_str() == "checkpoints") {
+                    parse_warp_points_layer(layer);
+                }
             } else if (type->as_str() == "tilelayer") {
                 // Layers whose tiles act as walls. The authored
                 // `collision` objectgroup only covers a few special
@@ -1159,6 +1484,7 @@ bool load(std::string const &path) {
                 }
             }
         }
+        validate_warps(path);
     } catch (std::exception const &e) {
         std::cerr << "[TiledMap] parse error: " << e.what() << "\n";
         return false;
@@ -1166,25 +1492,171 @@ bool load(std::string const &path) {
 
     mob_counts.assign(spawn_polygons.size(), 0);
     loaded = true;
+    current_map_path = path;
+    if (initial_map_path.empty()) initial_map_path = path;
+    CachedMap cached;
+    cached.loaded = true;
+    cached.path = path;
+    cached.width = map_width;
+    cached.height = map_height;
+    cached.collision_rects = collision_rects;
+    cached.collision_polys = collision_polys;
+    cached.spawn_polygons = spawn_polygons;
+    cached.warps = warps;
+    cached.mob_counts = mob_counts;
+    cached.warp_points = warp_points;
+    map_cache[path] = std::move(cached);
     std::cout << "[TiledMap] loaded " << path
-              << " — arena " << ARENA_WIDTH << "x" << ARENA_HEIGHT << ", "
+              << " — arena " << map_width << "x" << map_height << ", "
               << spawn_polygons.size() << " spawn polygons, "
               << collision_rects.size() << " collision rects, "
-              << collision_polys.size() << " collision polygons\n";
+              << collision_polys.size() << " collision polygons, "
+              << warps.size() << " warps\n";
     return true;
 }
 
+bool ensure_loaded(std::string const &path) {
+    if (path.empty()) return false;
+    if (find_cached(path)) return true;
+    return load(path);
+}
+
+std::string default_map_path() {
+    if (!initial_map_path.empty()) return initial_map_path;
+    return current_map_path.empty() ? std::string("Map/main/main.tmj") : current_map_path;
+}
+
+uint32_t arena_width(std::string const &path) {
+    CachedMap const *map = map_for(path);
+    return map ? map->width : ARENA_WIDTH;
+}
+
+uint32_t arena_height(std::string const &path) {
+    CachedMap const *map = map_for(path);
+    return map ? map->height : ARENA_HEIGHT;
+}
+
+static std::vector<std::string> active_player_maps(Simulation *sim) {
+    std::vector<std::string> active_maps;
+    sim->for_each<kFlower>([&](Simulation *, Entity &ent) {
+        if (ent.pending_delete) return;
+        std::string path = ent.map_path.empty() ? default_map_path() : ent.map_path;
+        if (std::find(active_maps.begin(), active_maps.end(), path) == active_maps.end())
+            active_maps.push_back(path);
+    });
+    return active_maps;
+}
+
+static void cleanup_inactive_map_entities(Simulation *sim, std::vector<std::string> const &active_maps) {
+    sim->for_each_entity([&](Simulation *sim, Entity &ent) {
+        if (ent.pending_delete) return;
+        if (!ent.has_component(kMob) && !ent.has_component(kDrop) && !ent.has_component(kWeb)) return;
+        if (std::find(active_maps.begin(), active_maps.end(), ent.map_path) != active_maps.end()) return;
+        BIT_SET(ent.flags, EntityFlags::kNoDrops);
+        sim->request_delete(ent.id);
+    });
+}
+
+void apply_warps(Simulation *sim) {
+    if (!loaded) return;
+    std::vector<std::string> active_maps = active_player_maps(sim);
+    cleanup_inactive_map_entities(sim, active_maps);
+
+    struct PendingWarp {
+        EntityID player_id = NULL_ENTITY;
+        std::string from_map;
+        TiledWarp warp {};
+    };
+    std::vector<PendingWarp> pending;
+    sim->for_each<kFlower>([&](Simulation *, Entity &ent) {
+        if (ent.pending_delete) return;
+        uint32_t const key = entity_key(ent.id);
+        auto cooldown_it = warp_cooldowns.find(key);
+        if (cooldown_it != warp_cooldowns.end()) {
+            if (cooldown_it->second > 0) {
+                --cooldown_it->second;
+                return;
+            }
+            warp_cooldowns.erase(cooldown_it);
+        }
+        std::string const map_path = ent.map_path.empty() ? default_map_path() : ent.map_path;
+        CachedMap const *map = map_for(map_path);
+        if (!map) return;
+        for (auto const &w : map->warps) {
+            float dx = ent.x - w.x;
+            float dy = ent.y - w.y;
+            float trigger = ent.radius + w.radius;
+            if (dx * dx + dy * dy <= trigger * trigger) {
+                pending.push_back({ent.id, map_path, w});
+                return;
+            }
+        }
+    });
+    for (auto const &p : pending) {
+        if (!sim->ent_alive(p.player_id)) continue;
+        CachedMap const *target_map = map_for(p.warp.map_path);
+        if (!target_map) continue;
+
+        Entity &player = sim->get_ent(p.player_id);
+        float x = player.x;
+        float y = player.y;
+        bool found_point = false;
+        for (auto const &point_name : split_warp_points(p.warp.warp_point)) {
+            auto it = target_map->warp_points.find(point_name);
+            if (it == target_map->warp_points.end()) continue;
+            x = it->second.x;
+            y = it->second.y;
+            found_point = true;
+            break;
+        }
+        if (!found_point && !p.warp.warp_point.empty()) {
+            std::cerr << "[TiledMap] warp warning: " << p.warp.map_path
+                      << " has no warp_point '" << p.warp.warp_point
+                      << "' for warp '" << warp_name(p.warp) << "'\n";
+        }
+        player.map_path = target_map->path;
+        player.set_x(fclamp(x, player.radius, target_map->width - player.radius));
+        player.set_y(fclamp(y, player.radius, target_map->height - player.radius));
+        player.velocity.set(0, 0);
+        player.acceleration.set(0, 0);
+        player.collision_velocity.set(0, 0);
+        warp_cooldowns[entity_key(p.player_id)] = 5 * SIM_RATE;
+
+        if (sim->ent_alive(player.parent)) {
+            Entity &camera = sim->get_ent(player.parent);
+            camera.map_path = target_map->path;
+            camera.set_camera_x(player.x);
+            camera.set_camera_y(player.y);
+        }
+
+        sim->for_each_entity([&](Simulation *, Entity &ent) {
+            if (ent.pending_delete) return;
+            if (ent.map_path != p.from_map) return;
+            if (ent.parent == p.player_id || ent.base_entity == p.player_id)
+                ent.map_path = target_map->path;
+        });
+    }
+}
+
 bool spawn_random_mob(Simulation *sim) {
-    if (!loaded || spawn_polygons.empty()) return false;
+    if (!loaded) return false;
+
+    std::vector<std::string> active_maps = active_player_maps(sim);
+    if (active_maps.empty()) return false;
+    cleanup_inactive_map_entities(sim, active_maps);
+
+    std::string const map_path = active_maps[(uint32_t)(frand() * active_maps.size()) % active_maps.size()];
+    CachedMap *map = map_for_mut(map_path);
+    if (!map || map->spawn_polygons.empty()) return false;
 
     // Pick a polygon weighted by area × density, but reject any polygon
     // that has hit its density cap (area × density / (500×500)).
     double total = 0;
-    std::vector<double> cum(spawn_polygons.size(), 0);
-    for (size_t i = 0; i < spawn_polygons.size(); ++i) {
-        auto const &p = spawn_polygons[i];
+    std::vector<double> cum(map->spawn_polygons.size(), 0);
+    for (size_t i = 0; i < map->spawn_polygons.size(); ++i) {
+        auto const &p = map->spawn_polygons[i];
         double cap = (double)p.density * p.area / (500.0 * 500.0);
-        if ((double)mob_counts[i] >= cap) { cum[i] = total; continue; }
+        if ((double)map->mob_counts[i] >= cap) { cum[i] = total; continue; }
         total += (double)p.area * p.density;
         cum[i] = total;
     }
@@ -1193,8 +1665,8 @@ bool spawn_random_mob(Simulation *sim) {
     double pick = frand() * total;
     size_t idx = 0;
     for (; idx < cum.size(); ++idx) if (pick <= cum[idx]) break;
-    if (idx >= spawn_polygons.size()) return true;
-    auto const &p = spawn_polygons[idx];
+    if (idx >= map->spawn_polygons.size()) return true;
+    auto const &p = map->spawn_polygons[idx];
 
     // Rejection sampling for a point inside the polygon. The bounding box
     // is the worst case here; for very thin polygons we may need many
@@ -1211,7 +1683,7 @@ bool spawn_random_mob(Simulation *sim) {
     // Avoid spawning inside a wall.
     float r = 30;
     float ox = x, oy = y;
-    resolve_collision(x, y, r);
+    resolve_collision_in(*map, x, y, r);
     if (x != ox || y != oy) {
         // If collision shoved us out of the polygon, skip this tick.
         if (!point_in_polygon(p, x, y)) return true;
@@ -1228,17 +1700,22 @@ bool spawn_random_mob(Simulation *sim) {
         if (r2 <= 0) { chosen = s.id; break; }
     }
 
-    Entity &ent = alloc_mob(sim, chosen, x, y, NULL_ENTITY);
+    Entity &ent = alloc_mob_on_map(sim, map->path, chosen, x, y, NULL_ENTITY);
     ent.zone = (uint8_t)(idx < 255 ? idx : 255);
     ent.immunity_ticks = SIM_RATE;
     BIT_SET(ent.flags, EntityFlags::kSpawnedFromZone);
-    mob_counts[idx]++;
+    map->mob_counts[idx]++;
     return true;
 }
 
 void note_mob_death(uint32_t poly_idx) {
-    if (poly_idx >= mob_counts.size()) return;
-    if (mob_counts[poly_idx] > 0) --mob_counts[poly_idx];
+    note_mob_death(current_map_path, poly_idx);
+}
+
+void note_mob_death(std::string const &map_path, uint32_t poly_idx) {
+    CachedMap *map = map_for_mut(map_path);
+    if (!map || poly_idx >= map->mob_counts.size()) return;
+    if (map->mob_counts[poly_idx] > 0) --map->mob_counts[poly_idx];
 }
 
 } // namespace TiledMap

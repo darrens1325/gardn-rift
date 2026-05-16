@@ -10,6 +10,9 @@ SERVER_ONLY(class Writer;)
 CLIENT_ONLY(class Reader;)
 
 #define FIELDS_Arena \
+    SINGLE(map_path, std::string) \
+    SINGLE(arena_width, uint32_t) \
+    SINGLE(arena_height, uint32_t) \
     SINGLE(player_count, uint32_t) \
     MULTIPLE(scores, Float, LEADERBOARD_SIZE) \
     MULTIPLE(names, std::string, LEADERBOARD_SIZE) \

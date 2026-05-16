@@ -27,11 +27,12 @@ void tick_entity_motion(Simulation *sim, Entity &ent) {
     ent.collision_velocity *= 0.5;
     ent.velocity += ent.collision_velocity;
     if (!ent.has_component(kPetal) && !ent.has_component(kWeb)) {
-        ent.set_x(fclamp(ent.x, ent.radius, ARENA_WIDTH - ent.radius));
-        ent.set_y(fclamp(ent.y, ent.radius, ARENA_HEIGHT - ent.radius));
+        std::string const map_path = ent.map_path.empty() ? TiledMap::default_map_path() : ent.map_path;
+        ent.set_x(fclamp(ent.x, ent.radius, TiledMap::arena_width(map_path) - ent.radius));
+        ent.set_y(fclamp(ent.y, ent.radius, TiledMap::arena_height(map_path) - ent.radius));
         if (TiledMap::loaded) {
             float x = ent.x, y = ent.y;
-            TiledMap::resolve_collision(x, y, ent.radius);
+            TiledMap::resolve_collision(map_path, x, y, ent.radius);
             // Zero the velocity component along whatever axis was
             // pushed so the entity actually stops at the wall instead of
             // re-entering on the next tick (the push moves position but

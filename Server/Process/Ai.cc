@@ -28,7 +28,9 @@ static void _focus_lose_clause(Simulation *sim, Entity &ent, Vector const &v) {
     if (ent.lifetime % (SIM_RATE / 4) != 0) return;
     if (!sim->ent_alive(ent.target)) return;
     Entity const &t = sim->get_ent(ent.target);
-    if (TiledMap::line_of_sight_blocked(ent.x, ent.y, t.x, t.y)) {
+    if (ent.map_path != t.map_path) {
+        ent.target = NULL_ENTITY;
+    } else if (TiledMap::line_of_sight_blocked(ent.map_path, ent.x, ent.y, t.x, t.y)) {
         ent.target = NULL_ENTITY;
     }
 }
@@ -556,7 +558,7 @@ void tick_ai_behavior(Simulation *sim, Entity &ent) {
                 // Spawned soldier inherits the queen's rolled rarity —
                 // a Mythic Queen pops out Mythic-sized soldiers, so
                 // their bodies match the queen they came from.
-                Entity &spawned = alloc_mob(sim, MobID::kSoldierAnt, ent.x + behind.x, ent.y + behind.y, ent.team, (int)ent.mob_rarity);
+                Entity &spawned = alloc_mob_on_map(sim, ent.map_path, MobID::kSoldierAnt, ent.x + behind.x, ent.y + behind.y, ent.team, (int)ent.mob_rarity);
                 entity_set_despawn_tick(spawned, 10 * SIM_RATE);
                 spawned.set_parent(ent.parent);
             }

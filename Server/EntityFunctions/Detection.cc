@@ -12,6 +12,7 @@ EntityID find_nearest_enemy(Simulation *simulation, Entity const &entity, float 
     float min_dist = radius;
     simulation->spatial_hash.query(entity.x, entity.y, radius, radius, [&](Simulation *sim, Entity &ent){
         if (!sim->ent_alive(ent.id)) return;
+        if (ent.map_path != entity.map_path) return;
         if (ent.team == entity.team) return;
         if (ent.immunity_ticks > 0) return;
         if (!ent.has_component(kMob) && !ent.has_component(kFlower)) return;
@@ -22,7 +23,7 @@ EntityID find_nearest_enemy(Simulation *simulation, Entity const &entity, float 
         }
         float dist = Vector(ent.x-entity.x,ent.y-entity.y).magnitude();
         if (dist >= min_dist) return;
-        if (TiledMap::line_of_sight_blocked(entity.x, entity.y, ent.x, ent.y)) return;
+        if (TiledMap::line_of_sight_blocked(entity.map_path, entity.x, entity.y, ent.x, ent.y)) return;
         min_dist = dist; ret = ent.id;
     });
     return ret;

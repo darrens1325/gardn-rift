@@ -8,7 +8,7 @@
 #   * Drops Server/Native.cc (uWebSockets) and the WASM-server's HTTP
 #     harness; replaces them with Bundle/Bridge.cc which exposes a stable
 #     C ABI: client_*, server_*, bot_*.
-#   * Embeds Map/main/main.tmj and tiles/ via --embed-file so the server's
+#   * Embeds Map/ and tiles/ via --embed-file so the server's
 #     TiledMap.cc std::ifstream paths work unchanged against MEMFS.
 #   * Builds as a SINGLE_FILE Emscripten output so the resulting .wasm is
 #     base64'd into the .js loader and the deliverable is one file.
@@ -311,7 +311,7 @@ target_link_options(gardn-bundle PRIVATE
     # multi-word flag as two separate list items via SHELL: (which avoids
     # de-duplication / quoting) — but the simplest form that survives
     # generators is to give them as two distinct tokens.
-    "SHELL:--embed-file ${REPO_ROOT}/Map/main/main.tmj@/Map/main/main.tmj"
+    "SHELL:--embed-file ${REPO_ROOT}/Map@/Map"
     "SHELL:--embed-file ${REPO_ROOT}/tiles@/tiles"
     # The trained DQN policy is bundled INTO the wasm — index.html reads
     # it from MEMFS at boot and hands the bytes to onnxruntime-web. When

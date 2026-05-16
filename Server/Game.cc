@@ -27,7 +27,7 @@ static void _update_client(Simulation *sim, Client *client) {
     writer.write<uint8_t>(Clientbound::kClientUpdate);
     writer.write<EntityID>(client->camera);
     sim->spatial_hash.query(camera.camera_x, camera.camera_y, 960 / camera.fov + 50, 540 / camera.fov + 50, [&](Simulation *, Entity &ent){
-        in_view.insert(ent.id);
+        if (ent.map_path == camera.map_path) in_view.insert(ent.id);
     });
 
     for (EntityID const &i: client->in_view) {
@@ -53,6 +53,10 @@ static void _update_client(Simulation *sim, Client *client) {
     }
     writer.write<EntityID>(NULL_ENTITY);
     //write arena stuff
+    std::string const map_path = camera.map_path.empty() ? TiledMap::default_map_path() : camera.map_path;
+    sim->arena_info.set_map_path(map_path);
+    sim->arena_info.set_arena_width(TiledMap::arena_width(map_path));
+    sim->arena_info.set_arena_height(TiledMap::arena_height(map_path));
     writer.write<uint8_t>(client->seen_arena);
     sim->arena_info.write(&writer, client->seen_arena);
     client->seen_arena = 1;
@@ -67,6 +71,9 @@ void GameInstance::init() {
     // StaticData.hh — see Map::spawn_random_mob.
     char const *map_path = std::getenv("GARDN_MAP");
     TiledMap::load(map_path ? map_path : "Map/main/main.tmj");
+    simulation.arena_info.set_map_path(TiledMap::default_map_path());
+    simulation.arena_info.set_arena_width(TiledMap::arena_width(TiledMap::default_map_path()));
+    simulation.arena_info.set_arena_height(TiledMap::arena_height(TiledMap::default_map_path()));
     for (uint32_t i = 0; i < ENTITY_CAP / 2; ++i)
         Map::spawn_random_mob(&simulation);
     team_manager.add_team(ColorID::kBlue);
@@ -223,6 +230,7 @@ void GameInstance::add_client(Client *client) {
     client->game = this;
     clients.insert(client);
     Entity &ent = simulation.alloc_ent();
+    ent.map_path = TiledMap::default_map_path();
     ent.add_component(kCamera);
     ent.add_component(kRelations);
     #ifdef GAMEMODE_TDM

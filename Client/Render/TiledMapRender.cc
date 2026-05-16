@@ -61,6 +61,15 @@ EM_JS(void, tiled_map_init_js, (), {
         return r.text();
     }
 
+    async function readAssetTextAny(paths) {
+        let lastError = null;
+        for (let i = 0; i < paths.length; i++) {
+            try { return await readAssetText(paths[i][0], paths[i][1]); }
+            catch (e) { lastError = e; }
+        }
+        throw lastError || new Error("no asset candidates");
+    }
+
     // Binary equivalent for bitmap tiles (PNG/JPG/etc.). Reading these
     // as utf-8 text — what readAssetText does — silently mangles the
     // bytes and the resulting Image fails to decode. MEMFS readFile
@@ -88,6 +97,28 @@ EM_JS(void, tiled_map_init_js, (), {
         return "";
     }
 
+    function uniquePush(arr, memPath, urlPath) {
+        for (let i = 0; i < arr.length; i++)
+            if (arr[i][0] === memPath && arr[i][1] === urlPath) return;
+        arr.push([memPath, urlPath]);
+    }
+
+    function tilesetPathCandidates(memPath, urlPath) {
+        const out = [];
+        function addVariants(m, u) {
+            if (m.endsWith(".tsx") || u.endsWith(".tsx"))
+                uniquePush(out,
+                    m.endsWith(".tsx") ? m.substring(0, m.length - 4) + ".tsj" : m,
+                    u.endsWith(".tsx") ? u.substring(0, u.length - 4) + ".tsj" : u);
+            uniquePush(out, m, u);
+        }
+        addVariants(memPath, urlPath);
+        const mapTiles = "/Map/tiles/";
+        if (memPath.indexOf(mapTiles) === 0)
+            addVariants("/tiles/" + memPath.substring(mapTiles.length), "/tiles/" + memPath.substring(mapTiles.length));
+        return out;
+    }
+
     // Load every external tileset the .tmj references, merging their tiles
     // into M["tileImages"] keyed by absolute gid (firstgid + tile.id). Maps
     // with multiple tilesets used to silently lose every tile from
@@ -110,7 +141,7 @@ EM_JS(void, tiled_map_init_js, (), {
         const tsPath = tsUrl.pathname;
         const tsMemPath = memfsResolve("/" + mapPath, tsRef["source"]);
         console.log("[TiledMap] loading tileset " + tsMemPath + " (url " + tsPath + ")");
-        const tsText = await readAssetText(tsMemPath, tsPath);
+        const tsText = await readAssetTextAny(tilesetPathCandidates(tsMemPath, tsPath));
         const ts = JSON.parse(tsText);
         const tsDir = tsPath.substring(0, tsPath.lastIndexOf("/"));
         const tsMemDir = tsMemPath.substring(0, tsMemPath.lastIndexOf("/"));
@@ -210,8 +241,15 @@ EM_JS(void, tiled_map_init_js, (), {
         return new Uint32Array(u8.buffer, u8.byteOffset, (u8.byteLength / 4) | 0);
     }
 
-    async function load() {
-        const mapPath = "Map/main/main.tmj";
+    async function load(mapPath) {
+        const loadId = (M["loadId"] | 0) + 1;
+        M["loadId"] = loadId;
+        M["ready"] = false;
+        M["layers"] = [];
+        M["tileImages"] = {};
+        M["objects"] = [];
+        M["collisionRects"] = [];
+        M["mapPath"] = mapPath;
         let mapJson;
         try {
             const txt = await readAssetText("/" + mapPath, mapPath);
@@ -220,6 +258,7 @@ EM_JS(void, tiled_map_init_js, (), {
             console.warn("[TiledMap] could not load " + mapPath + ": " + e.message);
             return;
         }
+        if (M["loadId"] !== loadId) return;
         const mapLayers = mapJson["layers"] || [];
         const mapTilesets = mapJson["tilesets"] || [];
         console.log("[TiledMap] map fetched: "
@@ -236,8 +275,10 @@ EM_JS(void, tiled_map_init_js, (), {
         } catch (e) {
             console.warn("[TiledMap] tileset load failed: " + e.message);
         }
+        if (M["loadId"] !== loadId) return;
 
         for (let i = 0; i < mapLayers.length; i++) {
+            if (M["loadId"] !== loadId) return;
             const layer = mapLayers[i];
             const lt = layer["type"];
             if (lt === "tilelayer") {
@@ -300,13 +341,22 @@ EM_JS(void, tiled_map_init_js, (), {
                 }
             }
         }
+        if (M["mapPath"] !== mapPath) return;
         M["ready"] = true;
         console.log("[TiledMap] ready: " + M["layers"].length + " tile layers, "
             + Object.keys(M["tileImages"]).length + " tile images, "
             + M["objects"].length + " image objects");
     }
 
-    load();
+    Module["tiledMapLoad"] = load;
+    load("Map/main/main.tmj");
+});
+
+EM_JS(void, tiled_map_set_map_js, (char const *path_ptr), {
+    const mapPath = UTF8ToString(path_ptr);
+    if (!Module["tiledMap"] || !Module["tiledMapLoad"]) return;
+    if (Module["tiledMap"]["mapPath"] === mapPath) return;
+    Module["tiledMapLoad"](mapPath);
 });
 
 EM_JS(void, tiled_map_draw_js, (int ctx_id), {
@@ -590,6 +640,8 @@ void init() {
     #endif
     tiled_map_init_js();
 }
+
+void set_map(std::string const &map_path) { tiled_map_set_map_js(map_path.c_str()); }
 
 void draw(Renderer &ctx) { tiled_map_draw_js(ctx.id); }
 

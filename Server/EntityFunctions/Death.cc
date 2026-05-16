@@ -1,4 +1,5 @@
 #include <Server/EntityFunctions.hh>
+#include <Server/TiledMap.hh>
 
 #include <Server/PetalTracker.hh>
 #include <Server/Spawn.hh>
@@ -39,7 +40,7 @@ static PetalID::T _upgrade_drop(PetalID::T base_id, uint8_t target_rarity) {
     return best;
 }
 
-static void _alloc_drops(Simulation *sim, std::vector<PetalID::T> &success_drops, float x, float y) {
+static void _alloc_drops(Simulation *sim, std::vector<PetalID::T> &success_drops, std::string const &map_path, float x, float y) {
     #ifdef DEBUG
     for (PetalID::T id : success_drops)
         assert(id != PetalID::kNone && id < PetalID::kNumPetals);
@@ -58,12 +59,14 @@ static void _alloc_drops(Simulation *sim, std::vector<PetalID::T> &success_drops
     if (count > 1) {
         for (size_t i = 0; i < count; ++i) {
             Entity &drop = alloc_drop(sim, success_drops[i]);
+            drop.map_path = map_path;
             drop.set_x(x);
             drop.set_y(y);
             drop.velocity.unit_normal(i * 2 * M_PI / count).set_magnitude(25);
         }
     } else if (count == 1) {
         Entity &drop = alloc_drop(sim, success_drops[0]);
+        drop.map_path = map_path;
         drop.set_x(x);
         drop.set_y(y);
     }
@@ -91,7 +94,7 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
     if (ent.has_component(kMob)) {
         //if (!(ent.team == NULL_ENTITY)) return;
         if (BIT_AT(ent.flags, EntityFlags::kSpawnedFromZone))
-            Map::remove_mob(sim, ent.zone);
+            TiledMap::note_mob_death(ent.map_path, ent.zone);
         if (!natural_despawn && !(BIT_AT(ent.flags, EntityFlags::kNoDrops))) {
             struct MobData const &mob_data = MOB_DATA[ent.mob_id];
             std::vector<PetalID::T> success_drops = {};
@@ -154,7 +157,7 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
                     }
                 }
             }
-            _alloc_drops(sim, success_drops, ent.x, ent.y);
+            _alloc_drops(sim, success_drops, ent.map_path, ent.x, ent.y);
         }
         if (ent.mob_id == MobID::kAntHole && ent.team == NULL_ENTITY && frand() < DIGGER_SPAWN_CHANCE) {
             EntityID team = NULL_ENTITY;
@@ -162,7 +165,7 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
                 team = sim->get_ent(ent.last_damaged_by).team;
             // Inherit the Ant Hole's rolled rarity — a Mythic Hole drops
             // a Mythic-tier Digger.
-            alloc_mob(sim, MobID::kDigger, ent.x, ent.y, team, (int)ent.mob_rarity);
+            alloc_mob_on_map(sim, ent.map_path, MobID::kDigger, ent.x, ent.y, team, (int)ent.mob_rarity);
         }
 
     } else if (ent.has_component(kPetal)) {
@@ -197,7 +200,7 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
             success_drops.push_back(p_id);
             potential.pop_back();
         }
-        _alloc_drops(sim, success_drops, ent.x, ent.y);
+        _alloc_drops(sim, success_drops, ent.map_path, ent.x, ent.y);
         //if the camera is the one that disconnects
         //no need to re-add the petals to the petal tracker
         if (!sim->ent_alive(ent.parent))

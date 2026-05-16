@@ -40,7 +40,7 @@ void inflict_damage(Simulation *sim, EntityID const atk_id, EntityID const def_i
             for (MobID::T mob_id : ANTHOLE_SPAWNS[num_spawn_waves - i]) {
                 // Damage-spawned ants inherit the Ant Hole's rolled
                 // rarity so they match its size and tier.
-                Entity &child = alloc_mob(sim, mob_id, defender.x, defender.y, defender.team, (int)defender.mob_rarity);
+                Entity &child = alloc_mob_on_map(sim, defender.map_path, mob_id, defender.x, defender.y, defender.team, (int)defender.mob_rarity);
                 child.set_parent(defender.id);
                 child.target = defender.target;
             }

@@ -2,6 +2,8 @@
 
 #include <Shared/Entity.hh>
 
+#include <string>
+
 class Simulation;
 
 Entity &alloc_drop(Simulation *, PetalID::T);
@@ -12,6 +14,7 @@ Entity &alloc_drop(Simulation *, PetalID::T);
 // consistent with the parent. -1 (default) keeps the existing behavior:
 // roll uniformly in [authored, current_wave_rarity].
 Entity &alloc_mob(Simulation *, MobID::T, float, float, EntityID const, int forced_rarity = -1);
+Entity &alloc_mob_on_map(Simulation *, std::string const &, MobID::T, float, float, EntityID const, int forced_rarity = -1);
 Entity &alloc_player(Simulation *, EntityID const);
 Entity &alloc_petal(Simulation *, PetalID::T, Entity const &);
 Entity &alloc_web(Simulation *, float, Entity const &);

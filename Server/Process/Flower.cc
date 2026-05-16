@@ -220,7 +220,7 @@ void tick_player_behavior(Simulation *sim, Entity &player) {
                     if (petal_data.attributes.spawns != MobID::kNumMobs &&
                         petal.secondary_reload > sec_reload_ticks) {
                         uint8_t spawn_id = petal_data.attributes.spawns;
-                        Entity &mob = alloc_mob(sim, spawn_id, petal.x, petal.y, petal.team);
+                        Entity &mob = alloc_mob_on_map(sim, petal.map_path, spawn_id, petal.x, petal.y, petal.team);
                         mob.set_parent(player.id);
                         mob.set_color(player.color);
                         mob.base_entity = player.id;

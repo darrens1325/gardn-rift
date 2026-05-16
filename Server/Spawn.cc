@@ -12,6 +12,8 @@
 
 #include <cmath>
 
+static std::string const *g_alloc_mob_map_path = nullptr;
+
 Entity &alloc_drop(Simulation *sim, PetalID::T drop_id) {
     DEBUG_ONLY(assert(drop_id < PetalID::kNumPetals);)
     PetalTracker::add_petal(sim, drop_id);
@@ -108,6 +110,7 @@ static Entity &__alloc_mob(Simulation *sim, MobID::T mob_id, float x, float y, E
     float radius_mult = MOB_RADIUS_MULT[rolled];
     float seed = frand();
     Entity &mob = sim->alloc_ent();
+    mob.map_path = g_alloc_mob_map_path ? *g_alloc_mob_map_path : TiledMap::default_map_path();
 
     mob.add_component(kPhysics);
     mob.set_radius(data.radius.get_single(seed) * radius_mult);
@@ -195,8 +198,17 @@ Entity &alloc_mob(Simulation *sim, MobID::T mob_id, float x, float y, EntityID c
     }
 }
 
+Entity &alloc_mob_on_map(Simulation *sim, std::string const &map_path, MobID::T mob_id, float x, float y, EntityID const team, int forced_rarity) {
+    std::string const *prev = g_alloc_mob_map_path;
+    g_alloc_mob_map_path = &map_path;
+    Entity &ent = alloc_mob(sim, mob_id, x, y, team, forced_rarity);
+    g_alloc_mob_map_path = prev;
+    return ent;
+}
+
 Entity &alloc_player(Simulation *sim, EntityID const team) {
     Entity &player = sim->alloc_ent();
+    player.map_path = TiledMap::default_map_path();
 
     player.add_component(kPhysics);
     player.set_radius(BASE_FLOWER_RADIUS);
@@ -227,6 +239,7 @@ Entity &alloc_petal(Simulation *sim, PetalID::T petal_id, Entity const &parent) 
     DEBUG_ONLY(assert(petal_id < PetalID::kNumPetals);)
     struct PetalData const &petal_data = PETAL_DATA[petal_id];
     Entity &petal = sim->alloc_ent();
+    petal.map_path = parent.map_path;
     petal.add_component(kPhysics);
     petal.set_x(parent.x);
     petal.set_y(parent.y);
@@ -255,6 +268,7 @@ Entity &alloc_petal(Simulation *sim, PetalID::T petal_id, Entity const &parent) 
 
 Entity &alloc_web(Simulation *sim, float radius, Entity const &parent) {
     Entity &web = sim->alloc_ent();
+    web.map_path = parent.map_path;
     web.add_component(kPhysics);
     web.set_x(parent.x);
     web.set_y(parent.y);
@@ -274,6 +288,8 @@ void player_spawn(Simulation *sim, Entity &camera, Entity &player) {
     camera.set_player(player.id);
     player.set_parent(camera.id);
     player.set_color(camera.color);
+    if (camera.map_path.empty()) camera.map_path = TiledMap::default_map_path();
+    player.map_path = camera.map_path;
     uint32_t power = Map::difficulty_at_level(camera.respawn_level);
     // Retry the random spawn point against the Tiled map's collision
     // geometry — without this, spawn lands inside a wall ~10–20% of the
@@ -285,10 +301,12 @@ void player_spawn(Simulation *sim, Entity &camera, Entity &player) {
     // sample lands in geometry (e.g. a degenerate map config).
     float spawn_x = 0.0f, spawn_y = 0.0f;
     for (int attempt = 0; attempt < 30; ++attempt) {
-        spawn_x = lerp(ARENA_WIDTH * 0.1, ARENA_WIDTH * 0.9, frand());
-        spawn_y = lerp(ARENA_HEIGHT * 0.1, ARENA_HEIGHT * 0.9, frand());
+        uint32_t arena_width = TiledMap::arena_width(player.map_path);
+        uint32_t arena_height = TiledMap::arena_height(player.map_path);
+        spawn_x = lerp(arena_width * 0.1, arena_width * 0.9, frand());
+        spawn_y = lerp(arena_height * 0.1, arena_height * 0.9, frand());
         float orig_x = spawn_x, orig_y = spawn_y;
-        TiledMap::resolve_collision(spawn_x, spawn_y, BASE_FLOWER_RADIUS);
+        TiledMap::resolve_collision(player.map_path, spawn_x, spawn_y, BASE_FLOWER_RADIUS);
         // No push needed → position was free.
         if (std::fabs(spawn_x - orig_x) < 0.5f && std::fabs(spawn_y - orig_y) < 0.5f) break;
         // Otherwise fall through and re-roll. After exhausting attempts

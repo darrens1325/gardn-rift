@@ -127,6 +127,7 @@ SINGLE(Name, nametag_visible, uint8_t)
     SINGLE(ai_tick, game_tick_t, =0) \
     SINGLE(ai_state, uint8_t, =0) \
     \
+    SINGLE(map_path, std::string, ={}) \
     SINGLE(zone, uint8_t, =0) \
     SINGLE(flags, uint8_t, =0) \
     SINGLE(deletion_tick, uint8_t, =0) \
