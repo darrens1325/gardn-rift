@@ -114,7 +114,19 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
                 float total = 0.0f;
                 for (uint32_t i = 0; i < mob_data.drops.size(); ++i) total += drop_chances[i];
                 float no_drop_mass = 1.0f - total;
-                if (no_drop_mass < 0) no_drop_mass = 0;
+                // Saturation: when the per-entry chances (each pre-clamped
+                // to ≤ 1 in StaticData.cc) sum to > 1, the mob always
+                // drops something. Re-normalise so the cumulative-sum
+                // roll picks each entry in proportion to its chance;
+                // without this, the first entry whose chance saturates at
+                // 1.0 short-circuits the roll and is always picked (e.g.
+                // Shiny Ladybug always producing Rare Dahlia and nothing
+                // else).
+                float norm = 1.0f;
+                if (no_drop_mass < 0) {
+                    no_drop_mass = 0;
+                    norm = 1.0f / total;
+                }
                 float roll = frand();
                 if (roll < no_drop_mass) {
                     if (delta > 0) {
@@ -132,7 +144,7 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
                 } else {
                     float cum = no_drop_mass;
                     for (uint32_t i = 0; i < mob_data.drops.size(); ++i) {
-                        cum += drop_chances[i];
+                        cum += drop_chances[i] * norm;
                         if (roll < cum) {
                             uint32_t r = (uint32_t)PETAL_DATA[mob_data.drops[i]].rarity + (uint32_t)delta;
                             if (r >= RarityID::kNumRarities) r = RarityID::kNumRarities - 1;

@@ -726,6 +726,39 @@ struct PetalData const PETAL_DATA[PetalID::kNumPetals] = {
         scale_hp(10.0, 3), scale_dmg(10.0, 3), 10.0, 1.0, 1, RarityID::kUnique, {
             .defend_only = 1
     }},
+    // Yggdrasil — base (kYggdrasil) is Unique with hp=1/dmg=1; lower tiers
+    // are scaled-down from there (Δ from Unique). Stats stay nominal — its
+    // "useless here" flavour is preserved across rarities.
+    {"Yggdrasil", "Unfortunately, its powers are useless here",
+        scale_hp(1.0, -6), scale_dmg(1.0, -6), 12.0, 10.0, 1, RarityID::kCommon, {
+        .defend_only = 1,
+        .icon_angle = M_PI
+    }},
+    {"Yggdrasil", "Unfortunately, its powers are useless here",
+        scale_hp(1.0, -5), scale_dmg(1.0, -5), 12.0, 10.0, 1, RarityID::kUnusual, {
+        .defend_only = 1,
+        .icon_angle = M_PI
+    }},
+    {"Yggdrasil", "Unfortunately, its powers are useless here",
+        scale_hp(1.0, -4), scale_dmg(1.0, -4), 12.0, 10.0, 1, RarityID::kRare, {
+        .defend_only = 1,
+        .icon_angle = M_PI
+    }},
+    {"Yggdrasil", "Unfortunately, its powers are useless here",
+        scale_hp(1.0, -3), scale_dmg(1.0, -3), 12.0, 10.0, 1, RarityID::kEpic, {
+        .defend_only = 1,
+        .icon_angle = M_PI
+    }},
+    {"Yggdrasil", "Unfortunately, its powers are useless here",
+        scale_hp(1.0, -2), scale_dmg(1.0, -2), 12.0, 10.0, 1, RarityID::kLegendary, {
+        .defend_only = 1,
+        .icon_angle = M_PI
+    }},
+    {"Yggdrasil", "Unfortunately, its powers are useless here",
+        scale_hp(1.0, -1), scale_dmg(1.0, -1), 12.0, 10.0, 1, RarityID::kMythic, {
+        .defend_only = 1,
+        .icon_angle = M_PI
+    }},
 };
 
 struct MobData const MOB_DATA[MobID::kNumMobs] = {
@@ -859,7 +892,7 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Ladybug",
         "This one is shiny... I wonder what it could mean...",
         RarityID::kEpic, {25.0}, 10.0, {30.0}, 3, {
-        PetalID::kDahlia, PetalID::kWing, PetalID::kCommonBubble, PetalID::kUnusualBubble, PetalID::kBubble, PetalID::kEpicBubble, PetalID::kLegendaryBubble, PetalID::kYggdrasil
+        PetalID::kDahlia, PetalID::kWing, PetalID::kCommonBubble, PetalID::kUnusualBubble, PetalID::kBubble, PetalID::kEpicBubble, PetalID::kLegendaryBubble, PetalID::kCommonYggdrasil, PetalID::kUnusualYggdrasil, PetalID::kRareYggdrasil, PetalID::kEpicYggdrasil, PetalID::kLegendaryYggdrasil, PetalID::kMythicYggdrasil, PetalID::kYggdrasil
     }, {}},
     {
         "Square",

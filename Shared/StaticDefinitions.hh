@@ -260,6 +260,16 @@ namespace PetalID {
         kLegendaryRoot,
         kMythicRoot,
         kUniqueRoot,
+        // Yggdrasil tiers — appended after Root so existing IDs (the
+        // pre-existing kYggdrasil keeps slot 76 as Unique) remain stable
+        // for trained bot checkpoints. Stats are formula-scaled from
+        // kYggdrasil at Δ from Unique by petal_at_tier() in StaticData.cc.
+        kCommonYggdrasil,
+        kUnusualYggdrasil,
+        kRareYggdrasil,
+        kEpicYggdrasil,
+        kLegendaryYggdrasil,
+        kMythicYggdrasil,
         kNumPetals
     };
 };

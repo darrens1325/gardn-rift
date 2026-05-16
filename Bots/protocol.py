@@ -264,6 +264,14 @@ PETAL_RARITY = [
     RARITY_LEGENDARY,  # 208 kLegendaryRoot
     RARITY_MYTHIC,     # 209 kMythicRoot
     RARITY_UNIQUE,     # 210 kUniqueRoot
+    # Yggdrasil tiers (kYggdrasil at id 76 stays Unique; these are the
+    # appended lower rarities)
+    RARITY_COMMON,     # 211 kCommonYggdrasil
+    RARITY_UNUSUAL,    # 212 kUnusualYggdrasil
+    RARITY_RARE,       # 213 kRareYggdrasil
+    RARITY_EPIC,       # 214 kEpicYggdrasil
+    RARITY_LEGENDARY,  # 215 kLegendaryYggdrasil
+    RARITY_MYTHIC,     # 216 kMythicYggdrasil
 ]
 
 PETAL_NONE = 0
@@ -502,6 +510,12 @@ PETAL_TYPE = [
     PETAL_TYPE_UTILITY,  # 208 kLegendaryRoot
     PETAL_TYPE_UTILITY,  # 209 kMythicRoot
     PETAL_TYPE_UTILITY,  # 210 kUniqueRoot
+    PETAL_TYPE_UTILITY,  # 211 kCommonYggdrasil
+    PETAL_TYPE_UTILITY,  # 212 kUnusualYggdrasil
+    PETAL_TYPE_UTILITY,  # 213 kRareYggdrasil
+    PETAL_TYPE_UTILITY,  # 214 kEpicYggdrasil
+    PETAL_TYPE_UTILITY,  # 215 kLegendaryYggdrasil
+    PETAL_TYPE_UTILITY,  # 216 kMythicYggdrasil
 ]
 
 
@@ -728,6 +742,14 @@ PETAL_BURST = [
     15,   # 208 kLegendaryRoot
     22,   # 209 kMythicRoot      (10 × 2.25)
     33,   # 210 kUniqueRoot      (10 × 3.375)
+    # Yggdrasil tiers — damage = 1.0 × 1.5^Δ from kYggdrasil (Unique, id 76,
+    # burst=1). Lower-tier damages round down to 0.
+    0,    # 211 kCommonYggdrasil    (1.0 / 1.5^6)
+    0,    # 212 kUnusualYggdrasil   (1.0 / 1.5^5)
+    0,    # 213 kRareYggdrasil      (1.0 / 1.5^4)
+    0,    # 214 kEpicYggdrasil      (1.0 / 1.5^3)
+    0,    # 215 kLegendaryYggdrasil (1.0 / 1.5^2)
+    1,    # 216 kMythicYggdrasil    (1.0 / 1.5^1)
 ]
 
 
