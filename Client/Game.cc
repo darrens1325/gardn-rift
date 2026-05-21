@@ -8,7 +8,10 @@
 
 #include <Shared/Config.hh>
 
+#include <emscripten.h>
+
 #include <cmath>
+#include <cstdlib>
 
 static double g_last_time = 0;
 float const MAX_TRANSITION_CIRCLE = 2500;
@@ -27,6 +30,7 @@ namespace Game {
     EntityID camera_id;
     EntityID player_id;
     std::string nickname;
+    std::string spawn_map_path;
     std::array<uint8_t, PetalID::kNumPetals> seen_petals;
     std::array<std::array<uint8_t, RarityID::kNumRarities>, MobID::kNumMobs> seen_mobs;
 
@@ -57,9 +61,36 @@ namespace Game {
 
 using namespace Game;
 
+// Pull the `?spawn=...` query parameter out of window.location.search.
+// Returns "" if absent or empty. Allocated by the JS side via _malloc;
+// we free it after copying into std::string. URLSearchParams.get already
+// percent-decodes the value, so the server sees e.g. "Map/foo/foo.tmj"
+// rather than "Map%2Ffoo%2Ffoo.tmj".
+static std::string read_url_spawn_param() {
+    char *ptr = (char *) EM_ASM_PTR({
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const v = params.get("spawn") || "";
+            const arr = new TextEncoder().encode(v);
+            const p = Module["_malloc"](arr.length + 1);
+            HEAPU8.set(arr, p);
+            HEAPU8[p + arr.length] = 0;
+            return p;
+        } catch (e) {
+            const p = Module["_malloc"](1);
+            HEAPU8[p] = 0;
+            return p;
+        }
+    });
+    std::string out{ptr ? ptr : ""};
+    if (ptr) std::free(ptr);
+    return out;
+}
+
 void Game::init() {
     Storage::retrieve();
     reset();
+    spawn_map_path = read_url_spawn_param();
     TiledMapRender::init();
     title_ui_window.add_child(
         [](){ 

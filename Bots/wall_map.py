@@ -19,13 +19,20 @@ Two obstacle sources are extracted:
 
 Plus the implicit arena boundary at (0, 0) → (world_w, world_h),
 derived from the .tmj's width × tilewidth and height × tileheight.
-"""
+
+This module also extracts the map's warp (portal) circles, parsed the
+same way `Server/TiledMap.cc:parse_warps_layer` does: object-layer
+objects whose `type`/`class` is "warp". Each warp is a trigger circle
+at (x, y) with radius = max(96, max(width, height) / 2). Exposed
+through `load_warps` so the bot can encode portal proximity in its
+observation (mirrors what a human player sees on the minimap)."""
 
 from __future__ import annotations
 
 import base64
 import gzip
 import json
+import math
 import os
 import struct
 import zlib
@@ -176,4 +183,129 @@ def wall_ray_features(
         min(1.0, east / cap),
         min(1.0, south / cap),
         min(1.0, west / cap),
+    ]
+
+
+# (x, y, radius) circle in world coordinates. Mirrors TiledWarp in
+# Server/TiledMap.hh — the trigger is a circle around (x, y), not a
+# rectangle, even though the .tmj stores width/height too.
+Warp = Tuple[float, float, float]
+
+# Minimum trigger radius the server applies even when a warp object
+# has zero width/height. Matches the `std::max(96.0f, ...)` clamp in
+# Server/TiledMap.cc:parse_warps_layer.
+WARP_MIN_RADIUS = 96.0
+
+
+def _object_kind(obj: dict) -> str:
+    """Mirrors `object_kind` in Server/TiledMap.cc — Tiled stores a
+    custom object class in either `type` (legacy) or `class` (current
+    Tiled JSON), and the server falls back from one to the other."""
+    t = obj.get("type")
+    if isinstance(t, str) and t:
+        return t
+    c = obj.get("class")
+    if isinstance(c, str):
+        return c
+    return ""
+
+
+def load_warps(tmj_path: str = DEFAULT_TMJ_PATH) -> List[Warp]:
+    """Parse the same .tmj `load_walls` reads and return every warp
+    object's (x, y, radius). Missing/unparseable files return [], so
+    the bot degrades gracefully (just sees no portals)."""
+    if not os.path.exists(tmj_path):
+        return []
+    try:
+        with open(tmj_path) as f:
+            m = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return []
+    out: List[Warp] = []
+    for layer in m.get("layers", []):
+        if layer.get("type") != "objectgroup":
+            continue
+        for obj in layer.get("objects", []):
+            if _object_kind(obj) != "warp":
+                continue
+            try:
+                x = float(obj.get("x", 0))
+                y = float(obj.get("y", 0))
+                w = float(obj.get("width", 0))
+                h = float(obj.get("height", 0))
+            except (TypeError, ValueError):
+                continue
+            radius = max(WARP_MIN_RADIUS, max(w, h) * 0.5)
+            out.append((x, y, radius))
+    return out
+
+
+# Number of warps reported in the observation. Picking 2 keeps the
+# feature vector compact while still letting the bot reason about a
+# "nearer" + "next-nearer" portal pair on multi-warp maps.
+K_WARPS = 2
+# Features per warp slot: rel_dx_norm, rel_dy_norm, distance_norm,
+# inside_trigger_flag. dx/dy use the same OBS_SCALE convention as
+# hostile/drop features so the network sees a uniformly-scaled world.
+WARP_FEAT_PER_SLOT = 4
+WARP_FEAT_DIM = K_WARPS * WARP_FEAT_PER_SLOT
+
+# Bot's normalised global position on the map: (px/world_w, py/world_h),
+# both in [0, 1]. Mirrors what a player reads from the minimap — "I'm
+# in the bottom-left corner of the world" — so the policy can learn
+# coarse positional preferences (e.g. centre-of-map farming vs.
+# corner-hugging). Plus a small flag set when no map is loaded so the
+# zeros don't get mis-read as "top-left corner".
+MINIMAP_FEAT_DIM = 3
+
+
+def warp_features(
+    px: float,
+    py: float,
+    warps: List[Warp],
+    obs_scale: float,
+) -> List[float]:
+    """K_WARPS nearest warps, each as (rel_dx_norm, rel_dy_norm,
+    distance_norm, inside_flag). Empty slots zero-pad. Distance is
+    normalised by `obs_scale` and clamped to [0, 1] so the policy gets
+    a uniform "near = small, far = saturating to 1" signal across
+    feature columns."""
+    if not warps:
+        return [0.0] * WARP_FEAT_DIM
+    scored: List[tuple[float, float, float, float]] = []
+    for wx, wy, wr in warps:
+        dx = wx - px
+        dy = wy - py
+        d2 = dx * dx + dy * dy
+        scored.append((d2, dx, dy, wr))
+    scored.sort(key=lambda s: s[0])
+    out: List[float] = []
+    for i in range(K_WARPS):
+        if i < len(scored):
+            d2, dx, dy, wr = scored[i]
+            dist = math.sqrt(d2)
+            out.extend([
+                dx / obs_scale,
+                dy / obs_scale,
+                min(1.0, dist / obs_scale),
+                1.0 if dist <= wr else 0.0,
+            ])
+        else:
+            out.extend([0.0] * WARP_FEAT_PER_SLOT)
+    return out
+
+
+def minimap_features(
+    px: float, py: float, world_w: float, world_h: float,
+) -> List[float]:
+    """Normalised global position: (px/world_w, py/world_h) ∈ [0, 1],
+    plus a 1.0 sentinel when no map is loaded so the leading zeros
+    aren't mistaken for "top-left corner". Same information a human
+    player gets from the minimap dot."""
+    if world_w <= 0 or world_h <= 0:
+        return [0.0, 0.0, 1.0]
+    return [
+        max(0.0, min(1.0, px / world_w)),
+        max(0.0, min(1.0, py / world_h)),
+        0.0,
     ]

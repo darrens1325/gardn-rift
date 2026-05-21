@@ -150,3 +150,31 @@ else()
         target_link_libraries(gardn-server ws2_32)
     endif()
 endif()
+
+# --- Stage Map/ and tiles/ next to the built server ---------------------------
+# TiledMap.cc opens map paths relative to CWD (Native.cc / Wasm.cc don't chdir
+# anywhere), so a server launched from Server/build/ needs `Map/<dir>/*.tmj`
+# alongside the binary. The default map is loaded at boot from `Map/main/main.tmj`
+# (Server/Game.cc::init), and `?spawn=Map/foo/foo.tmj` requests dispatch through
+# TiledMap::ensure_loaded → load → std::ifstream, which would 404 against any
+# map file that isn't staged here. Per-file copy_if_different keeps incremental
+# builds cheap; CONFIGURE_DEPENDS makes cmake re-run when files are added /
+# removed under Map/ or tiles/.
+set(_REPO_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/..")
+file(GLOB_RECURSE _GARDN_MAP_ASSETS CONFIGURE_DEPENDS
+     "${_REPO_ROOT}/Map/*"
+     "${_REPO_ROOT}/tiles/*")
+set(_GARDN_STAGED_ASSETS "")
+foreach(_src IN LISTS _GARDN_MAP_ASSETS)
+    file(RELATIVE_PATH _rel "${_REPO_ROOT}" "${_src}")
+    set(_dst "${CMAKE_CURRENT_BINARY_DIR}/${_rel}")
+    add_custom_command(
+        OUTPUT "${_dst}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_src}" "${_dst}"
+        DEPENDS "${_src}"
+        VERBATIM
+    )
+    list(APPEND _GARDN_STAGED_ASSETS "${_dst}")
+endforeach()
+add_custom_target(gardn-server-assets ALL DEPENDS ${_GARDN_STAGED_ASSETS})
+add_dependencies(gardn-server gardn-server-assets)

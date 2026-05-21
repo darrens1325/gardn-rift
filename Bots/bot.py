@@ -44,7 +44,17 @@ from agent import (
     is_movement_action,
 )
 from memory import EpisodicMemory, PersistentMemory
-from wall_map import WALL_FEAT_DIM, load_walls, wall_ray_features
+from wall_map import (
+    MINIMAP_FEAT_DIM,
+    WALL_FEAT_DIM,
+    WALL_RAY_CAP,
+    WARP_FEAT_DIM,
+    load_walls,
+    load_warps,
+    minimap_features,
+    wall_ray_features,
+    warp_features,
+)
 from protocol import (
     C_CHAT,
     C_CLIENT_UPDATE,
@@ -76,7 +86,7 @@ from protocol import (
     petal_type_norm,
 )
 
-VERSION_HASH = 4728567265382327  # bumped: added Serverbound::kStep for sync mode
+VERSION_HASH = 4728567265382328  # bumped: kClientSpawn gained a trailing map_path string
 
 MOVE_MAG = 260.0          # server clamps to PLAYER_ACCELERATION above 200
 DEFAULT_CONTROL_HZ = 20   # sane default for stock TPS=20; bump when server runs faster
@@ -221,6 +231,20 @@ W_PLAYER_KILL_BONUS = 50.0
 # can learn "max score by tick 72000" as a top-level objective without
 # the death cost cancelling the win.
 W_ROUND_WIN = 150.0
+
+# Wall-avoidance shaping. The 4 cardinal wall-ray features in the state
+# vector tell the network "there's a wall N units away" but nothing in
+# the reward stream actively pushes the bot to keep clearance. The only
+# implicit cost of grinding against geometry is the lost damage / approach
+# rewards while stuck — a multi-tick delayed signal the DQN learns very
+# slowly. WALL_AVOID_THRESHOLD is the distance (in world units, NOT the
+# already-normalised ray feature) below which we start charging a
+# per-tick cost; W_WALL_AVOID scales the cost so being pressed against a
+# wall pays a couple of damage-points worth of negative reward per tick.
+# Continuous (linear in the closest-ray distance), so the gradient points
+# the policy away from walls smoothly rather than as an on/off step.
+WALL_AVOID_THRESHOLD = 200.0
+W_WALL_AVOID = 0.4
 
 
 def _hostile_features(entities: dict, my_player: dict, my_team: tuple[int, int]) -> list[float]:
@@ -394,12 +418,16 @@ def _build_state(
     drop_feats: list[float],
     loadout_burst_feats: list[float],
     wall_feats: list[float],
+    warp_feats: list[float],
+    minimap_feats: list[float],
 ) -> list[float]:
     # Append-only layout. Indices [0..40] match the original 41-input
     # version, [0..68] match the type+drops version, [69..84] are the
     # per-slot effective-burst column, [85..88] are the wall-ray
-    # sensors. Older checkpoints pad-load cleanly into the leading
-    # slots; new training fills the trailing wall columns.
+    # sensors, [89..96] are the warp (portal) features, [97..99] are
+    # the minimap (normalised global position) features. Older
+    # checkpoints pad-load cleanly into the leading slots; new
+    # training fills the trailing columns.
     return (
         [float(my_player.get("health_ratio", 1.0))]
         + hostile_feats
@@ -409,6 +437,8 @@ def _build_state(
         + drop_feats
         + loadout_burst_feats
         + wall_feats
+        + warp_feats
+        + minimap_feats
     )
 
 
@@ -461,9 +491,19 @@ def _peer_features(agent: DQNAgent, my_name: str, my_player: dict) -> list[float
 # every direction, matching the pre-wall behavior so a bot run without
 # the map still functions (just won't learn wall avoidance).
 _WALL_WORLD_W, _WALL_WORLD_H, _WALL_RECTS = load_walls()
-print(f"[wall_map] loaded {len(_WALL_RECTS)} wall rect(s); world bounds "
+# Warp circles parsed from the same .tmj. Empty list when the map is
+# missing or has no `warp`-typed objects, so the bot falls back to
+# "no portals visible" rather than crashing.
+_WARPS = load_warps()
+print(f"[wall_map] loaded {len(_WALL_RECTS)} wall rect(s), "
+      f"{len(_WARPS)} warp(s); world bounds "
       f"{_WALL_WORLD_W:.0f} × {_WALL_WORLD_H:.0f}", flush=True)
 _ZERO_WALL_FEATS = [0.0] * WALL_FEAT_DIM
+_ZERO_WARP_FEATS = [0.0] * WARP_FEAT_DIM
+# Map-missing minimap fallback: zeros for the (x_norm, y_norm) slots
+# and a 1.0 sentinel so the network can distinguish "no map" from
+# "I'm at the top-left corner."
+_NO_MAP_MINIMAP_FEATS = [0.0, 0.0, 1.0]
 
 _ZERO_STATE = [0.0] * STATE_DIM
 
@@ -532,6 +572,16 @@ class LearningBot:
         self._prev_player_id: tuple[int, int] | None = None
         self._prev_score: int = 0
         self._prev_hp: float = 1.0
+        # High-water-mark score for the current life. Decoupled from
+        # `_prev_score` (which is used for per-tick reward shaping and
+        # tracks the *current* score, including server-side resets).
+        # The server zeroes player.score at round-end before deleting
+        # the player entity (Server/Game.cc:end_round), so `_prev_score`
+        # can be observed as 0 right before `_on_death` fires — leaving
+        # `last_episode_score` reading 0 even when the bot earned a
+        # large score during the round. Tracking the per-life max keeps
+        # the episode-window stat robust to that wipe.
+        self._max_score_this_life: int = 0
         self.episode_reward = 0.0
         self.episode_len = 0
         self.episodes_finished = 0
@@ -628,7 +678,10 @@ class LearningBot:
         await ws.send(w.to_bytes())
 
     async def _send_spawn(self, ws) -> None:
-        w = Writer(); w.w_u8(S_CLIENT_SPAWN); w.w_string(self.name[:16])
+        # Empty map_path = "use server's default map" — bots don't need
+        # to pick a non-default map; the trailing string just keeps us
+        # wire-compatible with the post-VERSION_HASH-bump protocol.
+        w = Writer(); w.w_u8(S_CLIENT_SPAWN); w.w_string(self.name[:16]); w.w_string("")
         await ws.send(w.to_bytes())
 
     async def _send_input(self, ws, x: float, y: float, flags: int) -> None:
@@ -771,12 +824,19 @@ class LearningBot:
         # respawn until the round ends; round-end deaths see _can_respawn
         # already flipped True by the recv loop so the next control tick
         # respawns immediately.
+        # Use the per-life high-water mark instead of `_prev_score` so
+        # an end-of-round server wipe (Server/Game.cc:end_round sets
+        # player.score = 0 right before request_delete) can't collapse
+        # this episode's reported score to 0. `_prev_score` is still
+        # used for per-tick reward shaping; the discrepancy only
+        # matters for the post-death summary stats.
+        episode_score = max(self._max_score_this_life, self._prev_score)
         self.last_episode_reward = self.episode_reward
-        self.last_episode_score = self._prev_score
+        self.last_episode_score = episode_score
         self.episodes_finished += 1
         # Feed the agent's rolling window — that's the curve to watch for
         # actual learning progress.
-        self.agent.record_episode(self._prev_score, self.episode_reward)
+        self.agent.record_episode(episode_score, self.episode_reward)
 
         # Persist this episode to disk. We try to attribute the death to
         # whoever the camera says killed us (camera.killed_by is a player
@@ -811,7 +871,7 @@ class LearningBot:
         })
         try:
             self.persistent.record_episode(
-                score=self._prev_score,
+                score=episode_score,
                 primary_loadout=primary_loadout,
                 killed_by_name=killed_by,
             )
@@ -828,6 +888,7 @@ class LearningBot:
         self._prev_player_id = None
         self._prev_score = 0
         self._prev_hp = 1.0
+        self._max_score_this_life = 0
         self._held_action = None
         self._repeat_left = 0
         # Drop the per-life HP attribution snapshot so the next life starts
@@ -867,6 +928,11 @@ class LearningBot:
             self._prev_player_id = player["_id"]
             self._prev_score = int(player.get("score", 0))
             self._prev_hp = float(player.get("health_ratio", 1.0))
+            # Fresh life — drop the previous life's high-water mark so
+            # the next death isn't credited with score the bot never
+            # earned. `_on_death` also clears this; setting here is the
+            # belt-and-braces for the "no _on_death fired" path above.
+            self._max_score_this_life = self._prev_score
 
         my_team = cam.get("team", (0, 0)) if cam else (0, 0)
         hostile_feats = _hostile_features(self.entities, player, my_team)
@@ -883,13 +949,32 @@ class LearningBot:
         # nearest wall AABB (or arena boundary), normalised to [0, 1].
         # Lets the policy learn "I'm cornered, back off" without
         # waiting to grind against geometry.
+        px = float(player.get("x", 0.0))
+        py = float(player.get("y", 0.0))
         if _WALL_RECTS or _WALL_WORLD_W > 0:
             wall_feats = wall_ray_features(
-                float(player.get("x", 0.0)), float(player.get("y", 0.0)),
-                _WALL_WORLD_W, _WALL_WORLD_H, _WALL_RECTS,
+                px, py, _WALL_WORLD_W, _WALL_WORLD_H, _WALL_RECTS,
             )
         else:
             wall_feats = _ZERO_WALL_FEATS
+        # Portal awareness — relative offset + distance + "inside
+        # trigger" flag for the K_WARPS nearest warps on this map.
+        # The bot sees the same portal positions the minimap renders
+        # on the client (see Client/Render/TiledMapRender.cc).
+        warp_feats = (
+            warp_features(px, py, _WARPS, OBS_SCALE)
+            if _WARPS else _ZERO_WARP_FEATS
+        )
+        # Minimap-equivalent feature: normalised global (x, y) on the
+        # current map so the policy can condition on "where am I in
+        # the world" the same way a human player reads their minimap
+        # dot.
+        if _WALL_WORLD_W > 0 and _WALL_WORLD_H > 0:
+            minimap_feats = minimap_features(
+                px, py, _WALL_WORLD_W, _WALL_WORLD_H,
+            )
+        else:
+            minimap_feats = _NO_MAP_MINIMAP_FEATS
         state = _build_state(
             player,
             hostile_feats,
@@ -899,10 +984,18 @@ class LearningBot:
             drop_feats,
             loadout_burst_feats,
             wall_feats,
+            warp_feats,
+            minimap_feats,
         )
 
         cur_score = int(player.get("score", 0))
         cur_hp = float(player.get("health_ratio", 1.0))
+        # Maintain the per-life max so post-death stats survive a
+        # round-end score wipe (Server/Game.cc zeroes player.score
+        # right before request_delete). Read before any reward shaping
+        # that mutates `_prev_score`.
+        if cur_score > self._max_score_this_life:
+            self._max_score_this_life = cur_score
 
         # Push the previous transition with the reward observed *now*.
         if self._prev_state is not None and self._prev_action is not None:
@@ -938,6 +1031,23 @@ class LearningBot:
             if near_d2 < PROXIMITY_RANGE * PROXIMITY_RANGE:
                 reward += W_PROXIMITY
                 self.engagement_ticks += 1
+            # Wall-proximity penalty. `wall_feats` is the bot's CURRENT 4-ray
+            # snapshot (N/E/S/W); each entry is min(1, dist/WALL_RAY_CAP), so
+            # the closest wall in world units is min(wall_feats) * WALL_RAY_CAP.
+            # When that's under WALL_AVOID_THRESHOLD, we charge a per-tick
+            # cost proportional to how deep into the danger zone we are. Linear
+            # ramp — at the threshold it's 0, pressed flat against a wall it's
+            # the full W_WALL_AVOID. Credits to the *previous* action, so the
+            # policy learns "don't pick directions that put me here." Mob /
+            # player damage bonuses are an order of magnitude larger, so this
+            # never overrides "approach a real target" — it just leans away
+            # from walls when nothing else is happening.
+            if wall_feats is not _ZERO_WALL_FEATS:
+                min_ray = min(wall_feats)
+                closest_wall = min_ray * WALL_RAY_CAP
+                if closest_wall < WALL_AVOID_THRESHOLD:
+                    deficit = 1.0 - (closest_wall / WALL_AVOID_THRESHOLD)
+                    reward -= W_WALL_AVOID * deficit
             # Engagement shaping #3: actual damage dealt, attributed via
             # *per-petal* collision against each enemy whose HP just dropped.
             # The world update we just parsed contains every visible petal

@@ -69,7 +69,11 @@ DROP_FEAT_DIM = K_DROPS * DROP_FEAT_PER_SLOT
 # tick time from the static Tiled map (see Bots/wall_map.py). Lets the
 # policy learn wall avoidance — without these, the bot only sees enemies
 # and inventory and just grinds against the geometry.
-from wall_map import WALL_FEAT_DIM  # noqa: E402  (kept inline so STATE_DIM follows)
+from wall_map import (  # noqa: E402  (kept inline so STATE_DIM follows)
+    MINIMAP_FEAT_DIM,
+    WALL_FEAT_DIM,
+    WARP_FEAT_DIM,
+)
 # State layout is **append-only** with respect to previous versions so
 # pad_load_state_dict can preserve trained weights from older checkpoints.
 # Append, never reorder. Boundaries:
@@ -77,6 +81,11 @@ from wall_map import WALL_FEAT_DIM  # noqa: E402  (kept inline so STATE_DIM foll
 #       [loadout_type×16] [drops×12]                              |  ← old 69
 #       [loadout_burst×16]                                        |  ← +16 = 85
 #       [wall_rays×4]                                             |  ← +4 = 89
+#       [warps×8]                                                 |  ← +8 = 97
+#       [minimap×3]                                               |  ← +3 = 100
+# The trailing warp/minimap columns are how the bot "sees" portals
+# and where it sits on the global map — features parallel to the
+# minimap a human player reads.
 STATE_DIM = (
     BASE_STATE_DIM            # 13
     + LOADOUT_FEAT_DIM        # 16
@@ -85,7 +94,9 @@ STATE_DIM = (
     + DROP_FEAT_DIM           # 12
     + LOADOUT_BURST_DIM       # 16
     + WALL_FEAT_DIM           # 4
-)                              # = 89
+    + WARP_FEAT_DIM           # 8
+    + MINIMAP_FEAT_DIM        # 3
+)                              # = 100
 # Action space layout (flat):
 #   0..NUM_MOVEMENT_ACTIONS-1            movement (9 directions × 2 modes)
 #   NUM_MOVEMENT_ACTIONS..+NUM_SWAP-1    swap loadout_ids[i] ↔ loadout_ids[i+8]

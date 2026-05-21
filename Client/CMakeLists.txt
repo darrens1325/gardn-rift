@@ -130,3 +130,31 @@ add_link_options(-sEXPORTED_FUNCTIONS=_main,_malloc,_free,_key_event,_mouse_even
 
 add_executable(gardn-client ${SRCS})
 set(CMAKE_EXECUTABLE_SUFFIX ".js")
+
+# --- Stage Map/ and tiles/ next to the built client ---------------------------
+# Client/Render/TiledMapRender.cc fetches map JSONs and tile SVGs over HTTP at
+# runtime (`fetch("/Map/<dir>/<file>.tmj")`, `fetch("/tiles/foo.svg")`); for a
+# plain `python -m http.server` in Client/build/ to serve the whole game,
+# Map/ and tiles/ have to live alongside gardn-client.{js,wasm}. The default
+# map is fetched at boot (TiledMapRender::init → load("Map/main/main.tmj"))
+# and any `?spawn=Map/foo/foo.tmj` URL request triggers another fetch. Per-file
+# copy_if_different keeps incremental builds cheap; CONFIGURE_DEPENDS makes
+# cmake re-run when files are added or removed under Map/ or tiles/.
+set(_REPO_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/..")
+file(GLOB_RECURSE _GARDN_MAP_ASSETS CONFIGURE_DEPENDS
+     "${_REPO_ROOT}/Map/*"
+     "${_REPO_ROOT}/tiles/*")
+set(_GARDN_STAGED_ASSETS "")
+foreach(_src IN LISTS _GARDN_MAP_ASSETS)
+    file(RELATIVE_PATH _rel "${_REPO_ROOT}" "${_src}")
+    set(_dst "${CMAKE_CURRENT_BINARY_DIR}/${_rel}")
+    add_custom_command(
+        OUTPUT "${_dst}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_src}" "${_dst}"
+        DEPENDS "${_src}"
+        VERBATIM
+    )
+    list(APPEND _GARDN_STAGED_ASSETS "${_dst}")
+endforeach()
+add_custom_target(gardn-client-assets ALL DEPENDS ${_GARDN_STAGED_ASSETS})
+add_dependencies(gardn-client gardn-client-assets)

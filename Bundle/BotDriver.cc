@@ -1,4 +1,4 @@
-// Server-side bot driver: builds an 89-dim observation per bot from the
+// Server-side bot driver: builds a 100-dim observation per bot from the
 // live Simulation and applies a chosen action by routing a kClientInput
 // (or kPetalSwap/kPetalDelete) packet through Client::on_message — exactly
 // what a real WebSocket client would do.
@@ -7,13 +7,12 @@
 // `namespace gardn::server`. Forward declarations in Bundle/Bridge.cc refer
 // to `gardn::server::bot_make_obs_impl` etc.
 //
-// MVP scope: matches agent.py / bot.py's STATE_DIM=89 and NUM_ACTIONS=42
-// layout so the ONNX-exported QNet runs unmodified. Only the BASE_STATE
-// 13 dims (self HP + 3 nearest hostiles × 4) are populated; the rest are
-// zero. Movement actions (0..17) are decoded into (vx, vy, input_flags)
-// and sent as kClientInput. Inventory actions (18..41) are stubbed.
-// Spawn-on-first-tick is handled automatically: if the bot has no live
-// flower we issue a kClientSpawn with a procedural name.
+// MVP scope: matches agent.py / bot.py's STATE_DIM=100 and NUM_ACTIONS=42
+// layout so the ONNX-exported QNet runs unmodified. Movement actions
+// (0..17) are decoded into (vx, vy, input_flags) and sent as kClientInput.
+// Inventory actions (18..41) are stubbed. Spawn-on-first-tick is handled
+// automatically: if the bot has no live flower we issue a kClientSpawn
+// with a procedural name.
 
 #include <Server/Client.hh>
 #include <Server/Game.hh>
@@ -31,7 +30,7 @@
 #include <cstring>
 
 // Mirror agent.py — kept in sync with STATE_DIM and NUM_ACTIONS there.
-static constexpr int BOT_OBS_DIM = 89;
+static constexpr int BOT_OBS_DIM = 100;
 static constexpr int BOT_NUM_ACTIONS = 42;
 static constexpr int NUM_MOVEMENT_ACTIONS = 18;
 static constexpr int NUM_DIRECTIONS = 9;
@@ -54,6 +53,37 @@ static const float DIR_TABLE[NUM_DIRECTIONS][2] = {
 };
 
 extern std::unordered_map<int, WebSocket *> WS_MAP;  // defined in Server/Wasm.cc
+
+// The bundle's URL-driven map override. Read once from
+// window.location.search at first call and cached for the rest of the
+// process; bundled bots send this verbatim as the kClientSpawn map_path
+// so they spawn alongside the human player on whatever map they picked.
+// Server-side validation (Server/Client.cc::is_safe_user_map_path) is
+// authoritative — we just forward the raw string and let the server
+// silently fall back if it's empty/malformed.
+static std::string const &bot_spawn_map_path() {
+    static std::string cached = []() -> std::string {
+        char *ptr = (char *) EM_ASM_PTR({
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const v = params.get("spawn") || "";
+                const arr = new TextEncoder().encode(v);
+                const p = Module["_malloc"](arr.length + 1);
+                HEAPU8.set(arr, p);
+                HEAPU8[p + arr.length] = 0;
+                return p;
+            } catch (e) {
+                const p = Module["_malloc"](1);
+                HEAPU8[p] = 0;
+                return p;
+            }
+        });
+        std::string out{ptr ? ptr : ""};
+        if (ptr) std::free(ptr);
+        return out;
+    }();
+    return cached;
+}
 
 // Per-bot "ready for next spawn" gate. Mirrors bot.py::_can_respawn —
 // True at connect (so the bot's first life starts immediately), False
@@ -79,6 +109,17 @@ static void update_round_gate() {
     g_prev_wave_tick = now;
 }
 
+// Per-bot last action — the in-process equivalent of Bots/agent.py's
+// peer-message blackboard. Other bots in the same bundle read these
+// when filling their peer_comm observation slots so the model gets the
+// same "what did my swarm-mates just decide" signal it was trained on.
+// Without this, the 12 peer slots are all zero in the bundle, which
+// puts the trained policy out of distribution — peer features were
+// almost always non-zero during training (the swarm shares an agent),
+// so the model interpreted the zero-vector as a meaningful state and
+// the bundled bots adopted a slightly different action distribution.
+static std::unordered_map<int, int> g_bot_last_action;
+
 // Mirror of bot.py / protocol.py constants. Kept in sync by hand.
 static constexpr int   K_PEERS          = 2;
 static constexpr int   COMM_PER_PEER    = 6;
@@ -91,7 +132,7 @@ static constexpr int NUM_PETAL_TYPES_INC_NONE = 6;   // matches protocol.py
 
 // State-vector offsets (cumulative, append-only — must match agent.py).
 // [HP, hostile×12, loadout_rank×16, peer_comm×12, loadout_type×16,
-//  drops×12, loadout_burst×16, wall_rays×4]
+//  drops×12, loadout_burst×16, wall_rays×4, warps×8, minimap×3]
 static constexpr int OFF_HP             = 0;
 static constexpr int OFF_HOSTILE        = 1;
 static constexpr int OFF_LOADOUT_RANK   = 13;
@@ -100,6 +141,14 @@ static constexpr int OFF_LOADOUT_TYPE   = 41;
 static constexpr int OFF_DROPS          = 57;
 static constexpr int OFF_LOADOUT_BURST  = 69;
 static constexpr int OFF_WALL_RAYS      = 85;
+static constexpr int OFF_WARPS          = 89;
+static constexpr int OFF_MINIMAP        = 97;
+
+// Warp/minimap feature shape — mirrors Bots/wall_map.py:
+//   K_WARPS × (rel_dx_norm, rel_dy_norm, dist_norm, inside_trigger_flag)
+//   then (x_norm, y_norm, no_map_flag).
+static constexpr int K_WARPS            = 2;
+static constexpr int WARP_FEAT_PER_SLOT = 4;
 
 // Mirror of protocol.py PETAL_TYPE_*: 0=NONE 1=DAMAGE 2=TANK 3=HEAL 4=POISON 5=UTILITY.
 enum PetalTypeCat { PT_NONE=0, PT_DAMAGE=1, PT_TANK=2, PT_HEAL=3, PT_POISON=4, PT_UTILITY=5 };
@@ -182,7 +231,7 @@ static Client *client_for_ws(int ws_id) {
     return it->second->getUserData();
 }
 
-// Encode a 89-dim observation from the current sim state for the bot at
+// Encode a 100-dim observation from the current sim state for the bot at
 // ws_id. Out-of-bound / dead-bot calls just zero-fill so the model
 // produces deterministic output (typically biased toward action 0 = stay).
 //
@@ -195,6 +244,8 @@ static Client *client_for_ws(int ws_id) {
 //   [57..68]  3 nearest drops × (dx,dy,rank_norm,type_norm)    (12)
 //   [69..84]  loadout slots × burst_norm                       (16)
 //   [85..88]  4 cardinal wall-ray distances (N,E,S,W)          (4)
+//   [89..96]  2 nearest warps × (dx,dy,dist,inside)            (8)
+//   [97..99]  minimap: (x_norm, y_norm, no_map_flag)           (3)
 void bot_make_obs_impl(int ws_id, float *out) {
     for (int i = 0; i < BOT_OBS_DIM; ++i) out[i] = 0.0f;
     Client *client = client_for_ws(ws_id);
@@ -319,14 +370,109 @@ void bot_make_obs_impl(int ws_id, float *out) {
     // Wall rays. 4 cardinal directions, clamped to WALL_RAY_CAP.
     wall_ray_features(mx, my, &out[OFF_WALL_RAYS]);
 
-    // Peer comm (OFF_PEER_COMM..OFF_PEER_COMM+11) intentionally left zero.
-    // In the standalone bot.py, peer comm carries the last action chosen
-    // by other bots via an in-process blackboard (agent.publish /
-    // agent.read_peers). The bundle's bots act sequentially and each one
-    // sees only the same sim — no peer-output channel exists to populate
-    // from. Leaving zeros matches "I have no information about peers,"
-    // which is what the trained QNet sees during occasional dropout
-    // anyway.
+    // Warps (portals) + minimap (normalised global position). Mirrors
+    // Bots/wall_map.py:warp_features and minimap_features so the bundled
+    // bots see the same trailing observation columns the trained QNet
+    // expects. The server's TiledMap::warps holds the current map's
+    // warps (populated by TiledMap::load); we pick the K_WARPS nearest
+    // by squared distance and fill (rel_dx, rel_dy, dist, inside_flag)
+    // per slot.
+    struct WarpFeat { float d2, dx, dy, radius; };
+    WarpFeat near_warps[K_WARPS];
+    for (int i = 0; i < K_WARPS; ++i) near_warps[i] = {1e30f, 0, 0, 0};
+    for (auto const &w : TiledMap::warps) {
+        float dx = (float)w.x - mx;
+        float dy = (float)w.y - my;
+        float d2 = dx * dx + dy * dy;
+        for (int k = 0; k < K_WARPS; ++k) {
+            if (d2 < near_warps[k].d2) {
+                for (int j = K_WARPS - 1; j > k; --j) near_warps[j] = near_warps[j-1];
+                near_warps[k] = {d2, dx, dy, (float)w.radius};
+                break;
+            }
+        }
+    }
+    for (int k = 0; k < K_WARPS; ++k) {
+        int base = OFF_WARPS + k * WARP_FEAT_PER_SLOT;
+        if (near_warps[k].d2 >= 1e29f) continue;  // empty slot — zeros
+        float dist = std::sqrt(near_warps[k].d2);
+        out[base + 0] = near_warps[k].dx / OBS_SCALE;
+        out[base + 1] = near_warps[k].dy / OBS_SCALE;
+        out[base + 2] = std::min(dist / OBS_SCALE, 1.0f);
+        out[base + 3] = dist <= near_warps[k].radius ? 1.0f : 0.0f;
+    }
+
+    // Minimap: normalised global position. ARENA_WIDTH/HEIGHT come from
+    // the configure-time Shared/MapDimensions.hh header, so they reflect
+    // the bundle's compiled-in map regardless of any runtime override.
+    float aw = (float)ARENA_WIDTH;
+    float ah = (float)ARENA_HEIGHT;
+    if (aw > 0.0f && ah > 0.0f) {
+        float xn = mx / aw;
+        float yn = my / ah;
+        if (xn < 0.0f) xn = 0.0f; else if (xn > 1.0f) xn = 1.0f;
+        if (yn < 0.0f) yn = 0.0f; else if (yn > 1.0f) yn = 1.0f;
+        out[OFF_MINIMAP + 0] = xn;
+        out[OFF_MINIMAP + 1] = yn;
+        out[OFF_MINIMAP + 2] = 0.0f;
+    } else {
+        out[OFF_MINIMAP + 0] = 0.0f;
+        out[OFF_MINIMAP + 1] = 0.0f;
+        out[OFF_MINIMAP + 2] = 1.0f;  // no-map sentinel
+    }
+
+    // Peer comm. Mirrors Bots/bot.py:_peer_features — for each of the
+    // K_PEERS nearest other bots, write (rel_dx, rel_dy, hp, peer_vx,
+    // peer_vy, peer_attacking). g_bot_last_action gives us each peer's
+    // most recent decoded movement direction, the equivalent of the
+    // Python agent's `peer_messages` blackboard. Without this slot the
+    // trained QNet sees zeros, which it never saw during training
+    // (peers were almost always within range in the swarm) and the
+    // policy drifts toward picking non-stay movement actions.
+    struct PeerSlot { float d2, dx, dy, hp; int action; };
+    PeerSlot peers[K_PEERS];
+    for (int i = 0; i < K_PEERS; ++i) peers[i] = {1e30f, 0, 0, 0, 0};
+    for (auto const &kv : WS_MAP) {
+        int peer_ws = kv.first;
+        if (peer_ws == ws_id) continue;
+        WebSocket *peer_socket = kv.second;
+        if (peer_socket == nullptr) continue;
+        Client *peer_client = peer_socket->getUserData();
+        if (peer_client == nullptr || !peer_client->verified) continue;
+        if (!sim->ent_exists(peer_client->camera)) continue;
+        Entity &peer_cam = sim->get_ent(peer_client->camera);
+        if (!sim->ent_alive(peer_cam.player)) continue;
+        Entity &peer = sim->get_ent(peer_cam.player);
+        float pdx = (float)peer.x - mx;
+        float pdy = (float)peer.y - my;
+        float pd2 = pdx * pdx + pdy * pdy;
+        auto it = g_bot_last_action.find(peer_ws);
+        int peer_action = it != g_bot_last_action.end() ? it->second : 0;
+        for (int k = 0; k < K_PEERS; ++k) {
+            if (pd2 < peers[k].d2) {
+                for (int j = K_PEERS - 1; j > k; --j) peers[j] = peers[j-1];
+                peers[k] = {pd2, pdx, pdy, (float)peer.health_ratio, peer_action};
+                break;
+            }
+        }
+    }
+    for (int k = 0; k < K_PEERS; ++k) {
+        int base = OFF_PEER_COMM + k * COMM_PER_PEER;
+        if (peers[k].d2 >= 1e29f) continue;  // empty slot — zeros
+        int act = peers[k].action;
+        // Inventory actions (>= NUM_MOVEMENT_ACTIONS) don't move the
+        // peer — agent.py clamps them to "stay" before deriving
+        // peer_vx/peer_vy. Mirror that here so the comm vector matches.
+        if (act >= NUM_MOVEMENT_ACTIONS) act = 0;
+        int dir = act % NUM_DIRECTIONS;
+        bool peer_defend = act >= NUM_DIRECTIONS;
+        out[base + 0] = peers[k].dx / OBS_SCALE;
+        out[base + 1] = peers[k].dy / OBS_SCALE;
+        out[base + 2] = peers[k].hp;
+        out[base + 3] = DIR_TABLE[dir][0];
+        out[base + 4] = DIR_TABLE[dir][1];
+        out[base + 5] = peer_defend ? 0.0f : 1.0f;  // attack flag = !defend
+    }
 }
 
 // Inject a synthetic Serverbound packet into the server as if it came from
@@ -356,14 +502,21 @@ static void ensure_spawned(int ws_id, Client *client) {
     }
     if (!it->second) return;  // dead, waiting for round end
 
-    // kClientSpawn { string name }. Use a stable name per ws_id.
-    uint8_t buf[64] = {0};
+    // kClientSpawn { string name, string map_path }. Bundled bots ride
+    // along with the human's chosen map — read once from ?spawn=... and
+    // forwarded verbatim. Empty string = the URL didn't override, which
+    // the server treats as "keep the camera's current map" (default for a
+    // fresh camera). The buffer is sized to fit the protocol cap on
+    // map_path (Server/Client.cc::MAX_SPAWN_MAP_PATH_LENGTH = 128).
+    std::string const &map_path = bot_spawn_map_path();
+    uint8_t buf[256] = {0};
     Writer w(buf);
     w.write<uint8_t>(Serverbound::kClientSpawn);
     char name_buf[16];
     std::snprintf(name_buf, sizeof(name_buf), "bot%d", ws_id);
     std::string name(name_buf);
     w.write<std::string>(name);
+    w.write<std::string>(map_path);
     send_to_server(ws_id, buf, (size_t)(w.at - w.packet));
     // Consumed the spawn. The bot can't double-spawn within a round —
     // the next ensure_spawned call only succeeds once the round-end
@@ -419,6 +572,11 @@ void bot_apply_action_impl(int ws_id, int action) {
     // every tick — pure server-side churn that the user sees as
     // dead bots "running" between rounds.
     if (!client->alive()) return;
+
+    // Record this bot's action so other bots can splice it into their
+    // peer_comm observation slot on the next tick. Mirrors bot.py's
+    // `agent.publish(...)` call; see g_bot_last_action.
+    g_bot_last_action[ws_id] = action;
 
     if (action < NUM_MOVEMENT_ACTIONS) {
         int dir = action % NUM_DIRECTIONS;

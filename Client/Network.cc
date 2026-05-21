@@ -91,13 +91,19 @@ void Game::send_inputs() {
 }
 
 void Game::spawn_in() {
-    uint8_t packet[100];
+    // Big enough for: opcode + name (≤ MAX_NAME_LENGTH bytes plus its
+    // varint length prefix) + map_path (capped at 128 chars server-side
+    // plus length prefix). 256 leaves comfortable headroom.
+    uint8_t packet[256];
     Writer writer(static_cast<uint8_t *>(packet));
     if (Game::alive()) return;
     if (Game::on_game_screen == 0) {
         writer.write<uint8_t>(Serverbound::kClientSpawn);
         std::string name = Game::nickname;
         writer.write<std::string>(name);
+        // Empty when the player didn't pass ?map=... — server treats it
+        // as "stay on the current map" (default for a fresh camera).
+        writer.write<std::string>(Game::spawn_map_path);
         socket.send(writer.packet, writer.at - writer.packet);
     } else Game::on_game_screen = 0;
 }

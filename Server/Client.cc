@@ -4,6 +4,7 @@
 #include <Server/PetalTracker.hh>
 #include <Server/Server.hh>
 #include <Server/Spawn.hh>
+#include <Server/TiledMap.hh>
 
 #include <Shared/Binary.hh>
 #include <Shared/Config.hh>
@@ -11,6 +12,30 @@
 #include <iostream>
 
 static uint32_t const RARITY_TO_XP[RarityID::kNumRarities] = { 2, 10, 50, 200, 1000, 5000, 0 };
+
+// Cap on the spawn-arg map path. Real map names live under Map/<dir>/<file>.tmj
+// and are well under this; the limit just bounds protocol cost and rejects
+// pathological inputs early.
+static uint32_t const MAX_SPAWN_MAP_PATH_LENGTH = 128;
+
+// Whitelist for client-supplied map paths. Must look like a Tiled map
+// inside the server's Map/ directory and contain no parent-dir refs —
+// otherwise a connecting client could ask the server to fopen any file
+// on disk via TiledMap::load.
+static bool is_safe_user_map_path(std::string const &path) {
+    if (path.empty()) return false;
+    if (path.size() < 5) return false;
+    if (path.rfind("Map/", 0) != 0) return false;
+    if (path.find("..") != std::string::npos) return false;
+    if (path.size() < 4 || path.compare(path.size() - 4, 4, ".tmj") != 0) return false;
+    for (char c : path) {
+        if (c == '\0') return false;
+        // Reject anything that isn't a plain ASCII path character. Avoids
+        // smuggled control bytes / nullbytes through to fopen.
+        if ((unsigned char)c < 0x20 || (unsigned char)c >= 0x7f) return false;
+    }
+    return true;
+}
 
 Client::Client() : game(nullptr) {}
 
@@ -102,16 +127,31 @@ void Client::on_message(WebSocket *ws, std::string_view message, uint64_t code) 
         }
         case Serverbound::kClientSpawn: {
             if (client->alive()) break;
-            Simulation *simulation = &client->game->simulation;
-            Entity &camera = simulation->get_ent(client->camera);
-            Entity &player = alloc_player(simulation, camera.team);
-            player_spawn(simulation, camera, player);
-            std::string name;
-            //check string length;
+            // Read + validate name and map_path *before* allocating the
+            // player, so a malformed packet doesn't leave a stray flower
+            // in the sim after the VALIDATE() macro short-returns.
             VALIDATE(validator.validate_string(MAX_NAME_LENGTH));
+            std::string name;
             reader.read<std::string>(name);
             VALIDATE(UTF8Parser::is_valid_utf8(name));
             name = UTF8Parser::trunc_string(name, MAX_NAME_LENGTH);
+            VALIDATE(validator.validate_string(MAX_SPAWN_MAP_PATH_LENGTH));
+            std::string requested_map;
+            reader.read<std::string>(requested_map);
+
+            Simulation *simulation = &client->game->simulation;
+            Entity &camera = simulation->get_ent(client->camera);
+            // Empty = "keep current camera map" (which is the default for
+            // a fresh camera, see Server/Game.cc::add_client). Non-empty
+            // is honored only if it passes the whitelist *and* loads;
+            // anything else silently falls back rather than disconnecting
+            // — the client just lands on the current map.
+            if (!requested_map.empty()
+                    && is_safe_user_map_path(requested_map)
+                    && TiledMap::ensure_loaded(requested_map))
+                camera.map_path = requested_map;
+            Entity &player = alloc_player(simulation, camera.team);
+            player_spawn(simulation, camera, player);
             player.set_name(name);
             break;
         }

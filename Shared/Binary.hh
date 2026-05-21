@@ -22,6 +22,11 @@ enum Clientbound {
 enum Serverbound {
     kVerify,
     kClientInput,
+    // { u8: kClientSpawn, string: name, string: map_path } — map_path is
+    // optional (empty = use camera's current map, or default for a fresh
+    // camera). Non-empty paths are validated server-side before the map
+    // is loaded; rejected values fall back to the current map without
+    // disconnecting.
     kClientSpawn,
     kPetalSwap,
     kPetalDelete,

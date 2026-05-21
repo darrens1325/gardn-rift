@@ -21,6 +21,12 @@ namespace Game {
     extern EntityID camera_id;
     extern EntityID player_id;
     extern std::string nickname;
+    // Optional override map path requested via the `?spawn=` URL query
+    // parameter at page load. Empty = spawn on the server's default map.
+    // Sent verbatim in every kClientSpawn packet; the server validates
+    // against its own whitelist (Server/Client.cc::is_safe_user_map_path)
+    // and silently falls back on rejection.
+    extern std::string spawn_map_path;
     extern std::array<uint8_t, PetalID::kNumPetals> seen_petals;
     // Indexed [mob_id][rarity]: nonzero once we've rendered a live mob
     // of this (kind, rolled-rarity) tuple. The mob gallery emits one
