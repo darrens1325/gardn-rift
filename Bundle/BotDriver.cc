@@ -85,6 +85,7 @@ static std::string const &bot_spawn_map_path() {
     return cached;
 }
 
+
 // Per-bot "ready for next spawn" gate. Mirrors bot.py::_can_respawn —
 // True at connect (so the bot's first life starts immediately), False
 // after each spawn, re-armed True when the server's wave_tick wraps
@@ -182,9 +183,20 @@ static int classify_petal_type(PetalID::T id) {
 // 4 cardinal-direction wall-distance rays. Mirrors Bots/wall_map.py —
 // the cardinal-ray AABB check collapses to a 1-D containment test:
 // vertical rays only care about walls whose x-span contains px, etc.
-// Reads TiledMap::collision_rects + collision_polys (the latter via
-// their bounding boxes — exact polygon vs ray is overkill for a
-// cardinal sensor). Output order matches WALL_FEAT layout in
+// Reads TiledMap::collision_rects + collision_polys. CRITICAL: bot.py
+// treats every occupied solid-tile *cell* as a full tile rect (it skips
+// the SVG decode), but TiledMap stores per-tile polygons whose
+// bounding boxes can be SMALLER than the cell for partial-tile shapes
+// (cliff diagonals, water edges). Naively using polygon bboxes makes
+// the bundle's wall rays report walls as further away than bot.py
+// thinks they are, so the model — trained on bot.py's conservative
+// distances — never triggers wall avoidance and the bot drives into
+// the wall. We snap each polygon back to its containing tile cell
+// using the polygon's own per-source-map tile_w / tile_h (different
+// maps use different tile sizes — main.tmj is 512, others vary). Older
+// polygons created before that field existed have tile_w == 0; we fall
+// back to the bbox in that case to preserve previous behaviour rather
+// than divide by zero. Output order matches WALL_FEAT layout in
 // wall_map.py: [N, E, S, W].
 static void wall_ray_features(float px, float py, float *out) {
     float north = py;
@@ -217,8 +229,21 @@ static void wall_ray_features(float px, float py, float *out) {
     };
     for (auto const &r : TiledMap::collision_rects)
         consider_rect(r.x, r.y, r.w, r.h);
-    for (auto const &p : TiledMap::collision_polys)
-        consider_rect(p.min_x, p.min_y, p.max_x - p.min_x, p.max_y - p.min_y);
+    for (auto const &p : TiledMap::collision_polys) {
+        if (p.tile_w > 0.0f && p.tile_h > 0.0f) {
+            // Snap to the containing tile cell. Each polygon was emitted
+            // from exactly one cell (Server/TiledMap.cc:build_cell_polygon),
+            // so floor(min/tile_w) gives the cell index reliably even
+            // when the polygon doesn't touch the cell corners. Uses the
+            // polygon's own tile_w/tile_h so multi-map bundles with
+            // different tile sizes still get the right cell.
+            float cell_x = std::floor(p.min_x / p.tile_w) * p.tile_w;
+            float cell_y = std::floor(p.min_y / p.tile_h) * p.tile_h;
+            consider_rect(cell_x, cell_y, p.tile_w, p.tile_h);
+        } else {
+            consider_rect(p.min_x, p.min_y, p.max_x - p.min_x, p.max_y - p.min_y);
+        }
+    }
     out[0] = std::min(north / WALL_RAY_CAP, 1.0f);
     out[1] = std::min(east  / WALL_RAY_CAP, 1.0f);
     out[2] = std::min(south / WALL_RAY_CAP, 1.0f);
@@ -291,6 +316,7 @@ void bot_make_obs_impl(int ws_id, float *out) {
     float cam_y = (float)camera.camera_y;
     float view_w = 960.0f / (float)camera.fov + 50.0f;
     float view_h = 540.0f / (float)camera.fov + 50.0f;
+    std::string const &my_map_path = camera.map_path;
     sim->spatial_hash.query(cam_x, cam_y, view_w, view_h, [&](Simulation *, Entity &e) {
         if (e.id == me_id) return;
         if (!e.has_component(kPhysics)) return;
@@ -301,6 +327,14 @@ void bot_make_obs_impl(int ws_id, float *out) {
         // just-killed hostile as the nearest target, perturbing the
         // model relative to its training-time inputs.
         if (e.pending_delete) return;
+        // Match Server/Game.cc::_update_client — the kClientUpdate packet
+        // only ships entities on the camera's current map, so bot.py's
+        // self.entities is implicitly map-filtered. The spatial hash is
+        // a single grid spanning all maps, so without this guard a
+        // bundled bot on map A sees mobs at the same (x, y) on map B as
+        // if they were colocated. Important post-warp-system, since
+        // multi-map play is the default.
+        if (e.map_path != my_map_path) return;
         float dx = (float)e.x - mx;
         float dy = (float)e.y - my;
         float d2 = dx*dx + dy*dy;
@@ -421,23 +455,24 @@ void bot_make_obs_impl(int ws_id, float *out) {
         out[OFF_MINIMAP + 2] = 1.0f;  // no-map sentinel
     }
 
-    // Peer comm. Mirrors Bots/bot.py:_peer_features — for each of the
-    // K_PEERS nearest other bots, write (rel_dx, rel_dy, hp, peer_vx,
-    // peer_vy, peer_attacking). g_bot_last_action gives us each peer's
-    // most recent decoded movement direction, the equivalent of the
-    // Python agent's `peer_messages` blackboard. Without this slot the
-    // trained QNet sees zeros, which it never saw during training
-    // (peers were almost always within range in the swarm) and the
-    // policy drifts toward picking non-stay movement actions.
+    // Peer comm. Mirrors Bots/bot.py:_peer_features exactly — for each of
+    // the K_PEERS nearest other bots that have already published an
+    // action, write (rel_dx, rel_dy, hp, peer_vx, peer_vy, peer_attacking).
+    // Iterating g_bot_last_action (= the in-process equivalent of bot.py's
+    // peer_messages) keeps the semantics identical: peers that haven't
+    // called bot_apply_action_impl yet are absent, not present-with-
+    // action=stay. (WS_MAP also includes the local human at ws_id=0 and
+    // freshly-spawned bots that haven't received an action yet; iterating
+    // it would surface "ghost" peers the trained policy never saw.)
     struct PeerSlot { float d2, dx, dy, hp; int action; };
     PeerSlot peers[K_PEERS];
     for (int i = 0; i < K_PEERS; ++i) peers[i] = {1e30f, 0, 0, 0, 0};
-    for (auto const &kv : WS_MAP) {
+    for (auto const &kv : g_bot_last_action) {
         int peer_ws = kv.first;
         if (peer_ws == ws_id) continue;
-        WebSocket *peer_socket = kv.second;
-        if (peer_socket == nullptr) continue;
-        Client *peer_client = peer_socket->getUserData();
+        auto ws_it = WS_MAP.find(peer_ws);
+        if (ws_it == WS_MAP.end() || ws_it->second == nullptr) continue;
+        Client *peer_client = ws_it->second->getUserData();
         if (peer_client == nullptr || !peer_client->verified) continue;
         if (!sim->ent_exists(peer_client->camera)) continue;
         Entity &peer_cam = sim->get_ent(peer_client->camera);
@@ -446,8 +481,7 @@ void bot_make_obs_impl(int ws_id, float *out) {
         float pdx = (float)peer.x - mx;
         float pdy = (float)peer.y - my;
         float pd2 = pdx * pdx + pdy * pdy;
-        auto it = g_bot_last_action.find(peer_ws);
-        int peer_action = it != g_bot_last_action.end() ? it->second : 0;
+        int peer_action = kv.second;
         for (int k = 0; k < K_PEERS; ++k) {
             if (pd2 < peers[k].d2) {
                 for (int j = K_PEERS - 1; j > k; --j) peers[j] = peers[j-1];
@@ -539,7 +573,7 @@ int bot_alive_count_impl() {
 
 // Apply a flat action index from the QNet's argmax. Action layout (matches
 // agent.py):
-//   0..8   : movement (stay/N/NE/E/SE/S/SW/W/NW), attack flag held
+//   0..8   : movement (stay,E,SE,S,SW,W,NW,N,NE), attack flag held
 //   9..17  : same movements, defend flag held
 //   18..25 : swap loadout_ids[i] ↔ loadout_ids[i+8]  (i = 0..7)
 //   26..41 : delete loadout_ids[i]                    (i = 0..15)
@@ -578,13 +612,25 @@ void bot_apply_action_impl(int ws_id, int action) {
     // `agent.publish(...)` call; see g_bot_last_action.
     g_bot_last_action[ws_id] = action;
 
+    // Always send a kClientInput every tick, even when the chosen action
+    // is a swap/delete. bot.py does the same: when the model picks an
+    // inventory action it issues kClientInput (0, 0, INPUT_ATTACK) before
+    // the inventory packet (see _decide_and_learn:1341-1346). Without
+    // this the server keeps applying whatever input was sent last —
+    // typically the bot's previous movement vector — so a bot that
+    // chooses to swap or delete keeps gliding in its prior direction
+    // and never appears to "stop." This was the visible symptom of
+    // "bots rarely stop in the bundle."
+    float vx = 0.0f, vy = 0.0f;
+    uint8_t flags = INPUT_ATTACK;
     if (action < NUM_MOVEMENT_ACTIONS) {
         int dir = action % NUM_DIRECTIONS;
         bool use_defend = action >= NUM_DIRECTIONS;
-        float vx = DIR_TABLE[dir][0] * MOVE_MAG;
-        float vy = DIR_TABLE[dir][1] * MOVE_MAG;
-        uint8_t flags = use_defend ? INPUT_DEFEND : INPUT_ATTACK;
-
+        vx = DIR_TABLE[dir][0] * MOVE_MAG;
+        vy = DIR_TABLE[dir][1] * MOVE_MAG;
+        flags = use_defend ? INPUT_DEFEND : INPUT_ATTACK;
+    }
+    {
         uint8_t buf[16] = {0};
         Writer w(buf);
         w.write<uint8_t>(Serverbound::kClientInput);
@@ -592,8 +638,9 @@ void bot_apply_action_impl(int ws_id, int action) {
         w.write<float>(vy);
         w.write<uint8_t>(flags);
         send_to_server(ws_id, buf, (size_t)(w.at - w.packet));
-        return;
     }
+
+    if (action < NUM_MOVEMENT_ACTIONS) return;
     int rel = action - NUM_MOVEMENT_ACTIONS;
     if (rel < 8) {
         // Swap action.

@@ -656,6 +656,8 @@ static void build_cell_polygon(uint32_t col, uint32_t row,
     out.verts.reserve(local_poly.size());
     out.min_x = out.min_y =  1e30f;
     out.max_x = out.max_y = -1e30f;
+    out.tile_w = (float)tile_w;
+    out.tile_h = (float)tile_h;
     float sx_world = (float)tile_w / image_w;
     float sy_world = (float)tile_h / image_h;
     for (auto const &p : local_poly) {

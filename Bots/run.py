@@ -208,6 +208,8 @@ def _spawn_workers(args: argparse.Namespace) -> int:
             "--initial-delay", f"{worker_initial_delay:.3f}",
             "--control-hz", str(args.control_hz),
             "--action-repeat", str(args.action_repeat),
+            "--build", args.build,
+            "--build-decay-steps", str(args.build_decay_steps),
             "--lr", str(args.lr),
             "--gamma", str(args.gamma),
             "--eps-decay", str(args.eps_decay),
@@ -425,6 +427,21 @@ async def _amain(args: argparse.Namespace) -> None:
 
     agent.start_trainer()
 
+    # Resolve `--build`. The bot always SPAWNS with kBasic — the named
+    # preset is a *reward-shaping target* (see bot.py W_BUILD_TARGET).
+    # "random" assigns a different non-basic target to each bot so the
+    # swarm collectively demonstrates every build; a single name
+    # ("tank", "damage", ...) makes every bot chase the same target.
+    # "basic" disables shaping entirely (returns BUILD_BASIC, which
+    # bot.py treats as "no target").
+    import random as _r
+    from bot import BUILD_NAMES, BUILD_BASIC  # local import: bot.py already imported above
+    def _resolve_build(i: int) -> int:
+        choice = (args.build or "basic").lower()
+        if choice == "random":
+            return _r.choice([v for k, v in BUILD_NAMES.items() if k != "basic"])
+        return BUILD_NAMES.get(choice, BUILD_BASIC)
+
     bots = [
         LearningBot(
             _make_name(i + (args.worker_id or 0) * 100),
@@ -432,6 +449,8 @@ async def _amain(args: argparse.Namespace) -> None:
             url=args.url,
             control_hz=args.control_hz,
             action_repeat=args.action_repeat,
+            target_build_id=_resolve_build(i),
+            build_decay_steps=args.build_decay_steps,
         )
         for i in range(args.count)
     ]
@@ -481,6 +500,26 @@ def main() -> int:
         help="hold each agent decision for N control ticks before re-deciding. "
              "Helps DQN credit assignment at very high TPS where 1 tick is too "
              "short for any meaningful game-event to resolve. Try 4 at TPS=400.",
+    )
+    p.add_argument(
+        "--build", default="basic",
+        help="target-loadout preset (Shared/Builds.hh): basic|damage|tank|"
+             "heal|poison|mixed|random. The bot still SPAWNS with kBasic; "
+             "the named build is a reward-shaping goal — the bot earns "
+             "per-tick bonus proportional to how many target petals are "
+             "in its primary loadout. 'random' assigns a different target "
+             "per-bot so the swarm demonstrates every build in parallel. "
+             "'basic' (default) disables shaping.",
+    )
+    p.add_argument(
+        "--build-decay-steps", type=int, default=0,
+        help="curriculum: anneal the --build reward bonus to 0 over this "
+             "many env_steps. Bot first learns 'this combination of "
+             "petals plays well' against the shaped reward, then the "
+             "shaping fades and the bot has to keep playing on the "
+             "policy it built. 0 = no decay, shaping stays at full "
+             "weight forever (use when you actively want to lock the "
+             "bot into a specific archetype).",
     )
     p.add_argument("--lr", type=float, default=5e-4, help="learning rate")
     p.add_argument("--gamma", type=float, default=0.97, help="discount factor")

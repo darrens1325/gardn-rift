@@ -1869,7 +1869,7 @@ void draw_static_mob(MobID::T mob_id, Renderer &ctx, MobRenderAttributes attr) {
             ctx.fill();
             break;
         case MobID::kWasp:
-            ctx.scale(radius / 10.0);
+            ctx.scale(radius / 15.0);
             ctx.set_fill(0xff333333);
             ctx.begin_path();
             ctx.move_to(-25.477, 0.000);

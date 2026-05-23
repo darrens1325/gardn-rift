@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import asyncio
 import math
+import random
 
 import websockets
 
@@ -88,14 +89,58 @@ from protocol import (
 
 VERSION_HASH = 4728567265382328  # bumped: kClientSpawn gained a trailing map_path string
 
+# Build identifiers and target-family tables for reward shaping. Pure
+# Python — the server never sees these. Server always grants kBasic
+# ×5; the bot has to earn the demonstrated build via normal gameplay.
+# Match is rarity-agnostic: any tier of the target petal family counts
+# toward the build (a Common Stinger counts the same as Epic Stinger).
+from builds import (
+    BUILD_BASIC,
+    BUILD_DAMAGE,
+    BUILD_TANK,
+    BUILD_HEAL,
+    BUILD_POISON,
+    BUILD_MIXED,
+    BUILD_NAMES,
+    BUILD_NAME_BY_ID,
+    primary_target_families as _build_primary_target,
+    match_score as _build_match_score,
+)
+
+# Sync-mode watchdog: max seconds we wait for the next kClientUpdate before
+# assuming the barrier deadlocked and re-sending kStep to nudge the server.
+# Generous so a normal slow tick (heavy gradient step, GC pause, …) doesn't
+# spuriously fire — only a true wedge does. Without this, occasional missed
+# event.set() races (recv_loop sets the event between our wait() returning
+# and clear() running) silently freeze the whole barrier and the training
+# run grinds to a halt with episode counters stuck.
+SYNC_WAIT_TIMEOUT = 5.0
+
 MOVE_MAG = 260.0          # server clamps to PLAYER_ACCELERATION above 200
 DEFAULT_CONTROL_HZ = 20   # sane default for stock TPS=20; bump when server runs faster
 NEAREST_K = 3             # number of hostiles encoded in the observation
 
 # Reward weights
 W_SCORE = 1.2
-W_HP = 10.0
-IDLE_PENALTY = 0.05
+# Per-tick reward proportional to `cur_hp - prev_hp`. Bumped from 10 to
+# 15 because deployment captures (Bundle obs-dump 2026-05-22) showed
+# bots ignoring sustained HP loss — at slow drain rates (~0.005 HP/tick
+# from passive damage) the old W_HP=10 generated a -0.05/tick signal,
+# completely drowned by W_DAMAGE=10 × any tiny damage dealt. The
+# transition gradient now bites hard enough that the policy should
+# notice "defend while taking damage" as a viable alternative to
+# "spam attack at all costs." See also LOW_HP_PENALTY below for the
+# *sustained* part of the signal.
+W_HP = 15.0
+# Per-tick cost just for being alive. Bumped from 0.05 → 0.10 alongside
+# zeroing W_PETAL_PRESENT (training stats env_steps=150M+ showed
+# episodes stuck at 147 with bots camping indefinitely). The combined
+# effect: camping with full loadout now costs -0.10/tick (vs. +0.20
+# before), giving the value function a clear "do something productive
+# or eat a continuous loss" gradient. Engaging hostiles still pays
+# +0.18/tick net (W_PROXIMITY + W_APPROACH - IDLE), preserving the
+# positive incentive to seek targets.
+IDLE_PENALTY = 0.10
 DEATH_PENALTY = 18.0
 
 # PvP reward shaping. Encourages the policy to seek out other bots rather
@@ -112,7 +157,12 @@ DEATH_PENALTY = 18.0
 #    hostile (mob or player) is within range. Continuous gradient toward
 #    "be near a fight" even before a kill lands. Tiny per tick.
 W_PVP_BONUS = 5.0
-W_PROXIMITY = 0.05
+# Per-tick reward while *any* hostile is within PROXIMITY_RANGE units.
+# Bumped from 0.05 → 0.2 alongside the W_APPROACH change — the policy
+# needs a clearer "be near the fight" signal vs the safer
+# W_PETAL_PRESENT camping reward. At 0.2/tick × 20 Hz this contributes
+# +4/sec while in range, comparable to a slow stream of mob damage.
+W_PROXIMITY = 0.2
 PROXIMITY_RANGE = 600.0
 
 # Damage-dealt shaping. The proximity bonus rewards loitering near an enemy;
@@ -149,7 +199,17 @@ W_PETAL_DAMAGE_BONUS = 8.0
 # the kill. Capping the per-tick contribution at a physically-plausible
 # closing speed (≈ terminal velocity × a couple of ticks) keeps the term
 # focused on actual motion rather than lock-target changes.
-W_APPROACH = 2.0
+#
+# Bumped from 2.0 → 8.0 after deployment captures (Bundle obs-dump
+# 2026-05-22) showed the trained policy picking action 0 (stay+atk)
+# 95%+ of ticks with occasional one-tick movement bursts. The math
+# made staying objectively safer: a 5-petal level-1 bot earned ~+0.5
+# per-tick from W_PETAL_PRESENT for sitting still, while approaching
+# at terminal velocity (15 units/tick) paid only 2.0 × 15/1500 = 0.02
+# per tick. The approach signal needs to be the same order of
+# magnitude as the petal-having stream so the policy treats "walk
+# toward the fight" as a genuine alternative to "camp my spawn."
+W_APPROACH = 8.0
 APPROACH_CAP = 50.0    # max distance-units of closing rewarded per tick
 
 # Petal-having shaping. With 24 inventory actions out of 42, a uniform-
@@ -165,7 +225,19 @@ APPROACH_CAP = 50.0    # max distance-units of closing rewarded per tick
 # reduces this reward stream, giving the policy the missing direct gradient.
 # Keeps inventory actions model-controlled (no heuristic gating); just
 # makes the cost of deletion immediately visible.
-W_PETAL_PRESENT = 0.1
+# Per-tick bonus per non-empty primary slot, before the rarity scaling
+# below. Zeroed out after training-stats (env_steps=150M+) showed the
+# policy locked into "camp in a corner with full starting loadout"
+# accumulating +0.25/tick while episodes never ended. The previous
+# halving (0.1→0.05) wasn't enough — at +0.20/tick camping net, the
+# discounted future value of staying still still beat the riskier
+# engagement strategies. Removing W_PETAL_PRESENT entirely flips
+# camping to -IDLE_PENALTY/tick (clearly negative) so the policy
+# can't reach a positive-value fixed point by doing nothing. We
+# still discourage *losing* petals via W_EMPTY_PRIMARY_PENALTY and
+# W_DELETE_COST below — the gradient toward "keep your loadout" is
+# preserved on the cost side, just not on the bonus side.
+W_PETAL_PRESENT = 0.0
 # Per-tick bonus is scaled by `1 + RARITY_PRESENT_SCALE * rank` so a slot
 # holding kUnique pays more than a slot holding kCommon. With scale=0.5:
 # common=1.0×, unusual=1.5×, rare=2.0×, ..., unique=4.0×. Gives the policy
@@ -210,6 +282,47 @@ W_DELETE_COST = 1.5
 # whatever lived in the slot we just deleted from.
 LOADOUT_RANK_OFFSET = 13
 
+# One-shot cost per kPetalSwap. Cheaper than delete because swaps are
+# reversible — a bad swap can be undone next tick, whereas a bad delete
+# is permanent. But it cannot be free: without a per-swap cost the
+# policy memorises "swap[i↔j] has high Q in this state" and oscillates
+# between two states forever (each swap reverses the previous, net
+# loadout unchanged, no penalty, while the bot ignores damage and
+# drops). Observed in deployment captures (see Bundle obs-dump trace
+# 2026-05-22): bot locked into swap[3↔11] for 12 s while HP bled from
+# 0.90 → 0.40, never defending or attacking.
+#
+# Plus a multiplier when the swap would leave the bot in a *worse*
+# primary-loadout configuration than before (more empty primary slots
+# than after the swap, or a higher-rarity petal pushed into storage).
+# Captures the specific "self-sabotage swap" the trained policy fell
+# into without forbidding legitimate swaps (drop pickup → storage,
+# storage → primary upgrade).
+W_SWAP_COST = 0.5
+W_SWAP_BAD_MULT = 3.0
+
+# Low-HP per-tick survival pressure. W_HP scales `d_hp` (per-tick HP
+# *delta*), so once the bot stops actively taking damage at HP=0.3 the
+# penalty stream goes to zero — even though the bot is still one hit
+# from death. LOW_HP_PENALTY is a continuous per-tick cost while
+# `cur_hp < LOW_HP_THRESHOLD`, linear in how deep below the threshold
+# we are: at HP=0 it pays the full W_LOW_HP_PENALTY; at HP=threshold
+# it pays nothing. Gives the policy a sustained "you are about to die"
+# gradient that should bias toward defend (curls petals inward = body
+# shield) or fleeing toward open space rather than picking inventory
+# actions while dying.
+LOW_HP_THRESHOLD = 0.5
+# Reduced from 1.0 → 0.3 after observing the policy converge to "avoid
+# all damage at any cost" (env_steps=150M+ training stats showed
+# episodes-stuck-at-147, ep_R mean = -1931 from per-tick survival
+# penalties accumulating over indefinite camping). A 1.0/tick penalty
+# at zero HP made any HP loss feel catastrophic to the value
+# function; the policy's response was to never engage. 0.3 still
+# nudges toward defensive play at low HP but doesn't dominate the
+# damage-reward stream — taking a hit to land 2 hits is once again
+# net positive in expectation, where before it was strictly avoided.
+W_LOW_HP_PENALTY = 0.3
+
 # Kill-event bonuses. The damage-credit path already pays per HP-ratio
 # point dealt by our petals, so the killing blow naturally pays whatever
 # share of the victim's HP we removed in that final tick. These flat
@@ -245,6 +358,21 @@ W_ROUND_WIN = 150.0
 # the policy away from walls smoothly rather than as an on/off step.
 WALL_AVOID_THRESHOLD = 200.0
 W_WALL_AVOID = 0.4
+
+# Build-target shaping. When the bot is given a target build via
+# `--build`, every per-tick reward includes a bonus = W_BUILD_TARGET ×
+# match_score × anneal_factor, where match_score is the multiset
+# intersection of (primary loadout, target primary) / |target primary|
+# in [0, 1], and anneal_factor decays linearly from 1.0 to 0.0 over
+# `--build-decay-steps` env_steps. At full match + full anneal the
+# bonus pays 0.5/tick — comparable to W_PROXIMITY (0.2) and stronger
+# than IDLE_PENALTY (0.10), so a bot that's already on the build
+# clearly prefers staying on it; partial matches still pay something
+# (0.2/tick at 40% match), keeping the gradient continuous. Tuned
+# specifically so a bot that picks up *one* target petal already
+# earns more than it would just camping, but a bot with no target
+# petals is no worse off than vanilla (only the bonus disappears).
+W_BUILD_TARGET = 0.5
 
 
 def _hostile_features(entities: dict, my_player: dict, my_team: tuple[int, int]) -> list[float]:
@@ -528,11 +656,30 @@ class LearningBot:
         url: str = "ws://localhost:9001",
         control_hz: float = DEFAULT_CONTROL_HZ,
         action_repeat: int = 1,
+        target_build_id: int = BUILD_BASIC,
+        build_decay_steps: int = 0,
     ) -> None:
         self.name = name
         self.agent = agent
         self.url = url
         self.control_hz = float(control_hz)
+        # Target-loadout preset (Shared/Builds.hh). The bot still spawns
+        # with kBasic ×5 like every other player — the build is a
+        # *reward-shaping target* so the bot is paid a per-tick bonus
+        # for currently equipping the demonstrated petals in its primary
+        # slots. As env_steps increases past build_decay_steps that
+        # bonus anneals to zero, so the bot first learns "this is what
+        # the game looks like with damage petals," then has to keep
+        # playing with diminishing handholding, and eventually explores
+        # freely with the policy it built during the demo phase.
+        # BUILD_BASIC = no shaping (default).
+        self.target_build_id = int(target_build_id) & 0xFF
+        # Target families (rarity-agnostic petal-family strings). Match
+        # against bot.player.loadout_ids[:5] via builds.match_score —
+        # any tier of the target family contributes equally so the bot
+        # can hit partial credit early without needing Epic drops.
+        self._target_primary: list[str] = _build_primary_target(self.target_build_id)
+        self.build_decay_steps = max(0, int(build_decay_steps))
         # Hold each agent decision for `action_repeat` ticks before consulting
         # the policy again. Helps DQN credit assignment when the simulation is
         # running far faster than meaningful game-events take to resolve
@@ -622,6 +769,16 @@ class LearningBot:
         # ticks, that delta is credited as drops_picked_up_this_life.
         # Swaps don't change the count so they don't false-positive.
         self.pvp_kills_this_life = 0
+        # Mob kills since the bot's current life began. Used alongside
+        # pvp_kills_this_life to populate the `kills` extra-metric in
+        # `record_episode_extras` so the rolling mean reflects total
+        # kills, not just PvP. With small training crowds and a huge
+        # map, PvP kills are vanishingly rare and the `kills=0.00` stat
+        # line stayed at zero indefinitely — including mob kills makes
+        # the metric a useful proxy for "is the bot engaging targets at
+        # all?" while a separate `pvp_kills` field preserves the
+        # PvP-only signal for anyone who wants it.
+        self.mob_kills_this_life = 0
         self.drops_picked_up_this_life = 0
         self._prev_nonempty_slots = 0
 
@@ -677,11 +834,32 @@ class LearningBot:
         w = Writer(); w.w_u8(S_VERIFY); w.w_u64(VERSION_HASH)
         await ws.send(w.to_bytes())
 
+    def _build_shaping_factor(self) -> float:
+        """Anneal weight on the build-target reward stream. Linear from
+        1.0 → 0.0 over `build_decay_steps` env_steps, then 0 forever.
+        Returns 1.0 (constant on) when build_decay_steps is 0 — i.e.
+        "no decay configured, just always shape." Reads the swarm-wide
+        agent.env_steps so every bot in the process is on the same
+        anneal phase."""
+        if self._target_primary == []:
+            return 0.0
+        if self.build_decay_steps <= 0:
+            return 1.0
+        progress = self.agent.env_steps / self.build_decay_steps
+        if progress >= 1.0:
+            return 0.0
+        return 1.0 - progress
+
     async def _send_spawn(self, ws) -> None:
-        # Empty map_path = "use server's default map" — bots don't need
-        # to pick a non-default map; the trailing string just keeps us
-        # wire-compatible with the post-VERSION_HASH-bump protocol.
-        w = Writer(); w.w_u8(S_CLIENT_SPAWN); w.w_string(self.name[:16]); w.w_string("")
+        # Server always grants the kBasic starting loadout. The "build"
+        # the bot is supposed to learn lives entirely on the Python side
+        # as reward shaping (W_BUILD_TARGET in _decide_and_learn) — the
+        # bot has to earn the build by killing mobs and swapping drops
+        # into primary. No protocol change involved.
+        w = Writer()
+        w.w_u8(S_CLIENT_SPAWN)
+        w.w_string(self.name[:16])
+        w.w_string("")
         await ws.send(w.to_bytes())
 
     async def _send_input(self, ws, x: float, y: float, flags: int) -> None:
@@ -863,8 +1041,13 @@ class LearningBot:
             ranks = [r for r in ranks if r >= 0]
             if ranks:
                 avg_rarity = sum(ranks) / len(ranks)
+        # `kills` is total (mob + PvP) so the metric reflects any
+        # engagement, not the much rarer PvP-only signal. `pvp_kills`
+        # exposes the PvP-only count for anyone training a PvP-aware
+        # checkpoint.
         self.agent.record_episode_extras({
-            "kills": float(self.pvp_kills_this_life),
+            "kills": float(self.pvp_kills_this_life + self.mob_kills_this_life),
+            "pvp_kills": float(self.pvp_kills_this_life),
             "drops": float(self.drops_picked_up_this_life),
             "damage": float(self.damage_dealt),
             "petal_rarity": avg_rarity,
@@ -903,6 +1086,7 @@ class LearningBot:
         self.approach_reward_total = 0.0
         # Reset per-life extras counters for the next episode.
         self.pvp_kills_this_life = 0
+        self.mob_kills_this_life = 0
         self.drops_picked_up_this_life = 0
         self._prev_nonempty_slots = 0
 
@@ -1006,7 +1190,7 @@ class LearningBot:
             # Credit-assigned to the delete action directly, so the QNet
             # learns "delete = expensive" without waiting for the empty-slot
             # penalty stream to flow through several future ticks.
-            prev_kind, prev_p1, _ = decode_inventory_action(self._prev_action)
+            prev_kind, prev_p1, prev_p2 = decode_inventory_action(self._prev_action)
             if prev_kind == "delete":
                 # Scale the cost by the rarity of what we just deleted, so
                 # tossing a kUnique is far more painful than tossing a
@@ -1022,6 +1206,58 @@ class LearningBot:
                         rank = norm * (_MAX_RARITY_RANK + 1) - 1
                         rarity_factor = 1.0 + RARITY_PRESENT_SCALE * max(0.0, rank)
                 reward -= W_DELETE_COST * rarity_factor
+            elif prev_kind == "swap":
+                # Per-swap base cost (reversible, so cheaper than delete)
+                # plus a multiplier when the swap was a strict downgrade:
+                # primary slot was filled and storage slot was empty
+                # (swap empties primary → strictly worse next tick), or
+                # storage slot was a *lower* rank than primary (downgrade).
+                # Captures the deployment failure mode where the policy
+                # locks into swap[i↔j] for many ticks while HP drains.
+                swap_cost = W_SWAP_COST
+                if (self._prev_state is not None
+                        and 0 <= prev_p1 < 8
+                        and 0 <= prev_p2 < 16):
+                    primary_norm = self._prev_state[LOADOUT_RANK_OFFSET + prev_p1]
+                    storage_norm = self._prev_state[LOADOUT_RANK_OFFSET + prev_p2]
+                    # Filled primary swapped with empty storage → primary
+                    # becomes empty (lossy). Or higher-rank primary
+                    # swapped with lower-rank storage → downgrade. Either
+                    # way, the swap left us in a worse primary state.
+                    if primary_norm > 0.0 and storage_norm < primary_norm:
+                        swap_cost *= W_SWAP_BAD_MULT
+                reward -= swap_cost
+            # Sustained survival pressure at low HP. W_HP only fires on
+            # transitions, so a bot stuck at HP=0.3 stops paying the
+            # "you're dying" cost the moment damage pauses. This term
+            # is a per-tick continuous penalty while HP is below
+            # LOW_HP_THRESHOLD, linear in the deficit. Independent of
+            # whether HP is changing — sitting at low HP is itself the
+            # signal to do something.
+            if cur_hp < LOW_HP_THRESHOLD:
+                deficit = (LOW_HP_THRESHOLD - cur_hp) / LOW_HP_THRESHOLD
+                reward -= W_LOW_HP_PENALTY * deficit
+            # Build-target shaping. When --build NAME is set the bot is
+            # paid a per-tick bonus proportional to how many target
+            # petals are currently in its primary loadout — encourages
+            # the policy to learn the demonstrated build by killing
+            # mobs for drops and swapping them into primary, rather
+            # than having to discover a viable build from scratch. The
+            # weight decays linearly to 0 over build_decay_steps (see
+            # _build_shaping_factor) so the demo eventually fades and
+            # the bot's policy has to stand on its own. Match score is
+            # a multiset intersection / target_size in [0, 1]; the
+            # full bonus is only paid for a perfect match, partial
+            # progress gets a partial pay-out so the gradient is
+            # continuous.
+            if self._target_primary:
+                factor = self._build_shaping_factor()
+                if factor > 0.0:
+                    ids = player.get("loadout_ids") or []
+                    primary = [int(x) for x in ids[:5]]
+                    ms = _build_match_score(primary, self._target_primary)
+                    if ms > 0.0:
+                        reward += W_BUILD_TARGET * ms * factor
             # Engagement shaping #2: small per-tick bonus while *any* hostile
             # (mob or enemy player) is within engagement range. Continuous
             # gradient toward "seek a fight," even before any kill resolves.
@@ -1186,6 +1422,7 @@ class LearningBot:
                 reward += W_PLAYER_KILL_BONUS * confirmed_pvp_kills
             self.pvp_kills += confirmed_pvp_kills
             self.pvp_kills_this_life += confirmed_pvp_kills
+            self.mob_kills_this_life += confirmed_mob_kills
             # Approach shaping: dense per-tick gradient toward "any hostile."
             # Computes change in the nearest-hostile distance vs. last tick;
             # capped so a target swap (kill, target despawn, or a closer
@@ -1460,12 +1697,31 @@ class LearningBot:
                 while not stop.is_set():
                     if self.sync_mode:
                         # Lockstep: wait until the next world update lands.
-                        # Clear immediately after awaiting so we won't
-                        # re-fire if multiple updates arrived between
-                        # iterations (shouldn't happen in sync mode but
-                        # is harmless to guard against).
+                        # Bounded so a missed event.set() (recv_loop fires
+                        # between our `wait()` returning and `clear()`) or
+                        # a server-side hiccup can't permanently deadlock
+                        # the barrier — if no update arrives in
+                        # SYNC_WAIT_TIMEOUT seconds we re-send kStep to
+                        # the server. The server is idempotent on extra
+                        # kStep packets for clients already removed from
+                        # pending_step (client_requested_step early-outs
+                        # on empty), so the worst case is a noop. Without
+                        # this watchdog, observed lockups during long
+                        # training runs would freeze episode counters.
                         try:
-                            await update_event.wait()
+                            await asyncio.wait_for(
+                                update_event.wait(),
+                                timeout=SYNC_WAIT_TIMEOUT,
+                            )
+                        except asyncio.TimeoutError:
+                            # No update for too long. Re-send kStep in
+                            # case the server was waiting on us, then
+                            # loop back to wait() again.
+                            try:
+                                await self._send_step(ws)
+                            except websockets.ConnectionClosed:
+                                return
+                            continue
                         except asyncio.CancelledError:
                             return
                         update_event.clear()

@@ -19,9 +19,18 @@ struct TiledPolyVert { float x, y; };
 // A per-cell solid-tile polygon. Stored once per occupied solid cell;
 // `verts` already contains the closed polygon in world coordinates so the
 // collision check is just a circle-vs-polygon test without further math.
+//
+// `tile_w` / `tile_h` are the source map's per-tile dimensions in world
+// units. Stored per-polygon so consumers (e.g. Bundle/BotDriver.cc's
+// wall-ray sensor) can snap each polygon back to its containing cell
+// rect, since Bots/wall_map.py's reference implementation treats every
+// occupied tile as a full cell-sized rect rather than the SVG polygon
+// shape. Maps can have different tile sizes (main.tmj=512, other maps
+// vary), so this is per-polygon rather than a TiledMap global.
 struct TiledCollisionPoly {
     std::vector<TiledPolyVert> verts;
     float min_x, min_y, max_x, max_y; // bounding box for early-out
+    float tile_w = 0.0f, tile_h = 0.0f;
 };
 
 struct TiledSpawnEntry {
