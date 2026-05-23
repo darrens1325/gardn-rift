@@ -80,6 +80,12 @@ void Writer::write<EntityID>(EntityID const &id) {
 }
 
 template<>
+void Writer::write<Petal>(Petal const &p) {
+    write<uint8_t>(p.type);
+    write<uint8_t>(p.rarity);
+}
+
+template<>
 void Writer::write<std::string>(std::string const &str) {
     uint32_t len = str.size();
     write<uint32_t>(len);
@@ -210,6 +216,19 @@ void Reader::read<LerpFloat>(LerpFloat &ref) {
 template<>
 void Reader::read<EntityID>(EntityID &ref) {
     ref = read<EntityID>();
+}
+
+template<>
+Petal Reader::read<Petal>() {
+    Petal p;
+    p.type = read<uint8_t>();
+    p.rarity = read<uint8_t>();
+    return p;
+}
+
+template<>
+void Reader::read<Petal>(Petal &ref) {
+    ref = read<Petal>();
 }
 
 template<>

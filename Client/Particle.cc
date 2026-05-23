@@ -28,9 +28,9 @@ void Particle::tick_title(Renderer &ctx, double dt) {
         part.angle += dt / 1000;
         ctx.translate(part.x, part.y + 12.5 * sin(Game::timestamp / 500 + part.sin_offset));
         ctx.scale(Ui::scale * part.radius);
-        if (PETAL_DATA[part.id].attributes.rotation_style == PetalAttributes::kPassiveRot)
+        if (PETAL_DATA[part.id.type][part.id.rarity].attributes.rotation_style == PetalAttributes::kPassiveRot)
             ctx.rotate(part.angle);
-        if (PETAL_DATA[part.id].count > 1)
+        if (PETAL_DATA[part.id.type][part.id.rarity].count > 1)
             draw_static_petal(part.id, ctx);
         else
             draw_static_petal_single(part.id, ctx);
@@ -39,16 +39,29 @@ void Particle::tick_title(Renderer &ctx, double dt) {
         if (frand() > 0.02) continue;
         TitleParticleEntity npart;
         npart.x = -100;
+        // Build the pool of petals the player has actually seen (plus a
+        // guaranteed Basic so the title screen is never empty). We iterate
+        // the full (type, rarity) plane and skip cells with no authored
+        // PetalData — those are unreachable coordinates.
         std::vector<PetalID::T> ids = {PetalID::kBasic};
         float freq_sum = 1;
-        for (PetalID::T pot = PetalID::kBasic + 1; pot < PetalID::kNumPetals; ++pot)
-            if (Game::seen_petals[pot]) { ids.push_back(pot); freq_sum += pow(0.5, PETAL_DATA[pot].rarity); }
-        
+        for (PetalType::T t = 0; t < PetalType::kNumPetalTypes; ++t) {
+            for (uint8_t r = 0; r < RarityID::kNumRarities; ++r) {
+                PetalID::T pot = {t, r};
+                if (pot == PetalID::kBasic) continue;
+                if (PETAL_DATA[t][r].name == nullptr) continue;
+                if (Game::seen_petals[t][r]) {
+                    ids.push_back(pot);
+                    freq_sum += pow(0.5, r);
+                }
+            }
+        }
+
         freq_sum *= frand();
         for (PetalID::T id : ids) {
-            freq_sum -= pow(0.5, PETAL_DATA[id].rarity);
+            freq_sum -= pow(0.5, id.rarity);
             if (freq_sum > 0) continue;
-            npart.id = id;   
+            npart.id = id;
             npart.y = frand() * ctx.height;
             npart.angle = frand() * 2 * M_PI;
             npart.x_velocity = frand() * 100 + 100;

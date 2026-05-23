@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-93",
   "first_seen": 1778543161.3629062,
-  "last_seen": 1779493396.185334,
-  "episodes": 1466,
-  "score_total": 202247,
+  "last_seen": 1779512021.938366,
+  "episodes": 1479,
+  "score_total": 202511,
   "score_best": 5571,
   "best_loadout": [
     0,
@@ -16,10 +16,10 @@
     0
   ],
   "killed_by": {
-    "Hornet": 368,
+    "Hornet": 375,
     "Worker Ant": 2,
-    "Wasp": 251,
-    "Beetle": 65,
+    "Wasp": 253,
+    "Beetle": 66,
     "Cactus": 77,
     "bot-148": 1,
     "Mantis": 111,
@@ -127,7 +127,7 @@
     "bot-73": 2
   },
   "loadout_history": {
-    "0": 1238,
+    "0": 1250,
     "49": 5,
     "1": 1017,
     "28": 4,
@@ -185,6 +185,8 @@
     "40": 2,
     "41": 2,
     "73": 1,
-    "50": 1
+    "50": 1,
+    "256": 9,
+    "1536": 1
   }
 }

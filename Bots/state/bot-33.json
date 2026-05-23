@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-33",
   "first_seen": 1778543101.679935,
-  "last_seen": 1779493402.772484,
-  "episodes": 1542,
-  "score_total": 260603,
+  "last_seen": 1779512404.517005,
+  "episodes": 1557,
+  "score_total": 260891,
   "score_best": 7668,
   "best_loadout": [
     0,
@@ -18,15 +18,15 @@
   ],
   "killed_by": {
     "Cactus": 96,
-    "Mantis": 134,
-    "Hornet": 357,
-    "Wasp": 251,
-    "Bee": 89,
+    "Mantis": 136,
+    "Hornet": 361,
+    "Wasp": 253,
+    "Bee": 90,
     "bot-95": 1,
     "Rock": 12,
     "bot-148": 2,
-    "Spider": 36,
-    "Beetle": 84,
+    "Spider": 37,
+    "Beetle": 85,
     "bot-98": 5,
     "Centipede": 53,
     "Evil Centipede": 29,
@@ -141,7 +141,7 @@
     "bot-102": 1
   },
   "loadout_history": {
-    "0": 1322,
+    "0": 1335,
     "1": 1117,
     "5": 24,
     "14": 28,
@@ -192,6 +192,8 @@
     "40": 3,
     "56": 1,
     "33": 1,
-    "46": 2
+    "46": 2,
+    "256": 10,
+    "6914": 1
   }
 }

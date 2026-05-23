@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <vector>
 
 using namespace Ui;
 
@@ -17,7 +18,7 @@ GalleryPetal::GalleryPetal(PetalID::T id, float w) :
     Element(w,w,{ .fill = 0x40000000, .round_radius = w/20 , .h_justify = Style::Left }), id(id) {}
 
 void GalleryPetal::on_render(Renderer &ctx) {
-    if (!Game::seen_petals[id]) {
+    if (!Game::seen_petals[id.type][id.rarity]) {
         Element::on_render(ctx);
         ctx.draw_text("?", { .fill = 0xffeeeeee, .size = width / 2, .stroke_scale = 0});
     } else {
@@ -27,9 +28,9 @@ void GalleryPetal::on_render(Renderer &ctx) {
 }
 
 void GalleryPetal::on_event(uint8_t event) {
-    if (event != kFocusLost && id != PetalID::kNone && Game::seen_petals[id]) {
+    if (event != kFocusLost && id != PetalID::kNone && Game::seen_petals[id.type][id.rarity]) {
         rendering_tooltip = 1;
-        tooltip = Ui::UiLoadout::petal_tooltips[id];
+        tooltip = Ui::UiLoadout::petal_tooltips[id.type][id.rarity];
     } else
         rendering_tooltip = 0;
 }
@@ -39,9 +40,13 @@ PetalsCollectedIndicator::PetalsCollectedIndicator(float w) : Element(w,w,{}) {}
 void PetalsCollectedIndicator::on_render(Renderer &ctx) {
     uint32_t colct = 0;
     uint32_t totct = 0;
-    for (PetalID::T i = PetalID::kBasic; i < PetalID::kNumPetals; ++i) {
-        colct += Game::seen_petals[i] != 0;
-        ++totct;
+    // Count over the full (type, rarity) plane, skipping unauthored cells.
+    for (PetalType::T t = PetalType::kNone + 1; t < PetalType::kNumPetalTypes; ++t) {
+        for (uint8_t r = 0; r < RarityID::kNumRarities; ++r) {
+            if (PETAL_DATA[t][r].name == nullptr) continue;
+            colct += Game::seen_petals[t][r] != 0;
+            ++totct;
+        }
     }
     ctx.set_fill(0x80000000);
     ctx.begin_path();
@@ -50,7 +55,8 @@ void PetalsCollectedIndicator::on_render(Renderer &ctx) {
     ctx.set_fill(0xc0eeeeee);
     ctx.begin_path();
     ctx.move_to(0,0);
-    ctx.partial_arc(0,0,width/2*0.8,-M_PI/2,-M_PI/2+2*M_PI*colct/totct,0);
+    if (totct > 0)
+        ctx.partial_arc(0,0,width/2*0.8,-M_PI/2,-M_PI/2+2*M_PI*colct/totct,0);
     ctx.close_path();
     ctx.fill();
 }
@@ -58,19 +64,23 @@ void PetalsCollectedIndicator::on_render(Renderer &ctx) {
 static Element *make_scroll() {
     Element *elt = new Ui::VContainer({}, 10, 10, {});
 
-    PetalID::T id_list[PetalID::kNumPetals];
-    for (PetalID::T i = 0; i < PetalID::kNumPetals; ++i)
-        id_list[i] = i;
-    std::sort(id_list, id_list + PetalID::kNumPetals, [](PetalID::T a, PetalID::T b){
-        if (a == PetalID::kNone) return true;
-        if (b == PetalID::kNone) return false;
-        if (PETAL_DATA[a].rarity < PETAL_DATA[b].rarity) return true;
-        if (PETAL_DATA[a].rarity > PETAL_DATA[b].rarity) return false;
-        return strcmp(PETAL_DATA[a].name, PETAL_DATA[b].name) <= 0;
+    // Collect every authored (type, rarity) cell. Unauthored cells
+    // (PETAL_DATA[t][r].name == nullptr) are skipped — there's no
+    // petal at that coordinate to render in the gallery.
+    std::vector<PetalID::T> id_list;
+    for (PetalType::T t = PetalType::kNone + 1; t < PetalType::kNumPetalTypes; ++t)
+        for (uint8_t r = 0; r < RarityID::kNumRarities; ++r)
+            if (PETAL_DATA[t][r].name != nullptr)
+                id_list.push_back({t, r});
+
+    std::sort(id_list.begin(), id_list.end(), [](PetalID::T a, PetalID::T b){
+        if (a.rarity < b.rarity) return true;
+        if (a.rarity > b.rarity) return false;
+        return strcmp(PETAL_DATA[a.type][a.rarity].name, PETAL_DATA[b.type][b.rarity].name) <= 0;
     });
-    for (PetalID::T i = PetalID::kBasic; i < PetalID::kNumPetals;) {
+    for (size_t i = 0; i < id_list.size();) {
         Element *row = new Ui::HContainer({}, 0, 10, { .v_justify = Style::Top });
-        for (uint8_t j = 0; j < 4 && i < PetalID::kNumPetals; ++j, ++i) {
+        for (uint8_t j = 0; j < 4 && i < id_list.size(); ++j, ++i) {
             row->add_child(new GalleryPetal(id_list[i], 60));
         }
         row->refactor();

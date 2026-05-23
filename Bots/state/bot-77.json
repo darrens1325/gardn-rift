@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-77",
   "first_seen": 1778543134.0063858,
-  "last_seen": 1779493393.570818,
-  "episodes": 1493,
-  "score_total": 225261,
+  "last_seen": 1779512006.015211,
+  "episodes": 1505,
+  "score_total": 225501,
   "score_best": 9045,
   "best_loadout": [
     0,
@@ -18,9 +18,9 @@
   ],
   "killed_by": {
     "Wasp": 267,
-    "Hornet": 371,
+    "Hornet": 375,
     "prickly": 1,
-    "Beetle": 74,
+    "Beetle": 75,
     "Evil Centipede": 18,
     "Mantis": 114,
     "Bee": 102,
@@ -80,7 +80,7 @@
     "bloom": 1,
     "zorr": 2,
     "bot": 3,
-    "Soldier Ant": 2,
+    "Soldier Ant": 4,
     "hello": 1,
     "bot-138": 4,
     "bot-129": 2,
@@ -131,13 +131,15 @@
     "bot-36": 2,
     "bot-87": 1,
     "bot-97": 2,
-    "bot-118": 2
+    "bot-118": 2,
+    "bot-29": 1,
+    "flower": 1
   },
   "loadout_history": {
     "1": 1055,
     "5": 20,
     "9": 13,
-    "0": 1277,
+    "0": 1288,
     "24": 19,
     "79": 5,
     "47": 1,
@@ -188,6 +190,9 @@
     "40": 4,
     "117": 2,
     "73": 1,
-    "42": 1
+    "42": 1,
+    "256": 6,
+    "1024": 1,
+    "2049": 1
   }
 }

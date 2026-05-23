@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-127",
   "first_seen": 1778543800.252141,
-  "last_seen": 1779493395.086703,
-  "episodes": 1440,
-  "score_total": 194238,
+  "last_seen": 1779512085.740878,
+  "episodes": 1454,
+  "score_total": 194485,
   "score_best": 5422,
   "best_loadout": [
     11,
@@ -17,17 +17,17 @@
   ],
   "killed_by": {
     "bot-22": 4,
-    "Beetle": 60,
-    "Hornet": 337,
-    "Wasp": 265,
+    "Beetle": 65,
+    "Hornet": 339,
+    "Wasp": 267,
     "Cactus": 87,
     "bot-142": 1,
     "bot-55": 1,
     "bot-23": 1,
-    "Bee": 98,
-    "Mantis": 121,
+    "Bee": 99,
+    "Mantis": 122,
     "Ladybug": 45,
-    "Desert Centipede": 8,
+    "Desert Centipede": 9,
     "bot-131": 1,
     "bot-139": 1,
     "rosie": 2,
@@ -139,7 +139,7 @@
     "bot-114": 1
   },
   "loadout_history": {
-    "0": 1238,
+    "0": 1249,
     "49": 3,
     "28": 8,
     "39": 1,
@@ -196,6 +196,12 @@
     "36": 1,
     "205": 1,
     "46": 1,
-    "50": 1
+    "50": 1,
+    "256": 10,
+    "9474": 1,
+    "3584": 1,
+    "2048": 1,
+    "512": 1,
+    "1537": 1
   }
 }

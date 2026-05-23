@@ -35,80 +35,54 @@ namespace DamageType {
     };
 }
 
-namespace PetalID {
+// Coordinate axis #1 of the (type, rarity) petal identity. Each value is a
+// distinct mechanical "family" — different stat curves, attributes, on-hit
+// effects. Two petals with the same `PetalType` differ only in their stat
+// numbers (HP, damage, etc.) along the rarity axis. Variants that look
+// similar but behave differently — single Stinger vs clump Tringer, Cactus
+// vs Poison-Cactus, Iris vs Blue-Iris, ant-spawn Egg vs beetle-spawn Egg —
+// each get their own type, so every (type, rarity) cell holds a unique petal.
+namespace PetalType {
     typedef uint8_t T;
     enum : T {
         kNone,
         kBasic,
-        kUnusualBasic,
-        kRareBasic,
-        kEpicBasic,
         kLight,
-        kUnusualLight,
-        kRareLight,
-        kEpicLight,
         kHeavy,
-        kUnusualHeavy,
-        kRareHeavy,
-        kEpicHeavy,
-        kLegendaryHeavy,
-        kCommonStinger,
         kStinger,
-        kRareStinger,
-        kEpicStinger,
-        kCommonLeaf,
+        kTringer,
         kLeaf,
-        kRareLeaf,
-        kEpicLeaf,
-        kLegendaryLeaf,
         kTwin,
-        kCommonRose,
         kRose,
-        kRareRose,
-        kLegendaryRose,
-        kCommonIris,
+        kAzalea,
         kIris,
-        kRareIris,
-        kLegendaryIris,
+        kBlueIris,
         kMissile,
         kDandelion,
-        kCommonBubble,
-        kUnusualBubble,
         kBubble,
-        kEpicBubble,
-        kLegendaryBubble,
         kFaster,
-        kCommonRock,
-        kUnusualRock,
         kRock,
-        kEpicRock,
-        kLegendaryRock,
         kCactus,
+        kPoisonCactus,
+        kTricac,
         kWeb,
+        kTriweb,
         kWing,
         kPeas,
+        kPoisonPeas,
         kSand,
         kPincer,
         kDahlia,
         kTriplet,
         kAntEgg,
-        kBlueIris,
-        kPollen,
-        kPoisonPeas,
         kBeetleEgg,
-        kAzalea,
+        kPollen,
         kStick,
-        kTringer,
-        kMythicTringer,
-        kTriweb,
         kAntennae,
-        kTricac,
         kHeaviest,
         kThirdEye,
         kObserver,
-        kPoisonCactus,
         kSalt,
-        kUniqueBasic,
         kSquare,
         kMoon,
         kLotus,
@@ -119,159 +93,261 @@ namespace PetalID {
         kBone,
         kYucca,
         kCorn,
-        // -------------------------------------------------------------------
-        // Wave-system rarity expansion. Every "combat-relevant" base petal
-        // gets all 7 rarity tiers so the rarity ramp during a round can
-        // upgrade drop pools naturally. Existing IDs above are unchanged so
-        // older trained checkpoints (which reference petals by integer)
-        // continue to load without rewriting embedding rows. Stats for
-        // each new entry are formula-scaled by petal_at_tier() in
-        // StaticData.cc — HP × 1.6^Δ, damage × 1.5^Δ, healing /
-        // poison × 1.5^Δ, with reload / count / radius held constant.
-        kLegendaryBasic,
-        kMythicBasic,
-        kLegendaryLight,
-        kMythicLight,
-        kUniqueLight,
-        kMythicHeavy,
-        kUniqueHeavy,
-        kUniqueStinger,
-        kMythicLeaf,
-        kUniqueLeaf,
-        kCommonTwin,
-        kRareTwin,
-        kEpicTwin,
-        kLegendaryTwin,
-        kMythicTwin,
-        kUniqueTwin,
-        kMythicRose,
-        kUniqueRose,
-        kMythicIris,
-        kUniqueIris,
-        kMythicBubble,
-        kUniqueBubble,
-        kMythicRock,
-        kUniqueRock,
-        kCommonWeb,
-        kUnusualWeb,
-        kEpicWeb,
-        kMythicWeb,
-        kUniqueWeb,
-        kCommonWing,
-        kUnusualWing,
-        kEpicWing,
-        kLegendaryWing,
-        kMythicWing,
-        kUniqueWing,
-        kCommonPeas,
-        kUnusualPeas,
-        kLegendaryPeas,
-        kMythicPeas,
-        kUniquePeas,
-        kCommonSand,
-        kUnusualSand,
-        kEpicSand,
-        kLegendarySand,
-        kMythicSand,
-        kUniqueSand,
-        kCommonPincer,
-        kUnusualPincer,
-        kEpicPincer,
-        kLegendaryPincer,
-        kMythicPincer,
-        kUniquePincer,
-        kCommonDahlia,
-        kUnusualDahlia,
-        kEpicDahlia,
-        kLegendaryDahlia,
-        kMythicDahlia,
-        kUniqueDahlia,
-        kCommonTriplet,
-        kUnusualTriplet,
-        kRareTriplet,
-        kLegendaryTriplet,
-        kMythicTriplet,
-        kUniqueTriplet,
-        kCommonSalt,
-        kUnusualSalt,
-        kEpicSalt,
-        kLegendarySalt,
-        kMythicSalt,
-        kUniqueSalt,
-        kCommonPollen,
-        kUnusualPollen,
-        kRarePollen,
-        kLegendaryPollen,
-        kMythicPollen,
-        kUniquePollen,
-        kCommonFaster,
-        kUnusualFaster,
-        kEpicFaster,
-        kLegendaryFaster,
-        kMythicFaster,
-        kUniqueFaster,
-        kCommonCactus,
-        kUnusualCactus,
-        kMythicCactus,
-        kUniqueCactus,
-        kCommonMissile,
-        kUnusualMissile,
-        kEpicMissile,
-        kLegendaryMissile,
-        kMythicMissile,
-        kUniqueMissile,
-        kCommonDandelion,
-        kUnusualDandelion,
-        kEpicDandelion,
-        kLegendaryDandelion,
-        kMythicDandelion,
-        kUniqueDandelion,
-        kCommonYucca,
-        kRareYucca,
-        kEpicYucca,
-        kLegendaryYucca,
-        kMythicYucca,
-        kUniqueYucca,
-        kCommonBone,
-        kUnusualBone,
-        kRareBone,
-        kEpicBone,
-        kMythicBone,
-        kUniqueBone,
-        kCommonRice,
-        kUnusualRice,
-        kRareRice,
-        kLegendaryRice,
-        kMythicRice,
-        kUniqueRice,
-        kCommonCorn,
-        kUnusualCorn,
-        kRareCorn,
-        kLegendaryCorn,
-        kMythicCorn,
-        kUniqueCorn,
-        // Appended (not slotted next to other Peas tiers) so existing IDs
-        // stay stable for trained checkpoints that key petals by integer.
-        kEpicPeas,
-        kCommonRoot,
-        kUnusualRoot,
         kRoot,
-        kEpicRoot,
-        kLegendaryRoot,
-        kMythicRoot,
-        kUniqueRoot,
-        // Yggdrasil tiers — appended after Root so existing IDs (the
-        // pre-existing kYggdrasil keeps slot 76 as Unique) remain stable
-        // for trained bot checkpoints. Stats are formula-scaled from
-        // kYggdrasil at Δ from Unique by petal_at_tier() in StaticData.cc.
-        kCommonYggdrasil,
-        kUnusualYggdrasil,
-        kRareYggdrasil,
-        kEpicYggdrasil,
-        kLegendaryYggdrasil,
-        kMythicYggdrasil,
-        kNumPetals
+        kNumPetalTypes
     };
+};
+
+namespace RarityID {
+    enum {
+        kCommon,
+        kUnusual,
+        kRare,
+        kEpic,
+        kLegendary,
+        kMythic,
+        kUnique,
+        kNumRarities
+    };
+};
+
+// Coordinate pair on the (type, rarity) plane. Wire encoding is two bytes:
+// the type byte, then the rarity byte. Compares lexicographically so sorting
+// by PetalID groups all rarities of a type together.
+struct Petal {
+    PetalType::T type;
+    uint8_t      rarity;
+    constexpr bool operator==(Petal const &) const = default;
+    constexpr bool operator!=(Petal const &) const = default;
+    constexpr auto operator<=>(Petal const &) const = default;
+};
+
+namespace PetalID {
+    using T = Petal;
+
+    // Legacy enumerated names. They keep the same call-site spelling
+    // (`PetalID::kBasic`, `PetalID::kEpicLight`, …) but now resolve to the
+    // (type, rarity) coordinate instead of a packed scalar. Drop-list arrays
+    // and switch statements continue to work; the wire format and tables
+    // are now indexed two-dimensionally.
+    inline constexpr Petal kNone             = { PetalType::kNone,          RarityID::kCommon    };
+    inline constexpr Petal kBasic            = { PetalType::kBasic,         RarityID::kCommon    };
+    inline constexpr Petal kUnusualBasic     = { PetalType::kBasic,         RarityID::kUnusual   };
+    inline constexpr Petal kRareBasic        = { PetalType::kBasic,         RarityID::kRare      };
+    inline constexpr Petal kEpicBasic        = { PetalType::kBasic,         RarityID::kEpic      };
+    inline constexpr Petal kLegendaryBasic   = { PetalType::kBasic,         RarityID::kLegendary };
+    inline constexpr Petal kMythicBasic      = { PetalType::kBasic,         RarityID::kMythic    };
+    inline constexpr Petal kUniqueBasic      = { PetalType::kBasic,         RarityID::kUnique    };
+    inline constexpr Petal kLight            = { PetalType::kLight,         RarityID::kCommon    };
+    inline constexpr Petal kUnusualLight     = { PetalType::kLight,         RarityID::kUnusual   };
+    inline constexpr Petal kRareLight        = { PetalType::kLight,         RarityID::kRare      };
+    inline constexpr Petal kEpicLight        = { PetalType::kLight,         RarityID::kEpic      };
+    inline constexpr Petal kLegendaryLight   = { PetalType::kLight,         RarityID::kLegendary };
+    inline constexpr Petal kMythicLight      = { PetalType::kLight,         RarityID::kMythic    };
+    inline constexpr Petal kUniqueLight      = { PetalType::kLight,         RarityID::kUnique    };
+    inline constexpr Petal kHeavy            = { PetalType::kHeavy,         RarityID::kCommon    };
+    inline constexpr Petal kUnusualHeavy     = { PetalType::kHeavy,         RarityID::kUnusual   };
+    inline constexpr Petal kRareHeavy        = { PetalType::kHeavy,         RarityID::kRare      };
+    inline constexpr Petal kEpicHeavy        = { PetalType::kHeavy,         RarityID::kEpic      };
+    inline constexpr Petal kLegendaryHeavy   = { PetalType::kHeavy,         RarityID::kLegendary };
+    inline constexpr Petal kMythicHeavy      = { PetalType::kHeavy,         RarityID::kMythic    };
+    inline constexpr Petal kUniqueHeavy      = { PetalType::kHeavy,         RarityID::kUnique    };
+    inline constexpr Petal kCommonStinger    = { PetalType::kStinger,       RarityID::kCommon    };
+    inline constexpr Petal kStinger          = { PetalType::kStinger,       RarityID::kUnusual   };
+    inline constexpr Petal kRareStinger      = { PetalType::kStinger,       RarityID::kRare      };
+    inline constexpr Petal kEpicStinger      = { PetalType::kStinger,       RarityID::kEpic      };
+    inline constexpr Petal kTringer          = { PetalType::kTringer,       RarityID::kLegendary };
+    inline constexpr Petal kMythicTringer    = { PetalType::kTringer,       RarityID::kMythic    };
+    inline constexpr Petal kUniqueStinger    = { PetalType::kTringer,       RarityID::kUnique    };
+    inline constexpr Petal kCommonLeaf       = { PetalType::kLeaf,          RarityID::kCommon    };
+    inline constexpr Petal kLeaf             = { PetalType::kLeaf,          RarityID::kUnusual   };
+    inline constexpr Petal kRareLeaf         = { PetalType::kLeaf,          RarityID::kRare      };
+    inline constexpr Petal kEpicLeaf         = { PetalType::kLeaf,          RarityID::kEpic      };
+    inline constexpr Petal kLegendaryLeaf    = { PetalType::kLeaf,          RarityID::kLegendary };
+    inline constexpr Petal kMythicLeaf       = { PetalType::kLeaf,          RarityID::kMythic    };
+    inline constexpr Petal kUniqueLeaf       = { PetalType::kLeaf,          RarityID::kUnique    };
+    inline constexpr Petal kCommonTwin       = { PetalType::kTwin,          RarityID::kCommon    };
+    inline constexpr Petal kTwin             = { PetalType::kTwin,          RarityID::kUnusual   };
+    inline constexpr Petal kRareTwin         = { PetalType::kTwin,          RarityID::kRare      };
+    inline constexpr Petal kEpicTwin         = { PetalType::kTwin,          RarityID::kEpic      };
+    inline constexpr Petal kLegendaryTwin    = { PetalType::kTwin,          RarityID::kLegendary };
+    inline constexpr Petal kMythicTwin       = { PetalType::kTwin,          RarityID::kMythic    };
+    inline constexpr Petal kUniqueTwin       = { PetalType::kTwin,          RarityID::kUnique    };
+    inline constexpr Petal kCommonRose       = { PetalType::kRose,          RarityID::kCommon    };
+    inline constexpr Petal kRose             = { PetalType::kRose,          RarityID::kUnusual   };
+    inline constexpr Petal kRareRose         = { PetalType::kRose,          RarityID::kRare      };
+    inline constexpr Petal kEpicRose         = { PetalType::kRose,          RarityID::kEpic      };
+    inline constexpr Petal kLegendaryRose    = { PetalType::kRose,          RarityID::kLegendary };
+    inline constexpr Petal kMythicRose       = { PetalType::kRose,          RarityID::kMythic    };
+    inline constexpr Petal kUniqueRose       = { PetalType::kRose,          RarityID::kUnique    };
+    inline constexpr Petal kAzalea           = { PetalType::kAzalea,        RarityID::kEpic      };
+    inline constexpr Petal kCommonIris       = { PetalType::kIris,          RarityID::kCommon    };
+    inline constexpr Petal kIris             = { PetalType::kIris,          RarityID::kUnusual   };
+    inline constexpr Petal kRareIris         = { PetalType::kIris,          RarityID::kRare      };
+    inline constexpr Petal kLegendaryIris    = { PetalType::kIris,          RarityID::kLegendary };
+    inline constexpr Petal kMythicIris       = { PetalType::kIris,          RarityID::kMythic    };
+    inline constexpr Petal kUniqueIris       = { PetalType::kIris,          RarityID::kUnique    };
+    inline constexpr Petal kBlueIris         = { PetalType::kBlueIris,      RarityID::kEpic      };
+    inline constexpr Petal kCommonMissile    = { PetalType::kMissile,       RarityID::kCommon    };
+    inline constexpr Petal kUnusualMissile   = { PetalType::kMissile,       RarityID::kUnusual   };
+    inline constexpr Petal kMissile          = { PetalType::kMissile,       RarityID::kRare      };
+    inline constexpr Petal kEpicMissile      = { PetalType::kMissile,       RarityID::kEpic      };
+    inline constexpr Petal kLegendaryMissile = { PetalType::kMissile,       RarityID::kLegendary };
+    inline constexpr Petal kMythicMissile    = { PetalType::kMissile,       RarityID::kMythic    };
+    inline constexpr Petal kUniqueMissile    = { PetalType::kMissile,       RarityID::kUnique    };
+    inline constexpr Petal kCommonDandelion  = { PetalType::kDandelion,     RarityID::kCommon    };
+    inline constexpr Petal kUnusualDandelion = { PetalType::kDandelion,     RarityID::kUnusual   };
+    inline constexpr Petal kDandelion        = { PetalType::kDandelion,     RarityID::kRare      };
+    inline constexpr Petal kEpicDandelion    = { PetalType::kDandelion,     RarityID::kEpic      };
+    inline constexpr Petal kLegendaryDandelion={ PetalType::kDandelion,     RarityID::kLegendary };
+    inline constexpr Petal kMythicDandelion  = { PetalType::kDandelion,     RarityID::kMythic    };
+    inline constexpr Petal kUniqueDandelion  = { PetalType::kDandelion,     RarityID::kUnique    };
+    inline constexpr Petal kCommonBubble     = { PetalType::kBubble,        RarityID::kCommon    };
+    inline constexpr Petal kUnusualBubble    = { PetalType::kBubble,        RarityID::kUnusual   };
+    inline constexpr Petal kBubble           = { PetalType::kBubble,        RarityID::kRare      };
+    inline constexpr Petal kEpicBubble       = { PetalType::kBubble,        RarityID::kEpic      };
+    inline constexpr Petal kLegendaryBubble  = { PetalType::kBubble,        RarityID::kLegendary };
+    inline constexpr Petal kMythicBubble     = { PetalType::kBubble,        RarityID::kMythic    };
+    inline constexpr Petal kUniqueBubble     = { PetalType::kBubble,        RarityID::kUnique    };
+    inline constexpr Petal kCommonFaster     = { PetalType::kFaster,        RarityID::kCommon    };
+    inline constexpr Petal kUnusualFaster    = { PetalType::kFaster,        RarityID::kUnusual   };
+    inline constexpr Petal kFaster           = { PetalType::kFaster,        RarityID::kRare      };
+    inline constexpr Petal kEpicFaster       = { PetalType::kFaster,        RarityID::kEpic      };
+    inline constexpr Petal kLegendaryFaster  = { PetalType::kFaster,        RarityID::kLegendary };
+    inline constexpr Petal kMythicFaster     = { PetalType::kFaster,        RarityID::kMythic    };
+    inline constexpr Petal kUniqueFaster     = { PetalType::kFaster,        RarityID::kUnique    };
+    inline constexpr Petal kCommonRock       = { PetalType::kRock,          RarityID::kCommon    };
+    inline constexpr Petal kUnusualRock      = { PetalType::kRock,          RarityID::kUnusual   };
+    inline constexpr Petal kRock             = { PetalType::kRock,          RarityID::kRare      };
+    inline constexpr Petal kEpicRock         = { PetalType::kRock,          RarityID::kEpic      };
+    inline constexpr Petal kLegendaryRock    = { PetalType::kRock,          RarityID::kLegendary };
+    inline constexpr Petal kMythicRock       = { PetalType::kRock,          RarityID::kMythic    };
+    inline constexpr Petal kUniqueRock       = { PetalType::kRock,          RarityID::kUnique    };
+    inline constexpr Petal kCommonCactus     = { PetalType::kCactus,        RarityID::kCommon    };
+    inline constexpr Petal kUnusualCactus    = { PetalType::kCactus,        RarityID::kUnusual   };
+    inline constexpr Petal kCactus           = { PetalType::kCactus,        RarityID::kRare      };
+    inline constexpr Petal kMythicCactus     = { PetalType::kCactus,        RarityID::kMythic    };
+    inline constexpr Petal kUniqueCactus     = { PetalType::kCactus,        RarityID::kUnique    };
+    inline constexpr Petal kPoisonCactus     = { PetalType::kPoisonCactus,  RarityID::kEpic      };
+    inline constexpr Petal kTricac           = { PetalType::kTricac,        RarityID::kLegendary };
+    inline constexpr Petal kCommonWeb        = { PetalType::kWeb,           RarityID::kCommon    };
+    inline constexpr Petal kUnusualWeb       = { PetalType::kWeb,           RarityID::kUnusual   };
+    inline constexpr Petal kWeb              = { PetalType::kWeb,           RarityID::kRare      };
+    inline constexpr Petal kEpicWeb          = { PetalType::kWeb,           RarityID::kEpic      };
+    inline constexpr Petal kTriweb           = { PetalType::kTriweb,        RarityID::kLegendary };
+    inline constexpr Petal kMythicWeb        = { PetalType::kTriweb,        RarityID::kMythic    };
+    inline constexpr Petal kUniqueWeb        = { PetalType::kTriweb,        RarityID::kUnique    };
+    inline constexpr Petal kCommonWing       = { PetalType::kWing,          RarityID::kCommon    };
+    inline constexpr Petal kUnusualWing      = { PetalType::kWing,          RarityID::kUnusual   };
+    inline constexpr Petal kWing             = { PetalType::kWing,          RarityID::kRare      };
+    inline constexpr Petal kEpicWing         = { PetalType::kWing,          RarityID::kEpic      };
+    inline constexpr Petal kLegendaryWing    = { PetalType::kWing,          RarityID::kLegendary };
+    inline constexpr Petal kMythicWing       = { PetalType::kWing,          RarityID::kMythic    };
+    inline constexpr Petal kUniqueWing       = { PetalType::kWing,          RarityID::kUnique    };
+    inline constexpr Petal kCommonPeas       = { PetalType::kPeas,          RarityID::kCommon    };
+    inline constexpr Petal kUnusualPeas      = { PetalType::kPeas,          RarityID::kUnusual   };
+    inline constexpr Petal kPeas             = { PetalType::kPeas,          RarityID::kRare      };
+    inline constexpr Petal kEpicPeas         = { PetalType::kPeas,          RarityID::kEpic      };
+    inline constexpr Petal kLegendaryPeas    = { PetalType::kPeas,          RarityID::kLegendary };
+    inline constexpr Petal kMythicPeas       = { PetalType::kPeas,          RarityID::kMythic    };
+    inline constexpr Petal kUniquePeas       = { PetalType::kPeas,          RarityID::kUnique    };
+    inline constexpr Petal kPoisonPeas       = { PetalType::kPoisonPeas,    RarityID::kEpic      };
+    inline constexpr Petal kCommonSand       = { PetalType::kSand,          RarityID::kCommon    };
+    inline constexpr Petal kUnusualSand      = { PetalType::kSand,          RarityID::kUnusual   };
+    inline constexpr Petal kSand             = { PetalType::kSand,          RarityID::kRare      };
+    inline constexpr Petal kEpicSand         = { PetalType::kSand,          RarityID::kEpic      };
+    inline constexpr Petal kLegendarySand    = { PetalType::kSand,          RarityID::kLegendary };
+    inline constexpr Petal kMythicSand       = { PetalType::kSand,          RarityID::kMythic    };
+    inline constexpr Petal kUniqueSand       = { PetalType::kSand,          RarityID::kUnique    };
+    inline constexpr Petal kCommonPincer     = { PetalType::kPincer,        RarityID::kCommon    };
+    inline constexpr Petal kUnusualPincer    = { PetalType::kPincer,        RarityID::kUnusual   };
+    inline constexpr Petal kPincer           = { PetalType::kPincer,        RarityID::kRare      };
+    inline constexpr Petal kEpicPincer       = { PetalType::kPincer,        RarityID::kEpic      };
+    inline constexpr Petal kLegendaryPincer  = { PetalType::kPincer,        RarityID::kLegendary };
+    inline constexpr Petal kMythicPincer     = { PetalType::kPincer,        RarityID::kMythic    };
+    inline constexpr Petal kUniquePincer     = { PetalType::kPincer,        RarityID::kUnique    };
+    inline constexpr Petal kCommonDahlia     = { PetalType::kDahlia,        RarityID::kCommon    };
+    inline constexpr Petal kUnusualDahlia    = { PetalType::kDahlia,        RarityID::kUnusual   };
+    inline constexpr Petal kDahlia           = { PetalType::kDahlia,        RarityID::kRare      };
+    inline constexpr Petal kEpicDahlia       = { PetalType::kDahlia,        RarityID::kEpic      };
+    inline constexpr Petal kLegendaryDahlia  = { PetalType::kDahlia,        RarityID::kLegendary };
+    inline constexpr Petal kMythicDahlia     = { PetalType::kDahlia,        RarityID::kMythic    };
+    inline constexpr Petal kUniqueDahlia     = { PetalType::kDahlia,        RarityID::kUnique    };
+    inline constexpr Petal kCommonTriplet    = { PetalType::kTriplet,       RarityID::kCommon    };
+    inline constexpr Petal kUnusualTriplet   = { PetalType::kTriplet,       RarityID::kUnusual   };
+    inline constexpr Petal kRareTriplet      = { PetalType::kTriplet,       RarityID::kRare      };
+    inline constexpr Petal kTriplet          = { PetalType::kTriplet,       RarityID::kEpic      };
+    inline constexpr Petal kLegendaryTriplet = { PetalType::kTriplet,       RarityID::kLegendary };
+    inline constexpr Petal kMythicTriplet    = { PetalType::kTriplet,       RarityID::kMythic    };
+    inline constexpr Petal kUniqueTriplet    = { PetalType::kTriplet,       RarityID::kUnique    };
+    inline constexpr Petal kAntEgg           = { PetalType::kAntEgg,        RarityID::kEpic      };
+    inline constexpr Petal kBeetleEgg        = { PetalType::kBeetleEgg,     RarityID::kEpic      };
+    inline constexpr Petal kCommonPollen     = { PetalType::kPollen,        RarityID::kCommon    };
+    inline constexpr Petal kUnusualPollen    = { PetalType::kPollen,        RarityID::kUnusual   };
+    inline constexpr Petal kRarePollen       = { PetalType::kPollen,        RarityID::kRare      };
+    inline constexpr Petal kPollen           = { PetalType::kPollen,        RarityID::kEpic      };
+    inline constexpr Petal kLegendaryPollen  = { PetalType::kPollen,        RarityID::kLegendary };
+    inline constexpr Petal kMythicPollen     = { PetalType::kPollen,        RarityID::kMythic    };
+    inline constexpr Petal kUniquePollen     = { PetalType::kPollen,        RarityID::kUnique    };
+    inline constexpr Petal kStick            = { PetalType::kStick,         RarityID::kLegendary };
+    inline constexpr Petal kAntennae         = { PetalType::kAntennae,      RarityID::kLegendary };
+    inline constexpr Petal kHeaviest         = { PetalType::kHeaviest,      RarityID::kEpic      };
+    inline constexpr Petal kThirdEye         = { PetalType::kThirdEye,      RarityID::kMythic    };
+    inline constexpr Petal kObserver         = { PetalType::kObserver,      RarityID::kMythic    };
+    inline constexpr Petal kCommonSalt       = { PetalType::kSalt,          RarityID::kCommon    };
+    inline constexpr Petal kUnusualSalt      = { PetalType::kSalt,          RarityID::kUnusual   };
+    inline constexpr Petal kSalt             = { PetalType::kSalt,          RarityID::kRare      };
+    inline constexpr Petal kEpicSalt         = { PetalType::kSalt,          RarityID::kEpic      };
+    inline constexpr Petal kLegendarySalt    = { PetalType::kSalt,          RarityID::kLegendary };
+    inline constexpr Petal kMythicSalt       = { PetalType::kSalt,          RarityID::kMythic    };
+    inline constexpr Petal kUniqueSalt       = { PetalType::kSalt,          RarityID::kUnique    };
+    inline constexpr Petal kSquare           = { PetalType::kSquare,        RarityID::kUnique    };
+    inline constexpr Petal kMoon             = { PetalType::kMoon,          RarityID::kMythic    };
+    inline constexpr Petal kLotus            = { PetalType::kLotus,         RarityID::kEpic      };
+    inline constexpr Petal kCutter           = { PetalType::kCutter,        RarityID::kEpic      };
+    inline constexpr Petal kYinYang          = { PetalType::kYinYang,       RarityID::kEpic      };
+    inline constexpr Petal kCommonYggdrasil  = { PetalType::kYggdrasil,     RarityID::kCommon    };
+    inline constexpr Petal kUnusualYggdrasil = { PetalType::kYggdrasil,     RarityID::kUnusual   };
+    inline constexpr Petal kRareYggdrasil    = { PetalType::kYggdrasil,     RarityID::kRare      };
+    inline constexpr Petal kEpicYggdrasil    = { PetalType::kYggdrasil,     RarityID::kEpic      };
+    inline constexpr Petal kLegendaryYggdrasil={ PetalType::kYggdrasil,     RarityID::kLegendary };
+    inline constexpr Petal kMythicYggdrasil  = { PetalType::kYggdrasil,     RarityID::kMythic    };
+    inline constexpr Petal kYggdrasil        = { PetalType::kYggdrasil,     RarityID::kUnique    };
+    inline constexpr Petal kCommonRice       = { PetalType::kRice,          RarityID::kCommon    };
+    inline constexpr Petal kUnusualRice      = { PetalType::kRice,          RarityID::kUnusual   };
+    inline constexpr Petal kRareRice         = { PetalType::kRice,          RarityID::kRare      };
+    inline constexpr Petal kRice             = { PetalType::kRice,          RarityID::kEpic      };
+    inline constexpr Petal kLegendaryRice    = { PetalType::kRice,          RarityID::kLegendary };
+    inline constexpr Petal kMythicRice       = { PetalType::kRice,          RarityID::kMythic    };
+    inline constexpr Petal kUniqueRice       = { PetalType::kRice,          RarityID::kUnique    };
+    inline constexpr Petal kCommonBone       = { PetalType::kBone,          RarityID::kCommon    };
+    inline constexpr Petal kUnusualBone      = { PetalType::kBone,          RarityID::kUnusual   };
+    inline constexpr Petal kRareBone         = { PetalType::kBone,          RarityID::kRare      };
+    inline constexpr Petal kEpicBone         = { PetalType::kBone,          RarityID::kEpic      };
+    inline constexpr Petal kBone             = { PetalType::kBone,          RarityID::kLegendary };
+    inline constexpr Petal kMythicBone       = { PetalType::kBone,          RarityID::kMythic    };
+    inline constexpr Petal kUniqueBone       = { PetalType::kBone,          RarityID::kUnique    };
+    inline constexpr Petal kCommonYucca      = { PetalType::kYucca,         RarityID::kCommon    };
+    inline constexpr Petal kYucca            = { PetalType::kYucca,         RarityID::kUnusual   };
+    inline constexpr Petal kRareYucca        = { PetalType::kYucca,         RarityID::kRare      };
+    inline constexpr Petal kEpicYucca        = { PetalType::kYucca,         RarityID::kEpic      };
+    inline constexpr Petal kLegendaryYucca   = { PetalType::kYucca,         RarityID::kLegendary };
+    inline constexpr Petal kMythicYucca      = { PetalType::kYucca,         RarityID::kMythic    };
+    inline constexpr Petal kUniqueYucca      = { PetalType::kYucca,         RarityID::kUnique    };
+    inline constexpr Petal kCommonCorn       = { PetalType::kCorn,          RarityID::kCommon    };
+    inline constexpr Petal kUnusualCorn      = { PetalType::kCorn,          RarityID::kUnusual   };
+    inline constexpr Petal kRareCorn         = { PetalType::kCorn,          RarityID::kRare      };
+    inline constexpr Petal kCorn             = { PetalType::kCorn,          RarityID::kEpic      };
+    inline constexpr Petal kLegendaryCorn    = { PetalType::kCorn,          RarityID::kLegendary };
+    inline constexpr Petal kMythicCorn       = { PetalType::kCorn,          RarityID::kMythic    };
+    inline constexpr Petal kUniqueCorn       = { PetalType::kCorn,          RarityID::kUnique    };
+    inline constexpr Petal kCommonRoot       = { PetalType::kRoot,          RarityID::kCommon    };
+    inline constexpr Petal kUnusualRoot      = { PetalType::kRoot,          RarityID::kUnusual   };
+    inline constexpr Petal kRoot             = { PetalType::kRoot,          RarityID::kRare      };
+    inline constexpr Petal kEpicRoot         = { PetalType::kRoot,          RarityID::kEpic      };
+    inline constexpr Petal kLegendaryRoot    = { PetalType::kRoot,          RarityID::kLegendary };
+    inline constexpr Petal kMythicRoot       = { PetalType::kRoot,          RarityID::kMythic    };
+    inline constexpr Petal kUniqueRoot       = { PetalType::kRoot,          RarityID::kUnique    };
 };
 
 namespace MobID {
@@ -306,19 +382,6 @@ namespace MobID {
         kMantis,
         kWasp,
         kNumMobs
-    };
-};
-
-namespace RarityID {
-    enum {
-        kCommon,
-        kUnusual,
-        kRare,
-        kEpic,
-        kLegendary,
-        kMythic,
-        kUnique,
-        kNumRarities
     };
 };
 
@@ -397,6 +460,11 @@ struct PetalAttributes {
     uint8_t spawn_count = 0;
 };
 
+// Per-(type, rarity) cell data. `name`/`description`/numbers vary along the
+// rarity axis; the type & rarity themselves are positional in PETAL_DATA
+// and live on the Petal pair, not duplicated in here. A `nullptr` name
+// marks an unauthored cell (e.g. PETAL_DATA[kBasic][kRare] before a Rare
+// Basic existed) so consumers can detect "no petal at this coordinate."
 struct PetalData {
     char const *name;
     char const *description;
@@ -405,7 +473,6 @@ struct PetalData {
     float radius;
     float reload;
     uint8_t count;
-    uint8_t rarity;
     struct PetalAttributes attributes;
 };
 

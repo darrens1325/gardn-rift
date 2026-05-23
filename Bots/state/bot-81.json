@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-81",
   "first_seen": 1778543697.56103,
-  "last_seen": 1779493396.5926971,
-  "episodes": 1544,
-  "score_total": 199441,
+  "last_seen": 1779512123.246882,
+  "episodes": 1557,
+  "score_total": 200041,
   "score_best": 5138,
   "best_loadout": [
     1,
@@ -16,22 +16,22 @@
     0
   ],
   "killed_by": {
-    "Wasp": 275,
-    "Hornet": 360,
-    "Mantis": 120,
+    "Wasp": 277,
+    "Hornet": 362,
+    "Mantis": 121,
     "gardn": 1,
     "leafy": 3,
     "bot-122": 2,
     "Bee": 111,
-    "Beetle": 97,
+    "Beetle": 99,
     "bot-67": 2,
     "Worker Ant": 4,
-    "Spider": 42,
+    "Spider": 44,
     "aa": 2,
     "bot-53": 2,
     "bot-91": 2,
     "bot-65": 2,
-    "Cactus": 74,
+    "Cactus": 75,
     "Centipede": 32,
     "Sandstorm": 24,
     "Leafbug": 22,
@@ -137,7 +137,7 @@
     "prickly": 2
   },
   "loadout_history": {
-    "0": 1305,
+    "0": 1318,
     "1": 1084,
     "14": 32,
     "10": 7,
@@ -192,6 +192,9 @@
     "42": 1,
     "117": 1,
     "203": 1,
-    "46": 2
+    "46": 2,
+    "256": 8,
+    "1024": 2,
+    "2560": 1
   }
 }

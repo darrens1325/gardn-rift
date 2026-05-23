@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-78",
   "first_seen": 1778543550.690562,
-  "last_seen": 1779493393.186352,
-  "episodes": 1459,
-  "score_total": 246661,
+  "last_seen": 1779512119.508354,
+  "episodes": 1473,
+  "score_total": 246873,
   "score_best": 8094,
   "best_loadout": [
     0,
@@ -17,16 +17,16 @@
     0
   ],
   "killed_by": {
-    "Hornet": 336,
+    "Hornet": 338,
     "Ladybug": 65,
-    "Wasp": 246,
-    "Cactus": 107,
+    "Wasp": 248,
+    "Cactus": 108,
     "Bee": 101,
     "Mantis": 105,
     "bot-58": 4,
-    "Beetle": 70,
+    "Beetle": 74,
     "bot-97": 2,
-    "Evil Centipede": 28,
+    "Evil Centipede": 29,
     "bot-29": 1,
     "Bush": 24,
     "florrio": 1,
@@ -34,7 +34,7 @@
     "rosie": 1,
     "bot-130": 3,
     "bot-37": 2,
-    "Spider": 31,
+    "Spider": 33,
     "Sandstorm": 13,
     "bot-82": 1,
     "Centipede": 38,
@@ -129,7 +129,7 @@
     "bot-93": 2
   },
   "loadout_history": {
-    "0": 1234,
+    "0": 1247,
     "1": 1038,
     "14": 25,
     "29": 5,
@@ -188,6 +188,8 @@
     "204": 2,
     "41": 2,
     "69": 1,
-    "23": 1
+    "23": 1,
+    "256": 9,
+    "3584": 1
   }
 }

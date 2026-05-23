@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-124",
   "first_seen": 1778543499.70433,
-  "last_seen": 1779493396.830752,
-  "episodes": 1471,
-  "score_total": 239170,
+  "last_seen": 1779512091.228908,
+  "episodes": 1483,
+  "score_total": 239493,
   "score_best": 6033,
   "best_loadout": [
     0,
@@ -16,20 +16,20 @@
     0
   ],
   "killed_by": {
-    "Hornet": 354,
-    "Wasp": 236,
+    "Hornet": 357,
+    "Wasp": 237,
     "Mantis": 133,
     "Beetle": 62,
     "bot-52": 3,
     "bot-134": 3,
     "bot-30": 4,
-    "Bee": 93,
-    "Spider": 42,
+    "Bee": 95,
+    "Spider": 43,
     "bot-62": 1,
     "bot-56": 1,
     "bot-35": 2,
     "Centipede": 34,
-    "Bush": 25,
+    "Bush": 26,
     "bot-128": 2,
     "bot-43": 2,
     "Evil Centipede": 28,
@@ -67,7 +67,7 @@
     "leafy": 2,
     "bot-123": 2,
     "Soldier Ant": 3,
-    "bot-97": 2,
+    "bot-97": 4,
     "bot-138": 1,
     "bot-136": 3,
     "bot-144": 3,
@@ -134,7 +134,7 @@
     "bot-147": 1
   },
   "loadout_history": {
-    "0": 1251,
+    "0": 1263,
     "1": 1035,
     "24": 16,
     "35": 2,
@@ -185,6 +185,8 @@
     "50": 1,
     "39": 1,
     "69": 1,
-    "41": 1
+    "41": 1,
+    "256": 6,
+    "3330": 1
   }
 }

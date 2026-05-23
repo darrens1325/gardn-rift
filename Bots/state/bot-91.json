@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-91",
   "first_seen": 1778543185.863652,
-  "last_seen": 1779493393.712008,
-  "episodes": 1483,
-  "score_total": 172861,
+  "last_seen": 1779512017.582119,
+  "episodes": 1495,
+  "score_total": 173047,
   "score_best": 5459,
   "best_loadout": [
     0,
@@ -16,9 +16,9 @@
     0
   ],
   "killed_by": {
-    "Bee": 117,
+    "Bee": 119,
     "Wasp": 249,
-    "Hornet": 368,
+    "Hornet": 372,
     "bot-107": 2,
     "Mantis": 136,
     "bot-131": 1,
@@ -29,7 +29,7 @@
     "Evil Centipede": 19,
     "Soldier Ant": 2,
     "Scorpion": 8,
-    "Spider": 40,
+    "Spider": 41,
     "bot-139": 5,
     "bot": 1,
     "bot-132": 1,
@@ -48,7 +48,7 @@
     "bot-23": 3,
     "bot-79": 3,
     "aa": 1,
-    "Rock": 14,
+    "Rock": 15,
     "bot-22": 1,
     "Bush": 17,
     "bot-86": 1,
@@ -135,10 +135,11 @@
     "bot-28": 1,
     "petalpop": 1,
     "Boulder": 1,
-    "bot-96": 2
+    "bot-96": 2,
+    "bot-52": 1
   },
   "loadout_history": {
-    "0": 1261,
+    "0": 1271,
     "1": 1016,
     "28": 9,
     "204": 1,
@@ -189,6 +190,9 @@
     "181": 1,
     "40": 5,
     "45": 1,
-    "69": 1
+    "69": 1,
+    "769": 1,
+    "256": 3,
+    "768": 1
   }
 }

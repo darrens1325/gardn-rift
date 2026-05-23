@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-96",
   "first_seen": 1778543115.258215,
-  "last_seen": 1779493393.70619,
-  "episodes": 1560,
-  "score_total": 198031,
+  "last_seen": 1779512067.934869,
+  "episodes": 1572,
+  "score_total": 198178,
   "score_best": 6031,
   "best_loadout": [
     0,
@@ -16,9 +16,9 @@
     0
   ],
   "killed_by": {
-    "Mantis": 130,
-    "Beetle": 81,
-    "Wasp": 260,
+    "Mantis": 131,
+    "Beetle": 82,
+    "Wasp": 261,
     "Cactus": 112,
     "Hornet": 348,
     "Evil Centipede": 35,
@@ -27,7 +27,7 @@
     "bot-63": 1,
     "Leafbug": 19,
     "bot-67": 1,
-    "Spider": 56,
+    "Spider": 62,
     "bot-73": 2,
     "bot-87": 3,
     "bot-32": 3,
@@ -36,7 +36,7 @@
     "bot-127": 2,
     "Bee": 106,
     "bot-74": 3,
-    "Desert Centipede": 7,
+    "Desert Centipede": 8,
     "Rock": 14,
     "Bush": 21,
     "Sandstorm": 26,
@@ -126,7 +126,7 @@
     "bot-97": 1
   },
   "loadout_history": {
-    "0": 1334,
+    "0": 1345,
     "1": 1092,
     "167": 6,
     "24": 18,
@@ -180,6 +180,10 @@
     "29": 2,
     "204": 1,
     "52": 1,
-    "205": 1
+    "205": 1,
+    "256": 5,
+    "768": 1,
+    "3330": 1,
+    "1024": 1
   }
 }

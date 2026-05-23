@@ -45,7 +45,6 @@ PetalID::T LoadoutSlot::get_petal_id() const {
 }
 
 void LoadoutSlot::update_id(Simulation *sim, PetalID::T petal_id) {
-    struct PetalData const &petal_data = PETAL_DATA[id];
     for (uint32_t j = 0; j < size(); ++j) {
         LoadoutPetal &petal_slot = petals[j];
         if (sim->ent_alive(petal_slot.ent_id))
@@ -58,9 +57,9 @@ void LoadoutSlot::update_id(Simulation *sim, PetalID::T petal_id) {
 void LoadoutSlot::force_reload() {
     already_spawned = 1;
     for (uint32_t j = 0; j < size(); ++j)
-        petals[j].reload = PETAL_DATA[id].reload * SIM_RATE;
+        petals[j].reload = PETAL_DATA[id.type][id.rarity].reload * SIM_RATE;
 }
 
 uint32_t LoadoutSlot::size() const {
-    return PETAL_DATA[id].count;
+    return PETAL_DATA[id.type][id.rarity].count;
 }

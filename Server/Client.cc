@@ -165,7 +165,7 @@ void Client::on_message(WebSocket *ws, std::string_view message, uint64_t code) 
             if (pos >= MAX_SLOT_COUNT + player.loadout_count) break;
             PetalID::T old_id = player.loadout_ids[pos];
             if (old_id != PetalID::kNone && old_id != PetalID::kBasic) {
-                uint8_t rarity = PETAL_DATA[old_id].rarity;
+                uint8_t rarity = old_id.rarity;
                 player.set_score(player.score + RARITY_TO_XP[rarity]);
                 //need to delete if over cap
                 if (player.deleted_petals.size() == player.deleted_petals.capacity())

@@ -31,7 +31,7 @@ namespace Game {
     EntityID player_id;
     std::string nickname;
     std::string spawn_map_path;
-    std::array<uint8_t, PetalID::kNumPetals> seen_petals;
+    std::array<std::array<uint8_t, RarityID::kNumRarities>, PetalType::kNumPetalTypes> seen_petals;
     std::array<std::array<uint8_t, RarityID::kNumRarities>, MobID::kNumMobs> seen_mobs;
 
     double timestamp = 0;
@@ -224,7 +224,7 @@ void Game::tick(double time) {
         Game::loadout_count = player.loadout_count;
         for (uint32_t i = 0; i < MAX_SLOT_COUNT + Game::loadout_count; ++i) {
             cached_loadout[i] = player.loadout_ids[i];
-            Game::seen_petals[cached_loadout[i]] = 1;
+            Game::seen_petals[cached_loadout[i].type][cached_loadout[i].rarity] = 1;
         }
         score = player.score;
         overlevel_timer = player.overlevel_timer;

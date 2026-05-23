@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-56",
   "first_seen": 1778543482.436189,
-  "last_seen": 1779493402.8866189,
-  "episodes": 1485,
-  "score_total": 220042,
+  "last_seen": 1779512029.121005,
+  "episodes": 1499,
+  "score_total": 220294,
   "score_best": 6512,
   "best_loadout": [
     0,
@@ -17,13 +17,13 @@
     0
   ],
   "killed_by": {
-    "Beetle": 73,
-    "Bee": 102,
+    "Beetle": 75,
+    "Bee": 103,
     "Mantis": 131,
-    "Hornet": 395,
-    "bot-108": 1,
+    "Hornet": 397,
+    "bot-108": 2,
     "Ladybug": 47,
-    "Wasp": 260,
+    "Wasp": 263,
     "bot-71": 2,
     "bot-90": 3,
     "Worker Ant": 7,
@@ -132,10 +132,12 @@
     "bot-110": 1,
     "hello": 1,
     "bot-34": 1,
-    "Boulder": 4
+    "Boulder": 4,
+    "flower": 1,
+    "bot-50": 1
   },
   "loadout_history": {
-    "0": 1280,
+    "0": 1294,
     "1": 1043,
     "167": 4,
     "116": 3,
@@ -188,6 +190,10 @@
     "205": 2,
     "40": 2,
     "41": 1,
-    "49": 1
+    "49": 1,
+    "256": 9,
+    "1536": 1,
+    "512": 1,
+    "11777": 1
   }
 }

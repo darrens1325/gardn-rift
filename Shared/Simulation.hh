@@ -19,7 +19,7 @@ class Simulation {
     Entity entities[ENTITY_CAP];
     StaticArray<EntityID::id_type, ENTITY_CAP> active_entities;
 public:
-    SERVER_ONLY(uint32_t petal_count_tracker[PetalID::kNumPetals];)
+    SERVER_ONLY(uint32_t petal_count_tracker[PetalType::kNumPetalTypes][RarityID::kNumRarities];)
     SERVER_ONLY(uint32_t zone_mob_counts[MAP.size()];)
     SERVER_ONLY(SpatialHash spatial_hash;)
     // Wave-system mob rarity tier in [0, kNumRarities). Common at the

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-83",
   "first_seen": 1778543180.756591,
-  "last_seen": 1779493397.452768,
-  "episodes": 1517,
-  "score_total": 238917,
+  "last_seen": 1779512094.3747158,
+  "episodes": 1530,
+  "score_total": 239205,
   "score_best": 7875,
   "best_loadout": [
     14,
@@ -18,17 +18,17 @@
   ],
   "killed_by": {
     "Evil Centipede": 25,
-    "Hornet": 382,
-    "Wasp": 262,
+    "Hornet": 386,
+    "Wasp": 263,
     "bot-78": 2,
     "Cactus": 92,
     "Bush": 21,
     "Spider": 40,
     "Sandstorm": 13,
     "Ladybug": 72,
-    "Beetle": 68,
+    "Beetle": 70,
     "Rock": 19,
-    "Mantis": 120,
+    "Mantis": 121,
     "bot-25": 2,
     "Bee": 99,
     "bot-79": 2,
@@ -132,13 +132,13 @@
     "hello": 1,
     "bot-101": 2,
     "bot-132": 1,
-    "Soldier Ant": 6,
+    "Soldier Ant": 8,
     "bot-123": 1,
     "bot-92": 1,
     "bot-62": 1
   },
   "loadout_history": {
-    "0": 1281,
+    "0": 1293,
     "1": 1065,
     "28": 8,
     "19": 9,
@@ -193,6 +193,9 @@
     "40": 3,
     "35": 2,
     "205": 2,
-    "69": 1
+    "69": 1,
+    "256": 5,
+    "2560": 1,
+    "6658": 1
   }
 }

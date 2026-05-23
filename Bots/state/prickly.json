@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "prickly",
   "first_seen": 1778364670.581866,
-  "last_seen": 1779493393.873813,
-  "episodes": 1559,
-  "score_total": 231672,
+  "last_seen": 1779512119.247435,
+  "episodes": 1572,
+  "score_total": 231935,
   "score_best": 7556,
   "best_loadout": [
     0,
@@ -17,18 +17,18 @@
     0
   ],
   "killed_by": {
-    "Spider": 41,
-    "Hornet": 374,
+    "Spider": 42,
+    "Hornet": 378,
     "Cactus": 73,
-    "Bee": 92,
+    "Bee": 93,
     "Beetle": 66,
-    "Wasp": 285,
+    "Wasp": 286,
     "Mantis": 125,
     "Centipede": 35,
     "bot-140": 2,
     "Baby Ant": 9,
-    "Ladybug": 64,
-    "Evil Centipede": 17,
+    "Ladybug": 65,
+    "Evil Centipede": 18,
     "bot-106": 1,
     "bot-41": 2,
     "bot-117": 1,
@@ -49,7 +49,7 @@
     "petalpop": 1,
     "bot-91": 4,
     "bot-47": 2,
-    "bot-114": 1,
+    "bot-114": 2,
     "bot-113": 2,
     "blossom": 3,
     "bot-31": 1,
@@ -148,10 +148,11 @@
     "bot-72": 1,
     "bot-148": 1,
     "bot-93": 1,
-    "bot-42": 1
+    "bot-42": 1,
+    "sussy": 1
   },
   "loadout_history": {
-    "0": 1343,
+    "0": 1354,
     "1": 1106,
     "29": 4,
     "40": 6,
@@ -202,6 +203,7 @@
     "206": 1,
     "41": 1,
     "75": 1,
-    "55": 1
+    "55": 1,
+    "256": 10
   }
 }

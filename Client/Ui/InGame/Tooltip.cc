@@ -7,37 +7,42 @@
 
 using namespace Ui;
 
-Element *Ui::UiLoadout::petal_tooltips[PetalID::kNumPetals] = {nullptr};
+// 2D table on the (type, rarity) plane — one tooltip per authored
+// PETAL_DATA cell. Unauthored cells stay null.
+Element *Ui::UiLoadout::petal_tooltips[PetalType::kNumPetalTypes][RarityID::kNumRarities] = {{nullptr}};
 
 static void make_petal_tooltip(PetalID::T id) {
-    std::string rld_str = PETAL_DATA[id].reload == 0 ? "" :
-        PETAL_DATA[id].attributes.secondary_reload == 0 ? std::format("{:.1f}s ⟳", PETAL_DATA[id].reload) : 
-        std::format("{:.1f} + {:.1f}s ⟳", PETAL_DATA[id].reload, PETAL_DATA[id].attributes.secondary_reload);
+    struct PetalData const &data = PETAL_DATA[id.type][id.rarity];
+    if (data.name == nullptr) return;
+    std::string rld_str = data.reload == 0 ? "" :
+        data.attributes.secondary_reload == 0 ? std::format("{:.1f}s ⟳", data.reload) :
+        std::format("{:.1f} + {:.1f}s ⟳", data.reload, data.attributes.secondary_reload);
     //std::cout << Renderer::get_ascii_text_size(rld_str.c_str()) << '\n';
     Element *tooltip = new Ui::VContainer({
         #ifdef DEBUG
         new Ui::HFlexContainer(
-            new Ui::StaticText(20, PETAL_DATA[id].name, { .fill = 0xffffffff, .h_justify = Style::Left }),
+            new Ui::StaticText(20, data.name, { .fill = 0xffffffff, .h_justify = Style::Left }),
             new Ui::StaticText(16, rld_str, { .fill = 0xffffffff, .v_justify = Style::Top }),
             5, 10, {}
         ),
         #else
-        new Ui::StaticText(20, PETAL_DATA[id].name, { .fill = 0xffffffff, .h_justify = Style::Left }),
+        new Ui::StaticText(20, data.name, { .fill = 0xffffffff, .h_justify = Style::Left }),
         #endif
-        new Ui::StaticText(14, RARITY_NAMES[PETAL_DATA[id].rarity], { .fill = RARITY_COLORS[PETAL_DATA[id].rarity], .h_justify = Style::Left }),
+        new Ui::StaticText(14, RARITY_NAMES[id.rarity], { .fill = RARITY_COLORS[id.rarity], .h_justify = Style::Left }),
         new Ui::Element(0,10),
-        new Ui::StaticText(12, PETAL_DATA[id].description, { .fill = 0xffffffff, .h_justify = Style::Left }),
-        DEBUG_ONLY(PETAL_DATA[id].health == 0 ? nullptr : new Ui::StaticText(12, "Health: " + format_score(PETAL_DATA[id].health), { .fill = 0xffffff90, .h_justify = Style::Left }),)
-        DEBUG_ONLY(PETAL_DATA[id].damage == 0 ? nullptr : new Ui::StaticText(12, "Damage: " + format_score(PETAL_DATA[id].damage), { .fill = 0xffffff90, .h_justify = Style::Left }),)
-        DEBUG_ONLY(PETAL_DATA[id].health == 0 ? nullptr : new Ui::StaticText(12, "Radius: " + format_score(PETAL_DATA[id].radius), { .fill = 0xffffff90, .h_justify = Style::Left }),)
+        new Ui::StaticText(12, data.description, { .fill = 0xffffffff, .h_justify = Style::Left }),
+        DEBUG_ONLY(data.health == 0 ? nullptr : new Ui::StaticText(12, "Health: " + format_score(data.health), { .fill = 0xffffff90, .h_justify = Style::Left }),)
+        DEBUG_ONLY(data.damage == 0 ? nullptr : new Ui::StaticText(12, "Damage: " + format_score(data.damage), { .fill = 0xffffff90, .h_justify = Style::Left }),)
+        DEBUG_ONLY(data.health == 0 ? nullptr : new Ui::StaticText(12, "Radius: " + format_score(data.radius), { .fill = 0xffffff90, .h_justify = Style::Left }),)
     }, 5, 2);
     tooltip->style.fill = 0x80000000;
     tooltip->style.round_radius = 6;
     tooltip->refactor();
-    Ui::UiLoadout::petal_tooltips[id] = tooltip;
+    Ui::UiLoadout::petal_tooltips[id.type][id.rarity] = tooltip;
 }
 
 void Ui::make_petal_tooltips() {
-    for (PetalID::T i = 0; i < PetalID::kNumPetals; ++i)
-        make_petal_tooltip(i);
+    for (PetalType::T t = 0; t < PetalType::kNumPetalTypes; ++t)
+        for (uint8_t r = 0; r < RarityID::kNumRarities; ++r)
+            make_petal_tooltip({t, r});
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-132",
   "first_seen": 1778543156.484498,
-  "last_seen": 1779493393.685301,
-  "episodes": 1575,
-  "score_total": 205328,
+  "last_seen": 1779512027.6358569,
+  "episodes": 1588,
+  "score_total": 205582,
   "score_best": 6559,
   "best_loadout": [
     0,
@@ -19,13 +19,13 @@
   "killed_by": {
     "Desert Centipede": 9,
     "Hornet": 418,
-    "Spider": 44,
-    "Beetle": 52,
+    "Spider": 45,
+    "Beetle": 55,
     "gardn": 3,
     "a": 2,
-    "Evil Centipede": 31,
-    "Wasp": 231,
-    "Mantis": 131,
+    "Evil Centipede": 33,
+    "Wasp": 234,
+    "Mantis": 133,
     "Cactus": 93,
     "bot-144": 3,
     "bot-29": 2,
@@ -128,7 +128,7 @@
     "blossom": 1
   },
   "loadout_history": {
-    "0": 1347,
+    "0": 1358,
     "1": 1140,
     "15": 20,
     "5": 18,
@@ -180,6 +180,9 @@
     "51": 1,
     "40": 8,
     "41": 1,
-    "33": 1
+    "33": 1,
+    "256": 8,
+    "1537": 1,
+    "1024": 1
   }
 }

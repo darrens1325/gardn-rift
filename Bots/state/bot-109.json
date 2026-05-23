@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-109",
   "first_seen": 1778364741.606845,
-  "last_seen": 1779493396.754584,
-  "episodes": 1609,
-  "score_total": 212402,
+  "last_seen": 1779512166.243003,
+  "episodes": 1622,
+  "score_total": 212776,
   "score_best": 6186,
   "best_loadout": [
     0,
@@ -17,14 +17,14 @@
   ],
   "killed_by": {
     "Sandstorm": 24,
-    "Hornet": 412,
+    "Hornet": 416,
     "Evil Centipede": 35,
-    "Mantis": 139,
-    "Wasp": 273,
-    "Scorpion": 6,
+    "Mantis": 141,
+    "Wasp": 274,
+    "Scorpion": 7,
     "bot-120": 2,
     "bot-128": 1,
-    "Beetle": 89,
+    "Beetle": 91,
     "bot-56": 1,
     "bot-127": 1,
     "Bush": 11,
@@ -44,7 +44,7 @@
     "Centipede": 39,
     "bot-147": 2,
     "bot-84": 3,
-    "Rock": 8,
+    "Rock": 9,
     "bot-38": 3,
     "bot-86": 2,
     "zorr": 3,
@@ -134,7 +134,7 @@
   },
   "loadout_history": {
     "1": 1189,
-    "0": 1359,
+    "0": 1371,
     "10": 12,
     "24": 22,
     "14": 27,
@@ -187,6 +187,8 @@
     "118": 1,
     "206": 1,
     "23": 2,
-    "50": 1
+    "50": 1,
+    "256": 11,
+    "5122": 1
   }
 }

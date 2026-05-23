@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-75",
   "first_seen": 1778543133.499709,
-  "last_seen": 1779493401.9379709,
-  "episodes": 1538,
-  "score_total": 193209,
+  "last_seen": 1779512187.7628129,
+  "episodes": 1550,
+  "score_total": 194773,
   "score_best": 6532,
   "best_loadout": [
     0,
@@ -17,21 +17,21 @@
     0
   ],
   "killed_by": {
-    "Hornet": 388,
+    "Hornet": 393,
     "bot-39": 1,
     "bot-62": 1,
     "Spider": 48,
     "Mantis": 113,
     "bot-32": 2,
     "Wasp": 257,
-    "Beetle": 71,
+    "Beetle": 73,
     "bot-49": 4,
     "bot-83": 2,
     "bot-80": 1,
-    "Cactus": 82,
+    "Cactus": 83,
     "bot-60": 2,
     "Desert Centipede": 18,
-    "Sandstorm": 22,
+    "Sandstorm": 23,
     "bot-25": 2,
     "bot-137": 2,
     "Evil Centipede": 25,
@@ -138,7 +138,7 @@
     "bot-29": 1
   },
   "loadout_history": {
-    "0": 1298,
+    "0": 1308,
     "1": 1046,
     "14": 33,
     "24": 23,
@@ -184,6 +184,9 @@
     "50": 2,
     "23": 3,
     "41": 1,
-    "36": 1
+    "36": 1,
+    "256": 3,
+    "1024": 1,
+    "5890": 1
   }
 }

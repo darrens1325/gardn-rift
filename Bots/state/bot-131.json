@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-131",
   "first_seen": 1778543543.0287948,
-  "last_seen": 1779493398.4550028,
-  "episodes": 1535,
-  "score_total": 240810,
+  "last_seen": 1779512254.5594182,
+  "episodes": 1548,
+  "score_total": 241262,
   "score_best": 10073,
   "best_loadout": [
     0,
@@ -18,11 +18,11 @@
   ],
   "killed_by": {
     "bot-29": 3,
-    "Hornet": 383,
-    "Mantis": 112,
+    "Hornet": 385,
+    "Mantis": 117,
     "Beetle": 86,
     "Evil Centipede": 17,
-    "Cactus": 75,
+    "Cactus": 76,
     "bot-138": 2,
     "Spider": 46,
     "bot-139": 1,
@@ -30,7 +30,7 @@
     "Wasp": 255,
     "Centipede": 37,
     "bot-71": 1,
-    "Bee": 100,
+    "Bee": 102,
     "bot-51": 2,
     "Rock": 15,
     "Worker Ant": 7,
@@ -135,7 +135,7 @@
     "bot-142": 1
   },
   "loadout_history": {
-    "0": 1299,
+    "0": 1312,
     "1": 1083,
     "5": 22,
     "14": 20,
@@ -194,6 +194,11 @@
     "32": 1,
     "40": 1,
     "41": 2,
-    "62": 1
+    "62": 1,
+    "768": 1,
+    "256": 8,
+    "1024": 1,
+    "9474": 1,
+    "3584": 1
   }
 }

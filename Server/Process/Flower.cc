@@ -24,16 +24,18 @@ struct PlayerBuffs {
 };
 
 static float _root_armor_per_stack(PetalID::T id) {
-    switch (id) {
-        case PetalID::kCommonRoot:    return 12.0f;
-        case PetalID::kUnusualRoot:   return 24.0f;
-        case PetalID::kRoot:          return 48.0f;
-        case PetalID::kEpicRoot:      return 60.0f;
-        case PetalID::kLegendaryRoot: return 100.0f;
-        case PetalID::kMythicRoot:    return 150.0f;
-        case PetalID::kUniqueRoot:    return 200.0f;
-        default:                      return 0.0f;
-    }
+    if (id.type != PetalType::kRoot) return 0.0f;
+    static constexpr float kArmorByRarity[RarityID::kNumRarities] = {
+        12.0f,   // Common
+        24.0f,   // Unusual
+        48.0f,   // Rare
+        60.0f,   // Epic
+        100.0f,  // Legendary
+        150.0f,  // Mythic
+        200.0f,  // Unique
+    };
+    if (id.rarity >= RarityID::kNumRarities) return 0.0f;
+    return kArmorByRarity[id.rarity];
 }
 
 static struct PlayerBuffs _get_petal_passive_buffs(Simulation *sim, Entity &player) {
@@ -44,7 +46,7 @@ static struct PlayerBuffs _get_petal_passive_buffs(Simulation *sim, Entity &play
     for (uint32_t i = 0; i < player.loadout_count; ++i) {
         LoadoutSlot const &slot = player.loadout[i];
         PetalID::T slot_petal_id = slot.get_petal_id();
-        struct PetalData const &petal_data = PETAL_DATA[slot_petal_id];
+        struct PetalData const &petal_data = PETAL_DATA[slot_petal_id.type][slot_petal_id.rarity];
         if (slot_petal_id == PetalID::kAntennae) {
             buffs.has_antennae = 1;
             buffs.extra_vision = fclamp(0.4,buffs.extra_vision,1);
@@ -92,7 +94,8 @@ static uint32_t _get_petal_rotation_count(Simulation *sim, Entity &player) {
     uint32_t count = 0;
     for (uint8_t i = 0; i < player.loadout_count; ++i) {
         LoadoutSlot const &slot = player.loadout[i];
-        struct PetalData const &petal_data = PETAL_DATA[slot.get_petal_id()];
+        PetalID::T const slot_id = slot.get_petal_id();
+        struct PetalData const &petal_data = PETAL_DATA[slot_id.type][slot_id.rarity];
         if (petal_data.attributes.clump_radius > 0)
             ++count;
         else {
@@ -158,7 +161,7 @@ void tick_player_behavior(Simulation *sim, Entity &player) {
         if (slot.get_petal_id() != player.loadout_ids[i] || player.overlevel_timer >= PETAL_DISABLE_DELAY * SIM_RATE)
             slot.update_id(sim, player.loadout_ids[i]);
         PetalID::T slot_petal_id = slot.get_petal_id();
-        struct PetalData const &petal_data = PETAL_DATA[slot_petal_id];
+        struct PetalData const &petal_data = PETAL_DATA[slot_petal_id.type][slot_petal_id.rarity];
         DEBUG_ONLY(assert(petal_data.count <= MAX_PETALS_IN_CLUMP);)
 
         if (slot_petal_id == PetalID::kNone || petal_data.count == 0)

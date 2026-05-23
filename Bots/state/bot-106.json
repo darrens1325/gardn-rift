@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-106",
   "first_seen": 1778364741.472102,
-  "last_seen": 1779493396.0945559,
-  "episodes": 1642,
-  "score_total": 235330,
+  "last_seen": 1779512010.195559,
+  "episodes": 1652,
+  "score_total": 235468,
   "score_best": 8414,
   "best_loadout": [
     0,
@@ -20,8 +20,8 @@
     "Spider": 58,
     "Hornet": 407,
     "Bee": 132,
-    "Cactus": 88,
-    "Beetle": 74,
+    "Cactus": 89,
+    "Beetle": 76,
     "bot-502": 1,
     "bot-105": 6,
     "Soldier Ant": 6,
@@ -34,7 +34,7 @@
     "Ladybug": 58,
     "Desert Centipede": 9,
     "Mantis": 139,
-    "Wasp": 282,
+    "Wasp": 287,
     "bot-114": 2,
     "bot-90": 3,
     "hello": 3,
@@ -142,7 +142,7 @@
     "bot-63": 2
   },
   "loadout_history": {
-    "0": 1396,
+    "0": 1405,
     "1": 1169,
     "14": 30,
     "9": 9,
@@ -195,6 +195,7 @@
     "204": 1,
     "206": 2,
     "118": 1,
-    "205": 1
+    "205": 1,
+    "256": 3
   }
 }

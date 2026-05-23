@@ -77,6 +77,15 @@ namespace StorageProtocol {
         for (uint32_t i = 0; i < len; ++i) write<uint8_t>(str[i]);
     }
 
+    // Two bytes: type, then rarity. Matches the on-wire encoding from
+    // Shared/Binary.cc::Writer::write<Petal> so a "seen petals" entry
+    // looks the same whether it came off the socket or out of localStorage.
+    template<>
+    void Encoder::write<Petal>(Petal const &p) {
+        write<uint8_t>(p.type);
+        write<uint8_t>(p.rarity);
+    }
+
     Decoder::Decoder(uint8_t const *ptr) : base(ptr), at(ptr) {}
 
     template<>
@@ -103,6 +112,14 @@ namespace StorageProtocol {
         uint32_t len = read<uint32_t>();
         for (uint32_t i = 0; i < len; ++i) ref.push_back(read<uint8_t>());
         return ref;
+    }
+
+    template<>
+    Petal Decoder::read<Petal>() {
+        Petal p;
+        p.type = read<uint8_t>();
+        p.rarity = read<uint8_t>();
+        return p;
     }
 }
 
@@ -135,7 +152,7 @@ STORED
 using namespace StorageProtocol;
 
 void Storage::retrieve() {
-    Game::seen_petals[PetalID::kBasic] = 1;
+    Game::seen_petals[PetalType::kBasic][RarityID::kCommon] = 1;
     {
         // Each stored entry is a packed (mob_id, rarity) pair: high byte
         // is mob_id, low nibble is rarity. The format predated the wave
@@ -152,12 +169,18 @@ void Storage::retrieve() {
         }
     }
     {
-        uint32_t len = StorageProtocol::retrieve("petals", 256);
+        // Petal stream: one Petal (= u8 type, u8 rarity) per seen
+        // (type, rarity) pair. Wider than the legacy one-byte-id
+        // encoding; existing localStorage blobs from before the 2D
+        // migration are stale and simply fail the bounds check.
+        uint32_t len = StorageProtocol::retrieve("petals", 1024);
         Decoder reader(&StorageProtocol::buffer[0]);
-        while (reader.at < StorageProtocol::buffer + len) {
-            PetalID::T petal_id = reader.read<uint8_t>();
-            if (petal_id >= PetalID::kNumPetals || petal_id == PetalID::kNone) break;
-            Game::seen_petals[petal_id] = 1;
+        while (reader.at + 1 < StorageProtocol::buffer + len) {
+            Petal id = reader.read<Petal>();
+            if (id == PetalID::kNone) break;
+            if (id.type >= PetalType::kNumPetalTypes) break;
+            if (id.rarity >= RarityID::kNumRarities) break;
+            Game::seen_petals[id.type][id.rarity] = 1;
         }
     }
     {
@@ -180,7 +203,10 @@ void Storage::retrieve() {
     for (MobID::T i = 0; i < MobID::kNumMobs; ++i)
         for (uint8_t r = 0; r < RarityID::kNumRarities; ++r)
             Game::seen_mobs[i][r] = 1;
-    for (PetalID::T i = PetalID::kBasic; i < PetalID::kNumPetals; ++i) Game::seen_petals[i] = 1;
+    for (PetalType::T t = 0; t < PetalType::kNumPetalTypes; ++t)
+        for (uint8_t r = 0; r < RarityID::kNumRarities; ++r)
+            if (PETAL_DATA[t][r].name != nullptr)
+                Game::seen_petals[t][r] = 1;
     #endif
 }
 
@@ -191,9 +217,16 @@ void Storage::set() {
     if (should_update == 0) return;
     should_update = 0;
     {
+        // Pair-stream: one Petal (= u8 type, u8 rarity) per seen
+        // (type, rarity) pair. Skip unauthored cells so we don't waste
+        // bytes on impossible coordinates.
         Encoder writer(&StorageProtocol::buffer[0]);
-        for (PetalID::T id = PetalID::kBasic; id < PetalID::kNumPetals; ++id)
-            if (Game::seen_petals[id]) writer.write<uint8_t>(id);
+        for (PetalType::T t = PetalType::kNone + 1; t < PetalType::kNumPetalTypes; ++t)
+            for (uint8_t r = 0; r < RarityID::kNumRarities; ++r)
+                if (Game::seen_petals[t][r] && PETAL_DATA[t][r].name != nullptr) {
+                    PetalID::T id = {t, r};
+                    writer.write<Petal>(id);
+                }
         StorageProtocol::store("petals", writer.at - writer.base);
     }
     {

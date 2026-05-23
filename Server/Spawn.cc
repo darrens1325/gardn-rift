@@ -15,7 +15,6 @@
 static std::string const *g_alloc_mob_map_path = nullptr;
 
 Entity &alloc_drop(Simulation *sim, PetalID::T drop_id) {
-    DEBUG_ONLY(assert(drop_id < PetalID::kNumPetals);)
     PetalTracker::add_petal(sim, drop_id);
     Entity &drop = sim->alloc_ent();
     drop.add_component(kPhysics);
@@ -28,7 +27,7 @@ Entity &alloc_drop(Simulation *sim, PetalID::T drop_id) {
 
     drop.add_component(kDrop);
     drop.set_drop_id(drop_id);
-    entity_set_despawn_tick(drop, 10 * (2 + PETAL_DATA[drop_id].rarity) * SIM_RATE);
+    entity_set_despawn_tick(drop, 10 * (2 + drop_id.rarity) * SIM_RATE);
     drop.immunity_ticks = SIM_RATE / 3;
     return drop;
 }
@@ -236,8 +235,7 @@ Entity &alloc_player(Simulation *sim, EntityID const team) {
 }
 
 Entity &alloc_petal(Simulation *sim, PetalID::T petal_id, Entity const &parent) {
-    DEBUG_ONLY(assert(petal_id < PetalID::kNumPetals);)
-    struct PetalData const &petal_data = PETAL_DATA[petal_id];
+    struct PetalData const &petal_data = PETAL_DATA[petal_id.type][petal_id.rarity];
     Entity &petal = sim->alloc_ent();
     petal.map_path = parent.map_path;
     petal.add_component(kPhysics);

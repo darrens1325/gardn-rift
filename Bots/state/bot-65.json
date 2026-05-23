@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-65",
   "first_seen": 1778543582.466288,
-  "last_seen": 1779493402.583848,
-  "episodes": 1445,
-  "score_total": 253229,
+  "last_seen": 1779512135.5913339,
+  "episodes": 1459,
+  "score_total": 253424,
   "score_best": 6868,
   "best_loadout": [
     0,
@@ -18,17 +18,17 @@
   ],
   "killed_by": {
     "Ladybug": 67,
-    "Hornet": 371,
-    "Mantis": 115,
+    "Hornet": 373,
+    "Mantis": 116,
     "Bush": 11,
-    "Wasp": 244,
+    "Wasp": 250,
     "Sandstorm": 19,
     "bot-118": 1,
     "bot-50": 1,
     "bot-89": 1,
     "bot-106": 2,
     "hello": 3,
-    "Beetle": 59,
+    "Beetle": 61,
     "bot-31": 2,
     "Evil Centipede": 25,
     "Bee": 97,
@@ -36,7 +36,7 @@
     "bot-128": 1,
     "bot-117": 1,
     "bot-69": 2,
-    "Cactus": 74,
+    "Cactus": 75,
     "Spider": 46,
     "Centipede": 42,
     "bot-27": 2,
@@ -135,7 +135,7 @@
     "bot-103": 1
   },
   "loadout_history": {
-    "0": 1230,
+    "0": 1241,
     "1": 986,
     "9": 16,
     "25": 10,
@@ -184,6 +184,9 @@
     "50": 1,
     "47": 2,
     "39": 1,
-    "23": 1
+    "23": 1,
+    "256": 7,
+    "5634": 1,
+    "3073": 1
   }
 }

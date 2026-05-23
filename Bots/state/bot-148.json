@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-148",
   "first_seen": 1778543177.00911,
-  "last_seen": 1779493397.339225,
-  "episodes": 1503,
-  "score_total": 183530,
+  "last_seen": 1779512069.134612,
+  "episodes": 1517,
+  "score_total": 183699,
   "score_best": 5340,
   "best_loadout": [
     0,
@@ -17,17 +17,17 @@
   ],
   "killed_by": {
     "bot-51": 3,
-    "Wasp": 285,
-    "Hornet": 343,
-    "Mantis": 117,
+    "Wasp": 290,
+    "Hornet": 344,
+    "Mantis": 118,
     "Cactus": 88,
     "Bee": 94,
     "bot-121": 2,
     "bot-93": 1,
     "Spider": 33,
-    "Beetle": 78,
+    "Beetle": 82,
     "bot-52": 2,
-    "Centipede": 37,
+    "Centipede": 38,
     "Evil Centipede": 20,
     "bot-112": 2,
     "bot-80": 1,
@@ -136,7 +136,7 @@
     "bot-24": 1
   },
   "loadout_history": {
-    "0": 1280,
+    "0": 1291,
     "9": 18,
     "1": 1077,
     "10": 7,
@@ -186,6 +186,11 @@
     "204": 2,
     "50": 1,
     "33": 1,
-    "45": 1
+    "45": 1,
+    "256": 9,
+    "5890": 1,
+    "10755": 1,
+    "3072": 1,
+    "12288": 1
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "zorr",
   "first_seen": 1778364032.693025,
-  "last_seen": 1779493402.741392,
-  "episodes": 1525,
-  "score_total": 254162,
+  "last_seen": 1779511946.0606358,
+  "episodes": 1538,
+  "score_total": 254311,
   "score_best": 10055,
   "best_loadout": [
     79,
@@ -17,7 +17,7 @@
     0
   ],
   "killed_by": {
-    "Hornet": 398,
+    "Hornet": 402,
     "Bee": 94,
     "Soldier Ant": 9,
     "Massive Beetle": 1,
@@ -27,9 +27,9 @@
     "Ladybug": 67,
     "Mantis": 101,
     "Cactus": 77,
-    "Wasp": 259,
+    "Wasp": 263,
     "bot-92": 3,
-    "Evil Centipede": 19,
+    "Evil Centipede": 21,
     "bot-133": 2,
     "bot-129": 5,
     "bot-90": 2,
@@ -136,7 +136,7 @@
     "bot-33": 3
   },
   "loadout_history": {
-    "0": 1300,
+    "0": 1311,
     "1": 1049,
     "10": 11,
     "5": 25,
@@ -184,6 +184,7 @@
     "168": 2,
     "23": 3,
     "46": 3,
-    "205": 1
+    "205": 1,
+    "256": 8
   }
 }

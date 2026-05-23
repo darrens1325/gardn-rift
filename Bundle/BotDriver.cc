@@ -154,30 +154,65 @@ static constexpr int WARP_FEAT_PER_SLOT = 4;
 // Mirror of protocol.py PETAL_TYPE_*: 0=NONE 1=DAMAGE 2=TANK 3=HEAL 4=POISON 5=UTILITY.
 enum PetalTypeCat { PT_NONE=0, PT_DAMAGE=1, PT_TANK=2, PT_HEAL=3, PT_POISON=4, PT_UTILITY=5 };
 
-// Classify a petal by inspecting its PETAL_DATA entry. Mirrors the
-// hand-authored protocol.py PETAL_TYPE table:
-//   1. attributes.constant_heal > 0 or attributes.burst_heal > 0 → HEAL
-//   2. attributes.poison_damage.damage > 0 → POISON
-//   3. names matching the TANK / DAMAGE lists below → that category
-//   4. everything else → UTILITY (flag-style petals: Antennae, Bubble,
-//      Missile, Web, Wing, Faster, Egg variants, Stick, Salt, ThirdEye,
-//      Observer, Lotus, Cutter, YinYang, Yggdrasil, Square, Root, …)
+// Coarse role of a petal, keyed by its PetalType byte alone — rarity does
+// not change the role (Common Stinger vs Epic Stinger are both DAMAGE).
+// Mirrors Bots/protocol.py:PETAL_TYPE_BY_TYPE row-for-row; if you edit one,
+// edit the other. Split variants (kPoisonCactus → POISON, kTricac → DAMAGE,
+// kBlueIris → POISON, kPoisonPeas → POISON, kAzalea → HEAL, kAntEgg /
+// kBeetleEgg → UTILITY, kTriweb → UTILITY) follow the spec exactly.
 static int classify_petal_type(PetalID::T id) {
-    if (id == PetalID::kNone || id >= PetalID::kNumPetals) return PT_NONE;
-    PetalData const &d = PETAL_DATA[id];
-    if (d.attributes.constant_heal > 0 || d.attributes.burst_heal > 0) return PT_HEAL;
-    if (d.attributes.poison_damage.damage > 0) return PT_POISON;
-    char const *n = d.name;
-    // TANK: chunky high-HP defensive petals.
-    if (!std::strcmp(n, "Heavy") || !std::strcmp(n, "Rock") || !std::strcmp(n, "Cactus")
-        || !std::strcmp(n, "Tricac") || !std::strcmp(n, "Heaviest") || !std::strcmp(n, "Moon")
-        || !std::strcmp(n, "Bone") || !std::strcmp(n, "Corn")) return PT_TANK;
-    // DAMAGE: offensive petals with no special role.
-    if (!std::strcmp(n, "Basic") || !std::strcmp(n, "Fast") || !std::strcmp(n, "Stinger")
-        || !std::strcmp(n, "Twin") || !std::strcmp(n, "Triplet") || !std::strcmp(n, "Peas")
-        || !std::strcmp(n, "Sand") || !std::strcmp(n, "Rice") || !std::strcmp(n, "Square")
-        || !std::strcmp(n, "Tringer")) return PT_DAMAGE;
-    return PT_UTILITY;
+    if (id.type == PetalType::kNone || id.type >= PetalType::kNumPetalTypes) return PT_NONE;
+    switch (id.type) {
+        case PetalType::kBasic:        return PT_DAMAGE;
+        case PetalType::kLight:        return PT_DAMAGE;
+        case PetalType::kHeavy:        return PT_TANK;
+        case PetalType::kStinger:      return PT_DAMAGE;
+        case PetalType::kTringer:      return PT_DAMAGE;
+        case PetalType::kLeaf:         return PT_HEAL;
+        case PetalType::kTwin:         return PT_DAMAGE;
+        case PetalType::kRose:         return PT_HEAL;
+        case PetalType::kAzalea:       return PT_HEAL;
+        case PetalType::kIris:         return PT_POISON;
+        case PetalType::kBlueIris:     return PT_POISON;
+        case PetalType::kMissile:      return PT_UTILITY;
+        case PetalType::kDandelion:    return PT_UTILITY;
+        case PetalType::kBubble:       return PT_UTILITY;
+        case PetalType::kFaster:       return PT_UTILITY;
+        case PetalType::kRock:         return PT_TANK;
+        case PetalType::kCactus:       return PT_TANK;
+        case PetalType::kPoisonCactus: return PT_POISON;
+        case PetalType::kTricac:       return PT_DAMAGE;  // clump heavy hitter
+        case PetalType::kWeb:          return PT_UTILITY;
+        case PetalType::kTriweb:       return PT_UTILITY;
+        case PetalType::kWing:         return PT_UTILITY;
+        case PetalType::kPeas:         return PT_DAMAGE;
+        case PetalType::kPoisonPeas:   return PT_POISON;
+        case PetalType::kSand:         return PT_DAMAGE;
+        case PetalType::kPincer:       return PT_POISON;
+        case PetalType::kDahlia:       return PT_HEAL;
+        case PetalType::kTriplet:      return PT_DAMAGE;
+        case PetalType::kAntEgg:       return PT_UTILITY;
+        case PetalType::kBeetleEgg:    return PT_UTILITY;
+        case PetalType::kPollen:       return PT_UTILITY;
+        case PetalType::kStick:        return PT_UTILITY;
+        case PetalType::kAntennae:     return PT_UTILITY;
+        case PetalType::kHeaviest:     return PT_TANK;
+        case PetalType::kThirdEye:     return PT_UTILITY;
+        case PetalType::kObserver:     return PT_UTILITY;
+        case PetalType::kSalt:         return PT_UTILITY;
+        case PetalType::kSquare:       return PT_UTILITY;
+        case PetalType::kMoon:         return PT_TANK;
+        case PetalType::kLotus:        return PT_UTILITY;
+        case PetalType::kCutter:       return PT_UTILITY;
+        case PetalType::kYinYang:      return PT_UTILITY;
+        case PetalType::kYggdrasil:    return PT_UTILITY;
+        case PetalType::kRice:         return PT_DAMAGE;
+        case PetalType::kBone:         return PT_TANK;
+        case PetalType::kYucca:        return PT_HEAL;
+        case PetalType::kCorn:         return PT_TANK;
+        case PetalType::kRoot:         return PT_UTILITY;
+        default:                       return PT_UTILITY;
+    }
 }
 
 // 4 cardinal-direction wall-distance rays. Mirrors Bots/wall_map.py —
@@ -295,8 +330,13 @@ void bot_make_obs_impl(int ws_id, float *out) {
     Hostile nearest[3] = { {1e30f,0,0,0,0}, {1e30f,0,0,0,0}, {1e30f,0,0,0,0} };
 
     // [3 nearest drops × 4]
-    struct DropFeat { float d2, dx, dy; int drop_id; };
-    DropFeat drops[K_DROPS] = { {1e30f,0,0,0}, {1e30f,0,0,0}, {1e30f,0,0,0} };
+    // drop_id is the (type, rarity) Petal pair pulled from Entity::drop_id.
+    struct DropFeat { float d2, dx, dy; PetalID::T drop_id; };
+    DropFeat drops[K_DROPS] = {
+        {1e30f, 0, 0, PetalID::kNone},
+        {1e30f, 0, 0, PetalID::kNone},
+        {1e30f, 0, 0, PetalID::kNone},
+    };
 
     // Critical: the Python bot's observation is built from `self.entities`,
     // which is populated from each kClientUpdate packet — and that packet
@@ -342,7 +382,7 @@ void bot_make_obs_impl(int ws_id, float *out) {
             for (int k = 0; k < K_DROPS; ++k) {
                 if (d2 < drops[k].d2) {
                     for (int j = K_DROPS - 1; j > k; --j) drops[j] = drops[j-1];
-                    drops[k] = { d2, dx, dy, (int)e.drop_id };
+                    drops[k] = { d2, dx, dy, e.drop_id };
                     break;
                 }
             }
@@ -372,13 +412,16 @@ void bot_make_obs_impl(int ws_id, float *out) {
     // Loadout features (rank / type / burst). One pass over the 16-slot
     // inventory; populates three parallel state-vector columns. Matches
     // bot.py::_loadout_features / _loadout_type_features /
-    // _loadout_burst_features.
+    // _loadout_burst_features. The petal id is a (type, rarity) coordinate
+    // — PETAL_DATA is a 2D table indexed by [type][rarity], and the rarity
+    // byte of the petal IS the rarity that used to live on PetalData.rarity.
     for (int i = 0; i < 16; ++i) {
         PetalID::T pid = me.loadout_ids[i];
-        if (pid == PetalID::kNone || pid >= PetalID::kNumPetals) continue;
-        PetalData const &pd = PETAL_DATA[pid];
+        if (pid.type == PetalType::kNone || pid.type >= PetalType::kNumPetalTypes) continue;
+        if (pid.rarity >= RarityID::kNumRarities) continue;
+        PetalData const &pd = PETAL_DATA[pid.type][pid.rarity];
         // rank: (rarity + 1) / (MAX_RARITY_RANK + 1) → kCommon ≈ 0.14, kUnique = 1.0
-        out[OFF_LOADOUT_RANK + i] = ((float)pd.rarity + 1.0f) / (MAX_RARITY_RANK + 1.0f);
+        out[OFF_LOADOUT_RANK + i] = ((float)pid.rarity + 1.0f) / (MAX_RARITY_RANK + 1.0f);
         // type: classifier / (NUM_TYPES_INC_NONE - 1) so empty=0, utility=1.0
         int t = classify_petal_type(pid);
         out[OFF_LOADOUT_TYPE + i] = (float)t / (float)(NUM_PETAL_TYPES_INC_NONE - 1);
@@ -388,16 +431,19 @@ void bot_make_obs_impl(int ws_id, float *out) {
     }
 
     // Drops: 3 nearest by squared distance, each as (dx, dy, rank, type).
+    // drop_id is a Petal struct (type, rarity), captured into the local
+    // `drops` array as the raw struct above.
     for (int k = 0; k < K_DROPS; ++k) {
         int base = OFF_DROPS + k * DROP_FEAT_PER;
         if (drops[k].d2 >= 1e29f) continue;  // empty slot — leave zeros
         out[base + 0] = drops[k].dx / OBS_SCALE;
         out[base + 1] = drops[k].dy / OBS_SCALE;
-        int did = drops[k].drop_id;
-        if (did > 0 && did < PetalID::kNumPetals) {
-            PetalData const &pd = PETAL_DATA[did];
-            out[base + 2] = ((float)pd.rarity + 1.0f) / (MAX_RARITY_RANK + 1.0f);
-            out[base + 3] = (float)classify_petal_type((PetalID::T)did) / (float)(NUM_PETAL_TYPES_INC_NONE - 1);
+        PetalID::T did = drops[k].drop_id;
+        if (did.type != PetalType::kNone && did.type < PetalType::kNumPetalTypes
+            && did.rarity < RarityID::kNumRarities) {
+            // rank: rarity normalised — rarity alone is the rank now.
+            out[base + 2] = ((float)did.rarity + 1.0f) / (MAX_RARITY_RANK + 1.0f);
+            out[base + 3] = (float)classify_petal_type(did) / (float)(NUM_PETAL_TYPES_INC_NONE - 1);
         }
     }
 

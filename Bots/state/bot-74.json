@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-74",
   "first_seen": 1778543473.4266272,
-  "last_seen": 1779493400.721792,
-  "episodes": 1466,
-  "score_total": 175009,
+  "last_seen": 1779512108.895096,
+  "episodes": 1480,
+  "score_total": 175310,
   "score_best": 5267,
   "best_loadout": [
     0,
@@ -16,12 +16,12 @@
     0
   ],
   "killed_by": {
-    "Beetle": 103,
-    "Wasp": 242,
-    "Hornet": 337,
+    "Beetle": 105,
+    "Wasp": 244,
+    "Hornet": 339,
     "bot-46": 2,
     "Cactus": 81,
-    "Sandstorm": 15,
+    "Sandstorm": 16,
     "bot-129": 1,
     "Mantis": 123,
     "petalpop": 1,
@@ -39,7 +39,7 @@
     "Desert Centipede": 10,
     "Scorpion": 6,
     "Rock": 16,
-    "Evil Centipede": 24,
+    "Evil Centipede": 25,
     "bot-147": 3,
     "Bush": 17,
     "bot-79": 1,
@@ -69,7 +69,7 @@
     "zorr": 7,
     "florrio": 2,
     "bot-148": 1,
-    "thorn": 1,
+    "thorn": 2,
     "bot-88": 2,
     "bot-70": 1,
     "Baby Ant": 6,
@@ -124,10 +124,11 @@
     "bot-32": 1,
     "blossom-v2": 1,
     "bot-118": 1,
-    "bot-91": 4
+    "bot-91": 4,
+    "bot-112": 2
   },
   "loadout_history": {
-    "0": 1240,
+    "0": 1252,
     "1": 1013,
     "45": 3,
     "25": 10,
@@ -178,6 +179,10 @@
     "117": 2,
     "40": 2,
     "116": 2,
-    "28": 1
+    "28": 1,
+    "256": 8,
+    "3585": 1,
+    "5888": 1,
+    "11777": 1
   }
 }

@@ -28,6 +28,7 @@ from __future__ import annotations
 import asyncio
 import math
 import random
+from collections import deque
 
 import websockets
 
@@ -333,6 +334,43 @@ W_LOW_HP_PENALTY = 0.3
 # a mob," because mobs are everywhere and players are scarce.
 W_MOB_KILL_BONUS = 10.0
 W_PLAYER_KILL_BONUS = 50.0
+
+# Anti-camp shaping. The existing IDLE_PENALTY / W_PROXIMITY combo
+# (net +0.10/tick when standing near a hostile) wasn't enough to
+# break the "sit in a safe corner with full loadout" fixed point.
+# This term targets the specific failure mode directly: when the bot
+# has been stationary AND has not killed anything for a sustained
+# window, charge a per-tick cost. Both conditions must hold so we
+# don't punish:
+#   - a bot actively engaging mobs (kills reset the no-kill timer);
+#   - a bot legitimately chasing across the map (movement breaks the
+#     stationary condition even with no kills landing).
+# Stationary = position moved < CAMP_MOVE_RADIUS world units over
+# the last CAMP_WINDOW_TICKS. No-kill = CAMP_KILL_GRACE_TICKS ticks
+# since the last confirmed mob OR player kill.
+CAMP_WINDOW_TICKS = 100          # 5 s at 20 Hz
+CAMP_MOVE_RADIUS = 200.0         # world units
+CAMP_KILL_GRACE_TICKS = 200      # 10 s at 20 Hz — generous so bursty
+                                 # mob fights don't trip the timer
+W_CAMP_PENALTY = 0.6             # per-tick — larger than IDLE_PENALTY
+                                 # (0.10) so the value function notices
+                                 # the difference between camping-with-
+                                 # loadout (+0.10 net before) and
+                                 # camping-without-kills (-0.50 net now)
+
+# Kill-of-camper / kill-of-weaker bonuses. Stack additively on top of
+# W_PLAYER_KILL_BONUS. Identifies the victim's "weaker than us" status
+# by counting visible orbiting Petal entities with parent=victim_eid
+# at snapshot time vs our own len(my_petals) at kill time. Camping
+# status is captured at snapshot time using the same window/radius
+# we use for ourselves: a victim is "camping" iff we've seen them
+# for at least CAMP_WINDOW_TICKS and their position drifted less than
+# CAMP_MOVE_RADIUS over that window. The full bonus stack on a kill
+# of a weak camper is base+weak+camp = 50+50+100 = +200, vs +50 for
+# a kill of a fully-equipped mover — strong gradient toward the
+# behaviors we actually want.
+W_PVP_WEAK_KILL_BONUS = 50.0
+W_PVP_CAMP_KILL_BONUS = 100.0
 
 # Wave-system end-of-round bonus. Server fires kRoundEnd every
 # WAVE_TICKS_PER_ROUND game-ticks naming the player with the highest score
@@ -790,7 +828,11 @@ class LearningBot:
         # is in this snapshot, not in `entities`. Without snapshotted
         # position we can't check petal overlap at the moment of death.
         # Reset on death so we don't credit cross-life damage.
-        self._enemy_hp_snapshot: dict[tuple[int, int], tuple[float, float, float, float, bool]] = {}
+        # (hp, x, y, radius, is_flower, petal_count, was_camping)
+        self._enemy_hp_snapshot: dict[
+            tuple[int, int],
+            tuple[float, float, float, float, bool, int, bool],
+        ] = {}
         # Snapshot of our petals' (x, y, radius) at the same tick the enemy
         # snapshot was taken. Used for the disappearance-credit path: when
         # an enemy vanishes we want to check overlap against the petals
@@ -802,6 +844,25 @@ class LearningBot:
         # (closing-rate gradient). None outside of an active life.
         self._prev_nearest_hostile_dist: float | None = None
         self.approach_reward_total = 0.0  # diagnostic: cumulative this life
+
+        # Anti-camp tracking — see W_CAMP_PENALTY block at module top
+        # for the rationale. `_tick_count_life` increments each control
+        # tick the bot is alive (reset on death). `_ticks_since_kill`
+        # tracks how long since a confirmed mob/player kill landed.
+        # `_self_pos_history` is a sliding window of recent positions
+        # used to measure stationarity; `_enemy_pos_history` does the
+        # same per visible enemy Flower so we can tag victims as
+        # "was_camping" at snapshot time.
+        self._tick_count_life = 0
+        self._ticks_since_kill = 0
+        self._self_pos_history: deque[tuple[int, float, float]] = deque()
+        self._enemy_pos_history: dict[tuple[int, int], deque[tuple[int, float, float]]] = {}
+        # Diagnostics: cumulative camp penalty this life, plus per-life
+        # counts of weak/camper kills credited so the user can tell
+        # whether the new shaping is firing at the expected rate.
+        self.camp_penalty_total = 0.0
+        self.camper_kills_this_life = 0
+        self.weak_kills_this_life = 0
 
         # Per-bot memory. Persistent state lives across runs in
         # Bots/state/<name>.json; episodic state is re-created per life.
@@ -1089,6 +1150,16 @@ class LearningBot:
         self.mob_kills_this_life = 0
         self.drops_picked_up_this_life = 0
         self._prev_nonempty_slots = 0
+        # Anti-camp trackers — fresh window per life so a previous
+        # life's stationary streak can't carry over and immediately
+        # fire the penalty on respawn.
+        self._tick_count_life = 0
+        self._ticks_since_kill = 0
+        self._self_pos_history.clear()
+        self._enemy_pos_history.clear()
+        self.camp_penalty_total = 0.0
+        self.camper_kills_this_life = 0
+        self.weak_kills_this_life = 0
 
     def _decide_and_learn(self) -> tuple[float, float, int] | None:
         """Returns (ax, ay, flags) or None if we have nothing to do this tick."""
@@ -1135,6 +1206,49 @@ class LearningBot:
         # waiting to grind against geometry.
         px = float(player.get("x", 0.0))
         py = float(player.get("y", 0.0))
+
+        # Anti-camp bookkeeping: increment per-life tick counter and the
+        # ticks-since-kill timer (reset on a confirmed kill further down),
+        # then update the sliding-window position histories used by the
+        # camp-detection logic. Done before the reward block so the
+        # stationarity check inside it can read the freshly-updated
+        # window.
+        self._tick_count_life += 1
+        self._ticks_since_kill += 1
+        self._self_pos_history.append((self._tick_count_life, px, py))
+        while (self._self_pos_history
+               and self._self_pos_history[0][0]
+               < self._tick_count_life - CAMP_WINDOW_TICKS):
+            self._self_pos_history.popleft()
+        # Track every visible enemy Flower so we can tag victims as
+        # "was_camping" at snapshot-write time. Mobs are excluded — they
+        # don't have a meaningful camping signal and we only pay the
+        # camper-kill bonus on PvP kills.
+        seen_enemy_eids: set[tuple[int, int]] = set()
+        my_id_for_history = player["_id"]
+        for eid_h, ent_h in self.entities.items():
+            if eid_h == my_id_for_history:
+                continue
+            if not has_component(ent_h, "Flower"):
+                continue
+            if ent_h.get("team", (0, 0)) == my_team:
+                continue
+            if "x" not in ent_h or ent_h.get("_pending_delete"):
+                continue
+            seen_enemy_eids.add(eid_h)
+            dq = self._enemy_pos_history.setdefault(eid_h, deque())
+            dq.append((self._tick_count_life, float(ent_h["x"]), float(ent_h["y"])))
+            while dq and dq[0][0] < self._tick_count_life - CAMP_WINDOW_TICKS:
+                dq.popleft()
+        # GC enemies we haven't seen in at least one camp window so the
+        # dict can't grow without bound across long lives.
+        for eid_g in list(self._enemy_pos_history.keys()):
+            if eid_g in seen_enemy_eids:
+                continue
+            dq = self._enemy_pos_history[eid_g]
+            if not dq or dq[-1][0] < self._tick_count_life - CAMP_WINDOW_TICKS:
+                del self._enemy_pos_history[eid_g]
+
         if _WALL_RECTS or _WALL_WORLD_W > 0:
             wall_feats = wall_ray_features(
                 px, py, _WALL_WORLD_W, _WALL_WORLD_H, _WALL_RECTS,
@@ -1186,6 +1300,22 @@ class LearningBot:
             d_score = max(0, cur_score - self._prev_score)  # ignore score drops on respawn
             d_hp = cur_hp - self._prev_hp
             reward = W_SCORE * d_score + W_HP * d_hp - IDLE_PENALTY
+            # Anti-camp penalty: charged only when BOTH stationary
+            # (position drifted < CAMP_MOVE_RADIUS over the last full
+            # CAMP_WINDOW_TICKS) AND it's been more than
+            # CAMP_KILL_GRACE_TICKS since the last confirmed kill.
+            # The window-full check (len >= CAMP_WINDOW_TICKS) gates
+            # the penalty during the first ~5s of a life, so a bot
+            # that just spawned isn't immediately punished for being
+            # "stationary" against an unset baseline.
+            if (len(self._self_pos_history) >= CAMP_WINDOW_TICKS
+                    and self._ticks_since_kill > CAMP_KILL_GRACE_TICKS):
+                ox, oy = self._self_pos_history[0][1], self._self_pos_history[0][2]
+                dxs = px - ox
+                dys = py - oy
+                if dxs * dxs + dys * dys < CAMP_MOVE_RADIUS * CAMP_MOVE_RADIUS:
+                    reward -= W_CAMP_PENALTY
+                    self.camp_penalty_total += W_CAMP_PENALTY
             # One-shot cost on the *action* that caused a delete this tick.
             # Credit-assigned to the delete action directly, so the QNet
             # learns "delete = expensive" without waiting for the empty-slot
@@ -1316,6 +1446,13 @@ class LearningBot:
             player_damage = 0.0
             confirmed_pvp_kills = 0
             confirmed_mob_kills = 0
+            # Subsets of confirmed_pvp_kills: counted when the victim's
+            # snapshot was tagged as camping (see snapshot writer) or
+            # when their visible orbiting petal count was strictly less
+            # than ours. Pay additive bonuses on top of the base
+            # W_PLAYER_KILL_BONUS; see W_PVP_CAMP_KILL_BONUS / WEAK.
+            confirmed_camper_kills = 0
+            confirmed_weak_kills = 0
             my_player_id = player["_id"]
             my_petals: list[tuple[float, float, float]] = []
             for eid, ent in self.entities.items():
@@ -1375,10 +1512,17 @@ class LearningBot:
                 # the kill blow correctly and tag it as PvP if the victim
                 # was a player.
                 snap_petals = self._my_petals_snapshot
+                # Our petal count at kill time — compared against the
+                # victim's snapshotted petal count to decide whether to
+                # pay the "weaker than us" PvP bonus. `my_petals` was
+                # populated above by the same scan used for damage
+                # credit, so it reflects the current frame.
+                my_petal_count = len(my_petals)
                 for eid in list(self._enemy_hp_snapshot.keys()):
                     if eid in seen_eids:
                         continue
-                    snap_hp, sx, sy, sr, snap_is_flower = self._enemy_hp_snapshot[eid]
+                    (snap_hp, sx, sy, sr, snap_is_flower,
+                     snap_petal_count, snap_was_camping) = self._enemy_hp_snapshot[eid]
                     if snap_hp <= 0.001:
                         del self._enemy_hp_snapshot[eid]
                         continue
@@ -1390,6 +1534,10 @@ class LearningBot:
                             if snap_is_flower:
                                 player_damage += snap_hp
                                 confirmed_pvp_kills += 1
+                                if snap_was_camping:
+                                    confirmed_camper_kills += 1
+                                if snap_petal_count < my_petal_count:
+                                    confirmed_weak_kills += 1
                             else:
                                 mob_damage += snap_hp
                                 confirmed_mob_kills += 1
@@ -1420,6 +1568,25 @@ class LearningBot:
                 reward += W_MOB_KILL_BONUS * confirmed_mob_kills
             if confirmed_pvp_kills:
                 reward += W_PLAYER_KILL_BONUS * confirmed_pvp_kills
+            # Camper / weaker-victim PvP bonuses — stack additively on
+            # top of W_PLAYER_KILL_BONUS so a kill on a weak camper pays
+            # W_PLAYER_KILL_BONUS + W_PVP_WEAK_KILL_BONUS +
+            # W_PVP_CAMP_KILL_BONUS. The bonuses are unconditional on
+            # whether the killer is itself camping — the goal is to
+            # make campers expensive *targets*, regardless of who
+            # punishes them.
+            if confirmed_camper_kills:
+                reward += W_PVP_CAMP_KILL_BONUS * confirmed_camper_kills
+                self.camper_kills_this_life += confirmed_camper_kills
+            if confirmed_weak_kills:
+                reward += W_PVP_WEAK_KILL_BONUS * confirmed_weak_kills
+                self.weak_kills_this_life += confirmed_weak_kills
+            # Any confirmed kill (mob or player) resets the camp
+            # no-kill timer. Without this the bot could grind mobs
+            # for a moment, then drift into camping with the timer
+            # already near the threshold.
+            if confirmed_mob_kills or confirmed_pvp_kills:
+                self._ticks_since_kill = 0
             self.pvp_kills += confirmed_pvp_kills
             self.pvp_kills_this_life += confirmed_pvp_kills
             self.mob_kills_this_life += confirmed_mob_kills
@@ -1517,11 +1684,24 @@ class LearningBot:
                 self.episodic.note_score_delta(d_score)
 
         # Refresh the hostile snapshot for next tick's damage attribution.
-        # Stores (hp, x, y, radius) per entity. Position is needed because
-        # an entity that dies between control ticks is already gone from
-        # `self.entities` by the time we look — we need its last known
-        # position to test petal overlap. Includes mobs *and* enemy players
-        # *and* pending_delete entities for the same reason.
+        # Stores (hp, x, y, radius, is_flower, petal_count, was_camping)
+        # per entity. Position is needed because an entity that dies
+        # between control ticks is already gone from `self.entities` by
+        # the time we look — we need its last known position to test
+        # petal overlap. Includes mobs *and* enemy players *and*
+        # pending_delete entities for the same reason.
+        # petal_count + was_camping are populated only meaningfully for
+        # enemy Flowers (mobs always get 0/False); they feed the
+        # weak/camper-kill PvP bonuses on the next tick if this snapshot
+        # ends up being the disappearance frame.
+        petal_owner_counts: dict[tuple[int, int], int] = {}
+        for ent in self.entities.values():
+            if not has_component(ent, "Petal"):
+                continue
+            parent = ent.get("parent")
+            if parent:
+                petal_owner_counts[parent] = petal_owner_counts.get(parent, 0) + 1
+        camp_radius_sq = CAMP_MOVE_RADIUS * CAMP_MOVE_RADIUS
         for eid, ent in self.entities.items():
             is_flower = has_component(ent, "Flower")
             is_mob = has_component(ent, "Mob")
@@ -1531,12 +1711,30 @@ class LearningBot:
                 continue
             if ent.get("team", (0, 0)) == my_team:
                 continue
+            ex = float(ent["x"])
+            ey = float(ent["y"])
+            was_camping = False
+            petal_count = 0
+            if is_flower:
+                petal_count = petal_owner_counts.get(eid, 0)
+                dq = self._enemy_pos_history.get(eid)
+                # Need a full window of observations before tagging
+                # someone as camping — otherwise an enemy who just
+                # came into view would always look stationary.
+                if (dq
+                    and self._tick_count_life - dq[0][0] >= CAMP_WINDOW_TICKS):
+                    edx = ex - dq[0][1]
+                    edy = ey - dq[0][2]
+                    if edx * edx + edy * edy < camp_radius_sq:
+                        was_camping = True
             self._enemy_hp_snapshot[eid] = (
                 float(ent.get("health_ratio", 1.0)),
-                float(ent["x"]),
-                float(ent["y"]),
+                ex,
+                ey,
                 float(ent.get("radius", 25.0)),
                 bool(is_flower),
+                petal_count,
+                was_camping,
             )
         # Mirror the petal positions taken this tick. Used by the
         # disappearance-credit path so the overlap check uses petals from

@@ -23,8 +23,9 @@ void Simulation::reset() {
     arena_info.init();
     #ifdef SERVERSIDE
     spatial_hash.refresh(ARENA_WIDTH, ARENA_HEIGHT);
-    for (PetalID::T i = 0; i < PetalID::kNumPetals; ++i)
-        petal_count_tracker[i] = 0;
+    for (PetalType::T t = 0; t < PetalType::kNumPetalTypes; ++t)
+        for (uint8_t r = 0; r < RarityID::kNumRarities; ++r)
+            petal_count_tracker[t][r] = 0;
     for (uint32_t i = 0; i < MAP.size(); ++i)
         zone_mob_counts[i] = 0;
     #endif

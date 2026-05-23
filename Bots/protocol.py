@@ -43,13 +43,106 @@ RARITY_LEGENDARY = 4
 RARITY_MYTHIC    = 5
 RARITY_UNIQUE    = 6
 
-# PetalID -> rarity. Index matches PetalID::T enum order in
-# Shared/StaticDefinitions.hh; values come from PETAL_DATA in
-# Shared/StaticData.cc. kNone is a sentinel and is treated as the worst rank
-# (the inventory manager filters it through `PETAL_NONE` before consulting
-# this table). When new rarity tiers are added to a petal, both the enum and
-# this table need a new entry — keep the order in lock-step with PETAL_DATA.
-PETAL_RARITY = [
+
+class RarityID:
+    """Mirror of Shared/StaticDefinitions.hh:RarityID. Values are u8 wire ints."""
+    kCommon    = 0
+    kUnusual   = 1
+    kRare      = 2
+    kEpic      = 3
+    kLegendary = 4
+    kMythic    = 5
+    kUnique    = 6
+    kNumRarities = 7
+
+
+class PetalType:
+    """Mirror of Shared/StaticDefinitions.hh:PetalType — the type axis of the
+    (type, rarity) coordinate that identifies a petal on the new 2D wire
+    format. Values are u8 wire ints."""
+    kNone          = 0
+    kBasic         = 1
+    kLight         = 2
+    kHeavy         = 3
+    kStinger       = 4
+    kTringer       = 5
+    kLeaf          = 6
+    kTwin          = 7
+    kRose          = 8
+    kAzalea        = 9
+    kIris          = 10
+    kBlueIris      = 11
+    kMissile       = 12
+    kDandelion     = 13
+    kBubble        = 14
+    kFaster        = 15
+    kRock          = 16
+    kCactus        = 17
+    kPoisonCactus  = 18
+    kTricac        = 19
+    kWeb           = 20
+    kTriweb        = 21
+    kWing          = 22
+    kPeas          = 23
+    kPoisonPeas    = 24
+    kSand          = 25
+    kPincer        = 26
+    kDahlia        = 27
+    kTriplet       = 28
+    kAntEgg        = 29
+    kBeetleEgg     = 30
+    kPollen        = 31
+    kStick         = 32
+    kAntennae      = 33
+    kHeaviest      = 34
+    kThirdEye      = 35
+    kObserver      = 36
+    kSalt          = 37
+    kSquare        = 38
+    kMoon          = 39
+    kLotus         = 40
+    kCutter        = 41
+    kYinYang       = 42
+    kYggdrasil     = 43
+    kRice          = 44
+    kBone          = 45
+    kYucca         = 46
+    kCorn          = 47
+    kRoot          = 48
+    kNumPetalTypes = 49
+
+
+# A petal on the wire is two bytes: `[type_u8][rarity_u8]`. The trainer/runtime
+# represents that pair as a single packed integer `(type << 8) | rarity`, so a
+# loadout slot is still a scalar value — but the embedding key is now a 2D
+# coordinate, not a flat 1..K index. Empty slots come over as
+# `(kNone, kCommon)` = packed 0, so the legacy `pid == PETAL_NONE` checks
+# elsewhere in the codebase still mean "empty."
+def pack_petal(petal_type: int, rarity: int) -> int:
+    """Combine a (type, rarity) pair into the packed int used throughout."""
+    return ((int(petal_type) & 0xFF) << 8) | (int(rarity) & 0xFF)
+
+
+def unpack_petal(packed: int) -> tuple[int, int]:
+    """Inverse of pack_petal: split a packed petal into (type, rarity)."""
+    return ((int(packed) >> 8) & 0xFF, int(packed) & 0xFF)
+
+
+def petal_type_of(packed: int) -> int:
+    """Extract the PetalType byte from a packed petal id."""
+    return (int(packed) >> 8) & 0xFF
+
+
+def petal_rarity_of(packed: int) -> int:
+    """Extract the RarityID byte from a packed petal id."""
+    return int(packed) & 0xFF
+
+
+# Legacy flat-PETAL_RARITY table left in place at a stub for archival only;
+# the canonical rarity now lives on the petal pair itself (low byte of the
+# packed id). Callers should use `petal_rarity_of(pid)` rather than indexing
+# into a table.
+_LEGACY_PETAL_RARITY = [
     RARITY_COMMON,     #  0  kNone (sentinel)
     RARITY_COMMON,     #  1  kBasic
     RARITY_UNUSUAL,    #  2  kUnusualBasic
@@ -274,8 +367,12 @@ PETAL_RARITY = [
     RARITY_MYTHIC,     # 216 kMythicYggdrasil
 ]
 
-PETAL_NONE = 0
-PETAL_BASIC = 1
+
+# "Empty slot" sentinel. Under the new wire format an empty inventory slot
+# arrives as (PetalType.kNone, RarityID.kCommon) — packed value 0. The
+# all-zero packed integer remains the natural "no petal" marker.
+PETAL_NONE = pack_petal(PetalType.kNone, RarityID.kCommon)
+PETAL_BASIC = pack_petal(PetalType.kBasic, RarityID.kCommon)
 
 # Coarse petal *role* taxonomy. Lets the policy distinguish "this is a
 # healer" from "this is a damage petal" — rarity alone says nothing about
@@ -290,13 +387,82 @@ PETAL_TYPE_POISON   = 4   # poison damage-over-time (Iris, Pincer, …)
 PETAL_TYPE_UTILITY  = 5   # everything else: spawns, slows, anti-heal, etc.
 _NUM_PETAL_TYPES_INC_NONE = 6   # number of categories, used to normalize
 
-# PetalID -> role. Order matches PETAL_DATA / PetalID enum in
-# Shared/StaticData.cc + Shared/StaticDefinitions.hh. Heavy variants are
-# tagged TANK because their large health is the dominant trait in play
-# (they soak more than they hit). Stinger is DAMAGE despite low health
-# because that's its primary purpose. Edge-case petals (Salt, Square,
-# Lotus, Cutter, …) land in UTILITY.
-PETAL_TYPE = [
+# PetalType -> role. One entry per mechanical family in PetalType (49 rows
+# including kNone). Rarity doesn't affect role, so the role table is now
+# keyed by the type byte only — a 50× shrink from the old flat-PetalID
+# table. Heavy variants are tagged TANK because their large health is the
+# dominant trait in play. Stinger / Tringer are DAMAGE despite low health
+# because that's their primary purpose. Split variants follow the spec:
+# kPoisonCactus → POISON, kTricac → DAMAGE (clump heavy hitter),
+# kBlueIris → POISON, kPoisonPeas → POISON, kAzalea → HEAL,
+# kAntEgg/kBeetleEgg → UTILITY (spawns), kTriweb → UTILITY.
+PETAL_TYPE_BY_TYPE = [
+    PETAL_TYPE_NONE,     #  0  kNone
+    PETAL_TYPE_DAMAGE,   #  1  kBasic
+    PETAL_TYPE_DAMAGE,   #  2  kLight
+    PETAL_TYPE_TANK,     #  3  kHeavy
+    PETAL_TYPE_DAMAGE,   #  4  kStinger
+    PETAL_TYPE_DAMAGE,   #  5  kTringer
+    PETAL_TYPE_HEAL,     #  6  kLeaf
+    PETAL_TYPE_DAMAGE,   #  7  kTwin
+    PETAL_TYPE_HEAL,     #  8  kRose
+    PETAL_TYPE_HEAL,     #  9  kAzalea
+    PETAL_TYPE_POISON,   # 10  kIris
+    PETAL_TYPE_POISON,   # 11  kBlueIris
+    PETAL_TYPE_UTILITY,  # 12  kMissile
+    PETAL_TYPE_UTILITY,  # 13  kDandelion
+    PETAL_TYPE_UTILITY,  # 14  kBubble
+    PETAL_TYPE_UTILITY,  # 15  kFaster
+    PETAL_TYPE_TANK,     # 16  kRock
+    PETAL_TYPE_TANK,     # 17  kCactus
+    PETAL_TYPE_POISON,   # 18  kPoisonCactus
+    PETAL_TYPE_DAMAGE,   # 19  kTricac (clump heavy hitter)
+    PETAL_TYPE_UTILITY,  # 20  kWeb
+    PETAL_TYPE_UTILITY,  # 21  kTriweb
+    PETAL_TYPE_UTILITY,  # 22  kWing
+    PETAL_TYPE_DAMAGE,   # 23  kPeas
+    PETAL_TYPE_POISON,   # 24  kPoisonPeas
+    PETAL_TYPE_DAMAGE,   # 25  kSand
+    PETAL_TYPE_POISON,   # 26  kPincer
+    PETAL_TYPE_HEAL,     # 27  kDahlia
+    PETAL_TYPE_DAMAGE,   # 28  kTriplet
+    PETAL_TYPE_UTILITY,  # 29  kAntEgg
+    PETAL_TYPE_UTILITY,  # 30  kBeetleEgg
+    PETAL_TYPE_UTILITY,  # 31  kPollen
+    PETAL_TYPE_UTILITY,  # 32  kStick
+    PETAL_TYPE_UTILITY,  # 33  kAntennae
+    PETAL_TYPE_TANK,     # 34  kHeaviest
+    PETAL_TYPE_UTILITY,  # 35  kThirdEye
+    PETAL_TYPE_UTILITY,  # 36  kObserver
+    PETAL_TYPE_UTILITY,  # 37  kSalt
+    PETAL_TYPE_UTILITY,  # 38  kSquare
+    PETAL_TYPE_TANK,     # 39  kMoon
+    PETAL_TYPE_UTILITY,  # 40  kLotus
+    PETAL_TYPE_UTILITY,  # 41  kCutter
+    PETAL_TYPE_UTILITY,  # 42  kYinYang
+    PETAL_TYPE_UTILITY,  # 43  kYggdrasil
+    PETAL_TYPE_DAMAGE,   # 44  kRice
+    PETAL_TYPE_TANK,     # 45  kBone
+    PETAL_TYPE_HEAL,     # 46  kYucca
+    PETAL_TYPE_TANK,     # 47  kCorn
+    PETAL_TYPE_UTILITY,  # 48  kRoot
+]
+assert len(PETAL_TYPE_BY_TYPE) == PetalType.kNumPetalTypes
+
+
+def role_of(petal_type: int) -> int:
+    """Return the coarse PETAL_TYPE_* role for a PetalType byte. Out-of-range
+    types (and kNone) map to PETAL_TYPE_NONE."""
+    pt = int(petal_type)
+    if 0 <= pt < len(PETAL_TYPE_BY_TYPE):
+        return PETAL_TYPE_BY_TYPE[pt]
+    return PETAL_TYPE_NONE
+
+
+# Backwards-compatible alias for older imports. The legacy flat-by-PetalID
+# `PETAL_TYPE` array is gone — use `PETAL_TYPE_BY_TYPE` (keyed by PetalType)
+# or `role_of(petal_type)` instead.
+_LEGACY_PETAL_TYPE = [
     PETAL_TYPE_NONE,     #  0  kNone
     PETAL_TYPE_DAMAGE,   #  1  kBasic
     PETAL_TYPE_DAMAGE,   #  2  kUnusualBasic
@@ -522,10 +688,12 @@ PETAL_TYPE = [
 # Per-petal effective burst (damage × count). Captures both raw damage
 # and clump multiplication in a single scalar so the model can compare
 # (e.g.) `kEpicLight = 35` against `kEpicHeavy = 70` and pick the harder-
-# hitting one. Generated from PETAL_DATA in Shared/StaticData.cc — keep in
-# lock-step with PETAL_RARITY / PETAL_TYPE.
+# hitting one. Generated from PETAL_DATA in Shared/StaticData.cc.
 _PETAL_MAX_BURST = 150  # Mythic Tringer: 50 damage × 3 count
-PETAL_BURST = [
+
+# Legacy flat-PetalID burst table, kept private for archival; the
+# canonical lookup is the 2D `PETAL_BURST` dict below.
+_LEGACY_PETAL_BURST = [
     0,    #  0  kNone
     10,   #  1  kBasic
     16,   #  2  kUnusualBasic
@@ -753,40 +921,316 @@ PETAL_BURST = [
 ]
 
 
-def petal_burst_norm(petal_id: int) -> float:
-    """Effective petal burst (damage × count) normalised to [0, 1]. Empty
-    or out-of-range maps to 0. New rarity-expansion petals can exceed
-    _PETAL_MAX_BURST (kept at the original 150 so already-trained
-    checkpoints don't see their input distribution shift); we clamp here
-    so the network always sees a value in [0, 1]."""
-    if 0 <= petal_id < len(PETAL_BURST):
-        v = PETAL_BURST[petal_id] / _PETAL_MAX_BURST
-        return v if v < 1.0 else 1.0
-    return 0.0
+# 2D effective-burst table keyed by (PetalType, RarityID). Cells absent from
+# this dict don't exist in the game (e.g. there is no Rare Stinger in the
+# kStinger type — kRareStinger is just the unusual-id-3 rarity slot of the
+# kStinger type; the Legendary/Mythic/Unique stinger variants live on
+# kTringer because they have different mechanics). Lookups for absent cells
+# fall through to 0.0 in petal_burst_norm. Values are damage × count from
+# PETAL_DATA in Shared/StaticData.cc.
+PETAL_BURST: dict[tuple[int, int], int] = {
+    # kNone — sentinel.
+    (PetalType.kNone, RarityID.kCommon):           0,
+    # kBasic.
+    (PetalType.kBasic, RarityID.kCommon):          10,
+    (PetalType.kBasic, RarityID.kUnusual):         16,
+    (PetalType.kBasic, RarityID.kRare):            25,
+    (PetalType.kBasic, RarityID.kEpic):            40,
+    (PetalType.kBasic, RarityID.kLegendary):       60,
+    (PetalType.kBasic, RarityID.kMythic):          90,
+    (PetalType.kBasic, RarityID.kUnique):          10,   # legacy kUniqueBasic value
+    # kLight.
+    (PetalType.kLight, RarityID.kCommon):          8,
+    (PetalType.kLight, RarityID.kUnusual):         14,
+    (PetalType.kLight, RarityID.kRare):            22,
+    (PetalType.kLight, RarityID.kEpic):            35,
+    (PetalType.kLight, RarityID.kLegendary):       52,
+    (PetalType.kLight, RarityID.kMythic):          79,
+    (PetalType.kLight, RarityID.kUnique):          118,
+    # kHeavy.
+    (PetalType.kHeavy, RarityID.kCommon):          20,
+    (PetalType.kHeavy, RarityID.kUnusual):         30,
+    (PetalType.kHeavy, RarityID.kRare):            45,
+    (PetalType.kHeavy, RarityID.kEpic):            70,
+    (PetalType.kHeavy, RarityID.kLegendary):       100,
+    (PetalType.kHeavy, RarityID.kMythic):          150,
+    (PetalType.kHeavy, RarityID.kUnique):          225,
+    # kStinger — Common..Epic only; Legendary+ are on kTringer.
+    (PetalType.kStinger, RarityID.kCommon):        20,
+    (PetalType.kStinger, RarityID.kUnusual):       35,
+    (PetalType.kStinger, RarityID.kRare):          50,
+    (PetalType.kStinger, RarityID.kEpic):          75,
+    # kTringer.
+    (PetalType.kTringer, RarityID.kLegendary):     105,
+    (PetalType.kTringer, RarityID.kMythic):        150,
+    (PetalType.kTringer, RarityID.kUnique):        225,
+    # kLeaf.
+    (PetalType.kLeaf, RarityID.kCommon):           6,
+    (PetalType.kLeaf, RarityID.kUnusual):          8,
+    (PetalType.kLeaf, RarityID.kRare):             12,
+    (PetalType.kLeaf, RarityID.kEpic):             18,
+    (PetalType.kLeaf, RarityID.kLegendary):        25,
+    (PetalType.kLeaf, RarityID.kMythic):           38,
+    (PetalType.kLeaf, RarityID.kUnique):           56,
+    # kTwin.
+    (PetalType.kTwin, RarityID.kCommon):           10,
+    (PetalType.kTwin, RarityID.kUnusual):          16,
+    (PetalType.kTwin, RarityID.kRare):             24,
+    (PetalType.kTwin, RarityID.kEpic):             36,
+    (PetalType.kTwin, RarityID.kLegendary):        54,
+    (PetalType.kTwin, RarityID.kMythic):           80,
+    (PetalType.kTwin, RarityID.kUnique):           122,
+    # kRose — no kEpic (that's kAzalea).
+    (PetalType.kRose, RarityID.kCommon):           3,
+    (PetalType.kRose, RarityID.kUnusual):          5,
+    (PetalType.kRose, RarityID.kRare):             7,
+    (PetalType.kRose, RarityID.kLegendary):        10,
+    (PetalType.kRose, RarityID.kMythic):           15,
+    (PetalType.kRose, RarityID.kUnique):           22,
+    # kAzalea — Epic only.
+    (PetalType.kAzalea, RarityID.kEpic):           5,
+    # kIris — no kEpic (that's kBlueIris).
+    (PetalType.kIris, RarityID.kCommon):           3,
+    (PetalType.kIris, RarityID.kUnusual):          5,
+    (PetalType.kIris, RarityID.kRare):             7,
+    (PetalType.kIris, RarityID.kLegendary):        15,
+    (PetalType.kIris, RarityID.kMythic):           22,
+    (PetalType.kIris, RarityID.kUnique):           34,
+    # kBlueIris — Epic only.
+    (PetalType.kBlueIris, RarityID.kEpic):         5,
+    # kMissile.
+    (PetalType.kMissile, RarityID.kCommon):        11,
+    (PetalType.kMissile, RarityID.kUnusual):       17,
+    (PetalType.kMissile, RarityID.kRare):          25,
+    (PetalType.kMissile, RarityID.kEpic):          38,
+    (PetalType.kMissile, RarityID.kLegendary):     56,
+    (PetalType.kMissile, RarityID.kMythic):        84,
+    (PetalType.kMissile, RarityID.kUnique):        127,
+    # kDandelion.
+    (PetalType.kDandelion, RarityID.kCommon):      4,
+    (PetalType.kDandelion, RarityID.kUnusual):     7,
+    (PetalType.kDandelion, RarityID.kRare):        10,
+    (PetalType.kDandelion, RarityID.kEpic):        15,
+    (PetalType.kDandelion, RarityID.kLegendary):   22,
+    (PetalType.kDandelion, RarityID.kMythic):      34,
+    (PetalType.kDandelion, RarityID.kUnique):      51,
+    # kBubble — all zeros (utility, no damage).
+    (PetalType.kBubble, RarityID.kCommon):         0,
+    (PetalType.kBubble, RarityID.kUnusual):        0,
+    (PetalType.kBubble, RarityID.kRare):           0,
+    (PetalType.kBubble, RarityID.kEpic):           0,
+    (PetalType.kBubble, RarityID.kLegendary):      0,
+    (PetalType.kBubble, RarityID.kMythic):         0,
+    (PetalType.kBubble, RarityID.kUnique):         0,
+    # kFaster.
+    (PetalType.kFaster, RarityID.kCommon):         3,
+    (PetalType.kFaster, RarityID.kUnusual):        5,
+    (PetalType.kFaster, RarityID.kRare):           7,
+    (PetalType.kFaster, RarityID.kEpic):           10,
+    (PetalType.kFaster, RarityID.kLegendary):      16,
+    (PetalType.kFaster, RarityID.kMythic):         24,
+    (PetalType.kFaster, RarityID.kUnique):         35,
+    # kRock.
+    (PetalType.kRock, RarityID.kCommon):           5,
+    (PetalType.kRock, RarityID.kUnusual):          7,
+    (PetalType.kRock, RarityID.kRare):             10,
+    (PetalType.kRock, RarityID.kEpic):             15,
+    (PetalType.kRock, RarityID.kLegendary):        25,
+    (PetalType.kRock, RarityID.kMythic):           38,
+    (PetalType.kRock, RarityID.kUnique):           56,
+    # kCactus — no kEpic (that's kPoisonCactus), no kLegendary (that's kTricac).
+    (PetalType.kCactus, RarityID.kCommon):         2,
+    (PetalType.kCactus, RarityID.kUnusual):        3,
+    (PetalType.kCactus, RarityID.kRare):           5,
+    (PetalType.kCactus, RarityID.kMythic):         17,
+    (PetalType.kCactus, RarityID.kUnique):         25,
+    # kPoisonCactus — Epic only.
+    (PetalType.kPoisonCactus, RarityID.kEpic):     5,
+    # kTricac — Legendary only.
+    (PetalType.kTricac, RarityID.kLegendary):      15,
+    # kWeb — Common..Epic only; Legendary+ are on kTriweb.
+    (PetalType.kWeb, RarityID.kCommon):            2,
+    (PetalType.kWeb, RarityID.kUnusual):           3,
+    (PetalType.kWeb, RarityID.kRare):              5,
+    (PetalType.kWeb, RarityID.kEpic):              7,
+    # kTriweb.
+    (PetalType.kTriweb, RarityID.kLegendary):      15,
+    (PetalType.kTriweb, RarityID.kMythic):         51,
+    (PetalType.kTriweb, RarityID.kUnique):         75,
+    # kWing.
+    (PetalType.kWing, RarityID.kCommon):           7,
+    (PetalType.kWing, RarityID.kUnusual):          10,
+    (PetalType.kWing, RarityID.kRare):             15,
+    (PetalType.kWing, RarityID.kEpic):             22,
+    (PetalType.kWing, RarityID.kLegendary):        34,
+    (PetalType.kWing, RarityID.kMythic):           51,
+    (PetalType.kWing, RarityID.kUnique):           76,
+    # kPeas.
+    (PetalType.kPeas, RarityID.kCommon):           16,
+    (PetalType.kPeas, RarityID.kUnusual):          20,
+    (PetalType.kPeas, RarityID.kRare):             32,
+    (PetalType.kPeas, RarityID.kEpic):             48,
+    (PetalType.kPeas, RarityID.kLegendary):        72,
+    (PetalType.kPeas, RarityID.kMythic):           108,
+    (PetalType.kPeas, RarityID.kUnique):           160,
+    # kPoisonPeas — Epic only.
+    (PetalType.kPoisonPeas, RarityID.kEpic):       8,
+    # kSand.
+    (PetalType.kSand, RarityID.kCommon):           4,
+    (PetalType.kSand, RarityID.kUnusual):          8,
+    (PetalType.kSand, RarityID.kRare):             12,
+    (PetalType.kSand, RarityID.kEpic):             16,
+    (PetalType.kSand, RarityID.kLegendary):        28,
+    (PetalType.kSand, RarityID.kMythic):           40,
+    (PetalType.kSand, RarityID.kUnique):           60,
+    # kPincer.
+    (PetalType.kPincer, RarityID.kCommon):         2,
+    (PetalType.kPincer, RarityID.kUnusual):        3,
+    (PetalType.kPincer, RarityID.kRare):           5,
+    (PetalType.kPincer, RarityID.kEpic):           7,
+    (PetalType.kPincer, RarityID.kLegendary):      11,
+    (PetalType.kPincer, RarityID.kMythic):         17,
+    (PetalType.kPincer, RarityID.kUnique):         25,
+    # kDahlia.
+    (PetalType.kDahlia, RarityID.kCommon):         6,
+    (PetalType.kDahlia, RarityID.kUnusual):        9,
+    (PetalType.kDahlia, RarityID.kRare):           15,
+    (PetalType.kDahlia, RarityID.kEpic):           21,
+    (PetalType.kDahlia, RarityID.kLegendary):      33,
+    (PetalType.kDahlia, RarityID.kMythic):         51,
+    (PetalType.kDahlia, RarityID.kUnique):         75,
+    # kTriplet.
+    (PetalType.kTriplet, RarityID.kCommon):        6,
+    (PetalType.kTriplet, RarityID.kUnusual):       12,
+    (PetalType.kTriplet, RarityID.kRare):          15,
+    (PetalType.kTriplet, RarityID.kEpic):          24,
+    (PetalType.kTriplet, RarityID.kLegendary):     36,
+    (PetalType.kTriplet, RarityID.kMythic):        54,
+    (PetalType.kTriplet, RarityID.kUnique):        81,
+    # kAntEgg — Epic only.
+    (PetalType.kAntEgg, RarityID.kEpic):           2,
+    # kBeetleEgg — Epic only.
+    (PetalType.kBeetleEgg, RarityID.kEpic):        1,
+    # kPollen.
+    (PetalType.kPollen, RarityID.kCommon):         6,
+    (PetalType.kPollen, RarityID.kUnusual):        12,
+    (PetalType.kPollen, RarityID.kRare):           15,
+    (PetalType.kPollen, RarityID.kEpic):           24,
+    (PetalType.kPollen, RarityID.kLegendary):      36,
+    (PetalType.kPollen, RarityID.kMythic):         54,
+    (PetalType.kPollen, RarityID.kUnique):         81,
+    # kStick — Legendary only.
+    (PetalType.kStick, RarityID.kLegendary):       1,
+    # kAntennae — Legendary only.
+    (PetalType.kAntennae, RarityID.kLegendary):    0,
+    # kHeaviest — Epic only.
+    (PetalType.kHeaviest, RarityID.kEpic):         10,
+    # kThirdEye — Mythic only.
+    (PetalType.kThirdEye, RarityID.kMythic):       0,
+    # kObserver — Mythic only.
+    (PetalType.kObserver, RarityID.kMythic):       0,
+    # kSalt.
+    (PetalType.kSalt, RarityID.kCommon):           4,
+    (PetalType.kSalt, RarityID.kUnusual):          7,
+    (PetalType.kSalt, RarityID.kRare):             10,
+    (PetalType.kSalt, RarityID.kEpic):             15,
+    (PetalType.kSalt, RarityID.kLegendary):        22,
+    (PetalType.kSalt, RarityID.kMythic):           34,
+    (PetalType.kSalt, RarityID.kUnique):           51,
+    # kSquare — Unique only.
+    (PetalType.kSquare, RarityID.kUnique):         10,
+    # kMoon — Mythic only.
+    (PetalType.kMoon, RarityID.kMythic):           1,
+    # kLotus — Epic only.
+    (PetalType.kLotus, RarityID.kEpic):            5,
+    # kCutter — Epic only.
+    (PetalType.kCutter, RarityID.kEpic):           0,
+    # kYinYang — Epic only.
+    (PetalType.kYinYang, RarityID.kEpic):          15,
+    # kYggdrasil.
+    (PetalType.kYggdrasil, RarityID.kCommon):      0,
+    (PetalType.kYggdrasil, RarityID.kUnusual):     0,
+    (PetalType.kYggdrasil, RarityID.kRare):        0,
+    (PetalType.kYggdrasil, RarityID.kEpic):        0,
+    (PetalType.kYggdrasil, RarityID.kLegendary):   0,
+    (PetalType.kYggdrasil, RarityID.kMythic):      1,
+    (PetalType.kYggdrasil, RarityID.kUnique):      1,
+    # kRice.
+    (PetalType.kRice, RarityID.kCommon):           1,
+    (PetalType.kRice, RarityID.kUnusual):          2,
+    (PetalType.kRice, RarityID.kRare):             3,
+    (PetalType.kRice, RarityID.kEpic):             4,
+    (PetalType.kRice, RarityID.kLegendary):        6,
+    (PetalType.kRice, RarityID.kMythic):           9,
+    (PetalType.kRice, RarityID.kUnique):           13,
+    # kBone.
+    (PetalType.kBone, RarityID.kCommon):           2,
+    (PetalType.kBone, RarityID.kUnusual):          3,
+    (PetalType.kBone, RarityID.kRare):             4,
+    (PetalType.kBone, RarityID.kEpic):             7,
+    (PetalType.kBone, RarityID.kLegendary):        10,
+    (PetalType.kBone, RarityID.kMythic):           15,
+    (PetalType.kBone, RarityID.kUnique):           22,
+    # kYucca.
+    (PetalType.kYucca, RarityID.kCommon):          3,
+    (PetalType.kYucca, RarityID.kUnusual):         5,
+    (PetalType.kYucca, RarityID.kRare):            7,
+    (PetalType.kYucca, RarityID.kEpic):            11,
+    (PetalType.kYucca, RarityID.kLegendary):       17,
+    (PetalType.kYucca, RarityID.kMythic):          25,
+    (PetalType.kYucca, RarityID.kUnique):          38,
+    # kCorn.
+    (PetalType.kCorn, RarityID.kCommon):           1,
+    (PetalType.kCorn, RarityID.kUnusual):          1,
+    (PetalType.kCorn, RarityID.kRare):             2,
+    (PetalType.kCorn, RarityID.kEpic):             2,
+    (PetalType.kCorn, RarityID.kLegendary):        4,
+    (PetalType.kCorn, RarityID.kMythic):           6,
+    (PetalType.kCorn, RarityID.kUnique):           8,
+    # kRoot.
+    (PetalType.kRoot, RarityID.kCommon):           3,
+    (PetalType.kRoot, RarityID.kUnusual):          4,
+    (PetalType.kRoot, RarityID.kRare):             7,
+    (PetalType.kRoot, RarityID.kEpic):             10,
+    (PetalType.kRoot, RarityID.kLegendary):        15,
+    (PetalType.kRoot, RarityID.kMythic):           22,
+    (PetalType.kRoot, RarityID.kUnique):           33,
+}
 
 
-def petal_type(petal_id: int) -> int:
-    """Return the PETAL_TYPE_* role for a petal id, or PETAL_TYPE_NONE for
-    out-of-range / sentinel ids."""
-    if 0 <= petal_id < len(PETAL_TYPE):
-        return PETAL_TYPE[petal_id]
-    return PETAL_TYPE_NONE
+def petal_burst_norm(packed: int) -> float:
+    """Effective petal burst (damage × count) normalised to [0, 1]. The
+    argument is the packed `(type << 8) | rarity` integer that lives in
+    inventory slots / drops. Out-of-range / unknown (type, rarity) cells
+    map to 0.0. Mythic-Tringer-and-up exceed _PETAL_MAX_BURST and clamp."""
+    key = (petal_type_of(packed), petal_rarity_of(packed))
+    raw = PETAL_BURST.get(key)
+    if raw is None:
+        return 0.0
+    v = raw / _PETAL_MAX_BURST
+    return v if v < 1.0 else 1.0
 
 
-def petal_type_norm(petal_id: int) -> float:
+def petal_type(packed: int) -> int:
+    """Return the coarse PETAL_TYPE_* role for a packed petal id. kNone or
+    out-of-range types map to PETAL_TYPE_NONE."""
+    return role_of(petal_type_of(packed))
+
+
+def petal_type_norm(packed: int) -> float:
     """petal_type() normalised to [0, 1] so it can drop straight into a
     state-vector slot. Empty (kNone) maps to 0.0; UTILITY maps to 1.0."""
-    t = petal_type(petal_id)
-    return t / (_NUM_PETAL_TYPES_INC_NONE - 1)
+    return petal_type(packed) / (_NUM_PETAL_TYPES_INC_NONE - 1)
 
 
-def petal_rank(petal_id: int) -> int:
-    """Return a rank where higher = better. kNone is worst."""
-    if petal_id == PETAL_NONE:
+def petal_rank(packed: int) -> int:
+    """Return a rank where higher = better — the rarity byte of the packed
+    petal. kNone (packed 0) is treated as the worst rank (-1) so empty
+    inventory slots sort below even kCommon petals in the equip-priority
+    queue, mirroring the old flat-PetalID semantics."""
+    if int(packed) == PETAL_NONE:
         return -1
-    if 0 <= petal_id < len(PETAL_RARITY):
-        return PETAL_RARITY[petal_id]
-    return -1
+    return petal_rarity_of(packed)
 
 # Clientbound
 C_DISCONNECT = 0
@@ -918,6 +1362,14 @@ class Reader:
         h = self.r_u8() if i else 0
         return (i, h)
 
+    def r_petal(self) -> int:
+        """Read a 2-byte petal: `[type_u8][rarity_u8]`. Returns the pair
+        packed as `(type << 8) | rarity` — see pack_petal/unpack_petal.
+        Empty slots (type == kNone) come over as packed 0."""
+        t = self.r_u8()
+        r = self.r_u8()
+        return (t << 8) | r
+
 
 # ---------------------------------------------------------------------------
 # Entity layout. Order MUST match Shared/EntityDef.hh PERCOMPONENT / PERFIELD.
@@ -937,7 +1389,7 @@ FIELDS: list[tuple[str, str, str, int]] = [
     ("Physics",   "angle",            "float",  0),
     ("Camera",    "player",           "eid",    0),
     ("Camera",    "respawn_level",    "u8",     0),
-    ("Camera",    "inventory",        "u8",    16),
+    ("Camera",    "inventory",        "petal", 16),
     ("Camera",    "killed_by",        "string", 0),
     ("Camera",    "camera_x",         "float",  0),
     ("Camera",    "camera_y",         "float",  0),
@@ -949,14 +1401,14 @@ FIELDS: list[tuple[str, str, str, int]] = [
     ("Flower",    "overlevel_timer",  "float",  0),
     ("Flower",    "loadout_count",    "u8",     0),
     ("Flower",    "face_flags",       "u8",     0),
-    ("Flower",    "loadout_ids",      "u8",    16),
+    ("Flower",    "loadout_ids",      "petal", 16),
     ("Flower",    "loadout_reloads",  "u8",     8),
-    ("Petal",     "petal_id",         "u8",     0),
+    ("Petal",     "petal_id",         "petal",  0),
     ("Health",    "health_ratio",     "float",  0),
     ("Health",    "damaged",          "u8",     0),
     ("Mob",       "mob_id",           "u8",     0),
     ("Mob",       "mob_rarity",       "u8",     0),
-    ("Drop",      "drop_id",          "u8",     0),
+    ("Drop",      "drop_id",          "petal",  0),
     ("Segmented", "is_tail",          "u8",     0),
     ("Score",     "score",            "u32",    0),
     ("Name",      "name",             "string", 0),
@@ -978,6 +1430,9 @@ def _read_one(reader: Reader, ty: str):
     if ty == "float":  return reader.r_float()
     if ty == "eid":    return reader.r_eid()
     if ty == "string": return reader.r_string()
+    # 2-byte petal: [type_u8][rarity_u8] → packed (type << 8) | rarity.
+    # See Reader.r_petal and the (type, rarity) 2D wire format.
+    if ty == "petal":  return reader.r_petal()
     raise ValueError(f"unknown field type {ty}")
 
 

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-144",
   "first_seen": 1778543568.926228,
-  "last_seen": 1779493396.1605902,
-  "episodes": 1480,
-  "score_total": 233952,
+  "last_seen": 1779510853.833481,
+  "episodes": 1491,
+  "score_total": 234373,
   "score_best": 7637,
   "best_loadout": [
     0,
@@ -19,9 +19,9 @@
   "killed_by": {
     "Centipede": 31,
     "Spider": 53,
-    "Hornet": 377,
-    "Wasp": 231,
-    "Cactus": 79,
+    "Hornet": 379,
+    "Wasp": 232,
+    "Cactus": 81,
     "bot-143": 1,
     "Evil Centipede": 31,
     "bot-98": 2,
@@ -29,7 +29,7 @@
     "bot-128": 2,
     "Mantis": 99,
     "bot-97": 3,
-    "Beetle": 98,
+    "Beetle": 100,
     "bot-61": 4,
     "Bush": 11,
     "Bee": 113,
@@ -59,7 +59,7 @@
     "leafy": 4,
     "Soldier Ant": 1,
     "bot-140": 1,
-    "not bot": 1,
+    "not bot": 3,
     "Worker Ant": 5,
     "bot-22": 3,
     "bot": 1,
@@ -131,7 +131,7 @@
     "bot-119": 1
   },
   "loadout_history": {
-    "0": 1266,
+    "0": 1276,
     "1": 1029,
     "79": 10,
     "6": 17,
@@ -187,6 +187,9 @@
     "69": 1,
     "39": 1,
     "43": 1,
-    "41": 1
+    "41": 1,
+    "2049": 1,
+    "256": 5,
+    "9474": 1
   }
 }

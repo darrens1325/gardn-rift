@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "leafy",
   "first_seen": 1778364027.298105,
-  "last_seen": 1779493402.29059,
-  "episodes": 1730,
-  "score_total": 274199,
+  "last_seen": 1779512394.2714722,
+  "episodes": 1746,
+  "score_total": 276151,
   "score_best": 7753,
   "best_loadout": [
     6,
@@ -17,13 +17,13 @@
     0
   ],
   "killed_by": {
-    "Beetle": 89,
-    "Hornet": 432,
+    "Beetle": 94,
+    "Hornet": 434,
     "Evil Centipede": 32,
     "Massive Beetle": 3,
     "Spider": 60,
     "bot-63": 1,
-    "Cactus": 101,
+    "Cactus": 102,
     "bot-303": 1,
     "Bee": 115,
     "Sandstorm": 17,
@@ -33,7 +33,7 @@
     "bot-703": 2,
     "blossom": 1,
     "Rock": 17,
-    "Mantis": 119,
+    "Mantis": 120,
     "Wasp": 309,
     "bot-81": 2,
     "Centipede": 45,
@@ -127,10 +127,12 @@
     "hello": 1,
     "bot-106": 1,
     "bot-59": 1,
-    "bot-118": 1
+    "bot-118": 1,
+    "bot-23": 1,
+    "bot-40": 1
   },
   "loadout_history": {
-    "0": 1474,
+    "0": 1489,
     "1": 1229,
     "79": 6,
     "6": 12,
@@ -182,6 +184,9 @@
     "41": 1,
     "204": 2,
     "205": 1,
-    "117": 1
+    "117": 1,
+    "256": 8,
+    "6658": 1,
+    "1024": 1
   }
 }

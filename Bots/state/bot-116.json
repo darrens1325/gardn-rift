@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-116",
   "first_seen": 1778364742.0010629,
-  "last_seen": 1779493396.706422,
-  "episodes": 1631,
-  "score_total": 243322,
+  "last_seen": 1779512058.143492,
+  "episodes": 1644,
+  "score_total": 243670,
   "score_best": 7874,
   "best_loadout": [
     0,
@@ -18,15 +18,15 @@
   ],
   "killed_by": {
     "Ladybug": 60,
-    "Hornet": 432,
+    "Hornet": 435,
     "Beetle": 82,
-    "Bee": 125,
-    "Mantis": 128,
-    "Wasp": 298,
+    "Bee": 126,
+    "Mantis": 129,
+    "Wasp": 299,
     "Centipede": 60,
     "bot-414": 1,
     "Cactus": 73,
-    "Evil Centipede": 22,
+    "Evil Centipede": 23,
     "Sandstorm": 10,
     "bot-32": 3,
     "bot-88": 2,
@@ -116,7 +116,7 @@
     "bot-144": 1,
     "root": 2,
     "bot-81": 3,
-    "Desert Centipede": 5,
+    "Desert Centipede": 6,
     "bot-130": 1,
     "leafy": 1,
     "bot-22": 1,
@@ -131,7 +131,7 @@
     "bot-147": 1
   },
   "loadout_history": {
-    "0": 1353,
+    "0": 1364,
     "1": 1151,
     "68": 1,
     "116": 3,
@@ -180,6 +180,10 @@
     "69": 1,
     "40": 3,
     "50": 1,
-    "52": 1
+    "52": 1,
+    "1536": 1,
+    "256": 10,
+    "1024": 1,
+    "512": 1
   }
 }

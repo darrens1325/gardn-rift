@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-137",
   "first_seen": 1778543574.336104,
-  "last_seen": 1779493401.225566,
-  "episodes": 1484,
-  "score_total": 220500,
+  "last_seen": 1779512276.516449,
+  "episodes": 1498,
+  "score_total": 220737,
   "score_best": 7564,
   "best_loadout": [
     0,
@@ -18,16 +18,16 @@
   ],
   "killed_by": {
     "Mantis": 123,
-    "Desert Centipede": 13,
+    "Desert Centipede": 14,
     "bot-105": 1,
-    "Hornet": 336,
+    "Hornet": 342,
     "bot-31": 3,
     "bot-99": 4,
-    "Bee": 118,
-    "Wasp": 255,
+    "Bee": 119,
+    "Wasp": 256,
     "bot-103": 3,
     "Sandstorm": 23,
-    "bot-84": 1,
+    "bot-84": 2,
     "bot-91": 5,
     "bot-100": 2,
     "Evil Centipede": 20,
@@ -130,7 +130,7 @@
     "Soldier Ant": 13
   },
   "loadout_history": {
-    "0": 1267,
+    "0": 1281,
     "1": 1023,
     "49": 3,
     "5": 30,
@@ -182,6 +182,11 @@
     "168": 1,
     "205": 1,
     "204": 1,
-    "36": 1
+    "36": 1,
+    "3584": 1,
+    "3585": 1,
+    "256": 7,
+    "769": 1,
+    "1536": 1
   }
 }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "blossom-v2",
   "first_seen": 1778364678.878558,
-  "last_seen": 1779493402.872921,
-  "episodes": 1619,
-  "score_total": 181781,
+  "last_seen": 1779512394.705892,
+  "episodes": 1634,
+  "score_total": 183179,
   "score_best": 6288,
   "best_loadout": [
     1,
@@ -16,11 +16,11 @@
     0
   ],
   "killed_by": {
-    "Hornet": 449,
+    "Hornet": 454,
     "Bee": 109,
-    "Mantis": 122,
-    "Beetle": 59,
-    "Wasp": 260,
+    "Mantis": 123,
+    "Beetle": 60,
+    "Wasp": 261,
     "Ladybug": 68,
     "bot-120": 2,
     "bot-70": 2,
@@ -30,7 +30,7 @@
     "Centipede": 36,
     "bloomy": 4,
     "bot-134": 3,
-    "Evil Centipede": 26,
+    "Evil Centipede": 27,
     "Sandstorm": 26,
     "bloom": 3,
     "bot-72": 3,
@@ -118,10 +118,13 @@
     "bot-126": 1,
     "Soldier Ant": 7,
     "bot-79": 1,
-    "gardn": 1
+    "gardn": 1,
+    "bot-44": 1,
+    "root": 1,
+    "bot-67": 1
   },
   "loadout_history": {
-    "0": 1392,
+    "0": 1405,
     "1": 1163,
     "34": 7,
     "167": 9,
@@ -174,6 +177,10 @@
     "49": 2,
     "39": 1,
     "69": 1,
-    "50": 1
+    "50": 1,
+    "2048": 1,
+    "256": 7,
+    "2561": 1,
+    "513": 1
   }
 }

@@ -9,11 +9,13 @@
 #include <cstring>
 
 void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
-    float r = PETAL_DATA[id].radius;
-    switch(id) {
-        case PetalID::kNone:
+    float r = PETAL_DATA[id.type][id.rarity].radius;
+    // Rendering is keyed on PetalType only — every rarity of a given type
+    // draws the same shape, scaled by the type/rarity-specific radius.
+    switch(id.type) {
+        case PetalType::kNone:
             break;
-        case PetalID::kDandelion:
+        case PetalType::kDandelion:
             ctx.set_stroke(0xff222222);
             ctx.round_line_cap();
             ctx.set_line_width(7);
@@ -21,17 +23,11 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.move_to(0,0);
             ctx.line_to(-1.6 * r, 0);
             ctx.stroke();
-        case PetalID::kUniqueBasic:
-        case PetalID::kBasic:
-        case PetalID::kUnusualBasic:
-        case PetalID::kRareBasic:
-        case PetalID::kEpicBasic:
-        case PetalID::kLight:
-        case PetalID::kUnusualLight:
-        case PetalID::kRareLight:
-        case PetalID::kEpicLight:
-        case PetalID::kTwin:
-        case PetalID::kTriplet:
+            [[fallthrough]];
+        case PetalType::kBasic:
+        case PetalType::kLight:
+        case PetalType::kTwin:
+        case PetalType::kTriplet:
             ctx.set_fill(0xffffffff);
             ctx.set_stroke(0xffcfcfcf);
             ctx.set_line_width(3);
@@ -40,11 +36,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kHeavy:
-        case PetalID::kUnusualHeavy:
-        case PetalID::kRareHeavy:
-        case PetalID::kEpicHeavy:
-        case PetalID::kLegendaryHeavy:
+        case PetalType::kHeavy:
             ctx.set_fill(0xffaaaaaa);
             ctx.set_stroke(0xff888888);
             ctx.set_line_width(3);
@@ -53,12 +45,8 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kCommonStinger:
-        case PetalID::kRareStinger:
-        case PetalID::kEpicStinger:
-        case PetalID::kMythicTringer:
-        case PetalID::kStinger: {
-        case PetalID::kTringer:
+        case PetalType::kStinger:
+        case PetalType::kTringer:
             ctx.set_fill(0xff333333);
             ctx.set_stroke(0xff292929);
             ctx.set_line_width(3);
@@ -72,12 +60,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        }
-        case PetalID::kCommonLeaf:
-        case PetalID::kRareLeaf:
-        case PetalID::kEpicLeaf:
-        case PetalID::kLegendaryLeaf:
-        case PetalID::kLeaf:
+        case PetalType::kLeaf:
             ctx.set_fill(0xff39b54a);
             ctx.set_stroke(0xff2e933c);
             ctx.set_line_width(3);
@@ -95,11 +78,8 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.qcurve_to(0,-1.5,7.5,0);
             ctx.stroke();
             break;
-        case PetalID::kCommonRose:
-        case PetalID::kRareRose:
-        case PetalID::kLegendaryRose:
-        case PetalID::kRose:
-        case PetalID::kDahlia:
+        case PetalType::kRose:
+        case PetalType::kDahlia:
             ctx.set_fill(0xffff94c9);
             ctx.set_stroke(0xffcf78a3);
             ctx.set_line_width(3);
@@ -108,7 +88,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kAntEgg:
+        case PetalType::kAntEgg:
             ctx.set_stroke(0xffcfc295);
             ctx.set_fill(0xfffff0b8);
             ctx.set_line_width(3);
@@ -117,7 +97,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kBeetleEgg:
+        case PetalType::kBeetleEgg:
             ctx.begin_path();
             ctx.ellipse(0,0,r * 0.85, r * 1.15);
             ctx.set_fill(0xfffff0b8);
@@ -126,7 +106,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.set_line_width(3);
             ctx.stroke();
             break;
-        case PetalID::kMissile:
+        case PetalType::kMissile:
             ctx.scale(r / 10);
             ctx.set_fill(0xff222222);
             ctx.set_stroke(0xff222222);
@@ -141,10 +121,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kCommonIris:
-        case PetalID::kRareIris:
-        case PetalID::kLegendaryIris:
-        case PetalID::kIris:
+        case PetalType::kIris:
             ctx.set_fill(0xffce76db);
             ctx.set_stroke(0xffa760b1);
             ctx.set_line_width(3);
@@ -153,7 +130,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kPollen:
+        case PetalType::kPollen:
             ctx.set_fill(0xffffe763);
             ctx.set_stroke(0xffcfbb50);
             ctx.set_line_width(3);
@@ -162,11 +139,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kCommonBubble:
-        case PetalID::kUnusualBubble:
-        case PetalID::kEpicBubble:
-        case PetalID::kLegendaryBubble:
-        case PetalID::kBubble:
+        case PetalType::kBubble:
             ctx.begin_path();
             ctx.arc(0,0,r);
             ctx.set_stroke(0xb2ffffff);
@@ -181,7 +154,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.set_fill(0x59ffffff);
             ctx.fill();
             break;
-        case PetalID::kFaster:
+        case PetalType::kFaster:
             ctx.set_fill(0xfffeffc9);
             ctx.set_stroke(0xffcecfa3);
             ctx.set_line_width(3);
@@ -190,7 +163,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kThirdEye:
+        case PetalType::kThirdEye:
             ctx.scale(0.5);
             ctx.set_fill(0xff111111);
             ctx.begin_path();
@@ -212,8 +185,8 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.qcurve_to(-8,0,0,-10);
             ctx.stroke();
             break;
-        case PetalID::kWeb:
-        case PetalID::kTriweb:
+        case PetalType::kWeb:
+        case PetalType::kTriweb:
             ctx.set_fill(0xffffffff);
             ctx.set_stroke(0xffcfcfcf);
             ctx.round_line_cap();
@@ -229,7 +202,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kWing:
+        case PetalType::kWing:
             ctx.begin_path();
             ctx.partial_arc(0,0,15,-1.5707963267948966,1.5707963267948966,0);
             ctx.qcurve_to(10,0,0,-15);
@@ -241,11 +214,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.round_line_join();
             ctx.stroke();
             break;
-        case PetalID::kCommonRock:
-        case PetalID::kUnusualRock:
-        case PetalID::kEpicRock:
-        case PetalID::kLegendaryRock:
-        case PetalID::kRock: {
+        case PetalType::kRock: {
             ctx.set_fill(0xff777777);
             ctx.set_stroke(Renderer::HSV(0xff777777, 0.8));
             ctx.set_line_width(3);
@@ -263,7 +232,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.stroke();
             break;
         }
-        case PetalID::kAntennae: {
+        case PetalType::kAntennae: {
             ctx.round_line_cap();
             ctx.round_line_join();
             ctx.set_stroke(0xff333333);
@@ -279,7 +248,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.stroke();
             break;
         }
-        case PetalID::kObserver: {
+        case PetalType::kObserver: {
             ctx.round_line_cap();
             ctx.round_line_join();
             ctx.set_stroke(0xff333333);
@@ -302,7 +271,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             break;
         }
-        case PetalID::kBlueIris:
+        case PetalType::kBlueIris:
             ctx.set_fill(0xff39e9f1);
             ctx.set_stroke(0xff2dbac0);
             ctx.set_line_width(3);
@@ -311,8 +280,8 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kCactus:
-        case PetalID::kTricac:
+        case PetalType::kCactus:
+        case PetalType::kTricac:
             ctx.set_fill(0xff38c75f);
             ctx.set_stroke(Renderer::HSV(0xff38c75f, 0.8));
             ctx.set_line_width(3);
@@ -331,25 +300,25 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.arc(0,0,8);
             ctx.fill();
             break;
-        case PetalID::kPoisonPeas:
+        case PetalType::kPoisonPeas:
             ctx.set_fill(0xffce76db);
             ctx.set_stroke(0xffa760b1);
             ctx.set_line_width(3);
             ctx.begin_path();
-            ctx.arc(0,0,PETAL_DATA[id].radius);
+            ctx.arc(0,0,r);
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kPeas:
+        case PetalType::kPeas:
             ctx.set_fill(0xff8ac255);
             ctx.set_stroke(0xff709d45);
             ctx.set_line_width(3);
             ctx.begin_path();
-            ctx.arc(0,0,PETAL_DATA[id].radius);
+            ctx.arc(0,0,r);
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kSand:
+        case PetalType::kSand:
             ctx.set_fill(0xffe0c85c);
             ctx.set_stroke(0xffb5a24b);
             ctx.set_line_width(3);
@@ -366,7 +335,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kStick:
+        case PetalType::kStick:
             ctx.round_line_cap();
             ctx.round_line_join();
             ctx.set_line_width(7);
@@ -382,7 +351,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.set_stroke(0xff7d5b1f);
             ctx.stroke();
             break;
-        case PetalID::kPincer:
+        case PetalType::kPincer:
             ctx.set_fill(0xff333333);
             ctx.set_stroke(0xff292929);
             ctx.set_line_width(3);
@@ -395,7 +364,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kAzalea: {
+        case PetalType::kAzalea: {
             ctx.set_fill(0xffff94c9);
             ctx.set_stroke(0xffcf78a3);
             ctx.set_line_width(3);
@@ -411,7 +380,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.stroke();
             break;
         }
-        case PetalID::kPoisonCactus:
+        case PetalType::kPoisonCactus:
             ctx.set_fill(0xffce76db);
             ctx.set_stroke(0xffa760b1);
             ctx.set_line_width(3);
@@ -430,7 +399,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.arc(0,0,8);
             ctx.fill();
             break;
-        case PetalID::kSalt:
+        case PetalType::kSalt:
             ctx.set_fill(0xffffffff);
             ctx.set_stroke(0xffcfcfcf);
             ctx.set_line_width(3);
@@ -448,7 +417,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kSquare:
+        case PetalType::kSquare:
             ctx.set_fill(0xffffe869);
             ctx.set_stroke(0xffcfbc55);
             ctx.set_line_width(0.15*r);
@@ -459,7 +428,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kMoon: {
+        case PetalType::kMoon: {
             ctx.set_fill(0xff878787);
             ctx.set_stroke(0xff6d6d6d);
             ctx.set_line_width(5);
@@ -468,7 +437,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.stroke();
             ctx.fill();
             ctx.clip();
-            SeedGenerator gen(id * 274633 + 284562);
+            SeedGenerator gen(id.type * 274633 + id.rarity * 91 + 284562);
             uint32_t ct = 10;
             ctx.set_fill(0xff999999);
             ctx.set_stroke(0xff7c7c7c);
@@ -485,7 +454,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill(1);
             break;
         }
-        case PetalID::kLotus:
+        case PetalType::kLotus:
             ctx.scale(r / 10);
             ctx.set_fill(0xffce76db);
             ctx.set_stroke(0xffa760b1);
@@ -517,7 +486,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.arc(0,0,1.74);
             ctx.fill();
             break;
-        case PetalID::kHeaviest:
+        case PetalType::kHeaviest:
             ctx.begin_path();
             ctx.arc(0,0,16);
             ctx.set_fill(0xff333333);
@@ -530,7 +499,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.set_fill(0xffcccccc);
             ctx.fill();
             break;
-        case PetalID::kCutter:
+        case PetalType::kCutter:
             ctx.set_fill(0xff111111);
             ctx.begin_path();
             ctx.arc(0,0,25);
@@ -545,7 +514,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.qcurve_to(23.899494171142578,9.899497032165527,24.748737335205078,24.748737335205078);
             ctx.fill();
             break;
-        case PetalID::kYinYang:
+        case PetalType::kYinYang:
             ctx.set_line_width(3);
             ctx.set_fill(0xffffffff);
             ctx.set_stroke(0xffcfcfcf);
@@ -569,7 +538,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.partial_arc(0,-r/2,r/2,-M_PI/2,M_PI/2,0);
             ctx.stroke();
             break;
-        case PetalID::kYggdrasil:
+        case PetalType::kYggdrasil:
             ctx.scale(r / 255);
             ctx.set_fill(0xff886d35);
             ctx.begin_path();
@@ -876,7 +845,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.bcurve_to(160.88, 177.96, 157.91, 169.93, 154.56, 161.90);
             ctx.fill();
             break;
-        case PetalID::kRice:
+        case PetalType::kRice:
             ctx.set_stroke(0xffcfcfcf);
             ctx.set_line_width(9);
             ctx.scale(r / 13);
@@ -888,7 +857,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.set_line_width(5);
             ctx.stroke();
             break;
-        case PetalID::kBone:
+        case PetalType::kBone:
             ctx.set_fill(0xffffffff);
             ctx.set_stroke(0xffcfcfcf);
             ctx.set_line_width(5);
@@ -904,7 +873,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.stroke();
             ctx.fill();
             break;
-        case PetalID::kYucca:
+        case PetalType::kYucca:
             ctx.set_fill(0xff74b53f);
             ctx.set_stroke(0xff5e9333);
             ctx.set_line_width(3);
@@ -920,7 +889,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.qcurve_to(0,-3,-14,0);
             ctx.stroke();
             break;
-        case PetalID::kCorn:
+        case PetalType::kCorn:
             ctx.scale(r / 10);
             ctx.set_fill(0xffffe419);
             ctx.set_stroke(0xffcfb914);
@@ -933,13 +902,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             ctx.stroke();
             break;
-        case PetalID::kCommonRoot:
-        case PetalID::kUnusualRoot:
-        case PetalID::kEpicRoot:
-        case PetalID::kLegendaryRoot:
-        case PetalID::kMythicRoot:
-        case PetalID::kUniqueRoot:
-        case PetalID::kRoot:
+        case PetalType::kRoot:
             ctx.scale(r / 7);
             ctx.set_fill(0xffb86c32);
             ctx.begin_path();
@@ -1089,21 +1052,11 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.fill();
             break;
         default: {
-            // Wave-system rarity expansion: every new (base, rarity)
-            // PetalID added at the end of the enum aliases its rendering
-            // to the first earlier-indexed petal with the same name.
-            // kLegendaryBasic → kBasic, kUniqueRose → kRose, etc. Avoids
-            // having to add ~120 explicit fall-through case labels here.
-            // PETAL_DATA is indexed in the same order as the enum, so a
-            // forward scan from id=1 finds the canonical case.
-            char const *name = PETAL_DATA[id].name;
-            for (PetalID::T fallback = 1; fallback < id; ++fallback) {
-                if (std::strcmp(PETAL_DATA[fallback].name, name) == 0) {
-                    draw_static_petal_single(fallback, ctx);
-                    return;
-                }
-            }
-            assert(id < PetalID::kNumPetals);
+            // Every PetalType is now explicitly cased above. Rarity
+            // variants of a given type share a case, so no per-rarity
+            // fallback is needed. If we land here, the enum gained a
+            // new type the renderer doesn't know about yet.
+            assert(id.type < PetalType::kNumPetalTypes);
             assert(!"didn't cover petal render");
             break;
         }
@@ -1111,7 +1064,7 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
 }
 
 void draw_static_petal(PetalID::T id, Renderer &ctx) {
-    struct PetalData const &data = PETAL_DATA[id];
+    struct PetalData const &data = PETAL_DATA[id.type][id.rarity];
     uint32_t count = data.count;
     if (count == 0) count = 1;
     for (uint32_t i = 0; i < count; ++i) {
@@ -1126,15 +1079,16 @@ void draw_static_petal(PetalID::T id, Renderer &ctx) {
     }
 }
 
-void draw_loadout_background(Renderer &ctx, uint8_t id, float reload) {
+void draw_loadout_background(Renderer &ctx, PetalID::T id, float reload) {
     RenderContext c(&ctx);
-    ctx.set_fill(Renderer::HSV(RARITY_COLORS[PETAL_DATA[id].rarity], 0.8));
+    struct PetalData const &data = PETAL_DATA[id.type][id.rarity];
+    ctx.set_fill(Renderer::HSV(RARITY_COLORS[id.rarity], 0.8));
     ctx.round_line_join();
     ctx.round_line_cap();
     ctx.begin_path();
     ctx.round_rect(-30, -30, 60, 60, 3);
     ctx.fill();
-    ctx.set_fill(RARITY_COLORS[PETAL_DATA[id].rarity]);
+    ctx.set_fill(RARITY_COLORS[id.rarity]);
     ctx.begin_path();
     ctx.rect(-25, -25, 50, 50);
     ctx.fill();
@@ -1155,12 +1109,13 @@ void draw_loadout_background(Renderer &ctx, uint8_t id, float reload) {
     {
         RenderContext r(&ctx);
         ctx.scale(0.833);
-        if (PETAL_DATA[id].radius > 20) ctx.scale(20 / PETAL_DATA[id].radius);
+        if (data.radius > 20) ctx.scale(20 / data.radius);
         draw_static_petal(id, ctx);
     }
-    float text_width = 12 * Renderer::get_ascii_text_size(PETAL_DATA[id].name);
+    char const *name = data.name ? data.name : "";
+    float text_width = 12 * Renderer::get_ascii_text_size(name);
     if (text_width < 50) text_width = 12;
     else text_width = 12 * 50 / text_width;
     ctx.translate(0, 20);
-    ctx.draw_text(PETAL_DATA[id].name, { .size = text_width });
+    ctx.draw_text(name, { .size = text_width });
 }

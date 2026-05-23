@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-147",
   "first_seen": 1778543129.902696,
-  "last_seen": 1779493396.720035,
-  "episodes": 1533,
-  "score_total": 163234,
+  "last_seen": 1779512035.9587672,
+  "episodes": 1546,
+  "score_total": 163545,
   "score_best": 5110,
   "best_loadout": [
     1,
@@ -16,22 +16,22 @@
     0
   ],
   "killed_by": {
-    "Hornet": 382,
+    "Hornet": 388,
     "bot-50": 4,
-    "Wasp": 292,
-    "Centipede": 48,
+    "Wasp": 293,
+    "Centipede": 49,
     "Sandstorm": 13,
     "bot-139": 2,
     "Cactus": 89,
     "Scorpion": 3,
-    "Rock": 8,
+    "Rock": 9,
     "Mantis": 114,
     "Beetle": 74,
     "bot-57": 3,
     "bot-80": 2,
     "bot-94": 1,
     "bot-98": 2,
-    "Bee": 92,
+    "Bee": 93,
     "bot-37": 1,
     "Evil Centipede": 17,
     "bot-133": 3,
@@ -132,7 +132,7 @@
     "bot-143": 1
   },
   "loadout_history": {
-    "0": 1303,
+    "0": 1315,
     "1": 1068,
     "24": 34,
     "5": 30,
@@ -184,6 +184,12 @@
     "205": 2,
     "204": 2,
     "41": 1,
-    "56": 1
+    "56": 1,
+    "1024": 1,
+    "256": 7,
+    "2048": 2,
+    "5122": 1,
+    "3584": 1,
+    "4097": 1
   }
 }

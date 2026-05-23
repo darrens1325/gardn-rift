@@ -51,7 +51,8 @@ namespace Ui {
         extern UiLoadoutPetal *petal_selected;
         extern UiLoadoutPetal *petal_slots[2 * MAX_SLOT_COUNT];
         extern UiLoadoutSlot *petal_backgrounds[2 * MAX_SLOT_COUNT + 1];
-        extern Element *petal_tooltips[PetalID::kNumPetals];
+        // Indexed [petal_type][rarity] — null for unauthored cells.
+        extern Element *petal_tooltips[PetalType::kNumPetalTypes][RarityID::kNumRarities];
         extern uint8_t selected_with_keys;
         extern double last_key_select;
     };

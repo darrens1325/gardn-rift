@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "hello",
   "first_seen": 1778364027.7534652,
-  "last_seen": 1779493401.432401,
-  "episodes": 1688,
-  "score_total": 222702,
+  "last_seen": 1779512389.255588,
+  "episodes": 1702,
+  "score_total": 222880,
   "score_best": 10072,
   "best_loadout": [
     0,
@@ -17,7 +17,7 @@
     0
   ],
   "killed_by": {
-    "Hornet": 496,
+    "Hornet": 497,
     "Soldier Ant": 11,
     "Beetle": 73,
     "Cactus": 79,
@@ -30,11 +30,11 @@
     "Ant Hole": 1,
     "bot-502": 1,
     "Queen Ant": 2,
-    "Wasp": 246,
+    "Wasp": 249,
     "bot-404": 1,
     "bot-144": 2,
     "Mantis": 133,
-    "Evil Centipede": 22,
+    "Evil Centipede": 24,
     "bot-111": 3,
     "bot-85": 2,
     "Sandstorm": 21,
@@ -137,10 +137,12 @@
     "sussy": 1,
     "bot-107": 2,
     "thornbloom": 1,
-    "Boulder": 2
+    "Boulder": 2,
+    "bot-91": 4,
+    "bot-69": 1
   },
   "loadout_history": {
-    "0": 1420,
+    "0": 1432,
     "1": 1233,
     "28": 9,
     "8": 1,
@@ -199,6 +201,8 @@
     "39": 1,
     "40": 9,
     "41": 4,
-    "204": 1
+    "204": 1,
+    "256": 5,
+    "3072": 1
   }
 }

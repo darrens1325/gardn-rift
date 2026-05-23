@@ -52,713 +52,768 @@ constexpr float scale_dmg(float base, int delta)    { return base * scale_pow(1.
 constexpr float scale_heal(float base, int delta)   { return base * scale_pow(1.5f, delta); }
 constexpr float scale_poison(float base, int delta) { return base * scale_pow(1.5f, delta); }
 
-struct PetalData const PETAL_DATA[PetalID::kNumPetals] = {
-    {"None", "How can you see this?",
-        0.0, 0.0, 0.0, 1.0, 0, RarityID::kCommon, {}},
-    {"Basic", "A nice petal, not too strong but not too weak",
-        10.0, 10.0, 10.0, 2.5, 1, RarityID::kCommon, {}},
-    {"Basic", "A nice petal, not too strong but not too weak",
-        18.0, 16.0, 10.0, 2.5, 1, RarityID::kUnusual, {}},
-    {"Basic", "A nice petal, not too strong but not too weak",
-        30.0, 25.0, 10.0, 2.5, 1, RarityID::kRare, {}},
-    {"Basic", "A nice petal, not too strong but not too weak",
-        50.0, 40.0, 10.0, 2.5, 1, RarityID::kEpic, {}},
-    {"Fast", "Weaker than most petals, but reloads very quickly",
-        5.0, 8.0, 7.0, 1.0, 1, RarityID::kCommon, {}},
-    {"Fast", "Weaker than most petals, but reloads very quickly",
-        8.0, 14.0, 7.0, 1.0, 1, RarityID::kUnusual, {}},
-    {"Fast", "Weaker than most petals, but reloads very quickly",
-        12.0, 22.0, 7.0, 1.0, 1, RarityID::kRare, {}},
-    {"Fast", "Weaker than most petals, but reloads very quickly",
-        20.0, 35.0, 7.0, 1.0, 1, RarityID::kEpic, {}},
-    {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
-        20.0, 20.0, 12.0, 4.5, 1, RarityID::kCommon, {}},
-    {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
-        35.0, 30.0, 12.0, 4.5, 1, RarityID::kUnusual, {}},
-    {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
-        60.0, 45.0, 12.0, 4.5, 1, RarityID::kRare, {}},
-    {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
-        100.0, 70.0, 12.0, 4.5, 1, RarityID::kEpic, {}},
-    {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
-        160.0, 100.0, 12.0, 4.5, 1, RarityID::kLegendary, {}},
-    {"Stinger", "It really hurts, but it's really fragile",
-        5.0, 20.0, 7.0, 3.5, 1, RarityID::kCommon, {}},
-    {"Stinger", "It really hurts, but it's really fragile",
-        5.0, 35.0, 7.0, 3.5, 1, RarityID::kUnusual, {}},
-    {"Stinger", "It really hurts, but it's really fragile",
-        5.0, 50.0, 7.0, 3.5, 1, RarityID::kRare, {}},
-    {"Stinger", "It really hurts, but it's really fragile",
-        5.0, 75.0, 7.0, 3.5, 1, RarityID::kEpic, {}},
-    {"Leaf", "Gathers energy from the sun to passively heal your flower",
-        6.0, 6.0, 10.0, 1.0, 1, RarityID::kCommon, {
-        .constant_heal = 0.5,
-        .icon_angle = -1
-    }},
-    {"Leaf", "Gathers energy from the sun to passively heal your flower",
-        10.0, 8.0, 10.0, 1.0, 1, RarityID::kUnusual, {
-        .constant_heal = 1,
-        .icon_angle = -1
-    }},
-    {"Leaf", "Gathers energy from the sun to passively heal your flower",
-        18.0, 12.0, 10.0, 1.0, 1, RarityID::kRare, {
-        .constant_heal = 1.5,
-        .icon_angle = -1
-    }},
-    {"Leaf", "Gathers energy from the sun to passively heal your flower",
-        30.0, 18.0, 10.0, 1.0, 1, RarityID::kEpic, {
-        .constant_heal = 2.5,
-        .icon_angle = -1
-    }},
-    {"Leaf", "Gathers energy from the sun to passively heal your flower",
-        50.0, 25.0, 10.0, 1.0, 1, RarityID::kLegendary, {
-        .constant_heal = 4.0,
-        .icon_angle = -1
-    }},
-    {"Twin", "Why stop at one? Why not TWO?!",
-        5.0, 8.0, 7.0, 1.0, 2, RarityID::kUnusual, {}},
-    {"Rose", "Its healing properties are amazing. Not so good at combat though",
-        3.0, 3.0, 10.0, 3.5, 1, RarityID::kCommon, {
-        .secondary_reload = 1.0,
-        .burst_heal = 5,
-        .defend_only = 1
-    }},
-    {"Rose", "Its healing properties are amazing. Not so good at combat though",
-        5.0, 5.0, 10.0, 3.5, 1, RarityID::kUnusual, {
-        .secondary_reload = 1.0,
-        .burst_heal = 10,
-        .defend_only = 1
-    }},
-    {"Rose", "Its healing properties are amazing. Not so good at combat though",
-        7.0, 7.0, 10.0, 3.5, 1, RarityID::kRare, {
-        .secondary_reload = 1.0,
-        .burst_heal = 15,
-        .defend_only = 1
-    }},
-    {"Rose", "Its healing properties are amazing. Not so good at combat though",
-        10.0, 10.0, 10.0, 3.5, 1, RarityID::kLegendary, {
-        .secondary_reload = 1.0,
-        .burst_heal = 35,
-        .defend_only = 1
-    }},
-    {"Iris", "Very poisonous, but takes a while to do its work",
-        3.0, 3.0, 7.0, 5.0, 1, RarityID::kCommon, {
-        .poison_damage = { 5.0, 6.0 }
-    }},
-    {"Iris", "Very poisonous, but takes a while to do its work",
-         5.0, 5.0, 7.0, 5.0, 1, RarityID::kUnusual, {
-        .poison_damage = { 10.0, 6.0 }
-    }},
-    {"Iris", "Very poisonous, but takes a while to do its work",
-        7.0, 7.0, 7.0, 5.0, 1, RarityID::kRare, {
-        .poison_damage = { 20.0, 6.0 }
-    }},
-    {"Iris", "Very poisonous, but takes a while to do its work",
-        15.0, 15.0, 7.0, 5.0, 1, RarityID::kLegendary, {
-        .poison_damage = { 40.0, 5.0 }
-    }},
-    {"Missile", "You can actually shoot this one",
-        5.0, 25.0, 10.0, 1.0, 1, RarityID::kRare, {
-        .secondary_reload = 0.5, 
-        .defend_only = 1,
-        .icon_angle = 1,
-        .rotation_style = PetalAttributes::kFollowRot 
-    }},
-    {"Dandelion", "Its interesting properties prevent healing effects on affected units",
-        10.0, 10.0, 10.0, 1.0, 1, RarityID::kRare, {
-        .icon_angle = 1,
-        .rotation_style = PetalAttributes::kFollowRot 
-    }},
-    {"Bubble", "You can right click to pop it and propel your flower",
-        0.5, 0.0, 12.0, 3.0, 1, RarityID::kCommon, {
-        .secondary_reload = 0.5,
-        .defend_only = 1,
-    }},
-    {"Bubble", "You can right click to pop it and propel your flower",
-        0.7, 0.0, 12.0, 2.5, 1, RarityID::kUnusual, {
-        .secondary_reload = 0.5,
-        .defend_only = 1,
-    }},
-    {"Bubble", "You can right click to pop it and propel your flower",
-        1.0, 0.0, 12.0, 2.0, 1, RarityID::kRare, {
-        .secondary_reload = 0.5,
-        .defend_only = 1,
-    }},
-    {"Bubble", "You can right click to pop it and propel your flower",
-        1.5, 0.0, 12.0, 1.5, 1, RarityID::kEpic, {
-        .secondary_reload = 0.5,
-        .defend_only = 1,
-    }},
-    {"Bubble", "You can right click to pop it and propel your flower",
-        2.0, 0.0, 12.0, 1.0, 1, RarityID::kLegendary, {
-        .secondary_reload = 0.5,
-        .defend_only = 1,
-    }},
-    {"Faster", "It's so light it makes your other petals spin faster",
-        5.0, 7.0, 7.0, 0.5, 1, RarityID::kRare, {}},
-    {"Rock", "Even more durable, but slower to recharge",
-        30.0, 5.0, 12.0, 7.5, 1, RarityID::kCommon, {}},
-    {"Rock", "Even more durable, but slower to recharge",
-        60.0, 7.0, 12.0, 7.5, 1, RarityID::kUnusual, {}},
-    {"Rock", "Even more durable, but slower to recharge",
-        100.0, 10.0, 12.0, 7.5, 1, RarityID::kRare, {}},
-    {"Rock", "Even more durable, but slower to recharge",
-        200.0, 15.0, 12.0, 7.5, 1, RarityID::kEpic, {}},
-    {"Rock", "Even more durable, but slower to recharge",
-        350.0, 25.0, 12.0, 7.5, 1, RarityID::kLegendary, {}},
-    {"Cactus", "Not very strong, but somehow increases your maximum health",
-        15.0, 5.0, 15.0, 1.0, 1, RarityID::kRare, {}},
-    {"Web", "It's really sticky",
-        10.0, 5.0, 10.0, 3.0, 1, RarityID::kRare, {
-        .secondary_reload = 0.5,
-        .defend_only = 1,
-    }},
-    {"Wing", "It comes and goes",
-        15.0, 15.0, 10.0, 2.5, 1, RarityID::kRare, {
-        .icon_angle = 1,
-    }},
-    {"Peas", "4 in 1 deal",
-        5.0, 8.0, 7.0, 2.0, 4, RarityID::kRare, {
-        .clump_radius = 8,
-        .secondary_reload = 0.1,
-        .defend_only = 1,
-    }},
-    {"Sand", "It's coarse, rough, and gets everywhere",
-        10.0, 3.0, 7.0, 1.5, 4, RarityID::kRare, {
-        .clump_radius = 10,
-    }},
-    {"Pincer", "Stuns and poisons targets for a short duration",
-        10.0, 5.0, 10.0, 2.5, 1, RarityID::kRare, {
-        .icon_angle = 0.7,
-        .poison_damage = { 5.0, 1.0 }
-    }},
-    {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
-        5.0, 5.0, 7.0, 3.5, 3, RarityID::kRare, { 
-        .clump_radius = 10,
-        .secondary_reload = 1.0,
-        .burst_heal = 3.5,
-        .defend_only = 1
-    }},
-    {"Triplet", "How about THREE?!",
-        5.0, 8.0, 7.0, 1.0, 3, RarityID::kEpic, {}},
-    {"Egg", "Something interesting might pop out of this",
-        50.0, 1.0, 12.5, 1.0, 2, RarityID::kEpic, { 
-        .secondary_reload = 3.5,
-        .defend_only = 1,
-        .rotation_style = PetalAttributes::kNoRot,
-        .spawns = MobID::kSoldierAnt
-    }},
-    {"Iris", "Deals its effects quicker than traditional irises",
-        10.0, 5.0, 7.0, 5.0, 1, RarityID::kEpic, { 
-        .poison_damage = { 15.0, 4.0 }
-    }},
-    {"Pollen", "Asthmatics beware",
-        7.0, 8.0, 7.0, 1.5, 3, RarityID::kEpic, {
-        .secondary_reload = 0.5,
-        .defend_only = 1
-    }},
-    {"Peas", "4 in 1 deal, now with a secret ingredient: poison",
-        5.0, 2.0, 7.0, 2.0, 4, RarityID::kEpic, {
-        .clump_radius = 8,
-        .secondary_reload = 0.1,
-        .defend_only = 1,
-        .poison_damage = { 20.0, 0.5 }
-    }},
-    {"Egg", "Something interesting might pop out of this",
-        50.0, 1.0, 15.0, 1.0, 1, RarityID::kEpic, { 
-        .secondary_reload = 3.5,
-        .defend_only = 1,
-        .rotation_style = PetalAttributes::kNoRot,
-        .spawns = MobID::kBeetle
-    }},
-    {"Rose", "Extremely powerful rose, almost unheard of",
-        5.0, 5.0, 10.0, 3.5, 1, RarityID::kEpic, { 
-        .secondary_reload = 1.0,
-        .burst_heal = 22,
-        .defend_only = 1
-    }},
-    {"Stick", "Harnesses the power of the wind",
-        10.0, 1.0, 15.0, 3.0, 1, RarityID::kLegendary, { 
-        .secondary_reload = 4.0,
-        .defend_only = 1,
-        .icon_angle = 1,
-        .spawns = MobID::kSandstorm,
-        .spawn_count = 2
-    }},
-    {"Stinger", "It really hurts, but it's really fragile",
-        5.0, 35.0, 7.0, 4.5, 3, RarityID::kLegendary, {
-        .clump_radius = 10
-    }},
-    {"Stinger", "It really hurts, but it's really fragile",
-        5.0, 50.0, 7.0, 4.5, 3, RarityID::kMythic, {
-        .clump_radius = 10
-    }},
-    {"Web", "It's really sticky",
-        10.0, 5.0, 10.0, 3.0, 3, RarityID::kLegendary, {
-        .clump_radius = 10,
-        .secondary_reload = 0.5,
-        .defend_only = 1,
-    }},
-    {"Antennae", "Allows your flower to sense foes from farther away",
-        0.0, 0.0, 12.5, 0.0, 0, RarityID::kLegendary, {}},
-    {"Cactus", "Not very strong, but somehow increases your maximum health",
-        15.0, 5.0, 10.0, 1.0, 3, RarityID::kLegendary, {
-        .clump_radius = 10,
-    }},
-    {"Heaviest", "This thing is so heavy that nothing gets in the way",
-        200.0, 10.0, 12.0, 15.0, 1, RarityID::kEpic, {
-        .mass = 10,
-        .rotation_style = PetalAttributes::kNoRot
-    }},
-    {"Third Eye", "Allows your flower to extend petals further out",
-        0.0, 0.0, 20.0, 0.0, 0, RarityID::kMythic, {}},
-    {"Observer", "The one who sees all", 
-        0.0, 0.0, 12.5, 0.0, 0, RarityID::kMythic, {}},
-    {"Cactus", "Turns your flower poisonous. Enemies will take poison damage on contact",
-        15.0, 5.0, 10.0, 1.0, 1, RarityID::kEpic, {
-        .poison_damage = { 1.0, 5.0 }
-    }},
-    {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
-        10.0, 10.0, 10.0, 2.5, 1, RarityID::kRare, {}},
-    {"Basic", "Something incredibly rare and useless",
-        10.0, 10.0, 10.0, 2.5, 1, RarityID::kUnique, {}},
-    {"Square", "This shape... it looks familiar...",
-        10.0, 10.0, 15.0, 2.5, 1, RarityID::kUnique, {
-        .icon_angle = M_PI / 4 + 1
-    }},
-    {"Moon", "Where did this come from?",
-        1000.0, 1.0, 50.0, 10.0, 1, RarityID::kMythic, {
-        .secondary_reload = 0.5,
-        .mass = 200
-    }},
-    {"Lotus", "Absorbs some poison damage taken by the flower",
-        5.0, 5.0, 12.0, 2.0, 1, RarityID::kEpic, {
-        .icon_angle = 0.1
-    }},
-    {"Cutter", "Increases the flower's body damage",
-        0.0, 0.0, 40.0, 0.0, 0, RarityID::kEpic, {}},
-    {"Yin Yang", "Alters the flower's petal rotation in interesting ways",
-        15.0, 15.0, 10.0, 2.5, 1, RarityID::kEpic, {}},
-    {"Yggdrasil", "Unfortunately, its powers are useless here",
-        1.0, 1.0, 12.0, 10.0, 1, RarityID::kUnique, {
-        .defend_only = 1,
-        .icon_angle = M_PI
-    }},
-    {"Rice", "Spawns instantly, but not very strong",
-        1.0, 4.0, 13.0, 0.1, 1, RarityID::kEpic, {
-        .icon_angle = 0.7
-    }},
-    {"Bone", "Sturdy",
-        12.0, 10.0, 12.0, 2.5, 1, RarityID::kLegendary, {
-        .icon_angle = 1
-    }},
-    {"Yucca", "Heals the flower, but only while in the defensive position",
-        10.0, 5.0, 10.0, 1.0, 1, RarityID::kUnusual, {
-        .constant_heal = 1.5,
-        .icon_angle = -1
-    }},
-    {"Corn", "Takes a long time to spawn, but has a lot of health",
-        500.0, 2.5, 16.0, 10.0, 1, RarityID::kEpic, {
-        .icon_angle = 0.5
-    }},
-    // -----------------------------------------------------------------------
-    // Wave-system rarity expansion. Order MUST match the new PetalID enum
-    // entries appended at the end of StaticDefinitions.hh::PetalID — these
-    // rows are indexed by enum value. Stats are formula-scaled from the
-    // nearest hand-tuned existing tier; the "// Δ from kX (rarity Y)" comment
-    // on each block names the source entry so the math is auditable.
-    // -----------------------------------------------------------------------
-    // Basic — Δ from kEpicBasic (50/40 @ Epic=3)
-    {"Basic", "A nice petal, not too strong but not too weak",
-        scale_hp(50.0, 1), scale_dmg(40.0, 1), 10.0, 2.5, 1, RarityID::kLegendary, {}},
-    {"Basic", "A nice petal, not too strong but not too weak",
-        scale_hp(50.0, 2), scale_dmg(40.0, 2), 10.0, 2.5, 1, RarityID::kMythic, {}},
-    // Fast (Light) — Δ from kEpicLight (20/35 @ Epic=3)
-    {"Fast", "Weaker than most petals, but reloads very quickly",
-        scale_hp(20.0, 1), scale_dmg(35.0, 1), 7.0, 1.0, 1, RarityID::kLegendary, {}},
-    {"Fast", "Weaker than most petals, but reloads very quickly",
-        scale_hp(20.0, 2), scale_dmg(35.0, 2), 7.0, 1.0, 1, RarityID::kMythic, {}},
-    {"Fast", "Weaker than most petals, but reloads very quickly",
-        scale_hp(20.0, 3), scale_dmg(35.0, 3), 7.0, 1.0, 1, RarityID::kUnique, {}},
-    // Heavy — Δ from kLegendaryHeavy (160/100 @ Legendary=4)
-    {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
-        scale_hp(160.0, 1), scale_dmg(100.0, 1), 12.0, 4.5, 1, RarityID::kMythic, {}},
-    {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
-        scale_hp(160.0, 2), scale_dmg(100.0, 2), 12.0, 4.5, 1, RarityID::kUnique, {}},
-    // Stinger — Δ from kMythicTringer (5/50, count=3, clump=10 @ Mythic=5)
-    {"Stinger", "It really hurts, but it's really fragile",
-        scale_hp(5.0, 1), scale_dmg(50.0, 1), 7.0, 4.5, 3, RarityID::kUnique, {.clump_radius = 10}},
-    // Leaf — Δ from kLegendaryLeaf (50/25, heal=4 @ Legendary=4)
-    {"Leaf", "Gathers energy from the sun to passively heal your flower",
-        scale_hp(50.0, 1), scale_dmg(25.0, 1), 10.0, 1.0, 1, RarityID::kMythic, {.constant_heal = scale_heal(4.0, 1), .icon_angle = -1}},
-    {"Leaf", "Gathers energy from the sun to passively heal your flower",
-        scale_hp(50.0, 2), scale_dmg(25.0, 2), 10.0, 1.0, 1, RarityID::kUnique, {.constant_heal = scale_heal(4.0, 2), .icon_angle = -1}},
-    // Twin — Δ from kTwin (5/8, count=2 @ Unusual=1)
-    {"Twin", "Why stop at one? Why not TWO?!",
-        scale_hp(5.0, -1), scale_dmg(8.0, -1), 7.0, 1.0, 2, RarityID::kCommon, {}},
-    {"Twin", "Why stop at one? Why not TWO?!",
-        scale_hp(5.0, 1), scale_dmg(8.0, 1), 7.0, 1.0, 2, RarityID::kRare, {}},
-    {"Twin", "Why stop at one? Why not TWO?!",
-        scale_hp(5.0, 2), scale_dmg(8.0, 2), 7.0, 1.0, 2, RarityID::kEpic, {}},
-    {"Twin", "Why stop at one? Why not TWO?!",
-        scale_hp(5.0, 3), scale_dmg(8.0, 3), 7.0, 1.0, 2, RarityID::kLegendary, {}},
-    {"Twin", "Why stop at one? Why not TWO?!",
-        scale_hp(5.0, 4), scale_dmg(8.0, 4), 7.0, 1.0, 2, RarityID::kMythic, {}},
-    {"Twin", "Why stop at one? Why not TWO?!",
-        scale_hp(5.0, 5), scale_dmg(8.0, 5), 7.0, 1.0, 2, RarityID::kUnique, {}},
-    // Rose — Δ from kLegendaryRose (10/10, burst=35 @ Legendary=4)
-    {"Rose", "Its healing properties are amazing. Not so good at combat though",
-        scale_hp(10.0, 1), scale_dmg(10.0, 1), 10.0, 3.5, 1, RarityID::kMythic,
-        {.secondary_reload = 1.0, .burst_heal = scale_heal(35.0, 1), .defend_only = 1}},
-    {"Rose", "Its healing properties are amazing. Not so good at combat though",
-        scale_hp(10.0, 2), scale_dmg(10.0, 2), 10.0, 3.5, 1, RarityID::kUnique,
-        {.secondary_reload = 1.0, .burst_heal = scale_heal(35.0, 2), .defend_only = 1}},
-    // Iris — Δ from kLegendaryIris (15/15, poison=40/5 @ Legendary=4)
-    {"Iris", "Very poisonous, but takes a while to do its work",
-        scale_hp(15.0, 1), scale_dmg(15.0, 1), 7.0, 5.0, 1, RarityID::kMythic,
-        {.poison_damage = {scale_poison(40.0, 1), 5.0}}},
-    {"Iris", "Very poisonous, but takes a while to do its work",
-        scale_hp(15.0, 2), scale_dmg(15.0, 2), 7.0, 5.0, 1, RarityID::kUnique,
-        {.poison_damage = {scale_poison(40.0, 2), 5.0}}},
-    // Bubble — Δ from kLegendaryBubble (2.0/0 @ Legendary=4)
-    {"Bubble", "You can right click to pop it and propel your flower",
-        scale_hp(2.0, 1), 0.0, 12.0, 1.0, 1, RarityID::kMythic,
-        {.secondary_reload = 0.5, .defend_only = 1}},
-    {"Bubble", "You can right click to pop it and propel your flower",
-        scale_hp(2.0, 2), 0.0, 12.0, 1.0, 1, RarityID::kUnique,
-        {.secondary_reload = 0.5, .defend_only = 1}},
-    // Rock — Δ from kLegendaryRock (350/25 @ Legendary=4)
-    {"Rock", "Even more durable, but slower to recharge",
-        scale_hp(350.0, 1), scale_dmg(25.0, 1), 12.0, 7.5, 1, RarityID::kMythic, {}},
-    {"Rock", "Even more durable, but slower to recharge",
-        scale_hp(350.0, 2), scale_dmg(25.0, 2), 12.0, 7.5, 1, RarityID::kUnique, {}},
-    // Web — Δ from kWeb (10/5 @ Rare=2). Mythic/Unique mirror kTriweb's clump.
-    {"Web", "It's really sticky",
-        scale_hp(10.0, -2), scale_dmg(5.0, -2), 10.0, 3.0, 1, RarityID::kCommon,
-        {.secondary_reload = 0.5, .defend_only = 1}},
-    {"Web", "It's really sticky",
-        scale_hp(10.0, -1), scale_dmg(5.0, -1), 10.0, 3.0, 1, RarityID::kUnusual,
-        {.secondary_reload = 0.5, .defend_only = 1}},
-    {"Web", "It's really sticky",
-        scale_hp(10.0, 1), scale_dmg(5.0, 1), 10.0, 3.0, 1, RarityID::kEpic,
-        {.secondary_reload = 0.5, .defend_only = 1}},
-    {"Web", "It's really sticky",
-        scale_hp(10.0, 3), scale_dmg(5.0, 3), 10.0, 3.0, 3, RarityID::kMythic,
-        {.clump_radius = 10, .secondary_reload = 0.5, .defend_only = 1}},
-    {"Web", "It's really sticky",
-        scale_hp(10.0, 4), scale_dmg(5.0, 4), 10.0, 3.0, 3, RarityID::kUnique,
-        {.clump_radius = 10, .secondary_reload = 0.5, .defend_only = 1}},
-    // Wing — Δ from kWing (15/15 @ Rare=2)
-    {"Wing", "It comes and goes",
-        scale_hp(15.0, -2), scale_dmg(15.0, -2), 10.0, 2.5, 1, RarityID::kCommon, {.icon_angle = 1}},
-    {"Wing", "It comes and goes",
-        scale_hp(15.0, -1), scale_dmg(15.0, -1), 10.0, 2.5, 1, RarityID::kUnusual, {.icon_angle = 1}},
-    {"Wing", "It comes and goes",
-        scale_hp(15.0, 1), scale_dmg(15.0, 1), 10.0, 2.5, 1, RarityID::kEpic, {.icon_angle = 1}},
-    {"Wing", "It comes and goes",
-        scale_hp(15.0, 2), scale_dmg(15.0, 2), 10.0, 2.5, 1, RarityID::kLegendary, {.icon_angle = 1}},
-    {"Wing", "It comes and goes",
-        scale_hp(15.0, 3), scale_dmg(15.0, 3), 10.0, 2.5, 1, RarityID::kMythic, {.icon_angle = 1}},
-    {"Wing", "It comes and goes",
-        scale_hp(15.0, 4), scale_dmg(15.0, 4), 10.0, 2.5, 1, RarityID::kUnique, {.icon_angle = 1}},
-    // Peas — Δ from kPeas (5/8 count=4 @ Rare=2)
-    {"Peas", "4 in 1 deal",
-        scale_hp(5.0, -2), scale_dmg(8.0, -2), 7.0, 2.0, 4, RarityID::kCommon,
-        {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
-    {"Peas", "4 in 1 deal",
-        scale_hp(5.0, -1), scale_dmg(8.0, -1), 7.0, 2.0, 4, RarityID::kUnusual,
-        {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
-    {"Peas", "4 in 1 deal",
-        scale_hp(5.0, 2), scale_dmg(8.0, 2), 7.0, 2.0, 4, RarityID::kLegendary,
-        {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
-    {"Peas", "4 in 1 deal",
-        scale_hp(5.0, 3), scale_dmg(8.0, 3), 7.0, 2.0, 4, RarityID::kMythic,
-        {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
-    {"Peas", "4 in 1 deal",
-        scale_hp(5.0, 4), scale_dmg(8.0, 4), 7.0, 2.0, 4, RarityID::kUnique,
-        {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
-    // Sand — Δ from kSand (10/3 count=4 @ Rare=2)
-    {"Sand", "It's coarse, rough, and gets everywhere",
-        scale_hp(10.0, -2), scale_dmg(3.0, -2), 7.0, 1.5, 4, RarityID::kCommon, {.clump_radius = 10}},
-    {"Sand", "It's coarse, rough, and gets everywhere",
-        scale_hp(10.0, -1), scale_dmg(3.0, -1), 7.0, 1.5, 4, RarityID::kUnusual, {.clump_radius = 10}},
-    {"Sand", "It's coarse, rough, and gets everywhere",
-        scale_hp(10.0, 1), scale_dmg(3.0, 1), 7.0, 1.5, 4, RarityID::kEpic, {.clump_radius = 10}},
-    {"Sand", "It's coarse, rough, and gets everywhere",
-        scale_hp(10.0, 2), scale_dmg(3.0, 2), 7.0, 1.5, 4, RarityID::kLegendary, {.clump_radius = 10}},
-    {"Sand", "It's coarse, rough, and gets everywhere",
-        scale_hp(10.0, 3), scale_dmg(3.0, 3), 7.0, 1.5, 4, RarityID::kMythic, {.clump_radius = 10}},
-    {"Sand", "It's coarse, rough, and gets everywhere",
-        scale_hp(10.0, 4), scale_dmg(3.0, 4), 7.0, 1.5, 4, RarityID::kUnique, {.clump_radius = 10}},
-    // Pincer — Δ from kPincer (10/5 + poison=5/1 @ Rare=2)
-    {"Pincer", "Stuns and poisons targets for a short duration",
-        scale_hp(10.0, -2), scale_dmg(5.0, -2), 10.0, 2.5, 1, RarityID::kCommon,
-        {.icon_angle = 0.7, .poison_damage = {scale_poison(5.0, -2), 1.0}}},
-    {"Pincer", "Stuns and poisons targets for a short duration",
-        scale_hp(10.0, -1), scale_dmg(5.0, -1), 10.0, 2.5, 1, RarityID::kUnusual,
-        {.icon_angle = 0.7, .poison_damage = {scale_poison(5.0, -1), 1.0}}},
-    {"Pincer", "Stuns and poisons targets for a short duration",
-        scale_hp(10.0, 1), scale_dmg(5.0, 1), 10.0, 2.5, 1, RarityID::kEpic,
-        {.icon_angle = 0.7, .poison_damage = {scale_poison(5.0, 1), 1.0}}},
-    {"Pincer", "Stuns and poisons targets for a short duration",
-        scale_hp(10.0, 2), scale_dmg(5.0, 2), 10.0, 2.5, 1, RarityID::kLegendary,
-        {.icon_angle = 0.7, .poison_damage = {scale_poison(5.0, 2), 1.0}}},
-    {"Pincer", "Stuns and poisons targets for a short duration",
-        scale_hp(10.0, 3), scale_dmg(5.0, 3), 10.0, 2.5, 1, RarityID::kMythic,
-        {.icon_angle = 0.7, .poison_damage = {scale_poison(5.0, 3), 1.0}}},
-    {"Pincer", "Stuns and poisons targets for a short duration",
-        scale_hp(10.0, 4), scale_dmg(5.0, 4), 10.0, 2.5, 1, RarityID::kUnique,
-        {.icon_angle = 0.7, .poison_damage = {scale_poison(5.0, 4), 1.0}}},
-    // Dahlia — Δ from kDahlia (5/5 count=3 burst=3.5 @ Rare=2)
-    {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
-        scale_hp(5.0, -2), scale_dmg(5.0, -2), 7.0, 3.5, 3, RarityID::kCommon,
-        {.clump_radius = 10, .secondary_reload = 1.0, .burst_heal = scale_heal(3.5, -2), .defend_only = 1}},
-    {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
-        scale_hp(5.0, -1), scale_dmg(5.0, -1), 7.0, 3.5, 3, RarityID::kUnusual,
-        {.clump_radius = 10, .secondary_reload = 1.0, .burst_heal = scale_heal(3.5, -1), .defend_only = 1}},
-    {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
-        scale_hp(5.0, 1), scale_dmg(5.0, 1), 7.0, 3.5, 3, RarityID::kEpic,
-        {.clump_radius = 10, .secondary_reload = 1.0, .burst_heal = scale_heal(3.5, 1), .defend_only = 1}},
-    {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
-        scale_hp(5.0, 2), scale_dmg(5.0, 2), 7.0, 3.5, 3, RarityID::kLegendary,
-        {.clump_radius = 10, .secondary_reload = 1.0, .burst_heal = scale_heal(3.5, 2), .defend_only = 1}},
-    {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
-        scale_hp(5.0, 3), scale_dmg(5.0, 3), 7.0, 3.5, 3, RarityID::kMythic,
-        {.clump_radius = 10, .secondary_reload = 1.0, .burst_heal = scale_heal(3.5, 3), .defend_only = 1}},
-    {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
-        scale_hp(5.0, 4), scale_dmg(5.0, 4), 7.0, 3.5, 3, RarityID::kUnique,
-        {.clump_radius = 10, .secondary_reload = 1.0, .burst_heal = scale_heal(3.5, 4), .defend_only = 1}},
-    // Triplet — Δ from kTriplet (5/8 count=3 @ Epic=3)
-    {"Triplet", "How about THREE?!",
-        scale_hp(5.0, -3), scale_dmg(8.0, -3), 7.0, 1.0, 3, RarityID::kCommon, {}},
-    {"Triplet", "How about THREE?!",
-        scale_hp(5.0, -2), scale_dmg(8.0, -2), 7.0, 1.0, 3, RarityID::kUnusual, {}},
-    {"Triplet", "How about THREE?!",
-        scale_hp(5.0, -1), scale_dmg(8.0, -1), 7.0, 1.0, 3, RarityID::kRare, {}},
-    {"Triplet", "How about THREE?!",
-        scale_hp(5.0, 1), scale_dmg(8.0, 1), 7.0, 1.0, 3, RarityID::kLegendary, {}},
-    {"Triplet", "How about THREE?!",
-        scale_hp(5.0, 2), scale_dmg(8.0, 2), 7.0, 1.0, 3, RarityID::kMythic, {}},
-    {"Triplet", "How about THREE?!",
-        scale_hp(5.0, 3), scale_dmg(8.0, 3), 7.0, 1.0, 3, RarityID::kUnique, {}},
-    // Salt — Δ from kSalt (10/10 @ Rare=2)
-    {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
-        scale_hp(10.0, -2), scale_dmg(10.0, -2), 10.0, 2.5, 1, RarityID::kCommon, {}},
-    {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
-        scale_hp(10.0, -1), scale_dmg(10.0, -1), 10.0, 2.5, 1, RarityID::kUnusual, {}},
-    {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
-        scale_hp(10.0, 1), scale_dmg(10.0, 1), 10.0, 2.5, 1, RarityID::kEpic, {}},
-    {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
-        scale_hp(10.0, 2), scale_dmg(10.0, 2), 10.0, 2.5, 1, RarityID::kLegendary, {}},
-    {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
-        scale_hp(10.0, 3), scale_dmg(10.0, 3), 10.0, 2.5, 1, RarityID::kMythic, {}},
-    {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
-        scale_hp(10.0, 4), scale_dmg(10.0, 4), 10.0, 2.5, 1, RarityID::kUnique, {}},
-    // Pollen — Δ from kPollen (7/8 count=3 @ Epic=3)
-    {"Pollen", "Asthmatics beware",
-        scale_hp(7.0, -3), scale_dmg(8.0, -3), 7.0, 1.5, 3, RarityID::kCommon,
-        {.secondary_reload = 0.5, .defend_only = 1}},
-    {"Pollen", "Asthmatics beware",
-        scale_hp(7.0, -2), scale_dmg(8.0, -2), 7.0, 1.5, 3, RarityID::kUnusual,
-        {.secondary_reload = 0.5, .defend_only = 1}},
-    {"Pollen", "Asthmatics beware",
-        scale_hp(7.0, -1), scale_dmg(8.0, -1), 7.0, 1.5, 3, RarityID::kRare,
-        {.secondary_reload = 0.5, .defend_only = 1}},
-    {"Pollen", "Asthmatics beware",
-        scale_hp(7.0, 1), scale_dmg(8.0, 1), 7.0, 1.5, 3, RarityID::kLegendary,
-        {.secondary_reload = 0.5, .defend_only = 1}},
-    {"Pollen", "Asthmatics beware",
-        scale_hp(7.0, 2), scale_dmg(8.0, 2), 7.0, 1.5, 3, RarityID::kMythic,
-        {.secondary_reload = 0.5, .defend_only = 1}},
-    {"Pollen", "Asthmatics beware",
-        scale_hp(7.0, 3), scale_dmg(8.0, 3), 7.0, 1.5, 3, RarityID::kUnique,
-        {.secondary_reload = 0.5, .defend_only = 1}},
-    // Faster — Δ from kFaster (5/7 reload=0.5 @ Rare=2)
-    {"Faster", "It's so light it makes your other petals spin faster",
-        scale_hp(5.0, -2), scale_dmg(7.0, -2), 7.0, 0.5, 1, RarityID::kCommon, {}},
-    {"Faster", "It's so light it makes your other petals spin faster",
-        scale_hp(5.0, -1), scale_dmg(7.0, -1), 7.0, 0.5, 1, RarityID::kUnusual, {}},
-    {"Faster", "It's so light it makes your other petals spin faster",
-        scale_hp(5.0, 1), scale_dmg(7.0, 1), 7.0, 0.5, 1, RarityID::kEpic, {}},
-    {"Faster", "It's so light it makes your other petals spin faster",
-        scale_hp(5.0, 2), scale_dmg(7.0, 2), 7.0, 0.5, 1, RarityID::kLegendary, {}},
-    {"Faster", "It's so light it makes your other petals spin faster",
-        scale_hp(5.0, 3), scale_dmg(7.0, 3), 7.0, 0.5, 1, RarityID::kMythic, {}},
-    {"Faster", "It's so light it makes your other petals spin faster",
-        scale_hp(5.0, 4), scale_dmg(7.0, 4), 7.0, 0.5, 1, RarityID::kUnique, {}},
-    // Cactus — Δ from kCactus (15/5 @ Rare=2). kPoisonCactus / kTricac
-    // already cover Epic / Legendary so we only fill Common, Unusual,
-    // Mythic, Unique.
-    {"Cactus", "Not very strong, but somehow increases your maximum health",
-        scale_hp(15.0, -2), scale_dmg(5.0, -2), 15.0, 1.0, 1, RarityID::kCommon, {}},
-    {"Cactus", "Not very strong, but somehow increases your maximum health",
-        scale_hp(15.0, -1), scale_dmg(5.0, -1), 15.0, 1.0, 1, RarityID::kUnusual, {}},
-    {"Cactus", "Not very strong, but somehow increases your maximum health",
-        scale_hp(15.0, 3), scale_dmg(5.0, 3), 15.0, 1.0, 1, RarityID::kMythic, {}},
-    {"Cactus", "Not very strong, but somehow increases your maximum health",
-        scale_hp(15.0, 4), scale_dmg(5.0, 4), 15.0, 1.0, 1, RarityID::kUnique, {}},
-    // Missile — Δ from kMissile (5/25 @ Rare=2)
-    {"Missile", "You can actually shoot this one",
-        scale_hp(5.0, -2), scale_dmg(25.0, -2), 10.0, 1.0, 1, RarityID::kCommon,
-        {.secondary_reload = 0.5, .defend_only = 1, .icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
-    {"Missile", "You can actually shoot this one",
-        scale_hp(5.0, -1), scale_dmg(25.0, -1), 10.0, 1.0, 1, RarityID::kUnusual,
-        {.secondary_reload = 0.5, .defend_only = 1, .icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
-    {"Missile", "You can actually shoot this one",
-        scale_hp(5.0, 1), scale_dmg(25.0, 1), 10.0, 1.0, 1, RarityID::kEpic,
-        {.secondary_reload = 0.5, .defend_only = 1, .icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
-    {"Missile", "You can actually shoot this one",
-        scale_hp(5.0, 2), scale_dmg(25.0, 2), 10.0, 1.0, 1, RarityID::kLegendary,
-        {.secondary_reload = 0.5, .defend_only = 1, .icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
-    {"Missile", "You can actually shoot this one",
-        scale_hp(5.0, 3), scale_dmg(25.0, 3), 10.0, 1.0, 1, RarityID::kMythic,
-        {.secondary_reload = 0.5, .defend_only = 1, .icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
-    {"Missile", "You can actually shoot this one",
-        scale_hp(5.0, 4), scale_dmg(25.0, 4), 10.0, 1.0, 1, RarityID::kUnique,
-        {.secondary_reload = 0.5, .defend_only = 1, .icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
-    // Dandelion — Δ from kDandelion (10/10 @ Rare=2)
-    {"Dandelion", "Its interesting properties prevent healing effects on affected units",
-        scale_hp(10.0, -2), scale_dmg(10.0, -2), 10.0, 1.0, 1, RarityID::kCommon,
-        {.icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
-    {"Dandelion", "Its interesting properties prevent healing effects on affected units",
-        scale_hp(10.0, -1), scale_dmg(10.0, -1), 10.0, 1.0, 1, RarityID::kUnusual,
-        {.icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
-    {"Dandelion", "Its interesting properties prevent healing effects on affected units",
-        scale_hp(10.0, 1), scale_dmg(10.0, 1), 10.0, 1.0, 1, RarityID::kEpic,
-        {.icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
-    {"Dandelion", "Its interesting properties prevent healing effects on affected units",
-        scale_hp(10.0, 2), scale_dmg(10.0, 2), 10.0, 1.0, 1, RarityID::kLegendary,
-        {.icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
-    {"Dandelion", "Its interesting properties prevent healing effects on affected units",
-        scale_hp(10.0, 3), scale_dmg(10.0, 3), 10.0, 1.0, 1, RarityID::kMythic,
-        {.icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
-    {"Dandelion", "Its interesting properties prevent healing effects on affected units",
-        scale_hp(10.0, 4), scale_dmg(10.0, 4), 10.0, 1.0, 1, RarityID::kUnique,
-        {.icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
-    // Yucca — Δ from kYucca (10/5 + heal=1.5 @ Unusual=1)
-    {"Yucca", "Heals the flower, but only while in the defensive position",
-        scale_hp(10.0, -1), scale_dmg(5.0, -1), 10.0, 1.0, 1, RarityID::kCommon,
-        {.constant_heal = scale_heal(1.5, -1), .icon_angle = -1}},
-    {"Yucca", "Heals the flower, but only while in the defensive position",
-        scale_hp(10.0, 1), scale_dmg(5.0, 1), 10.0, 1.0, 1, RarityID::kRare,
-        {.constant_heal = scale_heal(1.5, 1), .icon_angle = -1}},
-    {"Yucca", "Heals the flower, but only while in the defensive position",
-        scale_hp(10.0, 2), scale_dmg(5.0, 2), 10.0, 1.0, 1, RarityID::kEpic,
-        {.constant_heal = scale_heal(1.5, 2), .icon_angle = -1}},
-    {"Yucca", "Heals the flower, but only while in the defensive position",
-        scale_hp(10.0, 3), scale_dmg(5.0, 3), 10.0, 1.0, 1, RarityID::kLegendary,
-        {.constant_heal = scale_heal(1.5, 3), .icon_angle = -1}},
-    {"Yucca", "Heals the flower, but only while in the defensive position",
-        scale_hp(10.0, 4), scale_dmg(5.0, 4), 10.0, 1.0, 1, RarityID::kMythic,
-        {.constant_heal = scale_heal(1.5, 4), .icon_angle = -1}},
-    {"Yucca", "Heals the flower, but only while in the defensive position",
-        scale_hp(10.0, 5), scale_dmg(5.0, 5), 10.0, 1.0, 1, RarityID::kUnique,
-        {.constant_heal = scale_heal(1.5, 5), .icon_angle = -1}},
-    // Bone — Δ from kBone (12/10 @ Legendary=4); Spawn.cc still keys armor
-    // off PetalID::kBone only, so the new tiers are armorless. Authors can
-    // bump that lookup later if they want graded armor.
-    {"Bone", "Sturdy",
-        scale_hp(12.0, -4), scale_dmg(10.0, -4), 12.0, 2.5, 1, RarityID::kCommon, {.icon_angle = 1}},
-    {"Bone", "Sturdy",
-        scale_hp(12.0, -3), scale_dmg(10.0, -3), 12.0, 2.5, 1, RarityID::kUnusual, {.icon_angle = 1}},
-    {"Bone", "Sturdy",
-        scale_hp(12.0, -2), scale_dmg(10.0, -2), 12.0, 2.5, 1, RarityID::kRare, {.icon_angle = 1}},
-    {"Bone", "Sturdy",
-        scale_hp(12.0, -1), scale_dmg(10.0, -1), 12.0, 2.5, 1, RarityID::kEpic, {.icon_angle = 1}},
-    {"Bone", "Sturdy",
-        scale_hp(12.0, 1), scale_dmg(10.0, 1), 12.0, 2.5, 1, RarityID::kMythic, {.icon_angle = 1}},
-    {"Bone", "Sturdy",
-        scale_hp(12.0, 2), scale_dmg(10.0, 2), 12.0, 2.5, 1, RarityID::kUnique, {.icon_angle = 1}},
-    // Rice — Δ from kRice (1/4, reload=0.1 @ Epic=3)
-    {"Rice", "Spawns instantly, but not very strong",
-        scale_hp(1.0, -3), scale_dmg(4.0, -3), 13.0, 0.1, 1, RarityID::kCommon, {.icon_angle = 0.7}},
-    {"Rice", "Spawns instantly, but not very strong",
-        scale_hp(1.0, -2), scale_dmg(4.0, -2), 13.0, 0.1, 1, RarityID::kUnusual, {.icon_angle = 0.7}},
-    {"Rice", "Spawns instantly, but not very strong",
-        scale_hp(1.0, -1), scale_dmg(4.0, -1), 13.0, 0.1, 1, RarityID::kRare, {.icon_angle = 0.7}},
-    {"Rice", "Spawns instantly, but not very strong",
-        scale_hp(1.0, 1), scale_dmg(4.0, 1), 13.0, 0.1, 1, RarityID::kLegendary, {.icon_angle = 0.7}},
-    {"Rice", "Spawns instantly, but not very strong",
-        scale_hp(1.0, 2), scale_dmg(4.0, 2), 13.0, 0.1, 1, RarityID::kMythic, {.icon_angle = 0.7}},
-    {"Rice", "Spawns instantly, but not very strong",
-        scale_hp(1.0, 3), scale_dmg(4.0, 3), 13.0, 0.1, 1, RarityID::kUnique, {.icon_angle = 0.7}},
-    // Corn — Δ from kCorn (500/2.5, reload=10 @ Epic=3)
-    {"Corn", "Takes a long time to spawn, but has a lot of health",
-        scale_hp(500.0, -3), scale_dmg(2.5, -3), 16.0, 10.0, 1, RarityID::kCommon, {.icon_angle = 0.5}},
-    {"Corn", "Takes a long time to spawn, but has a lot of health",
-        scale_hp(500.0, -2), scale_dmg(2.5, -2), 16.0, 10.0, 1, RarityID::kUnusual, {.icon_angle = 0.5}},
-    {"Corn", "Takes a long time to spawn, but has a lot of health",
-        scale_hp(500.0, -1), scale_dmg(2.5, -1), 16.0, 10.0, 1, RarityID::kRare, {.icon_angle = 0.5}},
-    {"Corn", "Takes a long time to spawn, but has a lot of health",
-        scale_hp(500.0, 1), scale_dmg(2.5, 1), 16.0, 10.0, 1, RarityID::kLegendary, {.icon_angle = 0.5}},
-    {"Corn", "Takes a long time to spawn, but has a lot of health",
-        scale_hp(500.0, 2), scale_dmg(2.5, 2), 16.0, 10.0, 1, RarityID::kMythic, {.icon_angle = 0.5}},
-    {"Corn", "Takes a long time to spawn, but has a lot of health",
-        scale_hp(500.0, 3), scale_dmg(2.5, 3), 16.0, 10.0, 1, RarityID::kUnique, {.icon_angle = 0.5}},
-    // Epic Peas — Δ from kPeas (5/8 count=4 @ Rare=2). Appended; see enum.
-    {"Peas", "4 in 1 deal",
-        scale_hp(5.0, 1), scale_dmg(8.0, 1), 7.0, 2.0, 4, RarityID::kEpic,
-        {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
-    {"Root", "Slowly grants stacking armor that absorbs damage",
-        scale_hp(10.0, -3), scale_dmg(10.0, -3), 10.0, 1.0, 1, RarityID::kCommon, {
+struct PetalData const PETAL_DATA[PetalType::kNumPetalTypes][RarityID::kNumRarities] = {
+    [PetalType::kNone] = {
+        [RarityID::kCommon] = {"None", "How can you see this?",
+            0.0, 0.0, 0.0, 1.0, 0, {}},
+    },
+    [PetalType::kBasic] = {
+        [RarityID::kCommon] = {"Basic", "A nice petal, not too strong but not too weak",
+            10.0, 10.0, 10.0, 2.5, 1, {}},
+        [RarityID::kUnusual] = {"Basic", "A nice petal, not too strong but not too weak",
+            18.0, 16.0, 10.0, 2.5, 1, {}},
+        [RarityID::kRare] = {"Basic", "A nice petal, not too strong but not too weak",
+            30.0, 25.0, 10.0, 2.5, 1, {}},
+        [RarityID::kEpic] = {"Basic", "A nice petal, not too strong but not too weak",
+            50.0, 40.0, 10.0, 2.5, 1, {}},
+        [RarityID::kLegendary] = {"Basic", "A nice petal, not too strong but not too weak",
+            scale_hp(50.0, 1), scale_dmg(40.0, 1), 10.0, 2.5, 1, {}},
+        [RarityID::kMythic] = {"Basic", "A nice petal, not too strong but not too weak",
+            scale_hp(50.0, 2), scale_dmg(40.0, 2), 10.0, 2.5, 1, {}},
+        [RarityID::kUnique] = {"Basic", "Something incredibly rare and useless",
+            10.0, 10.0, 10.0, 2.5, 1, {}},
+    },
+    [PetalType::kLight] = {
+        [RarityID::kCommon] = {"Fast", "Weaker than most petals, but reloads very quickly",
+            5.0, 8.0, 7.0, 1.0, 1, {}},
+        [RarityID::kUnusual] = {"Fast", "Weaker than most petals, but reloads very quickly",
+            8.0, 14.0, 7.0, 1.0, 1, {}},
+        [RarityID::kRare] = {"Fast", "Weaker than most petals, but reloads very quickly",
+            12.0, 22.0, 7.0, 1.0, 1, {}},
+        [RarityID::kEpic] = {"Fast", "Weaker than most petals, but reloads very quickly",
+            20.0, 35.0, 7.0, 1.0, 1, {}},
+        [RarityID::kLegendary] = {"Fast", "Weaker than most petals, but reloads very quickly",
+            scale_hp(20.0, 1), scale_dmg(35.0, 1), 7.0, 1.0, 1, {}},
+        [RarityID::kMythic] = {"Fast", "Weaker than most petals, but reloads very quickly",
+            scale_hp(20.0, 2), scale_dmg(35.0, 2), 7.0, 1.0, 1, {}},
+        [RarityID::kUnique] = {"Fast", "Weaker than most petals, but reloads very quickly",
+            scale_hp(20.0, 3), scale_dmg(35.0, 3), 7.0, 1.0, 1, {}},
+    },
+    [PetalType::kHeavy] = {
+        [RarityID::kCommon] = {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
+            20.0, 20.0, 12.0, 4.5, 1, {}},
+        [RarityID::kUnusual] = {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
+            35.0, 30.0, 12.0, 4.5, 1, {}},
+        [RarityID::kRare] = {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
+            60.0, 45.0, 12.0, 4.5, 1, {}},
+        [RarityID::kEpic] = {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
+            100.0, 70.0, 12.0, 4.5, 1, {}},
+        [RarityID::kLegendary] = {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
+            160.0, 100.0, 12.0, 4.5, 1, {}},
+        [RarityID::kMythic] = {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
+            scale_hp(160.0, 1), scale_dmg(100.0, 1), 12.0, 4.5, 1, {}},
+        [RarityID::kUnique] = {"Heavy", "Very resilient and deals more damage, but reloads very slowly",
+            scale_hp(160.0, 2), scale_dmg(100.0, 2), 12.0, 4.5, 1, {}},
+    },
+    [PetalType::kStinger] = {
+        [RarityID::kCommon] = {"Stinger", "It really hurts, but it's really fragile",
+            5.0, 20.0, 7.0, 3.5, 1, {}},
+        [RarityID::kUnusual] = {"Stinger", "It really hurts, but it's really fragile",
+            5.0, 35.0, 7.0, 3.5, 1, {}},
+        [RarityID::kRare] = {"Stinger", "It really hurts, but it's really fragile",
+            5.0, 50.0, 7.0, 3.5, 1, {}},
+        [RarityID::kEpic] = {"Stinger", "It really hurts, but it's really fragile",
+            5.0, 75.0, 7.0, 3.5, 1, {}},
+    },
+    [PetalType::kTringer] = {
+        [RarityID::kLegendary] = {"Stinger", "It really hurts, but it's really fragile",
+            5.0, 35.0, 7.0, 4.5, 3, {
+            .clump_radius = 10
+        }},
+        [RarityID::kMythic] = {"Stinger", "It really hurts, but it's really fragile",
+            5.0, 50.0, 7.0, 4.5, 3, {
+            .clump_radius = 10
+        }},
+        [RarityID::kUnique] = {"Stinger", "It really hurts, but it's really fragile",
+            scale_hp(5.0, 1), scale_dmg(50.0, 1), 7.0, 4.5, 3, {.clump_radius = 10}},
+    },
+    [PetalType::kLeaf] = {
+        [RarityID::kCommon] = {"Leaf", "Gathers energy from the sun to passively heal your flower",
+            6.0, 6.0, 10.0, 1.0, 1, {
+            .constant_heal = 0.5,
+            .icon_angle = -1
+        }},
+        [RarityID::kUnusual] = {"Leaf", "Gathers energy from the sun to passively heal your flower",
+            10.0, 8.0, 10.0, 1.0, 1, {
+            .constant_heal = 1,
+            .icon_angle = -1
+        }},
+        [RarityID::kRare] = {"Leaf", "Gathers energy from the sun to passively heal your flower",
+            18.0, 12.0, 10.0, 1.0, 1, {
+            .constant_heal = 1.5,
+            .icon_angle = -1
+        }},
+        [RarityID::kEpic] = {"Leaf", "Gathers energy from the sun to passively heal your flower",
+            30.0, 18.0, 10.0, 1.0, 1, {
+            .constant_heal = 2.5,
+            .icon_angle = -1
+        }},
+        [RarityID::kLegendary] = {"Leaf", "Gathers energy from the sun to passively heal your flower",
+            50.0, 25.0, 10.0, 1.0, 1, {
+            .constant_heal = 4.0,
+            .icon_angle = -1
+        }},
+        [RarityID::kMythic] = {"Leaf", "Gathers energy from the sun to passively heal your flower",
+            scale_hp(50.0, 1), scale_dmg(25.0, 1), 10.0, 1.0, 1, {.constant_heal = scale_heal(4.0, 1), .icon_angle = -1}},
+        [RarityID::kUnique] = {"Leaf", "Gathers energy from the sun to passively heal your flower",
+            scale_hp(50.0, 2), scale_dmg(25.0, 2), 10.0, 1.0, 1, {.constant_heal = scale_heal(4.0, 2), .icon_angle = -1}},
+    },
+    [PetalType::kTwin] = {
+        [RarityID::kCommon] = {"Twin", "Why stop at one? Why not TWO?!",
+            scale_hp(5.0, -1), scale_dmg(8.0, -1), 7.0, 1.0, 2, {}},
+        [RarityID::kUnusual] = {"Twin", "Why stop at one? Why not TWO?!",
+            5.0, 8.0, 7.0, 1.0, 2, {}},
+        [RarityID::kRare] = {"Twin", "Why stop at one? Why not TWO?!",
+            scale_hp(5.0, 1), scale_dmg(8.0, 1), 7.0, 1.0, 2, {}},
+        [RarityID::kEpic] = {"Twin", "Why stop at one? Why not TWO?!",
+            scale_hp(5.0, 2), scale_dmg(8.0, 2), 7.0, 1.0, 2, {}},
+        [RarityID::kLegendary] = {"Twin", "Why stop at one? Why not TWO?!",
+            scale_hp(5.0, 3), scale_dmg(8.0, 3), 7.0, 1.0, 2, {}},
+        [RarityID::kMythic] = {"Twin", "Why stop at one? Why not TWO?!",
+            scale_hp(5.0, 4), scale_dmg(8.0, 4), 7.0, 1.0, 2, {}},
+        [RarityID::kUnique] = {"Twin", "Why stop at one? Why not TWO?!",
+            scale_hp(5.0, 5), scale_dmg(8.0, 5), 7.0, 1.0, 2, {}},
+    },
+    [PetalType::kRose] = {
+        [RarityID::kCommon] = {"Rose", "Its healing properties are amazing. Not so good at combat though",
+            3.0, 3.0, 10.0, 3.5, 1, {
+            .secondary_reload = 1.0,
+            .burst_heal = 5,
             .defend_only = 1
         }},
-    {"Root", "Slowly grants stacking armor that absorbs damage",
-        scale_hp(10.0, -2), scale_dmg(10.0, -2), 10.0, 1.0, 1, RarityID::kUnusual, {
+        [RarityID::kUnusual] = {"Rose", "Its healing properties are amazing. Not so good at combat though",
+            5.0, 5.0, 10.0, 3.5, 1, {
+            .secondary_reload = 1.0,
+            .burst_heal = 10,
             .defend_only = 1
-    }},
-    {"Root", "Slowly grants stacking armor that absorbs damage",
-        scale_hp(10.0, -1), scale_dmg(10.0, -1), 10.0, 1.0, 1, RarityID::kRare, {
+        }},
+        [RarityID::kRare] = {"Rose", "Its healing properties are amazing. Not so good at combat though",
+            7.0, 7.0, 10.0, 3.5, 1, {
+            .secondary_reload = 1.0,
+            .burst_heal = 15,
             .defend_only = 1
-    }},
-    {"Root", "Slowly grants stacking armor that absorbs damage",
-        scale_hp(10.0, 0), scale_dmg(10.0, 0), 10.0, 1.0, 1, RarityID::kEpic, {
+        }},
+        [RarityID::kEpic] = {"Rose", "Extremely powerful rose, almost unheard of",
+            5.0, 5.0, 10.0, 3.5, 1, {
+            .secondary_reload = 1.0,
+            .burst_heal = 22,
             .defend_only = 1
-    }},
-    {"Root", "Slowly grants stacking armor that absorbs damage",
-        scale_hp(10.0, 1), scale_dmg(10.0, 1), 10.0, 1.0, 1, RarityID::kLegendary, {
+        }},
+        [RarityID::kLegendary] = {"Rose", "Its healing properties are amazing. Not so good at combat though",
+            10.0, 10.0, 10.0, 3.5, 1, {
+            .secondary_reload = 1.0,
+            .burst_heal = 35,
             .defend_only = 1
-    }},
-    {"Root", "Slowly grants stacking armor that absorbs damage",
-        scale_hp(10.0, 2), scale_dmg(10.0, 2), 10.0, 1.0, 1, RarityID::kMythic, {
+        }},
+        [RarityID::kMythic] = {"Rose", "Its healing properties are amazing. Not so good at combat though",
+            scale_hp(10.0, 1), scale_dmg(10.0, 1), 10.0, 3.5, 1,
+            {.secondary_reload = 1.0, .burst_heal = scale_heal(35.0, 1), .defend_only = 1}},
+        [RarityID::kUnique] = {"Rose", "Its healing properties are amazing. Not so good at combat though",
+            scale_hp(10.0, 2), scale_dmg(10.0, 2), 10.0, 3.5, 1,
+            {.secondary_reload = 1.0, .burst_heal = scale_heal(35.0, 2), .defend_only = 1}},
+    },
+    [PetalType::kAzalea] = {},
+    [PetalType::kIris] = {
+        [RarityID::kCommon] = {"Iris", "Very poisonous, but takes a while to do its work",
+            3.0, 3.0, 7.0, 5.0, 1, {
+            .poison_damage = { 5.0, 6.0 }
+        }},
+        [RarityID::kUnusual] = {"Iris", "Very poisonous, but takes a while to do its work",
+             5.0, 5.0, 7.0, 5.0, 1, {
+            .poison_damage = { 10.0, 6.0 }
+        }},
+        [RarityID::kRare] = {"Iris", "Very poisonous, but takes a while to do its work",
+            7.0, 7.0, 7.0, 5.0, 1, {
+            .poison_damage = { 20.0, 6.0 }
+        }},
+        [RarityID::kLegendary] = {"Iris", "Very poisonous, but takes a while to do its work",
+            15.0, 15.0, 7.0, 5.0, 1, {
+            .poison_damage = { 40.0, 5.0 }
+        }},
+        [RarityID::kMythic] = {"Iris", "Very poisonous, but takes a while to do its work",
+            scale_hp(15.0, 1), scale_dmg(15.0, 1), 7.0, 5.0, 1,
+            {.poison_damage = {scale_poison(40.0, 1), 5.0}}},
+        [RarityID::kUnique] = {"Iris", "Very poisonous, but takes a while to do its work",
+            scale_hp(15.0, 2), scale_dmg(15.0, 2), 7.0, 5.0, 1,
+            {.poison_damage = {scale_poison(40.0, 2), 5.0}}},
+    },
+    [PetalType::kBlueIris] = {
+        [RarityID::kEpic] = {"Iris", "Deals its effects quicker than traditional irises",
+            10.0, 5.0, 7.0, 5.0, 1, {
+            .poison_damage = { 15.0, 4.0 }
+        }},
+    },
+    [PetalType::kMissile] = {
+        [RarityID::kCommon] = {"Missile", "You can actually shoot this one",
+            scale_hp(5.0, -2), scale_dmg(25.0, -2), 10.0, 1.0, 1,
+            {.secondary_reload = 0.5, .defend_only = 1, .icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
+        [RarityID::kUnusual] = {"Missile", "You can actually shoot this one",
+            scale_hp(5.0, -1), scale_dmg(25.0, -1), 10.0, 1.0, 1,
+            {.secondary_reload = 0.5, .defend_only = 1, .icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
+        [RarityID::kRare] = {"Missile", "You can actually shoot this one",
+            5.0, 25.0, 10.0, 1.0, 1, {
+            .secondary_reload = 0.5,
+            .defend_only = 1,
+            .icon_angle = 1,
+            .rotation_style = PetalAttributes::kFollowRot
+        }},
+        [RarityID::kEpic] = {"Missile", "You can actually shoot this one",
+            scale_hp(5.0, 1), scale_dmg(25.0, 1), 10.0, 1.0, 1,
+            {.secondary_reload = 0.5, .defend_only = 1, .icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
+        [RarityID::kLegendary] = {"Missile", "You can actually shoot this one",
+            scale_hp(5.0, 2), scale_dmg(25.0, 2), 10.0, 1.0, 1,
+            {.secondary_reload = 0.5, .defend_only = 1, .icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
+        [RarityID::kMythic] = {"Missile", "You can actually shoot this one",
+            scale_hp(5.0, 3), scale_dmg(25.0, 3), 10.0, 1.0, 1,
+            {.secondary_reload = 0.5, .defend_only = 1, .icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
+        [RarityID::kUnique] = {"Missile", "You can actually shoot this one",
+            scale_hp(5.0, 4), scale_dmg(25.0, 4), 10.0, 1.0, 1,
+            {.secondary_reload = 0.5, .defend_only = 1, .icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
+    },
+    [PetalType::kDandelion] = {
+        [RarityID::kCommon] = {"Dandelion", "Its interesting properties prevent healing effects on affected units",
+            scale_hp(10.0, -2), scale_dmg(10.0, -2), 10.0, 1.0, 1,
+            {.icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
+        [RarityID::kUnusual] = {"Dandelion", "Its interesting properties prevent healing effects on affected units",
+            scale_hp(10.0, -1), scale_dmg(10.0, -1), 10.0, 1.0, 1,
+            {.icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
+        [RarityID::kRare] = {"Dandelion", "Its interesting properties prevent healing effects on affected units",
+            10.0, 10.0, 10.0, 1.0, 1, {
+            .icon_angle = 1,
+            .rotation_style = PetalAttributes::kFollowRot
+        }},
+        [RarityID::kEpic] = {"Dandelion", "Its interesting properties prevent healing effects on affected units",
+            scale_hp(10.0, 1), scale_dmg(10.0, 1), 10.0, 1.0, 1,
+            {.icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
+        [RarityID::kLegendary] = {"Dandelion", "Its interesting properties prevent healing effects on affected units",
+            scale_hp(10.0, 2), scale_dmg(10.0, 2), 10.0, 1.0, 1,
+            {.icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
+        [RarityID::kMythic] = {"Dandelion", "Its interesting properties prevent healing effects on affected units",
+            scale_hp(10.0, 3), scale_dmg(10.0, 3), 10.0, 1.0, 1,
+            {.icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
+        [RarityID::kUnique] = {"Dandelion", "Its interesting properties prevent healing effects on affected units",
+            scale_hp(10.0, 4), scale_dmg(10.0, 4), 10.0, 1.0, 1,
+            {.icon_angle = 1, .rotation_style = PetalAttributes::kFollowRot}},
+    },
+    [PetalType::kBubble] = {
+        [RarityID::kCommon] = {"Bubble", "You can right click to pop it and propel your flower",
+            0.5, 0.0, 12.0, 3.0, 1, {
+            .secondary_reload = 0.5,
+            .defend_only = 1,
+        }},
+        [RarityID::kUnusual] = {"Bubble", "You can right click to pop it and propel your flower",
+            0.7, 0.0, 12.0, 2.5, 1, {
+            .secondary_reload = 0.5,
+            .defend_only = 1,
+        }},
+        [RarityID::kRare] = {"Bubble", "You can right click to pop it and propel your flower",
+            1.0, 0.0, 12.0, 2.0, 1, {
+            .secondary_reload = 0.5,
+            .defend_only = 1,
+        }},
+        [RarityID::kEpic] = {"Bubble", "You can right click to pop it and propel your flower",
+            1.5, 0.0, 12.0, 1.5, 1, {
+            .secondary_reload = 0.5,
+            .defend_only = 1,
+        }},
+        [RarityID::kLegendary] = {"Bubble", "You can right click to pop it and propel your flower",
+            2.0, 0.0, 12.0, 1.0, 1, {
+            .secondary_reload = 0.5,
+            .defend_only = 1,
+        }},
+        [RarityID::kMythic] = {"Bubble", "You can right click to pop it and propel your flower",
+            scale_hp(2.0, 1), 0.0, 12.0, 1.0, 1,
+            {.secondary_reload = 0.5, .defend_only = 1}},
+        [RarityID::kUnique] = {"Bubble", "You can right click to pop it and propel your flower",
+            scale_hp(2.0, 2), 0.0, 12.0, 1.0, 1,
+            {.secondary_reload = 0.5, .defend_only = 1}},
+    },
+    [PetalType::kFaster] = {
+        [RarityID::kCommon] = {"Faster", "It's so light it makes your other petals spin faster",
+            scale_hp(5.0, -2), scale_dmg(7.0, -2), 7.0, 0.5, 1, {}},
+        [RarityID::kUnusual] = {"Faster", "It's so light it makes your other petals spin faster",
+            scale_hp(5.0, -1), scale_dmg(7.0, -1), 7.0, 0.5, 1, {}},
+        [RarityID::kRare] = {"Faster", "It's so light it makes your other petals spin faster",
+            5.0, 7.0, 7.0, 0.5, 1, {}},
+        [RarityID::kEpic] = {"Faster", "It's so light it makes your other petals spin faster",
+            scale_hp(5.0, 1), scale_dmg(7.0, 1), 7.0, 0.5, 1, {}},
+        [RarityID::kLegendary] = {"Faster", "It's so light it makes your other petals spin faster",
+            scale_hp(5.0, 2), scale_dmg(7.0, 2), 7.0, 0.5, 1, {}},
+        [RarityID::kMythic] = {"Faster", "It's so light it makes your other petals spin faster",
+            scale_hp(5.0, 3), scale_dmg(7.0, 3), 7.0, 0.5, 1, {}},
+        [RarityID::kUnique] = {"Faster", "It's so light it makes your other petals spin faster",
+            scale_hp(5.0, 4), scale_dmg(7.0, 4), 7.0, 0.5, 1, {}},
+    },
+    [PetalType::kRock] = {
+        [RarityID::kCommon] = {"Rock", "Even more durable, but slower to recharge",
+            30.0, 5.0, 12.0, 7.5, 1, {}},
+        [RarityID::kUnusual] = {"Rock", "Even more durable, but slower to recharge",
+            60.0, 7.0, 12.0, 7.5, 1, {}},
+        [RarityID::kRare] = {"Rock", "Even more durable, but slower to recharge",
+            100.0, 10.0, 12.0, 7.5, 1, {}},
+        [RarityID::kEpic] = {"Rock", "Even more durable, but slower to recharge",
+            200.0, 15.0, 12.0, 7.5, 1, {}},
+        [RarityID::kLegendary] = {"Rock", "Even more durable, but slower to recharge",
+            350.0, 25.0, 12.0, 7.5, 1, {}},
+        [RarityID::kMythic] = {"Rock", "Even more durable, but slower to recharge",
+            scale_hp(350.0, 1), scale_dmg(25.0, 1), 12.0, 7.5, 1, {}},
+        [RarityID::kUnique] = {"Rock", "Even more durable, but slower to recharge",
+            scale_hp(350.0, 2), scale_dmg(25.0, 2), 12.0, 7.5, 1, {}},
+    },
+    [PetalType::kCactus] = {
+        [RarityID::kCommon] = {"Cactus", "Not very strong, but somehow increases your maximum health",
+            scale_hp(15.0, -2), scale_dmg(5.0, -2), 15.0, 1.0, 1, {}},
+        [RarityID::kUnusual] = {"Cactus", "Not very strong, but somehow increases your maximum health",
+            scale_hp(15.0, -1), scale_dmg(5.0, -1), 15.0, 1.0, 1, {}},
+        [RarityID::kRare] = {"Cactus", "Not very strong, but somehow increases your maximum health",
+            15.0, 5.0, 15.0, 1.0, 1, {}},
+        [RarityID::kMythic] = {"Cactus", "Not very strong, but somehow increases your maximum health",
+            scale_hp(15.0, 3), scale_dmg(5.0, 3), 15.0, 1.0, 1, {}},
+        [RarityID::kUnique] = {"Cactus", "Not very strong, but somehow increases your maximum health",
+            scale_hp(15.0, 4), scale_dmg(5.0, 4), 15.0, 1.0, 1, {}},
+    },
+    [PetalType::kPoisonCactus] = {
+        [RarityID::kEpic] = {"Cactus", "Turns your flower poisonous. Enemies will take poison damage on contact",
+            15.0, 5.0, 10.0, 1.0, 1, {
+            .poison_damage = { 1.0, 5.0 }
+        }},
+    },
+    [PetalType::kTricac] = {
+        [RarityID::kLegendary] = {"Cactus", "Not very strong, but somehow increases your maximum health",
+            15.0, 5.0, 10.0, 1.0, 3, {
+            .clump_radius = 10,
+        }},
+    },
+    [PetalType::kWeb] = {
+        [RarityID::kCommon] = {"Web", "It's really sticky",
+            scale_hp(10.0, -2), scale_dmg(5.0, -2), 10.0, 3.0, 1,
+            {.secondary_reload = 0.5, .defend_only = 1}},
+        [RarityID::kUnusual] = {"Web", "It's really sticky",
+            scale_hp(10.0, -1), scale_dmg(5.0, -1), 10.0, 3.0, 1,
+            {.secondary_reload = 0.5, .defend_only = 1}},
+        [RarityID::kRare] = {"Web", "It's really sticky",
+            10.0, 5.0, 10.0, 3.0, 1, {
+            .secondary_reload = 0.5,
+            .defend_only = 1,
+        }},
+        [RarityID::kEpic] = {"Web", "It's really sticky",
+            scale_hp(10.0, 1), scale_dmg(5.0, 1), 10.0, 3.0, 1,
+            {.secondary_reload = 0.5, .defend_only = 1}},
+    },
+    [PetalType::kTriweb] = {
+        [RarityID::kLegendary] = {"Web", "It's really sticky",
+            10.0, 5.0, 10.0, 3.0, 3, {
+            .clump_radius = 10,
+            .secondary_reload = 0.5,
+            .defend_only = 1,
+        }},
+        [RarityID::kMythic] = {"Web", "It's really sticky",
+            scale_hp(10.0, 3), scale_dmg(5.0, 3), 10.0, 3.0, 3,
+            {.clump_radius = 10, .secondary_reload = 0.5, .defend_only = 1}},
+        [RarityID::kUnique] = {"Web", "It's really sticky",
+            scale_hp(10.0, 4), scale_dmg(5.0, 4), 10.0, 3.0, 3,
+            {.clump_radius = 10, .secondary_reload = 0.5, .defend_only = 1}},
+    },
+    [PetalType::kWing] = {
+        [RarityID::kCommon] = {"Wing", "It comes and goes",
+            scale_hp(15.0, -2), scale_dmg(15.0, -2), 10.0, 2.5, 1, {.icon_angle = 1}},
+        [RarityID::kUnusual] = {"Wing", "It comes and goes",
+            scale_hp(15.0, -1), scale_dmg(15.0, -1), 10.0, 2.5, 1, {.icon_angle = 1}},
+        [RarityID::kRare] = {"Wing", "It comes and goes",
+            15.0, 15.0, 10.0, 2.5, 1, {
+            .icon_angle = 1,
+        }},
+        [RarityID::kEpic] = {"Wing", "It comes and goes",
+            scale_hp(15.0, 1), scale_dmg(15.0, 1), 10.0, 2.5, 1, {.icon_angle = 1}},
+        [RarityID::kLegendary] = {"Wing", "It comes and goes",
+            scale_hp(15.0, 2), scale_dmg(15.0, 2), 10.0, 2.5, 1, {.icon_angle = 1}},
+        [RarityID::kMythic] = {"Wing", "It comes and goes",
+            scale_hp(15.0, 3), scale_dmg(15.0, 3), 10.0, 2.5, 1, {.icon_angle = 1}},
+        [RarityID::kUnique] = {"Wing", "It comes and goes",
+            scale_hp(15.0, 4), scale_dmg(15.0, 4), 10.0, 2.5, 1, {.icon_angle = 1}},
+    },
+    [PetalType::kPeas] = {
+        [RarityID::kCommon] = {"Peas", "4 in 1 deal",
+            scale_hp(5.0, -2), scale_dmg(8.0, -2), 7.0, 2.0, 4,
+            {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
+        [RarityID::kUnusual] = {"Peas", "4 in 1 deal",
+            scale_hp(5.0, -1), scale_dmg(8.0, -1), 7.0, 2.0, 4,
+            {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
+        [RarityID::kRare] = {"Peas", "4 in 1 deal",
+            5.0, 8.0, 7.0, 2.0, 4, {
+            .clump_radius = 8,
+            .secondary_reload = 0.1,
+            .defend_only = 1,
+        }},
+        [RarityID::kEpic] = {"Peas", "4 in 1 deal",
+            scale_hp(5.0, 1), scale_dmg(8.0, 1), 7.0, 2.0, 4,
+            {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
+        [RarityID::kLegendary] = {"Peas", "4 in 1 deal",
+            scale_hp(5.0, 2), scale_dmg(8.0, 2), 7.0, 2.0, 4,
+            {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
+        [RarityID::kMythic] = {"Peas", "4 in 1 deal",
+            scale_hp(5.0, 3), scale_dmg(8.0, 3), 7.0, 2.0, 4,
+            {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
+        [RarityID::kUnique] = {"Peas", "4 in 1 deal",
+            scale_hp(5.0, 4), scale_dmg(8.0, 4), 7.0, 2.0, 4,
+            {.clump_radius = 8, .secondary_reload = 0.1, .defend_only = 1}},
+    },
+    [PetalType::kPoisonPeas] = {
+        [RarityID::kEpic] = {"Peas", "4 in 1 deal, now with a secret ingredient: poison",
+            5.0, 2.0, 7.0, 2.0, 4, {
+            .clump_radius = 8,
+            .secondary_reload = 0.1,
+            .defend_only = 1,
+            .poison_damage = { 20.0, 0.5 }
+        }},
+    },
+    [PetalType::kSand] = {
+        [RarityID::kCommon] = {"Sand", "It's coarse, rough, and gets everywhere",
+            scale_hp(10.0, -2), scale_dmg(3.0, -2), 7.0, 1.5, 4, {.clump_radius = 10}},
+        [RarityID::kUnusual] = {"Sand", "It's coarse, rough, and gets everywhere",
+            scale_hp(10.0, -1), scale_dmg(3.0, -1), 7.0, 1.5, 4, {.clump_radius = 10}},
+        [RarityID::kRare] = {"Sand", "It's coarse, rough, and gets everywhere",
+            10.0, 3.0, 7.0, 1.5, 4, {
+            .clump_radius = 10,
+        }},
+        [RarityID::kEpic] = {"Sand", "It's coarse, rough, and gets everywhere",
+            scale_hp(10.0, 1), scale_dmg(3.0, 1), 7.0, 1.5, 4, {.clump_radius = 10}},
+        [RarityID::kLegendary] = {"Sand", "It's coarse, rough, and gets everywhere",
+            scale_hp(10.0, 2), scale_dmg(3.0, 2), 7.0, 1.5, 4, {.clump_radius = 10}},
+        [RarityID::kMythic] = {"Sand", "It's coarse, rough, and gets everywhere",
+            scale_hp(10.0, 3), scale_dmg(3.0, 3), 7.0, 1.5, 4, {.clump_radius = 10}},
+        [RarityID::kUnique] = {"Sand", "It's coarse, rough, and gets everywhere",
+            scale_hp(10.0, 4), scale_dmg(3.0, 4), 7.0, 1.5, 4, {.clump_radius = 10}},
+    },
+    [PetalType::kPincer] = {
+        [RarityID::kCommon] = {"Pincer", "Stuns and poisons targets for a short duration",
+            scale_hp(10.0, -2), scale_dmg(5.0, -2), 10.0, 2.5, 1,
+            {.icon_angle = 0.7, .poison_damage = {scale_poison(5.0, -2), 1.0}}},
+        [RarityID::kUnusual] = {"Pincer", "Stuns and poisons targets for a short duration",
+            scale_hp(10.0, -1), scale_dmg(5.0, -1), 10.0, 2.5, 1,
+            {.icon_angle = 0.7, .poison_damage = {scale_poison(5.0, -1), 1.0}}},
+        [RarityID::kRare] = {"Pincer", "Stuns and poisons targets for a short duration",
+            10.0, 5.0, 10.0, 2.5, 1, {
+            .icon_angle = 0.7,
+            .poison_damage = { 5.0, 1.0 }
+        }},
+        [RarityID::kEpic] = {"Pincer", "Stuns and poisons targets for a short duration",
+            scale_hp(10.0, 1), scale_dmg(5.0, 1), 10.0, 2.5, 1,
+            {.icon_angle = 0.7, .poison_damage = {scale_poison(5.0, 1), 1.0}}},
+        [RarityID::kLegendary] = {"Pincer", "Stuns and poisons targets for a short duration",
+            scale_hp(10.0, 2), scale_dmg(5.0, 2), 10.0, 2.5, 1,
+            {.icon_angle = 0.7, .poison_damage = {scale_poison(5.0, 2), 1.0}}},
+        [RarityID::kMythic] = {"Pincer", "Stuns and poisons targets for a short duration",
+            scale_hp(10.0, 3), scale_dmg(5.0, 3), 10.0, 2.5, 1,
+            {.icon_angle = 0.7, .poison_damage = {scale_poison(5.0, 3), 1.0}}},
+        [RarityID::kUnique] = {"Pincer", "Stuns and poisons targets for a short duration",
+            scale_hp(10.0, 4), scale_dmg(5.0, 4), 10.0, 2.5, 1,
+            {.icon_angle = 0.7, .poison_damage = {scale_poison(5.0, 4), 1.0}}},
+    },
+    [PetalType::kDahlia] = {
+        [RarityID::kCommon] = {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
+            scale_hp(5.0, -2), scale_dmg(5.0, -2), 7.0, 3.5, 3,
+            {.clump_radius = 10, .secondary_reload = 1.0, .burst_heal = scale_heal(3.5, -2), .defend_only = 1}},
+        [RarityID::kUnusual] = {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
+            scale_hp(5.0, -1), scale_dmg(5.0, -1), 7.0, 3.5, 3,
+            {.clump_radius = 10, .secondary_reload = 1.0, .burst_heal = scale_heal(3.5, -1), .defend_only = 1}},
+        [RarityID::kRare] = {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
+            5.0, 5.0, 7.0, 3.5, 3, {
+            .clump_radius = 10,
+            .secondary_reload = 1.0,
+            .burst_heal = 3.5,
             .defend_only = 1
-    }},
-    {"Root", "Slowly grants stacking armor that absorbs damage",
-        scale_hp(10.0, 3), scale_dmg(10.0, 3), 10.0, 1.0, 1, RarityID::kUnique, {
+        }},
+        [RarityID::kEpic] = {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
+            scale_hp(5.0, 1), scale_dmg(5.0, 1), 7.0, 3.5, 3,
+            {.clump_radius = 10, .secondary_reload = 1.0, .burst_heal = scale_heal(3.5, 1), .defend_only = 1}},
+        [RarityID::kLegendary] = {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
+            scale_hp(5.0, 2), scale_dmg(5.0, 2), 7.0, 3.5, 3,
+            {.clump_radius = 10, .secondary_reload = 1.0, .burst_heal = scale_heal(3.5, 2), .defend_only = 1}},
+        [RarityID::kMythic] = {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
+            scale_hp(5.0, 3), scale_dmg(5.0, 3), 7.0, 3.5, 3,
+            {.clump_radius = 10, .secondary_reload = 1.0, .burst_heal = scale_heal(3.5, 3), .defend_only = 1}},
+        [RarityID::kUnique] = {"Dahlia", "Its healing properties are amazing. Not so good at combat though",
+            scale_hp(5.0, 4), scale_dmg(5.0, 4), 7.0, 3.5, 3,
+            {.clump_radius = 10, .secondary_reload = 1.0, .burst_heal = scale_heal(3.5, 4), .defend_only = 1}},
+    },
+    [PetalType::kTriplet] = {
+        [RarityID::kCommon] = {"Triplet", "How about THREE?!",
+            scale_hp(5.0, -3), scale_dmg(8.0, -3), 7.0, 1.0, 3, {}},
+        [RarityID::kUnusual] = {"Triplet", "How about THREE?!",
+            scale_hp(5.0, -2), scale_dmg(8.0, -2), 7.0, 1.0, 3, {}},
+        [RarityID::kRare] = {"Triplet", "How about THREE?!",
+            scale_hp(5.0, -1), scale_dmg(8.0, -1), 7.0, 1.0, 3, {}},
+        [RarityID::kEpic] = {"Triplet", "How about THREE?!",
+            5.0, 8.0, 7.0, 1.0, 3, {}},
+        [RarityID::kLegendary] = {"Triplet", "How about THREE?!",
+            scale_hp(5.0, 1), scale_dmg(8.0, 1), 7.0, 1.0, 3, {}},
+        [RarityID::kMythic] = {"Triplet", "How about THREE?!",
+            scale_hp(5.0, 2), scale_dmg(8.0, 2), 7.0, 1.0, 3, {}},
+        [RarityID::kUnique] = {"Triplet", "How about THREE?!",
+            scale_hp(5.0, 3), scale_dmg(8.0, 3), 7.0, 1.0, 3, {}},
+    },
+    [PetalType::kAntEgg] = {
+        [RarityID::kEpic] = {"Egg", "Something interesting might pop out of this",
+            50.0, 1.0, 12.5, 1.0, 2, {
+            .secondary_reload = 3.5,
+            .defend_only = 1,
+            .rotation_style = PetalAttributes::kNoRot,
+            .spawns = MobID::kSoldierAnt
+        }},
+    },
+    [PetalType::kBeetleEgg] = {
+        [RarityID::kEpic] = {"Egg", "Something interesting might pop out of this",
+            50.0, 1.0, 15.0, 1.0, 1, {
+            .secondary_reload = 3.5,
+            .defend_only = 1,
+            .rotation_style = PetalAttributes::kNoRot,
+            .spawns = MobID::kBeetle
+        }},
+    },
+    [PetalType::kPollen] = {
+        [RarityID::kCommon] = {"Pollen", "Asthmatics beware",
+            scale_hp(7.0, -3), scale_dmg(8.0, -3), 7.0, 1.5, 3,
+            {.secondary_reload = 0.5, .defend_only = 1}},
+        [RarityID::kUnusual] = {"Pollen", "Asthmatics beware",
+            scale_hp(7.0, -2), scale_dmg(8.0, -2), 7.0, 1.5, 3,
+            {.secondary_reload = 0.5, .defend_only = 1}},
+        [RarityID::kRare] = {"Pollen", "Asthmatics beware",
+            scale_hp(7.0, -1), scale_dmg(8.0, -1), 7.0, 1.5, 3,
+            {.secondary_reload = 0.5, .defend_only = 1}},
+        [RarityID::kEpic] = {"Pollen", "Asthmatics beware",
+            7.0, 8.0, 7.0, 1.5, 3, {
+            .secondary_reload = 0.5,
             .defend_only = 1
-    }},
-    // Yggdrasil — base (kYggdrasil) is Unique with hp=1/dmg=1; lower tiers
-    // are scaled-down from there (Δ from Unique). Stats stay nominal — its
-    // "useless here" flavour is preserved across rarities.
-    {"Yggdrasil", "Unfortunately, its powers are useless here",
-        scale_hp(1.0, -6), scale_dmg(1.0, -6), 12.0, 10.0, 1, RarityID::kCommon, {
-        .defend_only = 1,
-        .icon_angle = M_PI
-    }},
-    {"Yggdrasil", "Unfortunately, its powers are useless here",
-        scale_hp(1.0, -5), scale_dmg(1.0, -5), 12.0, 10.0, 1, RarityID::kUnusual, {
-        .defend_only = 1,
-        .icon_angle = M_PI
-    }},
-    {"Yggdrasil", "Unfortunately, its powers are useless here",
-        scale_hp(1.0, -4), scale_dmg(1.0, -4), 12.0, 10.0, 1, RarityID::kRare, {
-        .defend_only = 1,
-        .icon_angle = M_PI
-    }},
-    {"Yggdrasil", "Unfortunately, its powers are useless here",
-        scale_hp(1.0, -3), scale_dmg(1.0, -3), 12.0, 10.0, 1, RarityID::kEpic, {
-        .defend_only = 1,
-        .icon_angle = M_PI
-    }},
-    {"Yggdrasil", "Unfortunately, its powers are useless here",
-        scale_hp(1.0, -2), scale_dmg(1.0, -2), 12.0, 10.0, 1, RarityID::kLegendary, {
-        .defend_only = 1,
-        .icon_angle = M_PI
-    }},
-    {"Yggdrasil", "Unfortunately, its powers are useless here",
-        scale_hp(1.0, -1), scale_dmg(1.0, -1), 12.0, 10.0, 1, RarityID::kMythic, {
-        .defend_only = 1,
-        .icon_angle = M_PI
-    }},
+        }},
+        [RarityID::kLegendary] = {"Pollen", "Asthmatics beware",
+            scale_hp(7.0, 1), scale_dmg(8.0, 1), 7.0, 1.5, 3,
+            {.secondary_reload = 0.5, .defend_only = 1}},
+        [RarityID::kMythic] = {"Pollen", "Asthmatics beware",
+            scale_hp(7.0, 2), scale_dmg(8.0, 2), 7.0, 1.5, 3,
+            {.secondary_reload = 0.5, .defend_only = 1}},
+        [RarityID::kUnique] = {"Pollen", "Asthmatics beware",
+            scale_hp(7.0, 3), scale_dmg(8.0, 3), 7.0, 1.5, 3,
+            {.secondary_reload = 0.5, .defend_only = 1}},
+    },
+    [PetalType::kStick] = {
+        [RarityID::kLegendary] = {"Stick", "Harnesses the power of the wind",
+            10.0, 1.0, 15.0, 3.0, 1, {
+            .secondary_reload = 4.0,
+            .defend_only = 1,
+            .icon_angle = 1,
+            .spawns = MobID::kSandstorm,
+            .spawn_count = 2
+        }},
+    },
+    [PetalType::kAntennae] = {
+        [RarityID::kLegendary] = {"Antennae", "Allows your flower to sense foes from farther away",
+            0.0, 0.0, 12.5, 0.0, 0, {}},
+    },
+    [PetalType::kHeaviest] = {
+        [RarityID::kEpic] = {"Heaviest", "This thing is so heavy that nothing gets in the way",
+            200.0, 10.0, 12.0, 15.0, 1, {
+            .mass = 10,
+            .rotation_style = PetalAttributes::kNoRot
+        }},
+    },
+    [PetalType::kThirdEye] = {
+        [RarityID::kMythic] = {"Third Eye", "Allows your flower to extend petals further out",
+            0.0, 0.0, 20.0, 0.0, 0, {}},
+    },
+    [PetalType::kObserver] = {
+        [RarityID::kMythic] = {"Observer", "The one who sees all",
+            0.0, 0.0, 12.5, 0.0, 0, {}},
+    },
+    [PetalType::kSalt] = {
+        [RarityID::kCommon] = {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
+            scale_hp(10.0, -2), scale_dmg(10.0, -2), 10.0, 2.5, 1, {}},
+        [RarityID::kUnusual] = {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
+            scale_hp(10.0, -1), scale_dmg(10.0, -1), 10.0, 2.5, 1, {}},
+        [RarityID::kRare] = {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
+            10.0, 10.0, 10.0, 2.5, 1, {}},
+        [RarityID::kEpic] = {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
+            scale_hp(10.0, 1), scale_dmg(10.0, 1), 10.0, 2.5, 1, {}},
+        [RarityID::kLegendary] = {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
+            scale_hp(10.0, 2), scale_dmg(10.0, 2), 10.0, 2.5, 1, {}},
+        [RarityID::kMythic] = {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
+            scale_hp(10.0, 3), scale_dmg(10.0, 3), 10.0, 2.5, 1, {}},
+        [RarityID::kUnique] = {"Salt", "Reflects some damage dealt to the flower. Does not stack with itself",
+            scale_hp(10.0, 4), scale_dmg(10.0, 4), 10.0, 2.5, 1, {}},
+    },
+    [PetalType::kSquare] = {
+        [RarityID::kUnique] = {"Square", "This shape... it looks familiar...",
+            10.0, 10.0, 15.0, 2.5, 1, {
+            .icon_angle = M_PI / 4 + 1
+        }},
+    },
+    [PetalType::kMoon] = {
+        [RarityID::kMythic] = {"Moon", "Where did this come from?",
+            1000.0, 1.0, 50.0, 10.0, 1, {
+            .secondary_reload = 0.5,
+            .mass = 200
+        }},
+    },
+    [PetalType::kLotus] = {
+        [RarityID::kEpic] = {"Lotus", "Absorbs some poison damage taken by the flower",
+            5.0, 5.0, 12.0, 2.0, 1, {
+            .icon_angle = 0.1
+        }},
+    },
+    [PetalType::kCutter] = {
+        [RarityID::kEpic] = {"Cutter", "Increases the flower's body damage",
+            0.0, 0.0, 40.0, 0.0, 0, {}},
+    },
+    [PetalType::kYinYang] = {
+        [RarityID::kEpic] = {"Yin Yang", "Alters the flower's petal rotation in interesting ways",
+            15.0, 15.0, 10.0, 2.5, 1, {}},
+    },
+    [PetalType::kYggdrasil] = {
+        [RarityID::kCommon] = {"Yggdrasil", "Unfortunately, its powers are useless here",
+            scale_hp(1.0, -6), scale_dmg(1.0, -6), 12.0, 10.0, 1, {
+            .defend_only = 1,
+            .icon_angle = M_PI
+        }},
+        [RarityID::kUnusual] = {"Yggdrasil", "Unfortunately, its powers are useless here",
+            scale_hp(1.0, -5), scale_dmg(1.0, -5), 12.0, 10.0, 1, {
+            .defend_only = 1,
+            .icon_angle = M_PI
+        }},
+        [RarityID::kRare] = {"Yggdrasil", "Unfortunately, its powers are useless here",
+            scale_hp(1.0, -4), scale_dmg(1.0, -4), 12.0, 10.0, 1, {
+            .defend_only = 1,
+            .icon_angle = M_PI
+        }},
+        [RarityID::kEpic] = {"Yggdrasil", "Unfortunately, its powers are useless here",
+            scale_hp(1.0, -3), scale_dmg(1.0, -3), 12.0, 10.0, 1, {
+            .defend_only = 1,
+            .icon_angle = M_PI
+        }},
+        [RarityID::kLegendary] = {"Yggdrasil", "Unfortunately, its powers are useless here",
+            scale_hp(1.0, -2), scale_dmg(1.0, -2), 12.0, 10.0, 1, {
+            .defend_only = 1,
+            .icon_angle = M_PI
+        }},
+        [RarityID::kMythic] = {"Yggdrasil", "Unfortunately, its powers are useless here",
+            scale_hp(1.0, -1), scale_dmg(1.0, -1), 12.0, 10.0, 1, {
+            .defend_only = 1,
+            .icon_angle = M_PI
+        }},
+        [RarityID::kUnique] = {"Yggdrasil", "Unfortunately, its powers are useless here",
+            1.0, 1.0, 12.0, 10.0, 1, {
+            .defend_only = 1,
+            .icon_angle = M_PI
+        }},
+    },
+    [PetalType::kRice] = {
+        [RarityID::kCommon] = {"Rice", "Spawns instantly, but not very strong",
+            scale_hp(1.0, -3), scale_dmg(4.0, -3), 13.0, 0.1, 1, {.icon_angle = 0.7}},
+        [RarityID::kUnusual] = {"Rice", "Spawns instantly, but not very strong",
+            scale_hp(1.0, -2), scale_dmg(4.0, -2), 13.0, 0.1, 1, {.icon_angle = 0.7}},
+        [RarityID::kRare] = {"Rice", "Spawns instantly, but not very strong",
+            scale_hp(1.0, -1), scale_dmg(4.0, -1), 13.0, 0.1, 1, {.icon_angle = 0.7}},
+        [RarityID::kEpic] = {"Rice", "Spawns instantly, but not very strong",
+            1.0, 4.0, 13.0, 0.1, 1, {
+            .icon_angle = 0.7
+        }},
+        [RarityID::kLegendary] = {"Rice", "Spawns instantly, but not very strong",
+            scale_hp(1.0, 1), scale_dmg(4.0, 1), 13.0, 0.1, 1, {.icon_angle = 0.7}},
+        [RarityID::kMythic] = {"Rice", "Spawns instantly, but not very strong",
+            scale_hp(1.0, 2), scale_dmg(4.0, 2), 13.0, 0.1, 1, {.icon_angle = 0.7}},
+        [RarityID::kUnique] = {"Rice", "Spawns instantly, but not very strong",
+            scale_hp(1.0, 3), scale_dmg(4.0, 3), 13.0, 0.1, 1, {.icon_angle = 0.7}},
+    },
+    [PetalType::kBone] = {
+        [RarityID::kCommon] = {"Bone", "Sturdy",
+            scale_hp(12.0, -4), scale_dmg(10.0, -4), 12.0, 2.5, 1, {.icon_angle = 1}},
+        [RarityID::kUnusual] = {"Bone", "Sturdy",
+            scale_hp(12.0, -3), scale_dmg(10.0, -3), 12.0, 2.5, 1, {.icon_angle = 1}},
+        [RarityID::kRare] = {"Bone", "Sturdy",
+            scale_hp(12.0, -2), scale_dmg(10.0, -2), 12.0, 2.5, 1, {.icon_angle = 1}},
+        [RarityID::kEpic] = {"Bone", "Sturdy",
+            scale_hp(12.0, -1), scale_dmg(10.0, -1), 12.0, 2.5, 1, {.icon_angle = 1}},
+        [RarityID::kLegendary] = {"Bone", "Sturdy",
+            12.0, 10.0, 12.0, 2.5, 1, {
+            .icon_angle = 1
+        }},
+        [RarityID::kMythic] = {"Bone", "Sturdy",
+            scale_hp(12.0, 1), scale_dmg(10.0, 1), 12.0, 2.5, 1, {.icon_angle = 1}},
+        [RarityID::kUnique] = {"Bone", "Sturdy",
+            scale_hp(12.0, 2), scale_dmg(10.0, 2), 12.0, 2.5, 1, {.icon_angle = 1}},
+    },
+    [PetalType::kYucca] = {
+        [RarityID::kCommon] = {"Yucca", "Heals the flower, but only while in the defensive position",
+            scale_hp(10.0, -1), scale_dmg(5.0, -1), 10.0, 1.0, 1,
+            {.constant_heal = scale_heal(1.5, -1), .icon_angle = -1}},
+        [RarityID::kUnusual] = {"Yucca", "Heals the flower, but only while in the defensive position",
+            10.0, 5.0, 10.0, 1.0, 1, {
+            .constant_heal = 1.5,
+            .icon_angle = -1
+        }},
+        [RarityID::kRare] = {"Yucca", "Heals the flower, but only while in the defensive position",
+            scale_hp(10.0, 1), scale_dmg(5.0, 1), 10.0, 1.0, 1,
+            {.constant_heal = scale_heal(1.5, 1), .icon_angle = -1}},
+        [RarityID::kEpic] = {"Yucca", "Heals the flower, but only while in the defensive position",
+            scale_hp(10.0, 2), scale_dmg(5.0, 2), 10.0, 1.0, 1,
+            {.constant_heal = scale_heal(1.5, 2), .icon_angle = -1}},
+        [RarityID::kLegendary] = {"Yucca", "Heals the flower, but only while in the defensive position",
+            scale_hp(10.0, 3), scale_dmg(5.0, 3), 10.0, 1.0, 1,
+            {.constant_heal = scale_heal(1.5, 3), .icon_angle = -1}},
+        [RarityID::kMythic] = {"Yucca", "Heals the flower, but only while in the defensive position",
+            scale_hp(10.0, 4), scale_dmg(5.0, 4), 10.0, 1.0, 1,
+            {.constant_heal = scale_heal(1.5, 4), .icon_angle = -1}},
+        [RarityID::kUnique] = {"Yucca", "Heals the flower, but only while in the defensive position",
+            scale_hp(10.0, 5), scale_dmg(5.0, 5), 10.0, 1.0, 1,
+            {.constant_heal = scale_heal(1.5, 5), .icon_angle = -1}},
+    },
+    [PetalType::kCorn] = {
+        [RarityID::kCommon] = {"Corn", "Takes a long time to spawn, but has a lot of health",
+            scale_hp(500.0, -3), scale_dmg(2.5, -3), 16.0, 10.0, 1, {.icon_angle = 0.5}},
+        [RarityID::kUnusual] = {"Corn", "Takes a long time to spawn, but has a lot of health",
+            scale_hp(500.0, -2), scale_dmg(2.5, -2), 16.0, 10.0, 1, {.icon_angle = 0.5}},
+        [RarityID::kRare] = {"Corn", "Takes a long time to spawn, but has a lot of health",
+            scale_hp(500.0, -1), scale_dmg(2.5, -1), 16.0, 10.0, 1, {.icon_angle = 0.5}},
+        [RarityID::kEpic] = {"Corn", "Takes a long time to spawn, but has a lot of health",
+            500.0, 2.5, 16.0, 10.0, 1, {
+            .icon_angle = 0.5
+        }},
+        [RarityID::kLegendary] = {"Corn", "Takes a long time to spawn, but has a lot of health",
+            scale_hp(500.0, 1), scale_dmg(2.5, 1), 16.0, 10.0, 1, {.icon_angle = 0.5}},
+        [RarityID::kMythic] = {"Corn", "Takes a long time to spawn, but has a lot of health",
+            scale_hp(500.0, 2), scale_dmg(2.5, 2), 16.0, 10.0, 1, {.icon_angle = 0.5}},
+        [RarityID::kUnique] = {"Corn", "Takes a long time to spawn, but has a lot of health",
+            scale_hp(500.0, 3), scale_dmg(2.5, 3), 16.0, 10.0, 1, {.icon_angle = 0.5}},
+    },
+    [PetalType::kRoot] = {
+        [RarityID::kCommon] = {"Root", "Slowly grants stacking armor that absorbs damage",
+            scale_hp(10.0, -3), scale_dmg(10.0, -3), 10.0, 1.0, 1, {
+                .defend_only = 1
+            }},
+        [RarityID::kUnusual] = {"Root", "Slowly grants stacking armor that absorbs damage",
+            scale_hp(10.0, -2), scale_dmg(10.0, -2), 10.0, 1.0, 1, {
+                .defend_only = 1
+        }},
+        [RarityID::kRare] = {"Root", "Slowly grants stacking armor that absorbs damage",
+            scale_hp(10.0, -1), scale_dmg(10.0, -1), 10.0, 1.0, 1, {
+                .defend_only = 1
+        }},
+        [RarityID::kEpic] = {"Root", "Slowly grants stacking armor that absorbs damage",
+            scale_hp(10.0, 0), scale_dmg(10.0, 0), 10.0, 1.0, 1, {
+                .defend_only = 1
+        }},
+        [RarityID::kLegendary] = {"Root", "Slowly grants stacking armor that absorbs damage",
+            scale_hp(10.0, 1), scale_dmg(10.0, 1), 10.0, 1.0, 1, {
+                .defend_only = 1
+        }},
+        [RarityID::kMythic] = {"Root", "Slowly grants stacking armor that absorbs damage",
+            scale_hp(10.0, 2), scale_dmg(10.0, 2), 10.0, 1.0, 1, {
+                .defend_only = 1
+        }},
+        [RarityID::kUnique] = {"Root", "Slowly grants stacking armor that absorbs damage",
+            scale_hp(10.0, 3), scale_dmg(10.0, 3), 10.0, 1.0, 1, {
+                .defend_only = 1
+        }},
+    },
 };
 
 struct MobData const MOB_DATA[MobID::kNumMobs] = {
@@ -938,7 +993,7 @@ std::array<StaticArray<float, MAX_DROPS_PER_MOB>, MobID::kNumMobs> const MOB_DRO
     std::array<StaticArray<float, MAX_DROPS_PER_MOB>, MobID::kNumMobs> ret;
     double const RARITY_MULT[RarityID::kNumRarities] = {50000,15000,5000,1000,500,250,100};
     double MOB_SPAWN_RATES[MobID::kNumMobs] = {0};
-    double PETAL_AGGREGATE_DROPS[PetalID::kNumPetals] = {0};
+    double PETAL_AGGREGATE_DROPS[PetalType::kNumPetalTypes][RarityID::kNumRarities] = {{0}};
     for (struct ZoneDefinition const &zone : MAP) {
         double total = 0;
         for (SpawnChance const &s : zone.spawns) total += s.chance;
@@ -955,14 +1010,14 @@ std::array<StaticArray<float, MAX_DROPS_PER_MOB>, MobID::kNumMobs> const MOB_DRO
     }
 
     for (MobID::T id = 0; id < MobID::kNumMobs; ++id)
-        for (PetalID::T const drop_id : MOB_DATA[id].drops) PETAL_AGGREGATE_DROPS[drop_id]++;
+        for (PetalID::T const drop_id : MOB_DATA[id].drops) PETAL_AGGREGATE_DROPS[drop_id.type][drop_id.rarity]++;
 
     double const BASE_NUM = MOB_SPAWN_RATES[MobID::kSquare];
     if (BASE_NUM <= 0) assert(!"Square mob must spawn in at least one zone");
 
     for (MobID::T id = 0; id < MobID::kNumMobs; ++id) {
         for (PetalID::T const drop_id : MOB_DATA[id].drops) {
-            float chance = fclamp((BASE_NUM * RARITY_MULT[PETAL_DATA[drop_id].rarity]) / (PETAL_AGGREGATE_DROPS[drop_id] * MOB_SPAWN_RATES[id] * MOB_DATA[id].attributes.segments), 0, 1);
+            float chance = fclamp((BASE_NUM * RARITY_MULT[drop_id.rarity]) / (PETAL_AGGREGATE_DROPS[drop_id.type][drop_id.rarity] * MOB_SPAWN_RATES[id] * MOB_DATA[id].attributes.segments), 0, 1);
             ret[id].push(chance);
         }
     }

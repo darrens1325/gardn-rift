@@ -27,7 +27,11 @@ namespace Game {
     // against its own whitelist (Server/Client.cc::is_safe_user_map_path)
     // and silently falls back on rejection.
     extern std::string spawn_map_path;
-    extern std::array<uint8_t, PetalID::kNumPetals> seen_petals;
+    // Indexed [petal_type][rarity]: nonzero once we've seen this exact
+    // (type, rarity) petal in our own loadout. Empty cells in PETAL_DATA
+    // (e.g. PETAL_DATA[kBasic][kRare] before a Rare Basic existed) just
+    // stay zero — there's no harm in having extra unreachable slots.
+    extern std::array<std::array<uint8_t, RarityID::kNumRarities>, PetalType::kNumPetalTypes> seen_petals;
     // Indexed [mob_id][rarity]: nonzero once we've rendered a live mob
     // of this (kind, rolled-rarity) tuple. The mob gallery emits one
     // card per (id, rarity) flag set so a Mythic Bee and a Common Bee

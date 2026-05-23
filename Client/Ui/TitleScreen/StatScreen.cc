@@ -29,17 +29,17 @@ void StatPetalSlot::refactor() {
 }
 
 void StatPetalSlot::on_render(Renderer &ctx) {
-    uint8_t id = Game::cached_loadout[pos];
+    PetalID::T id = Game::cached_loadout[pos];
     if (id == PetalID::kNone) return;
     ctx.scale(width / 60);
     draw_loadout_background(ctx, id);
 }
 
 void StatPetalSlot::on_event(uint8_t event) {
-    uint8_t id = Game::cached_loadout[pos];
+    PetalID::T id = Game::cached_loadout[pos];
     if (event != kFocusLost && id != PetalID::kNone) {
         rendering_tooltip = 1;
-        tooltip = Ui::UiLoadout::petal_tooltips[id];
+        tooltip = Ui::UiLoadout::petal_tooltips[id.type][id.rarity];
     } else {
         rendering_tooltip = 0;
     }
@@ -60,7 +60,7 @@ void TitlePetalSlot::on_render(Renderer &ctx) {
     if (!Game::simulation.ent_exists(Game::camera_id))
         return;
     Entity const &camera = Game::simulation.get_ent(Game::camera_id);
-    uint8_t id = camera.inventory[pos];
+    PetalID::T id = camera.inventory[pos];
     if (id == PetalID::kNone) return;
     ctx.scale(width / 60);
     draw_loadout_background(ctx, id);
@@ -70,10 +70,10 @@ void TitlePetalSlot::on_event(uint8_t event) {
     if (!Game::simulation.ent_exists(Game::camera_id))
         return;
     Entity const &camera = Game::simulation.get_ent(Game::camera_id);
-    uint8_t id = camera.inventory[pos];
+    PetalID::T id = camera.inventory[pos];
     if (event != kFocusLost && id != PetalID::kNone) {
         rendering_tooltip = 1;
-        tooltip = Ui::UiLoadout::petal_tooltips[id];
+        tooltip = Ui::UiLoadout::petal_tooltips[id.type][id.rarity];
     } else {
         rendering_tooltip = 0;
     }

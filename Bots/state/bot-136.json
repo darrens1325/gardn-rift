@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-136",
   "first_seen": 1778543147.28368,
-  "last_seen": 1779493400.548942,
-  "episodes": 1515,
-  "score_total": 172555,
+  "last_seen": 1779512058.932485,
+  "episodes": 1528,
+  "score_total": 173880,
   "score_best": 5485,
   "best_loadout": [
     0,
@@ -17,16 +17,16 @@
   ],
   "killed_by": {
     "Cactus": 83,
-    "Hornet": 360,
-    "Wasp": 273,
+    "Hornet": 363,
+    "Wasp": 277,
     "bot-53": 1,
     "Sandstorm": 19,
-    "Beetle": 79,
+    "Beetle": 81,
     "bot-23": 6,
-    "Ladybug": 81,
+    "Ladybug": 82,
     "Bush": 15,
     "Spider": 41,
-    "Mantis": 145,
+    "Mantis": 146,
     "bot-43": 3,
     "bot-61": 3,
     "Scorpion": 14,
@@ -131,7 +131,7 @@
     "not bot": 1
   },
   "loadout_history": {
-    "0": 1280,
+    "0": 1291,
     "1": 1076,
     "69": 4,
     "116": 3,
@@ -190,6 +190,10 @@
     "20": 1,
     "50": 1,
     "40": 1,
-    "42": 1
+    "42": 1,
+    "256": 9,
+    "1024": 2,
+    "3330": 1,
+    "1025": 1
   }
 }

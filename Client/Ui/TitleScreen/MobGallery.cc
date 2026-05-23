@@ -28,19 +28,28 @@ static float _gallery_pow(float base, int n) {
     return r;
 }
 static PetalID::T _gallery_upgrade_drop(PetalID::T base_id, uint8_t target_rarity) {
-    if (base_id == PetalID::kNone || base_id >= PetalID::kNumPetals) return base_id;
-    if (PETAL_DATA[base_id].rarity >= target_rarity) return base_id;
-    char const *name = PETAL_DATA[base_id].name;
+    if (base_id == PetalID::kNone) return base_id;
+    if (base_id.type >= PetalType::kNumPetalTypes) return base_id;
+    if (base_id.rarity >= target_rarity) return base_id;
+    // Same-name lookup across the whole (type, rarity) plane. The
+    // split-type variants (kStinger -> kTringer at Legendary, kCactus
+    // -> kPoisonCactus/Tricac, kRose -> kAzalea, etc.) share a name
+    // with the authored Common-tier drop, so we hop across rows of the
+    // table by matching `name` and picking the highest cell whose
+    // rarity is still <= target_rarity.
+    char const *name = PETAL_DATA[base_id.type][base_id.rarity].name;
+    if (name == nullptr) return base_id;
     PetalID::T best = base_id;
-    uint8_t best_rarity = PETAL_DATA[base_id].rarity;
-    for (PetalID::T id = 1; id < PetalID::kNumPetals; ++id) {
-        if (id == base_id) continue;
-        if (std::strcmp(PETAL_DATA[id].name, name) != 0) continue;
-        uint8_t r = PETAL_DATA[id].rarity;
-        if (r > target_rarity) continue;
-        if (r > best_rarity) {
-            best = id;
-            best_rarity = r;
+    uint8_t best_rarity = base_id.rarity;
+    for (PetalType::T t = PetalType::kNone + 1; t < PetalType::kNumPetalTypes; ++t) {
+        for (uint8_t r = 0; r < RarityID::kNumRarities; ++r) {
+            if (PETAL_DATA[t][r].name == nullptr) continue;
+            if (std::strcmp(PETAL_DATA[t][r].name, name) != 0) continue;
+            if (r > target_rarity) continue;
+            if (r > best_rarity) {
+                best = {t, r};
+                best_rarity = r;
+            }
         }
     }
     return best;

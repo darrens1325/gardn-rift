@@ -100,7 +100,9 @@ UiLoadoutPetal::UiLoadoutPetal(uint8_t pos) : Element(60, 60),
             if (no_change_ticks == 0 || player.get_state_loadout_ids(static_pos)) {
                 no_change_ticks = 0;
                 petal_id = Game::cached_loadout[static_pos];
-                if (petal_id != PetalID::kNone && petal_id < PetalID::kNumPetals)
+                if (petal_id != PetalID::kNone
+                    && petal_id.type < PetalType::kNumPetalTypes
+                    && petal_id.rarity < RarityID::kNumRarities)
                     last_id = petal_id;
             } else --no_change_ticks;
         }
@@ -176,7 +178,7 @@ UiLoadoutPetal::UiLoadoutPetal(uint8_t pos) : Element(60, 60),
 
 void UiLoadoutPetal::on_render(Renderer &ctx) {
     ctx.scale(width / 60);
-    if (static_pos < Game::loadout_count && PETAL_DATA[last_id].count != 0)
+    if (static_pos < Game::loadout_count && PETAL_DATA[last_id.type][last_id.rarity].count != 0)
         draw_loadout_background(ctx, last_id, (float) reload);
     else
         draw_loadout_background(ctx, last_id);
@@ -199,7 +201,7 @@ void UiLoadoutPetal::on_event(uint8_t event) {
     }
     if (event != kFocusLost && last_id != PetalID::kNone && Ui::UiLoadout::petal_selected == nullptr) {
         rendering_tooltip = 1;
-        tooltip = Ui::UiLoadout::petal_tooltips[last_id];
+        tooltip = Ui::UiLoadout::petal_tooltips[last_id.type][last_id.rarity];
     } else {
         rendering_tooltip = 0;
     }

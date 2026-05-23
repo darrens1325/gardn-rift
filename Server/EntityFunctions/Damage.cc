@@ -65,13 +65,8 @@ void inflict_damage(Simulation *sim, EntityID const atk_id, EntityID const def_i
         defender.slow_ticks = attacker.slow_inflict;
     
     if (defender.has_component(kPetal)) {
-        switch (defender.petal_id) {
-            case PetalID::kDandelion:
-                attacker.dandy_ticks = 10 * SIM_RATE;
-                break;
-            default:
-                break;
-        }
+        if (defender.petal_id.type == PetalType::kDandelion)
+            attacker.dandy_ticks = 10 * SIM_RATE;
     }
 
     if (attacker.has_component(kPetal)) {

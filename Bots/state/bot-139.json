@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-139",
   "first_seen": 1778543547.0881379,
-  "last_seen": 1779493393.722291,
-  "episodes": 1520,
-  "score_total": 196504,
+  "last_seen": 1779512211.621266,
+  "episodes": 1535,
+  "score_total": 196821,
   "score_best": 7770,
   "best_loadout": [
     0,
@@ -18,9 +18,9 @@
   ],
   "killed_by": {
     "Spider": 54,
-    "Hornet": 367,
-    "Bee": 109,
-    "Wasp": 262,
+    "Hornet": 372,
+    "Bee": 111,
+    "Wasp": 264,
     "bot-74": 5,
     "Mantis": 132,
     "bot-145": 3,
@@ -28,7 +28,7 @@
     "Cactus": 75,
     "Sandstorm": 12,
     "Scorpion": 12,
-    "Beetle": 75,
+    "Beetle": 76,
     "bot-113": 4,
     "Ladybug": 81,
     "bot-101": 1,
@@ -134,11 +134,13 @@
     "bot-95": 1,
     "Soldier Ant": 1,
     "bot-51": 1,
-    "leafy": 1
+    "leafy": 1,
+    "bot-31": 1,
+    "florrio": 1
   },
   "loadout_history": {
     "24": 16,
-    "0": 1281,
+    "0": 1294,
     "1": 1060,
     "9": 17,
     "12": 4,
@@ -183,6 +185,9 @@
     "8": 1,
     "40": 3,
     "204": 1,
-    "45": 1
+    "45": 1,
+    "256": 8,
+    "3584": 1,
+    "768": 1
   }
 }

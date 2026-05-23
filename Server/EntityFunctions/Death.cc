@@ -11,31 +11,23 @@
 #include <Shared/Vector.hh>
 
 #include <algorithm>
-#include <cstring>
 #include <iostream>
 
 // Promote `base_id` to its highest-rarity sibling whose rarity ≤
-// target_rarity. Two petals are siblings iff PETAL_DATA[].name matches.
-// Used to upgrade mob drops by the mob's per-spawn rarity tier (Spawn.cc):
-// a Mythic-rolled bee drops `kMythicTringer` even though its authored
-// drop list contains `kCommonStinger`, because both name == "Stinger".
-// Falls back to base_id if no sibling at higher rarity exists (e.g. for
-// flag petals like kAntennae that only have one tier).
+// target_rarity. Siblings share `PetalType` — under the 2D table that's
+// just "walk the rarity axis of the same column". Used to upgrade mob
+// drops by the mob's per-spawn rarity tier (Spawn.cc): a Mythic-rolled
+// bee drops the Mythic-tier Stinger family member even though its
+// authored drop list contains the Common Stinger. Falls back to base_id
+// if no higher-rarity sibling cell is authored (PETAL_DATA[t][r].name ==
+// nullptr marks an unauthored cell).
 static PetalID::T _upgrade_drop(PetalID::T base_id, uint8_t target_rarity) {
-    if (base_id == PetalID::kNone || base_id >= PetalID::kNumPetals) return base_id;
-    if (PETAL_DATA[base_id].rarity >= target_rarity) return base_id;
-    char const *name = PETAL_DATA[base_id].name;
+    if (base_id == PetalID::kNone) return base_id;
+    if (base_id.rarity >= target_rarity) return base_id;
     PetalID::T best = base_id;
-    uint8_t best_rarity = PETAL_DATA[base_id].rarity;
-    for (PetalID::T id = 1; id < PetalID::kNumPetals; ++id) {
-        if (id == base_id) continue;
-        if (std::strcmp(PETAL_DATA[id].name, name) != 0) continue;
-        uint8_t r = PETAL_DATA[id].rarity;
-        if (r > target_rarity) continue;
-        if (r > best_rarity) {
-            best = id;
-            best_rarity = r;
-        }
+    for (uint8_t r = base_id.rarity + 1; r <= target_rarity && r < RarityID::kNumRarities; ++r) {
+        if (PETAL_DATA[base_id.type][r].name == nullptr) continue;
+        best = { base_id.type, r };
     }
     return best;
 }
@@ -43,12 +35,12 @@ static PetalID::T _upgrade_drop(PetalID::T base_id, uint8_t target_rarity) {
 static void _alloc_drops(Simulation *sim, std::vector<PetalID::T> &success_drops, std::string const &map_path, float x, float y) {
     #ifdef DEBUG
     for (PetalID::T id : success_drops)
-        assert(id != PetalID::kNone && id < PetalID::kNumPetals);
+        assert(id != PetalID::kNone);
     #endif
     size_t count = success_drops.size();
     for (size_t i = count; i > 0; --i) {
         PetalID::T drop_id = success_drops[i - 1];
-        if (PETAL_DATA[drop_id].rarity == RarityID::kUnique && PetalTracker::get_count(sim, drop_id) > 0) {
+        if (drop_id.rarity == RarityID::kUnique && PetalTracker::get_count(sim, drop_id) > 0) {
             success_drops[i] = success_drops[count - 1];
             --count;
             success_drops.pop_back();
@@ -149,7 +141,7 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
                     for (uint32_t i = 0; i < mob_data.drops.size(); ++i) {
                         cum += drop_chances[i] * norm;
                         if (roll < cum) {
-                            uint32_t r = (uint32_t)PETAL_DATA[mob_data.drops[i]].rarity + (uint32_t)delta;
+                            uint32_t r = (uint32_t)mob_data.drops[i].rarity + (uint32_t)delta;
                             if (r >= RarityID::kNumRarities) r = RarityID::kNumRarities - 1;
                             success_drops.push_back(_upgrade_drop(mob_data.drops[i], (uint8_t)r));
                             break;
@@ -174,20 +166,18 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
     } else if (ent.has_component(kFlower)) {
         std::vector<PetalID::T> potential = {};
         for (uint32_t i = 0; i < ent.loadout_count + MAX_SLOT_COUNT; ++i) {
-            DEBUG_ONLY(assert(ent.loadout_ids[i] < PetalID::kNumPetals));
             PetalTracker::remove_petal(sim, ent.loadout_ids[i]);
             if (ent.loadout_ids[i] != PetalID::kNone && ent.loadout_ids[i] != PetalID::kBasic && frand() < 0.95)
                 potential.push_back(ent.loadout_ids[i]);
         }
         for (uint32_t i = 0; i < ent.deleted_petals.size(); ++i) {
-            DEBUG_ONLY(assert(ent.deleted_petals[i] < PetalID::kNumPetals));
             PetalTracker::remove_petal(sim, ent.deleted_petals[i]);
             if (ent.deleted_petals[i] != PetalID::kNone && ent.deleted_petals[i] != PetalID::kBasic && frand() < 0.95)
                 potential.push_back(ent.deleted_petals[i]);
         }
         //no need to deleted_petals.clear, the player dies
         std::sort(potential.begin(), potential.end(), [](PetalID::T a, PetalID::T b) {
-            return PETAL_DATA[a].rarity < PETAL_DATA[b].rarity;
+            return a.rarity < b.rarity;
         });
 
         std::vector<PetalID::T> success_drops = {};
@@ -196,7 +186,7 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
             numDrops = 3;
         for (uint32_t i = 0; i < numDrops; ++i) {
             PetalID::T p_id = potential.back();
-            if (PETAL_DATA[p_id].rarity >= RarityID::kRare && frand() < 0.05) p_id = PetalID::kPollen;
+            if (p_id.rarity >= RarityID::kRare && frand() < 0.05) p_id = PetalID::kPollen;
             success_drops.push_back(p_id);
             potential.pop_back();
         }
@@ -218,7 +208,6 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
         for (uint32_t i = 0; i < 2 * MAX_SLOT_COUNT; ++i)
             camera.set_inventory(i, PetalID::kNone); //force reset
         for (uint32_t i = 0; i < num_left; ++i) {
-            DEBUG_ONLY(assert(potential.back() < PetalID::kNumPetals));
             PetalTracker::add_petal(sim, potential.back());
             camera.set_inventory(i, potential.back());
             potential.pop_back();

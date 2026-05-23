@@ -29,7 +29,12 @@ extern float const BASE_FOV;
 extern float const BASE_HEALTH;
 extern float const BASE_BODY_DAMAGE;
 
-extern struct PetalData const PETAL_DATA[PetalID::kNumPetals];
+// 2D table on the (type, rarity) plane. Cells without an authored petal
+// for that pair are zero-initialised; callers can detect that by checking
+// `PETAL_DATA[t][r].name == nullptr` (or, equivalently, that the rarity
+// the caller asked for is not in the type's authored row). For any live
+// Petal coming off the wire or from a loadout, the cell is populated.
+extern struct PetalData const PETAL_DATA[PetalType::kNumPetalTypes][RarityID::kNumRarities];
 extern struct MobData const MOB_DATA[MobID::kNumMobs];
 
 //map extends from (0,0) to (ARENA_WIDTH,ARENA_HEIGHT)

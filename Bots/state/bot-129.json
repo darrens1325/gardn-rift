@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-129",
   "first_seen": 1778543191.061109,
-  "last_seen": 1779493395.0416331,
-  "episodes": 1502,
-  "score_total": 168548,
+  "last_seen": 1779512100.427001,
+  "episodes": 1515,
+  "score_total": 168988,
   "score_best": 5027,
   "best_loadout": [
     0,
@@ -17,12 +17,12 @@
   ],
   "killed_by": {
     "Wasp": 294,
-    "Hornet": 366,
+    "Hornet": 374,
     "bot-28": 2,
     "Beetle": 67,
     "Evil Centipede": 25,
-    "Spider": 35,
-    "Cactus": 81,
+    "Spider": 36,
+    "Cactus": 82,
     "Mantis": 116,
     "Desert Centipede": 8,
     "bot-142": 1,
@@ -100,7 +100,7 @@
     "bot-89": 4,
     "prickly": 2,
     "bot-125": 2,
-    "bot-86": 1,
+    "bot-86": 2,
     "bot-80": 1,
     "bot-51": 1,
     "bot-105": 2,
@@ -124,7 +124,7 @@
     "thorny": 1,
     "bot-137": 1,
     "bot-144": 2,
-    "bot-59": 2,
+    "bot-59": 3,
     "bot-107": 1,
     "bot-132": 1,
     "bot-35": 1,
@@ -136,7 +136,7 @@
     "blossom": 1
   },
   "loadout_history": {
-    "0": 1289,
+    "0": 1301,
     "1": 1060,
     "14": 32,
     "18": 12,
@@ -189,6 +189,8 @@
     "40": 1,
     "26": 1,
     "30": 1,
-    "47": 1
+    "47": 1,
+    "256": 7,
+    "1024": 1
   }
 }
