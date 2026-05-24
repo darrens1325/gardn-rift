@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-228",
+  "first_seen": 1779582944.706934,
+  "last_seen": 1779585014.976065,
+  "episodes": 3,
+  "score_total": 686,
+  "score_best": 359,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-206": 1,
+    "Mantis": 1
+  },
+  "loadout_history": {
+    "0": 3,
+    "2048": 1,
+    "256": 1
+  }
+}

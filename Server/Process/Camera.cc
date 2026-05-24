@@ -10,7 +10,13 @@ void tick_camera_behavior(Simulation *sim, Entity &ent) {
         Entity &player = sim->get_ent(ent.player);
         ent.set_camera_x(player.x);
         ent.set_camera_y(player.y);
-        player.set_loadout_count(loadout_slots_at_level(score_to_level(player.score)));
+        uint8_t max_rarity = 0;
+        for (uint32_t i = 0; i < player.loadout_count + MAX_SLOT_COUNT; ++i) {
+            PetalID::T id = player.loadout_ids[i];
+            if (id == PetalID::kNone) continue;
+            if (id.rarity > max_rarity) max_rarity = id.rarity;
+        }
+        player.set_loadout_count(loadout_slots_for_max_rarity(max_rarity));
         ent.last_damaged_by = player.last_damaged_by;
         struct ZoneDefinition const &zone = MAP[Map::get_zone_from_pos(player.x, player.y)];
         // if (zone.difficulty < Map::difficulty_at_level(score_to_level(player.score))) {

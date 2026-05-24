@@ -2,29 +2,33 @@
   "schema": 1,
   "name": "bot-307",
   "first_seen": 1778364744.192675,
-  "last_seen": 1778543068.4486668,
-  "episodes": 26,
-  "score_total": 433,
-  "score_best": 54,
+  "last_seen": 1779583279.2012422,
+  "episodes": 31,
+  "score_total": 644,
+  "score_best": 86,
   "best_loadout": [
-    1,
-    1,
-    1,
-    1,
-    1
+    0,
+    256,
+    256,
+    256,
+    256,
+    0
   ],
   "killed_by": {
     "Beetle": 4,
-    "Cactus": 3,
+    "Cactus": 4,
     "Hornet": 6,
     "Spider": 1,
     "Bee": 1,
     "Wasp": 5,
-    "Mantis": 1
+    "Mantis": 1,
+    "bot-111": 1
   },
   "loadout_history": {
-    "0": 21,
+    "0": 22,
     "1": 23,
-    "14": 2
+    "14": 2,
+    "2048": 2,
+    "256": 5
   }
 }

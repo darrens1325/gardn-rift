@@ -2,16 +2,16 @@
   "schema": 1,
   "name": "bot-216",
   "first_seen": 1778364743.2492821,
-  "last_seen": 1778543010.111257,
-  "episodes": 24,
-  "score_total": 511,
-  "score_best": 201,
+  "last_seen": 1779584352.494679,
+  "episodes": 26,
+  "score_total": 904,
+  "score_best": 240,
   "best_loadout": [
-    1,
     0,
-    1,
     0,
-    1
+    0,
+    0,
+    0
   ],
   "killed_by": {
     "Beetle": 1,
@@ -21,10 +21,11 @@
     "Spider": 1,
     "Desert Centipede": 1,
     "Wasp": 5,
-    "Evil Centipede": 1
+    "Evil Centipede": 1,
+    "bot-108": 1
   },
   "loadout_history": {
-    "0": 20,
+    "0": 22,
     "1": 23,
     "5": 1
   }

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-214",
   "first_seen": 1778364742.213428,
-  "last_seen": 1778543045.285731,
-  "episodes": 23,
-  "score_total": 317,
+  "last_seen": 1779583376.687907,
+  "episodes": 25,
+  "score_total": 348,
   "score_best": 40,
   "best_loadout": [
     1,
@@ -22,12 +22,13 @@
     "Spider": 2,
     "Mantis": 2,
     "Beetle": 1,
-    "Wasp": 2
+    "Wasp": 2,
+    "bot-335": 1
   },
   "loadout_history": {
     "1": 19,
     "9": 1,
-    "0": 20,
+    "0": 22,
     "19": 1,
     "14": 2,
     "28": 1

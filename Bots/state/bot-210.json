@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-210",
   "first_seen": 1778364743.342874,
-  "last_seen": 1778542985.170462,
-  "episodes": 25,
-  "score_total": 328,
+  "last_seen": 1779585029.2177632,
+  "episodes": 26,
+  "score_total": 358,
   "score_best": 57,
   "best_loadout": [
     14,
@@ -23,9 +23,10 @@
     "Mantis": 1
   },
   "loadout_history": {
-    "0": 19,
+    "0": 20,
     "1": 22,
     "14": 2,
-    "24": 2
+    "24": 2,
+    "256": 1
   }
 }

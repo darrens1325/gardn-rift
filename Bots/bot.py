@@ -254,7 +254,16 @@ RARITY_PRESENT_SCALE = 0.5
 # a per-tick cost. Without the penalty, the worst case (zero petals) was
 # just "no positive reward" — same as standing still — and the policy had
 # no direct cost signal for staying empty after a delete spree.
-W_EMPTY_PRIMARY_PENALTY = 0.25
+# Reduced from 0.25 → 0.10 after training-stats showed ep_R mean
+# collapsing to -900: a freshly-spawned bot with kBasic ×4 + 1 empty
+# slot was paying -0.25/tick (-0.75/tick with 3 empties) for the
+# first ~30s of every life until drops were collected. That single
+# stream contributed ~200-300 negative reward per episode, drowning
+# the positive PvP signal. The penalty still discourages *deleting*
+# useful petals (W_DELETE_COST does the heavy lifting there) but no
+# longer crushes value-function estimates during the spawn-loadout
+# phase that every bot must pass through.
+W_EMPTY_PRIMARY_PENALTY = 0.10
 # Per-tick value of a non-empty *storage* slot, expressed as a multiplier
 # on the primary slot's W_PETAL_PRESENT. Storage petals can't damage anyone
 # (they only orbit once swapped into primary), so we don't pay them the
@@ -333,7 +342,30 @@ W_LOW_HP_PENALTY = 0.3
 # asymmetry encodes "killing another bot is worth a lot more than killing
 # a mob," because mobs are everywhere and players are scarce.
 W_MOB_KILL_BONUS = 10.0
-W_PLAYER_KILL_BONUS = 50.0
+# Bumped from 50 → 200 because pvp_kills rolling-mean was barely
+# advancing — bots were happy to farm mobs (W_MOB_KILL_BONUS=10)
+# safely and avoid players. At 200, a single PvP kill is worth 20
+# mob kills, which finally tips the value function toward chasing
+# Flowers even when easier mob targets are around. Pairs with
+# W_PVP_PROXIMITY / W_PVP_APPROACH below — those provide the
+# *gradient* toward players; this provides the *payoff* once you
+# actually land the kill.
+W_PLAYER_KILL_BONUS = 200.0
+
+# Player-specific proximity / approach. The existing W_PROXIMITY and
+# W_APPROACH terms don't distinguish mobs from enemy Flowers, so a
+# bot has no per-tick gradient telling it that "this hostile is more
+# valuable to chase than that one." These additive terms fire only
+# when the nearest *Flower* is in range / being approached, stacking
+# on top of the hostile-agnostic terms.
+#
+# Effective per-tick budgets when in range / closing:
+#   near a mob only:      +0.20 (W_PROXIMITY)
+#   near a player:        +0.20 + 0.60 = +0.80 (4×)
+#   approaching a mob:    up to W_APPROACH × cap/scale
+#   approaching a player: up to (W_APPROACH + W_PVP_APPROACH) × cap/scale = 3×
+W_PVP_PROXIMITY = 0.6
+W_PVP_APPROACH = 16.0
 
 # Anti-camp shaping. The existing IDLE_PENALTY / W_PROXIMITY combo
 # (net +0.10/tick when standing near a hostile) wasn't enough to
@@ -352,11 +384,17 @@ CAMP_WINDOW_TICKS = 100          # 5 s at 20 Hz
 CAMP_MOVE_RADIUS = 200.0         # world units
 CAMP_KILL_GRACE_TICKS = 200      # 10 s at 20 Hz — generous so bursty
                                  # mob fights don't trip the timer
-W_CAMP_PENALTY = 0.6             # per-tick — larger than IDLE_PENALTY
+W_CAMP_PENALTY = 0.3             # per-tick — larger than IDLE_PENALTY
                                  # (0.10) so the value function notices
-                                 # the difference between camping-with-
-                                 # loadout (+0.10 net before) and
-                                 # camping-without-kills (-0.50 net now)
+                                 # the difference. Reduced from 0.6 →
+                                 # 0.3 after ep_R mean collapsed to
+                                 # -900: 0.6/tick over the long stretches
+                                 # of low-engagement ticks every long
+                                 # life sees was the single biggest
+                                 # contributor. 0.3 still puts camping
+                                 # net-negative (≈ -0.4/tick combined
+                                 # with IDLE_PENALTY) without crushing
+                                 # the Q-targets across the board.
 
 # Kill-of-camper / kill-of-weaker bonuses. Stack additively on top of
 # W_PLAYER_KILL_BONUS. Identifies the victim's "weaker than us" status
@@ -465,6 +503,36 @@ def _nearest_hostile_dist_sq(
         is_flower = has_component(ent, "Flower")
         is_mob = has_component(ent, "Mob")
         if not (is_flower or is_mob):
+            continue
+        if ent.get("team", (0, 0)) == my_team:
+            continue
+        dx = ent["x"] - px
+        dy = ent["y"] - py
+        d2 = dx * dx + dy * dy
+        if d2 < best:
+            best = d2
+    return best
+
+
+def _nearest_player_dist_sq(
+    entities: dict,
+    my_player: dict,
+    my_team: tuple[int, int],
+) -> float:
+    """Same as `_nearest_hostile_dist_sq` but restricted to enemy
+    Flowers (other players). Used for the PvP-specific proximity and
+    approach reward streams that stack on top of the hostile-agnostic
+    versions — bot needs a gradient telling it to prefer chasing
+    players over chasing mobs."""
+    px, py = my_player["x"], my_player["y"]
+    my_id = my_player["_id"]
+    best = math.inf
+    for eid, ent in entities.items():
+        if eid == my_id:
+            continue
+        if "x" not in ent or ent.get("_pending_delete"):
+            continue
+        if not has_component(ent, "Flower"):
             continue
         if ent.get("team", (0, 0)) == my_team:
             continue
@@ -843,6 +911,10 @@ class LearningBot:
         # Last tick's nearest-hostile distance, used for the approach reward
         # (closing-rate gradient). None outside of an active life.
         self._prev_nearest_hostile_dist: float | None = None
+        # Same idea but restricted to enemy Flowers — fuels the
+        # PvP-specific closing reward (W_PVP_APPROACH) that stacks on
+        # top of the hostile-agnostic approach reward.
+        self._prev_nearest_player_dist: float | None = None
         self.approach_reward_total = 0.0  # diagnostic: cumulative this life
 
         # Anti-camp tracking — see W_CAMP_PENALTY block at module top
@@ -1144,6 +1216,7 @@ class LearningBot:
         # Drop the approach baseline so respawning at a far-away position
         # doesn't register as a huge "moved away" penalty next tick.
         self._prev_nearest_hostile_dist = None
+        self._prev_nearest_player_dist = None
         self.approach_reward_total = 0.0
         # Reset per-life extras counters for the next episode.
         self.pvp_kills_this_life = 0
@@ -1397,6 +1470,13 @@ class LearningBot:
             if near_d2 < PROXIMITY_RANGE * PROXIMITY_RANGE:
                 reward += W_PROXIMITY
                 self.engagement_ticks += 1
+            # Player-specific proximity bonus. Stacks on top of
+            # W_PROXIMITY so being near a player pays 4× being near
+            # a mob — the gradient signal that "players are more
+            # valuable targets" before any kill resolves.
+            near_player_d2 = _nearest_player_dist_sq(self.entities, player, my_team)
+            if near_player_d2 < PROXIMITY_RANGE * PROXIMITY_RANGE:
+                reward += W_PVP_PROXIMITY
             # Wall-proximity penalty. `wall_feats` is the bot's CURRENT 4-ray
             # snapshot (N/E/S/W); each entry is min(1, dist/WALL_RAY_CAP), so
             # the closest wall in world units is min(wall_feats) * WALL_RAY_CAP.
@@ -1467,9 +1547,27 @@ class LearningBot:
                     float(ent["y"]),
                     float(ent.get("radius", 10.0)),
                 ))
+            # Our petal count at kill time — compared against the
+            # victim's snapshotted petal count to decide whether to
+            # pay the "weaker than us" PvP bonus.
+            my_petal_count = len(my_petals)
+            # Threshold below which we treat the visible enemy as dead.
+            # Server's pending_delete keeps a dying entity in our view at
+            # HP≈0 for one to a few ticks before the actual deletion ships.
+            # Without this, kill credit only fires in Path 2 (entity vanished
+            # between ticks), and any kill whose victim was still in view
+            # at HP=0 lost the kill bonus because the snapshot writer at
+            # the bottom of this method overwrites snap_hp with the new
+            # zero — Path 2 next tick then sees snap_hp <= 0.001 and skips.
+            KILL_HP_THRESHOLD = 0.01
             if my_petals:
                 # Path 1: enemies still in our view that took damage. Check
-                # current petal overlap against current enemy position.
+                # current petal overlap against current enemy position. We
+                # also fire kill credit here when the petal-confirmed damage
+                # drops the enemy to ≤ KILL_HP_THRESHOLD — covers the case
+                # where the victim is visibly dying for a tick before the
+                # server removes them from our view (the slow-vanish case
+                # that Path 2 alone misses).
                 seen_eids: set[tuple[int, int]] = set()
                 for eid, ent in self.entities.items():
                     if eid == my_player_id:
@@ -1497,10 +1595,20 @@ class LearningBot:
                         dx = ex - px_
                         dy = ey - py_
                         if dx * dx + dy * dy < rsum * rsum:
+                            is_killshot = cur_e_hp <= KILL_HP_THRESHOLD
                             if is_flower:
                                 player_damage += drop
+                                if is_killshot:
+                                    confirmed_pvp_kills += 1
+                                    if snap is not None:
+                                        if snap[6]:  # snap_was_camping
+                                            confirmed_camper_kills += 1
+                                        if snap[5] < my_petal_count:
+                                            confirmed_weak_kills += 1
                             else:
                                 mob_damage += drop
+                                if is_killshot:
+                                    confirmed_mob_kills += 1
                             break
 
                 # Path 2: enemies that vanished from our view since last
@@ -1512,12 +1620,6 @@ class LearningBot:
                 # the kill blow correctly and tag it as PvP if the victim
                 # was a player.
                 snap_petals = self._my_petals_snapshot
-                # Our petal count at kill time — compared against the
-                # victim's snapshotted petal count to decide whether to
-                # pay the "weaker than us" PvP bonus. `my_petals` was
-                # populated above by the same scan used for damage
-                # credit, so it reflects the current frame.
-                my_petal_count = len(my_petals)
                 for eid in list(self._enemy_hp_snapshot.keys()):
                     if eid in seen_eids:
                         continue
@@ -1581,11 +1683,19 @@ class LearningBot:
             if confirmed_weak_kills:
                 reward += W_PVP_WEAK_KILL_BONUS * confirmed_weak_kills
                 self.weak_kills_this_life += confirmed_weak_kills
-            # Any confirmed kill (mob or player) resets the camp
-            # no-kill timer. Without this the bot could grind mobs
-            # for a moment, then drift into camping with the timer
-            # already near the threshold.
-            if confirmed_mob_kills or confirmed_pvp_kills:
+            # Reset the camp no-kill timer on any tick where we landed
+            # petal-confirmed damage on a hostile (mob OR player), not
+            # just on a confirmed kill. The earlier kill-only reset was
+            # punishing bots that were actively winning a long PvP
+            # engagement: players are tanky, an extended fight runs
+            # past CAMP_KILL_GRACE_TICKS (10s) with no kill landing,
+            # and the camp penalty would fire mid-combat — teaching
+            # the policy to disengage from PvP fights it was about to
+            # win. Resetting on damage means "currently chunking an
+            # enemy" counts as not-camping, even if the kill itself is
+            # still seconds away. The camp penalty still fires for a
+            # bot that genuinely sits doing nothing.
+            if damage_credited > 0.0 or confirmed_mob_kills or confirmed_pvp_kills:
                 self._ticks_since_kill = 0
             self.pvp_kills += confirmed_pvp_kills
             self.pvp_kills_this_life += confirmed_pvp_kills
@@ -1613,6 +1723,27 @@ class LearningBot:
                 # No hostile in view — clear the baseline so we don't apply
                 # a spurious closing reward when one re-enters.
                 self._prev_nearest_hostile_dist = None
+            # Player-specific approach. Same closing-rate gradient but
+            # against the nearest *Flower* only, stacked on top of the
+            # hostile-agnostic term. Net effect: moving toward a player
+            # pays (W_APPROACH + W_PVP_APPROACH) = 24 per
+            # OBS_SCALE-normalised closing unit, vs 8 for moving
+            # toward a mob. The cap is shared (APPROACH_CAP) so a
+            # target swap can't ride the bonus harder than the base
+            # term does.
+            cur_player_d2 = _nearest_player_dist_sq(self.entities, player, my_team)
+            if cur_player_d2 < math.inf:
+                cur_player_d = math.sqrt(cur_player_d2)
+                if self._prev_nearest_player_dist is not None:
+                    p_closing = self._prev_nearest_player_dist - cur_player_d
+                    if p_closing > APPROACH_CAP:
+                        p_closing = APPROACH_CAP
+                    elif p_closing < -APPROACH_CAP:
+                        p_closing = -APPROACH_CAP
+                    reward += W_PVP_APPROACH * (p_closing / OBS_SCALE)
+                self._prev_nearest_player_dist = cur_player_d
+            else:
+                self._prev_nearest_player_dist = None
             # Petal-having reward / empty-slot penalty. Two-sided gradient
             # on the loadout: every non-empty primary slot pays the full
             # rarity-scaled per-tick bonus, every kNone primary slot pays

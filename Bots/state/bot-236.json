@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-236",
+  "first_seen": 1779582551.8769789,
+  "last_seen": 1779583273.109798,
+  "episodes": 4,
+  "score_total": 80,
+  "score_best": 39,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "a": 1,
+    "bot-23": 1,
+    "bot-303": 1
+  },
+  "loadout_history": {
+    "0": 4,
+    "256": 2
+  }
+}

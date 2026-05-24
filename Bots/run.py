@@ -188,6 +188,12 @@ def _spawn_workers(args: argparse.Namespace) -> int:
     worker_env["MKL_NUM_THREADS"] = str(threads_per_worker)
     worker_env["OPENBLAS_NUM_THREADS"] = str(threads_per_worker)
     worker_env["GARDN_TORCH_THREADS"] = str(threads_per_worker)
+    # Each child runs with --workers 1 (so it doesn't recursively fork)
+    # but still needs to know the total worker count for peer-sync
+    # (so it can build the list of sibling .W{id} paths). Pass the
+    # original args.workers via env var so the child can read it
+    # without us adding yet another CLI flag.
+    worker_env["GARDN_NUM_WORKERS"] = str(args.workers)
     for wid in range(args.workers):
         n = base_per + (1 if wid < extra else 0)
         if n <= 0:
@@ -216,6 +222,8 @@ def _spawn_workers(args: argparse.Namespace) -> int:
             "--warmup", str(args.warmup),
             "--device", args.device,
             "--stats-interval", str(args.stats_interval),
+            "--peer-sync-every", str(args.peer_sync_every),
+            "--peer-sync-my-weight", str(args.peer_sync_my_weight),
         ]
         if args.checkpoint:
             cmd += ["--checkpoint", args.checkpoint]
@@ -225,6 +233,10 @@ def _spawn_workers(args: argparse.Namespace) -> int:
             cmd.append("--fast-start")
         if args.sync:
             cmd.append("--sync")
+        if args.frozen_frac > 0:
+            cmd += ["--frozen-frac", str(args.frozen_frac)]
+            if args.frozen_checkpoint:
+                cmd += ["--frozen-checkpoint", args.frozen_checkpoint]
         children.append(subprocess.Popen(cmd, env=worker_env))
     rc = 0
     try:
@@ -425,7 +437,93 @@ async def _amain(args: argparse.Namespace) -> None:
         except Exception as e:  # noqa: BLE001
             print(f"[agent W{args.worker_id}] failed to load {load_path}: {e}; using fresh init")
 
+    # Multi-worker peer sync. Each child knows its own worker_id and the
+    # total worker count (passed via GARDN_NUM_WORKERS by the parent
+    # spawner). When >1 sibling exists and a checkpoint base is set, build
+    # a paths_provider that returns the other workers' .W{id} files and
+    # hand it to the agent. Sync disabled if base_checkpoint is None
+    # (nothing to read), num_workers <= 1 (no siblings), or cadence is 0.
+    _num_workers = int(os.environ.get("GARDN_NUM_WORKERS", "1"))
+    if (base_checkpoint
+            and args.worker_id is not None
+            and _num_workers > 1
+            and args.peer_sync_every > 0):
+        _peer_ids = [w for w in range(_num_workers) if w != args.worker_id]
+        _peer_paths = [_worker_path(base_checkpoint, w) for w in _peer_ids]
+        agent.configure_peer_sync(
+            paths_provider=lambda paths=_peer_paths: paths,
+            every_train_steps=args.peer_sync_every,
+            my_weight=args.peer_sync_my_weight,
+        )
+        print(
+            f"[agent W{args.worker_id}] peer-sync enabled: "
+            f"every {args.peer_sync_every} train_steps, "
+            f"my_weight={args.peer_sync_my_weight}, "
+            f"peers={_peer_ids}",
+            flush=True,
+        )
+
     agent.start_trainer()
+
+    # Frozen-opponent pool: an older policy snapshot used by a fraction of
+    # bots so the learner has a different-distribution target to actually
+    # kill. Without this, all bots share one policy and PvP kills plateau
+    # at the rate two equally-skilled flowers manage to finish each other
+    # before something else interrupts (observed: ~0.03 PvP kills/episode
+    # for hours of training, while every other metric kept improving).
+    # The frozen agent never trains and its push() is monkey-patched to
+    # no-op so it doesn't grow a stale buffer or step env_steps.
+    frozen_agent: DQNAgent | None = None
+    if args.frozen_frac > 0 and base_checkpoint:
+        frozen_path = args.frozen_checkpoint
+        if not frozen_path:
+            # Default: prefer the historical best-at-PvP snapshot, which is
+            # the most behaviorally distinct checkpoint we routinely keep.
+            candidate = _best_path(base_checkpoint, "pvp_kills")
+            if os.path.exists(candidate):
+                frozen_path = candidate
+            elif os.path.exists(_best_path(base_checkpoint)):
+                frozen_path = _best_path(base_checkpoint)
+        if frozen_path and os.path.exists(frozen_path):
+            try:
+                import torch as _torch
+                frozen_agent = DQNAgent(
+                    device=args.device,
+                    checkpoint_path=None,
+                    eps_start=0.0,
+                    eps_end=0.0,
+                )
+                fstate = _torch.load(frozen_path, map_location=frozen_agent.device)
+                _pad_load_state_dict(frozen_agent.q, fstate.get("q", {}))
+                frozen_agent.target.load_state_dict(frozen_agent.q.state_dict())
+                frozen_agent.q_inference.load_state_dict(frozen_agent.q.state_dict())
+                # No trainer, no stats pollution: skip push so the buffer
+                # doesn't accumulate transitions nobody reads, and env_steps
+                # stays at 0 (epsilon is already pinned to 0, so this only
+                # matters for the build-decay anneal — frozen bots aren't
+                # chasing a build target anyway).
+                frozen_agent.push = lambda *a, **kw: None  # type: ignore[assignment]
+                print(
+                    f"[agent W{args.worker_id}] frozen opponents loaded from {frozen_path}"
+                )
+            except Exception as e:  # noqa: BLE001
+                print(
+                    f"[agent W{args.worker_id}] failed to load frozen {frozen_path}: {e}; "
+                    "disabling frozen pool"
+                )
+                frozen_agent = None
+        else:
+            print(
+                f"[agent W{args.worker_id}] no frozen checkpoint available "
+                f"(tried {frozen_path or '<auto>'}); disabling frozen pool"
+            )
+
+    n_frozen = int(round(args.count * args.frozen_frac)) if frozen_agent else 0
+    if frozen_agent and n_frozen > 0:
+        print(
+            f"[agent W{args.worker_id}] {n_frozen}/{args.count} bots will play "
+            f"the frozen policy as opponents"
+        )
 
     # Resolve `--build`. The bot always SPAWNS with kBasic — the named
     # preset is a *reward-shaping target* (see bot.py W_BUILD_TARGET).
@@ -445,7 +543,7 @@ async def _amain(args: argparse.Namespace) -> None:
     bots = [
         LearningBot(
             _make_name(i + (args.worker_id or 0) * 100),
-            agent=agent,
+            agent=(frozen_agent if (frozen_agent and i < n_frozen) else agent),
             url=args.url,
             control_hz=args.control_hz,
             action_repeat=args.action_repeat,
@@ -540,6 +638,22 @@ def main() -> int:
              "competing for the swarm-wide best checkpoint at <checkpoint>.best.",
     )
     p.add_argument(
+        "--peer-sync-every", type=int, default=1000,
+        help="federated-averaging cadence for multi-worker training: every N "
+             "train_steps, average our online QNet weights with sibling workers' "
+             "checkpoints on disk. 0 disables (each worker stays independent — "
+             "the old racing-for-best behavior). Only takes effect when "
+             "--workers > 1. Default 1000 trades minor disk I/O for a single "
+             "shared model that benefits from every worker's gradient updates.",
+    )
+    p.add_argument(
+        "--peer-sync-my-weight", type=float, default=0.5,
+        help="how much of our own weights survive each peer-sync merge. 0.5 = "
+             "equal blend with peer average; closer to 1.0 keeps more of our "
+             "own trajectory (slower consensus, more diversity); closer to 0.0 "
+             "pulls harder toward consensus (faster convergence, less exploration).",
+    )
+    p.add_argument(
         "--worker-id", type=int, default=None,
         help="(internal) set by the parent when forking workers; identifies which "
              "worker this child is for checkpoint pathing.",
@@ -573,6 +687,23 @@ def main() -> int:
              "round-end respawn gate so episode turnover is ~100× the "
              "default. Use this to validate the training pipeline; turn it "
              "off for production runs where you want the full wave mechanic.",
+    )
+    p.add_argument(
+        "--frozen-frac", type=float, default=0.0,
+        help="fraction of bots (per worker) that play a frozen older policy "
+             "instead of the live learner. Used as opponent diversity to break "
+             "the self-play stalemate where all bots share one policy and "
+             "trade damage forever without finishing. The frozen agent never "
+             "trains and never records stats into the learner — its purpose "
+             "is to be a different-distribution target the learner can "
+             "actually kill. Default 0 disables it.",
+    )
+    p.add_argument(
+        "--frozen-checkpoint", default=None,
+        help="checkpoint path for the frozen-opponent pool. Defaults to "
+             "<checkpoint>.best.pvp_kills (the historical best-at-PvP "
+             "snapshot — different enough from current weights to be a "
+             "meaningfully distinct opponent). Ignored when --frozen-frac=0.",
     )
     p.add_argument(
         "--sync", action="store_true",

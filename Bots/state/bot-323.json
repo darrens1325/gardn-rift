@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "bot-323",
+  "first_seen": 1779582487.4054348,
+  "last_seen": 1779584332.315715,
+  "episodes": 3,
+  "score_total": 139,
+  "score_best": 105,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Evil Centipede": 1,
+    "Cactus": 1
+  },
+  "loadout_history": {
+    "0": 3,
+    "256": 1
+  }
+}

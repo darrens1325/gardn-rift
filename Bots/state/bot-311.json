@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-311",
   "first_seen": 1778364742.733154,
-  "last_seen": 1778542994.713697,
-  "episodes": 25,
-  "score_total": 443,
+  "last_seen": 1779584320.365079,
+  "episodes": 27,
+  "score_total": 505,
   "score_best": 66,
   "best_loadout": [
     0,
@@ -26,9 +26,10 @@
     "bot-410": 1
   },
   "loadout_history": {
-    "0": 20,
+    "0": 22,
     "1": 21,
     "5": 2,
-    "15": 2
+    "15": 2,
+    "2049": 1
   }
 }

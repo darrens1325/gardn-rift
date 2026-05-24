@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-327",
+  "first_seen": 1779583258.530439,
+  "last_seen": 1779583258.530439,
+  "episodes": 1,
+  "score_total": 147,
+  "score_best": 147,
+  "best_loadout": [
+    4096,
+    4097,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "4096": 1,
+    "4097": 1,
+    "0": 1
+  }
+}

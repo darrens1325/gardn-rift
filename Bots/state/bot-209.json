@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-209",
   "first_seen": 1778364745.407786,
-  "last_seen": 1778542844.542783,
-  "episodes": 22,
-  "score_total": 243,
+  "last_seen": 1779583406.891623,
+  "episodes": 24,
+  "score_total": 254,
   "score_best": 63,
   "best_loadout": [
     0,
@@ -21,13 +21,16 @@
     "Evil Centipede": 1,
     "bot-416": 2,
     "Spider": 1,
-    "Wasp": 1
+    "Wasp": 1,
+    "bot-37": 1
   },
   "loadout_history": {
-    "0": 17,
+    "0": 18,
     "1": 20,
     "5": 1,
     "14": 1,
-    "49": 1
+    "49": 1,
+    "2048": 1,
+    "256": 2
   }
 }

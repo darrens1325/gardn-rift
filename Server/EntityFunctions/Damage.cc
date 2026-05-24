@@ -15,7 +15,12 @@ void inflict_damage(Simulation *sim, EntityID const atk_id, EntityID const def_i
     DEBUG_ONLY(assert(!defender.pending_delete);)
     DEBUG_ONLY(assert(defender.has_component(kHealth));)
     if (defender.immunity_ticks > 0) return;
-    if (type == DamageType::kContact) amt -= defender.armor;
+    if (type == DamageType::kContact) {
+        if (defender.has_component(kFlower) && defender.armor_stacks > 0)
+            amt -= defender.armor_per_stack;
+        else
+            amt -= defender.armor;
+    }
     else if (type == DamageType::kPoison) amt -= defender.poison_armor;
     if (defender.has_component(kMob) && defender.mob_id == MobID::kLeafbug) {
         amt = fclamp(amt - 10, 0, amt);

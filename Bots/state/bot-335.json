@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "name": "bot-335",
+  "first_seen": 1779583081.46914,
+  "last_seen": 1779583258.85984,
+  "episodes": 2,
+  "score_total": 46,
+  "score_best": 29,
+  "best_loadout": [
+    768,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "768": 1,
+    "0": 2,
+    "256": 1
+  }
+}

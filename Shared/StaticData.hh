@@ -152,5 +152,6 @@ extern uint32_t score_to_pass_level(uint32_t);
 extern uint32_t score_to_level(uint32_t);
 extern uint32_t level_to_score(uint32_t);
 extern uint32_t loadout_slots_at_level(uint32_t);
+extern uint32_t loadout_slots_for_max_rarity(uint8_t);
 
 extern float hp_at_level(uint32_t);

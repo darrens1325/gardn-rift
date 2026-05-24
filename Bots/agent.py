@@ -201,16 +201,25 @@ def _pad_load_state_dict(module: nn.Module, source: dict) -> dict:
 class QNet(nn.Module):
     def __init__(self) -> None:
         super().__init__()
+        # Widened from 128/128/256/128 → 512/512/1024/512 (~100K → ~1.4M
+        # parameters, ~14×). The narrower net plateaued at pvp_kills ≈
+        # 0.08/episode at 150M env_steps and couldn't translate the
+        # richer reward signal (camp penalty, weak/camper-kill bonuses,
+        # player-specific proximity/approach) into behavior changes.
+        # Old checkpoints still load via `_pad_load_state_dict` — the
+        # legacy 128 hidden units occupy the first 128 positions of each
+        # new wider layer, and the remaining positions train from
+        # random init.
         self.net = nn.Sequential(
-            nn.Linear(STATE_DIM, 128),
+            nn.Linear(STATE_DIM, 512),
             nn.ReLU(),
-            nn.Linear(128, 128),
+            nn.Linear(512, 512),
             nn.ReLU(),
-            nn.Linear(128, 256),
+            nn.Linear(512, 1024),
             nn.ReLU(),
-            nn.Linear(256, 128),
+            nn.Linear(1024, 512),
             nn.ReLU(),
-            nn.Linear(128, NUM_ACTIONS),
+            nn.Linear(512, NUM_ACTIONS),
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -281,6 +290,18 @@ class DQNAgent:
         # weights lag by up to this many gradient updates, which DQN
         # tolerates fine — the policy doesn't change radically per step.
         self._inference_sync_every = 10
+
+        # Peer-sync: in multi-worker training, periodically average the
+        # online net's weights with sibling workers' on-disk checkpoints.
+        # Disabled by default (provider=None) — run.py wires this up when
+        # `--workers > 1`. Implements federated-averaging-style sync so
+        # all workers slowly converge on a shared model rather than each
+        # one wasting its compute on an independent racing trajectory.
+        # See `merge_peer_weights` for the actual merge implementation.
+        self._peer_sync_paths_provider = None
+        self._peer_sync_every_train_steps: int = 0
+        self._peer_sync_my_weight: float = 0.5
+        self._peer_sync_log: bool = True
 
         # Rolling window of recent finished-episode results across the entire
         # swarm. Bots call `record_episode()` on death. The mean over this
@@ -498,7 +519,20 @@ class DQNAgent:
 
         q_pred = self.q(s_t).gather(1, a_t).squeeze(1)
         with torch.no_grad():
-            q_next = self.target(s2_t).max(dim=1).values
+            # Double DQN: decouple action *selection* (online net) from
+            # action *evaluation* (target net). Vanilla DQN's max over
+            # the target net systematically overestimates Q-values
+            # because the same network both picks and evaluates the
+            # argmax — any noise that makes one action look spuriously
+            # good gets propagated as the bootstrap target. Especially
+            # bad in multi-agent .io-style environments where rewards
+            # are non-stationary (opponents' policies shift mid-training)
+            # and outlier rewards (W_PLAYER_KILL_BONUS=200, camp/weak
+            # stacks up to +350) get amplified by the overestimation.
+            # The one-extra forward through self.q is cheap (we're
+            # already inside no_grad) and the stability win is large.
+            a_next = self.q(s2_t).argmax(dim=1, keepdim=True)
+            q_next = self.target(s2_t).gather(1, a_next).squeeze(1)
             q_target = r_t + self.gamma * q_next * (1.0 - d_t)
         # Huber loss is more stable than MSE under reward outliers (kill bonuses).
         loss = nn.functional.smooth_l1_loss(q_pred, q_target)
@@ -524,6 +558,28 @@ class DQNAgent:
                 and self.checkpoint_every_train_steps > 0
                 and self.train_steps % self.checkpoint_every_train_steps == 0):
             self.save()
+        # Federated peer sync — average online net's weights with the
+        # other workers' saved checkpoints at the configured cadence.
+        # This must run *after* the local save so our own slot reflects
+        # the latest pre-merge weights before sibling workers pick it up,
+        # and so a tight checkpoint_every / peer_sync_every coupling
+        # doesn't read stale data from disk on the very tick we'd otherwise
+        # be writing fresh.
+        if (self._peer_sync_paths_provider is not None
+                and self._peer_sync_every_train_steps > 0
+                and self.train_steps % self._peer_sync_every_train_steps == 0):
+            paths = self._peer_sync_paths_provider()
+            if paths:
+                report = self.merge_peer_weights(
+                    paths, my_weight=self._peer_sync_my_weight
+                )
+                if self._peer_sync_log and report["peers_merged"] > 0:
+                    print(
+                        f"[agent] peer-sync merged "
+                        f"{report['peers_merged']}/{len(paths)} peer(s) "
+                        f"at train_step={self.train_steps}",
+                        flush=True,
+                    )
 
     def save(self) -> None:
         if not self.checkpoint_path:
@@ -546,3 +602,73 @@ class DQNAgent:
             {"q": sd, "env_steps": env_steps, "train_steps": train_steps},
             path,
         )
+
+    def configure_peer_sync(
+        self,
+        paths_provider,
+        every_train_steps: int,
+        my_weight: float = 0.5,
+        log: bool = True,
+    ) -> None:
+        """Enable federated-averaging-style sync with sibling workers.
+        `paths_provider` is a zero-arg callable returning the list of
+        per-worker checkpoint paths to read (excluding our own); typically
+        wired up by run.py from `_worker_path(base, w)` for each peer
+        worker id. `every_train_steps` controls the cadence (0 disables).
+        `my_weight` is how much of our own weights survive the merge
+        (0.5 = equal blend with the peer-average; closer to 1.0 keeps
+        more of our trajectory, closer to 0.0 pulls harder toward
+        consensus)."""
+        self._peer_sync_paths_provider = paths_provider
+        self._peer_sync_every_train_steps = max(0, int(every_train_steps))
+        self._peer_sync_my_weight = max(0.0, min(1.0, float(my_weight)))
+        self._peer_sync_log = bool(log)
+
+    def merge_peer_weights(self, paths: list, my_weight: float = 0.5) -> dict:
+        """Read each path's saved state_dict and average our online net's
+        weights with theirs:  q := my_weight * q + (1 - my_weight) * mean(peers).
+        Skips any path that's missing, mid-write, or shape-incompatible
+        (e.g. a peer hasn't grown to the new QNet size yet). Merge runs
+        under `_sync_lock` so the inference copy can't pull torn weights.
+
+        Returns {"peers_merged": int} so callers can log the merge."""
+        own_sd = {k: v.clone() for k, v in self.q.state_dict().items()}
+        peer_sds = []
+        for path in paths:
+            try:
+                data = torch.load(path, map_location=self.device)
+            except (FileNotFoundError, EOFError, RuntimeError, OSError):
+                # Missing file (peer hasn't saved yet) or torn read
+                # (peer is mid-write); skip silently — we'll retry next
+                # sync cycle.
+                continue
+            if not isinstance(data, dict):
+                continue
+            peer_sd = data.get("q")
+            if peer_sd is None:
+                continue
+            # Reject shape-mismatched peers outright — e.g. one worker on
+            # an old QNet size after a hot reload. Mixing partial slices
+            # gives garbage; better to skip and re-converge next cycle.
+            if not all(
+                k in peer_sd and peer_sd[k].shape == own_sd[k].shape
+                for k in own_sd
+            ):
+                continue
+            peer_sds.append(peer_sd)
+        if not peer_sds:
+            return {"peers_merged": 0}
+        other_weight = (1.0 - my_weight) / len(peer_sds)
+        merged_sd = {}
+        for k, own_t in own_sd.items():
+            acc = own_t * my_weight
+            for peer_sd in peer_sds:
+                acc = acc + peer_sd[k].to(self.device, dtype=own_t.dtype) * other_weight
+            merged_sd[k] = acc
+        with self._sync_lock:
+            self.q.load_state_dict(merged_sd)
+            # Also refresh q_inference so bots start using the merged
+            # weights immediately instead of waiting for the next
+            # _inference_sync_every cycle.
+            self.q_inference.load_state_dict(merged_sd)
+        return {"peers_merged": len(peer_sds)}

@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-331",
+  "first_seen": 1779582580.473235,
+  "last_seen": 1779584349.5965838,
+  "episodes": 4,
+  "score_total": 230,
+  "score_best": 69,
+  "best_loadout": [
+    0,
+    256,
+    0,
+    0,
+    256
+  ],
+  "killed_by": {
+    "bot-325": 1,
+    "Beetle": 1,
+    "bot-114": 1
+  },
+  "loadout_history": {
+    "0": 4,
+    "256": 2
+  }
+}

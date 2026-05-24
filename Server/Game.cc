@@ -189,7 +189,9 @@ void GameInstance::end_round() {
                 camera.set_inventory(i, PetalID::kNone);
             }
             camera.set_respawn_level(1);
-            for (uint32_t i = 0; i < loadout_slots_at_level(camera.respawn_level); ++i) {
+            camera.set_inventory(0, PetalID::kCommonRose);
+            PetalTracker::add_petal(&simulation, PetalID::kCommonRose);
+            for (uint32_t i = 1; i < loadout_slots_at_level(camera.respawn_level); ++i) {
                 camera.set_inventory(i, PetalID::kBasic);
                 PetalTracker::add_petal(&simulation, PetalID::kBasic);
             }
@@ -244,10 +246,11 @@ void GameInstance::add_client(Client *client) {
     
     ent.set_fov(BASE_FOV);
     ent.set_respawn_level(1);
-    for (uint32_t i = 0; i < loadout_slots_at_level(ent.respawn_level); ++i)
+    ent.set_inventory(0, PetalID::kCommonRose);
+    for (uint32_t i = 1; i < loadout_slots_at_level(ent.respawn_level); ++i)
         ent.set_inventory(i, PetalID::kBasic);
     if (frand() < 0.0001 && PetalTracker::get_count(&simulation, PetalID::kUniqueBasic) == 0)
-        ent.set_inventory(0, PetalID::kUniqueBasic);
+        ent.set_inventory(1, PetalID::kUniqueBasic);
     for (uint32_t i = 0; i < loadout_slots_at_level(ent.respawn_level); ++i)
         PetalTracker::add_petal(&simulation, ent.inventory[i]);
     client->camera = ent.id;

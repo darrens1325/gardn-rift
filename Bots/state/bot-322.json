@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-322",
+  "first_seen": 1779582579.38701,
+  "last_seen": 1779584348.418095,
+  "episodes": 4,
+  "score_total": 472,
+  "score_best": 220,
+  "best_loadout": [
+    0,
+    256,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Wasp": 1,
+    "bot-306": 1,
+    "Bee": 1
+  },
+  "loadout_history": {
+    "0": 4,
+    "256": 1
+  }
+}

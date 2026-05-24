@@ -2,26 +2,37 @@
   "schema": 1,
   "name": "bot-207",
   "first_seen": 1778364743.9667141,
-  "last_seen": 1778542947.604479,
-  "episodes": 20,
-  "score_total": 214,
-  "score_best": 66,
+  "last_seen": 1779583427.312094,
+  "episodes": 27,
+  "score_total": 503,
+  "score_best": 95,
   "best_loadout": [
+    256,
+    256,
+    256,
     0,
-    1,
-    0,
-    0,
-    0
+    256,
+    2561
   ],
   "killed_by": {
     "Bee": 2,
     "Hornet": 4,
     "Spider": 3,
     "Beetle": 1,
-    "Desert Centipede": 1
+    "Desert Centipede": 1,
+    "bot-204": 1,
+    "bot-333": 1,
+    "Evil Centipede": 1,
+    "bloomy": 1,
+    "Soldier Ant": 1
   },
   "loadout_history": {
     "1": 17,
-    "0": 15
+    "0": 17,
+    "2048": 2,
+    "256": 7,
+    "5888": 1,
+    "2560": 1,
+    "2561": 1
   }
 }

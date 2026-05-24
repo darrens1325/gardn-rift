@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "name": "bot-232",
+  "first_seen": 1779583141.7817779,
+  "last_seen": 1779585082.0312839,
+  "episodes": 2,
+  "score_total": 60,
+  "score_best": 34,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Evil Centipede": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "256": 1
+  }
+}

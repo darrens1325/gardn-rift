@@ -857,7 +857,7 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Massive Ladybug",
         "Much larger, but still cute.",
         RarityID::kEpic, {1000.0}, 10.0, {90.0}, 400, {
-        PetalID::kCommonRose, PetalID::kRose, PetalID::kRareRose, PetalID::kLegendaryRose, PetalID::kDahlia, PetalID::kCommonBubble, PetalID::kUnusualBubble, PetalID::kBubble, PetalID::kEpicBubble, PetalID::kLegendaryBubble, PetalID::kAzalea, PetalID::kObserver
+        PetalID::kCommonRose, PetalID::kRose, PetalID::kRareRose, PetalID::kLegendaryRose, PetalID::kDahlia, PetalID::kCommonBubble, PetalID::kUnusualBubble, PetalID::kBubble, PetalID::kEpicBubble, PetalID::kLegendaryBubble, PetalID::kObserver
     }, {}},
     {
         "Massive Beetle",
@@ -869,7 +869,7 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Ladybug",
         "Cute and harmless... if left unprovoked.",
         RarityID::kUnusual, {35.0}, 10.0, {30.0}, 5, {
-        PetalID::kDahlia, PetalID::kWing, PetalID::kYinYang, PetalID::kAzalea
+        PetalID::kDahlia, PetalID::kWing, PetalID::kYinYang
     }, {}},
     {
         "Hornet",
@@ -1049,6 +1049,14 @@ uint32_t level_to_score(uint32_t level) {
 uint32_t loadout_slots_at_level(uint32_t level) {
     if (level > MAX_LEVEL) level = MAX_LEVEL;
     uint32_t ret = 5 + level / LEVELS_PER_EXTRA_SLOT;
+    if (ret > MAX_SLOT_COUNT) return MAX_SLOT_COUNT;
+    return ret;
+}
+
+// One extra slot per rarity step above Common: Common→5, Unusual→6,
+// Rare→7, Epic+→capped at MAX_SLOT_COUNT.
+uint32_t loadout_slots_for_max_rarity(uint8_t max_rarity) {
+    uint32_t ret = 5 + max_rarity;
     if (ret > MAX_SLOT_COUNT) return MAX_SLOT_COUNT;
     return ret;
 }

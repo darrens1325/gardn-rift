@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-224",
+  "first_seen": 1779582627.1196868,
+  "last_seen": 1779583287.0365498,
+  "episodes": 3,
+  "score_total": 1738,
+  "score_best": 1040,
+  "best_loadout": [
+    2048,
+    0,
+    256,
+    0,
+    0
+  ],
+  "killed_by": {
+    "not bot": 1,
+    "bot-310": 1
+  },
+  "loadout_history": {
+    "2048": 1,
+    "0": 3,
+    "256": 2,
+    "3584": 1
+  }
+}

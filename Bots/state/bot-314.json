@@ -2,20 +2,20 @@
   "schema": 1,
   "name": "bot-314",
   "first_seen": 1778364743.273674,
-  "last_seen": 1778543015.064021,
-  "episodes": 22,
-  "score_total": 385,
-  "score_best": 44,
+  "last_seen": 1779583402.1310441,
+  "episodes": 25,
+  "score_total": 488,
+  "score_best": 51,
   "best_loadout": [
+    2560,
     0,
     0,
-    0,
-    0,
+    256,
     0
   ],
   "killed_by": {
     "Spider": 1,
-    "Hornet": 7,
+    "Hornet": 9,
     "Evil Centipede": 2,
     "Sandstorm": 2,
     "Cactus": 1,
@@ -25,9 +25,12 @@
     "Leafbug": 1
   },
   "loadout_history": {
-    "0": 16,
+    "0": 19,
     "1": 20,
     "10": 1,
-    "14": 1
+    "14": 1,
+    "1024": 2,
+    "256": 2,
+    "2560": 1
   }
 }

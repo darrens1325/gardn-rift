@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "name": "bot-234",
+  "first_seen": 1779583055.490814,
+  "last_seen": 1779583055.490814,
+  "episodes": 1,
+  "score_total": 19,
+  "score_best": 19,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "0": 1
+  }
+}

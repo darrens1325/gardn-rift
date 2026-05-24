@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "name": "bot-229",
+  "first_seen": 1779582755.8458219,
+  "last_seen": 1779583243.8533819,
+  "episodes": 3,
+  "score_total": 264,
+  "score_best": 119,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Cactus": 2
+  },
+  "loadout_history": {
+    "0": 3
+  }
+}

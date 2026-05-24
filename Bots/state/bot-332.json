@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "name": "bot-332",
+  "first_seen": 1779582812.318762,
+  "last_seen": 1779585022.1285791,
+  "episodes": 3,
+  "score_total": 405,
+  "score_best": 247,
+  "best_loadout": [
+    0,
+    0,
+    256,
+    256,
+    0
+  ],
+  "killed_by": {
+    "bloom": 1,
+    "bot-218": 1
+  },
+  "loadout_history": {
+    "0": 3,
+    "256": 1
+  }
+}

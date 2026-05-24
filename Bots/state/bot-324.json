@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-324",
+  "first_seen": 1779582672.4832242,
+  "last_seen": 1779583355.519723,
+  "episodes": 4,
+  "score_total": 835,
+  "score_best": 445,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 1,
+    "Evil Centipede": 1,
+    "bot-107": 1
+  },
+  "loadout_history": {
+    "3584": 2,
+    "512": 1,
+    "0": 4
+  }
+}

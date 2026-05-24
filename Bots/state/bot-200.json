@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-200",
   "first_seen": 1778364742.724025,
-  "last_seen": 1778542968.899678,
-  "episodes": 93,
-  "score_total": 1245,
+  "last_seen": 1779583002.794116,
+  "episodes": 95,
+  "score_total": 1294,
   "score_best": 69,
   "best_loadout": [
     0,
@@ -18,7 +18,7 @@
     "Massive Beetle": 1,
     "Hornet": 37,
     "Cactus": 9,
-    "Beetle": 5,
+    "Beetle": 6,
     "Evil Centipede": 11,
     "bot-312": 1,
     "Soldier Ant": 4,
@@ -42,6 +42,9 @@
     "29": 1,
     "9": 1,
     "16": 1,
-    "28": 1
+    "28": 1,
+    "2048": 1,
+    "256": 2,
+    "2560": 1
   }
 }

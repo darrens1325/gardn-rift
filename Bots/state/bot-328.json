@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "name": "bot-328",
+  "first_seen": 1779582856.1362062,
+  "last_seen": 1779583231.62675,
+  "episodes": 3,
+  "score_total": 175,
+  "score_best": 92,
+  "best_loadout": [
+    3072,
+    256,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Cactus": 1,
+    "Mantis": 1
+  },
+  "loadout_history": {
+    "0": 3,
+    "1024": 1,
+    "3072": 1,
+    "256": 2
+  }
+}
