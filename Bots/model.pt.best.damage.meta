@@ -1,1 +1,1 @@
-{"value": 1.015625, "metric": "damage", "saved_at": 1779580769.007596, "worker_id": -1, "env_steps": 152047681, "train_steps": 13434518}
+{"value": 2.0, "metric": "damage", "saved_at": 1779588769.1473262, "worker_id": 7, "env_steps": 152022970, "train_steps": 13433225}
