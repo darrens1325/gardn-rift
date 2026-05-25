@@ -766,6 +766,13 @@ class LearningBot:
     # Set True if you want a human watching the channel to see kill /
     # help / position pings (useful for deployment, not for training).
     chat_enabled = False
+    # Class-level set of bot names belonging to the frozen-policy pool.
+    # Populated by run.py once bots are constructed (it knows which
+    # indices were assigned the frozen_agent). Used to compute the
+    # `team_round_wins` per-episode extra metric: a round counts as a
+    # learning-team win when the winner's name is NOT in this set.
+    # Empty set means no frozen pool (every winner counts as ours).
+    frozen_names: set[str] = set()
 
     def __init__(
         self,
@@ -898,6 +905,16 @@ class LearningBot:
         # PvP-only signal for anyone who wants it.
         self.mob_kills_this_life = 0
         self.drops_picked_up_this_life = 0
+        # Cumulative `rounds_won` lives on the bot for the whole run.
+        # `team_round_wins_this_life` resets on death and feeds the
+        # `team_round_wins` per-episode metric: counts how many rounds
+        # ENDED in this life with the learning team (= any bot whose
+        # name is NOT in LearningBot.frozen_names) as the winner. When
+        # no frozen pool is configured, every winner is "learning", so
+        # the count equals total rounds-this-life. Reported by every bot
+        # (learning + frozen) but only the learning agent's deque is
+        # checked for `.best.team_round_wins` promotion in run.py.
+        self.team_round_wins_this_life = 0
         self._prev_nonempty_slots = 0
 
         # Snapshot of last-seen (hp, x, y, radius) per hostile EntityID. Used
@@ -1203,6 +1220,7 @@ class LearningBot:
             "drops": float(self.drops_picked_up_this_life),
             "damage": float(self.damage_dealt),
             "petal_rarity": avg_rarity,
+            "team_round_wins": float(self.team_round_wins_this_life),
         })
         try:
             self.persistent.record_episode(
@@ -1241,6 +1259,7 @@ class LearningBot:
         self.pvp_kills_this_life = 0
         self.mob_kills_this_life = 0
         self.drops_picked_up_this_life = 0
+        self.team_round_wins_this_life = 0
         self._prev_nonempty_slots = 0
         # Anti-camp trackers — fresh window per life so a previous
         # life's stationary streak can't carry over and immediately
@@ -2010,6 +2029,14 @@ class LearningBot:
                                 if winner_name == self.name:
                                     self._round_win_pending = W_ROUND_WIN
                                     self.rounds_won += 1
+                                # Team-aware win counter: a round is a
+                                # learning-team win whenever the winner
+                                # isn't in the frozen pool. Every bot
+                                # tracks the same value per round so
+                                # the swarm-wide mean equals the
+                                # learning team's win rate per life.
+                                if winner_name not in LearningBot.frozen_names:
+                                    self.team_round_wins_this_life += 1
                                 # Re-arm respawn — every bot waits for this
                                 # signal between rounds so they all spawn
                                 # together at round start.

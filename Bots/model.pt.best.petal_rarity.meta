@@ -1,1 +1,1 @@
-{"value": 0.4, "metric": "petal_rarity", "saved_at": 1779588787.8734658, "worker_id": 10, "env_steps": 152023254, "train_steps": 13433297}
+{"value": 0.3318928571428571, "metric": "petal_rarity", "saved_at": 1779692126.7850418, "worker_id": 2, "env_steps": 153545911, "train_steps": 13529540}

@@ -554,6 +554,14 @@ async def _amain(args: argparse.Namespace) -> None:
         )
         for i in range(args.count)
     ]
+    # Publish the frozen-pool's names so every bot can compute the
+    # `team_round_wins` per-episode metric (= "did a learning bot win
+    # this round?"). Across the whole swarm the mean of this metric is
+    # the learning team's win rate — useful as a `.best.team_round_wins`
+    # promotion signal even though per-bot `round_wins` saturates at 1/N
+    # because exactly one bot wins per round.
+    LearningBot.frozen_names = {bot.name for i, bot in enumerate(bots)
+                                if frozen_agent is not None and i < n_frozen}
     # When the parent splits a fleet across workers, each child is given
     # an `--initial-delay` so its first WebSocket only opens after every
     # earlier worker has finished staggering its own bots. This keeps the

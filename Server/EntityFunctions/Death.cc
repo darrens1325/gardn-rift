@@ -95,7 +95,9 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
             // entity's runtime rolled rarity, so a Mythic-rolled Bee uses
             // the gallery's "Bee Mythic" distribution directly — no delta
             // upgrade is needed because the per-view chances already
-            // express what florr's gallery shows at each rarity.
+            // express what florr's gallery shows at each rarity. The
+            // policy is trained against this distribution, so reverting
+            // to authored-row + delta-upgrade would destabilise it.
             //
             // NORMAL maps stay on the legacy delta-upgrade model: chances
             // are stored at the authored rarity and runtime-rolled
