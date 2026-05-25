@@ -49,6 +49,9 @@ namespace gardn::server {
     int bot_obs_dim_impl();
     int bot_num_actions_impl();
     int bot_alive_count_impl();
+    void bot_begin_tick_impl();
+    void bot_seed_peer_view_impl(int ws_id);
+    void bot_dump_obs_impl(int ws_id);
 }
 
 extern "C" {
@@ -140,6 +143,27 @@ int bot_num_actions() {
 }
 int bot_alive_count() {
     return gardn::server::bot_alive_count_impl();
+}
+// Call once per batched obs-make pass, BEFORE iterating bot_make_obs
+// over the bot list. Snapshots g_bot_last_action so every bot in the
+// tick reads the same peer-action view, eliminating any intra-tick
+// ordering effects in peer_comm features.
+void bot_begin_tick() {
+    gardn::server::bot_begin_tick_impl();
+}
+// Call right after a bot's ws_id is allocated (before its first
+// bot_make_obs). Seeds g_bot_last_action[ws_id] = 0 so the new bot
+// is visible to peers from tick 1 instead of being invisible until
+// it has called bot_apply_action once.
+void bot_seed_peer_view(int ws_id) {
+    gardn::server::bot_seed_peer_view_impl(ws_id);
+}
+// One-shot debug helper: prints an annotated dump of the obs vector
+// for `ws_id` to console. Use from JS console as
+//   Module._bot_dump_obs(<ws_id>)
+// to spot which feature group diverges from bot.py / inspect_obs.py.
+void bot_dump_obs(int ws_id) {
+    gardn::server::bot_dump_obs_impl(ws_id);
 }
 
 }  // extern "C"

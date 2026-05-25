@@ -2,10 +2,10 @@
   "schema": 1,
   "name": "bot-513",
   "first_seen": 1778364746.5700228,
-  "last_seen": 1778543030.515594,
-  "episodes": 25,
-  "score_total": 216,
-  "score_best": 29,
+  "last_seen": 1779652007.639254,
+  "episodes": 29,
+  "score_total": 370,
+  "score_best": 107,
   "best_loadout": [
     0,
     0,
@@ -15,20 +15,23 @@
   ],
   "killed_by": {
     "Sandstorm": 1,
-    "Hornet": 6,
+    "Hornet": 7,
     "Cactus": 4,
     "Beetle": 2,
     "Centipede": 2,
     "Evil Centipede": 1,
-    "bot-716": 1
+    "bot-716": 1,
+    "bot-214": 1,
+    "bot-514": 1
   },
   "loadout_history": {
-    "0": 19,
+    "0": 23,
     "1": 22,
     "15": 2,
     "9": 1,
     "69": 1,
     "19": 1,
-    "167": 1
+    "167": 1,
+    "256": 1
   }
 }

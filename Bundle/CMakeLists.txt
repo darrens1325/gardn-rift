@@ -284,6 +284,9 @@ set(EXPORTED_FUNCS
     _bot_obs_dim
     _bot_num_actions
     _bot_alive_count
+    _bot_begin_tick
+    _bot_seed_peer_view
+    _bot_dump_obs
     _malloc
     _free
 )

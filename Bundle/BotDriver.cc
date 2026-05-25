@@ -120,6 +120,20 @@ static void update_round_gate() {
 // so the model interpreted the zero-vector as a meaningful state and
 // the bundled bots adopted a slightly different action distribution.
 static std::unordered_map<int, int> g_bot_last_action;
+// Snapshot of g_bot_last_action taken at the *start* of each batched
+// obs-make pass. Peer-feature reads consult THIS map, not the live
+// g_bot_last_action, so every bot in the same tick sees the same set
+// of peer actions regardless of how the JS driver orders its calls.
+// Without the snapshot, if bot_make_obs and bot_apply_action ever
+// got interleaved per-bot (as opposed to "all obs, then all actions"
+// like the current JS does), bots later in the order would see
+// updates from bots earlier in the order — a within-tick race that
+// would silently break peer-feature determinism.
+//
+// Also seeded by bot_seed_peer_view(ws_id, action=0) so a freshly-
+// spawned bot is visible to peers from its very first tick rather than
+// invisible until it has called bot_apply_action once.
+static std::unordered_map<int, int> g_peer_view_snapshot;
 
 // Mirror of bot.py / protocol.py constants. Kept in sync by hand.
 static constexpr int   K_PEERS          = 2;
@@ -513,7 +527,13 @@ void bot_make_obs_impl(int ws_id, float *out) {
     struct PeerSlot { float d2, dx, dy, hp; int action; };
     PeerSlot peers[K_PEERS];
     for (int i = 0; i < K_PEERS; ++i) peers[i] = {1e30f, 0, 0, 0, 0};
-    for (auto const &kv : g_bot_last_action) {
+    // Read from the per-tick snapshot (refreshed by bot_begin_tick_impl
+    // at the start of each batched obs-make pass). Falls back to the
+    // live map on the first tick before any snapshot exists, which
+    // matches the pre-snapshot behavior.
+    auto const &peer_view =
+        g_peer_view_snapshot.empty() ? g_bot_last_action : g_peer_view_snapshot;
+    for (auto const &kv : peer_view) {
         int peer_ws = kv.first;
         if (peer_ws == ws_id) continue;
         auto ws_it = WS_MAP.find(peer_ws);
@@ -711,3 +731,71 @@ void bot_apply_action_impl(int ws_id, int action) {
 
 int bot_obs_dim_impl() { return BOT_OBS_DIM; }
 int bot_num_actions_impl() { return BOT_NUM_ACTIONS; }
+
+// Snapshot the live peer-action map at the start of a batched obs-make
+// pass. JS calls this once per tick BEFORE iterating bot_make_obs over
+// the bot list. Every bot in this tick then reads the same peer view,
+// so peer-comm features are deterministic regardless of bot order and
+// regardless of any interleaving of make_obs / apply_action calls.
+void bot_begin_tick_impl() {
+    g_peer_view_snapshot = g_bot_last_action;
+}
+
+// Seed a freshly-spawned bot's peer entry with "stay" so it's visible
+// to other bots from its very first tick, instead of being invisible
+// until it has called bot_apply_action once. Called by the JS bot
+// spawner immediately after assigning the ws_id.
+void bot_seed_peer_view_impl(int ws_id) {
+    // Action 0 = stay + attack (the do-nothing baseline mapping).
+    // Doesn't move the peer in the comm vector; just ensures we don't
+    // skip the entry in the peer-features scan.
+    if (g_bot_last_action.find(ws_id) == g_bot_last_action.end()) {
+        g_bot_last_action[ws_id] = 0;
+    }
+}
+
+// One-shot debug logger: dump the full obs vector for `ws_id` to the
+// emscripten console with per-slot annotations. Useful for verifying
+// the bundle's obs matches what bot.py / Bots/inspect_obs.py would
+// compute given the same world state. Output format mirrors the
+// [obs-dump] JSON the JS driver emits but adds the slot-by-slot
+// labels so you can spot which feature group (wall, peer, hostile,
+// etc.) is mis-computed without having to mentally index the vector.
+void bot_dump_obs_impl(int ws_id) {
+    float obs[BOT_OBS_DIM];
+    bot_make_obs_impl(ws_id, obs);
+    // Slot offsets — kept in sync with the layout map at the top of
+    // bot_make_obs_impl and with bot.py's _build_state.
+    static constexpr int OFF_HP            = 0;
+    static constexpr int OFF_HOSTILES      = 1;       // 12 floats
+    static constexpr int OFF_LOADOUT_RANK  = 13;      // 16 floats
+    static constexpr int OFF_PEERS         = 29;      // 12 floats (K_PEERS×6)
+    static constexpr int OFF_LOADOUT_TYPE  = 41;      // 16 floats
+    static constexpr int OFF_DROPS         = 57;      // 12 floats (K_DROPS×4)
+    static constexpr int OFF_LOADOUT_BURST = 69;      // 16 floats
+    static constexpr int OFF_WALL_RAYS_DBG = 85;      // 4 floats
+    static constexpr int OFF_WARPS_DBG     = 89;      // 8 floats (K_WARPS×4)
+    static constexpr int OFF_MINIMAP_DBG   = 97;      // 3 floats
+    std::printf("[obs-dump c++] ws_id=%d peers_in_view=%zu\n",
+                ws_id, g_peer_view_snapshot.size());
+    std::printf("  hp                 = %.4f\n", obs[OFF_HP]);
+    std::printf("  hostiles[12]       = ");
+    for (int i = 0; i < 12; ++i) std::printf("%.4f%s", obs[OFF_HOSTILES + i], i==11?"\n":",");
+    std::printf("  loadout_rank[16]   = ");
+    for (int i = 0; i < 16; ++i) std::printf("%.4f%s", obs[OFF_LOADOUT_RANK + i], i==15?"\n":",");
+    std::printf("  peers[12]          = ");
+    for (int i = 0; i < 12; ++i) std::printf("%.4f%s", obs[OFF_PEERS + i], i==11?"\n":",");
+    std::printf("  loadout_type[16]   = ");
+    for (int i = 0; i < 16; ++i) std::printf("%.4f%s", obs[OFF_LOADOUT_TYPE + i], i==15?"\n":",");
+    std::printf("  drops[12]          = ");
+    for (int i = 0; i < 12; ++i) std::printf("%.4f%s", obs[OFF_DROPS + i], i==11?"\n":",");
+    std::printf("  loadout_burst[16]  = ");
+    for (int i = 0; i < 16; ++i) std::printf("%.4f%s", obs[OFF_LOADOUT_BURST + i], i==15?"\n":",");
+    std::printf("  wall_rays[N,E,S,W] = %.4f,%.4f,%.4f,%.4f\n",
+                obs[OFF_WALL_RAYS_DBG + 0], obs[OFF_WALL_RAYS_DBG + 1],
+                obs[OFF_WALL_RAYS_DBG + 2], obs[OFF_WALL_RAYS_DBG + 3]);
+    std::printf("  warps[8]           = ");
+    for (int i = 0; i < 8; ++i) std::printf("%.4f%s", obs[OFF_WARPS_DBG + i], i==7?"\n":",");
+    std::printf("  minimap[x,y,nomap] = %.4f,%.4f,%.4f\n",
+                obs[OFF_MINIMAP_DBG + 0], obs[OFF_MINIMAP_DBG + 1], obs[OFF_MINIMAP_DBG + 2]);
+}

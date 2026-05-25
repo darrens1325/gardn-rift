@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-522",
+  "first_seen": 1779650674.8334908,
+  "last_seen": 1779652041.750578,
+  "episodes": 16,
+  "score_total": 2106,
+  "score_best": 391,
+  "best_loadout": [
+    0,
+    0,
+    256,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Wasp": 1,
+    "Beetle": 1,
+    "bot-303": 1,
+    "bot-308": 1,
+    "bot-302": 1,
+    "bot-320": 1,
+    "bot-212": 1,
+    "flower": 1,
+    "bot-311": 1,
+    "bot-220": 1,
+    "bot-507": 1,
+    "bot-417": 1,
+    "bot-501": 1,
+    "bot-523": 1,
+    "bot-318": 1
+  },
+  "loadout_history": {
+    "2048": 1,
+    "0": 15,
+    "256": 12
+  }
+}

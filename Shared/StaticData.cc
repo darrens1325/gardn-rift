@@ -3,6 +3,7 @@
 #include <Shared/Map.hh>
 
 #include <cmath>
+#include <cstring>
 
 uint32_t const MAX_LEVEL = 99;
 // Wall-clock tick rate. Override at compile time with -DGARDN_TPS=N (CMake
@@ -1019,6 +1020,191 @@ std::array<StaticArray<float, MAX_DROPS_PER_MOB>, MobID::kNumMobs> const MOB_DRO
         for (PetalID::T const drop_id : MOB_DATA[id].drops) {
             float chance = fclamp((BASE_NUM * RARITY_MULT[drop_id.rarity]) / (PETAL_AGGREGATE_DROPS[drop_id.type][drop_id.rarity] * MOB_SPAWN_RATES[id] * MOB_DATA[id].attributes.segments), 0, 1);
             ret[id].push(chance);
+        }
+    }
+    return ret;
+}();
+
+// Port of Scripts/drop_constant.py loot_table_gen(n). Returns a
+// mob_rarity × drop_rarity table; cell [m][d] is the probability that a
+// mob of rarity m drops a petal of rarity d for a single drop entry whose
+// per-(mob, drop) exponent is `n`. Higher n → steeper rarity falloff.
+//
+// Two variants: the original capped version is used on NORMAL (non-BR)
+// maps so the gardn loot table stays in sync with Scripts/drop_constant.py;
+// the cap-free version is used for BR maps (and for generating
+// MOB_DROP_CHANCES_BR via .ocr_work/build_inl.py) so high-tier drops can
+// reach low-rarity mobs as florr.io's mob_gallery shows.
+static constexpr double DROPS_BOUNDS[8] = {
+    0.0,
+    0.8589559816476924,
+    0.9963889387113232,
+    0.9998247626379139,
+    0.9999965538342435,
+    0.9999999896581699,
+    0.9999999999656417,
+    1.0,
+};
+static constexpr double MOBS_DIVISOR[RarityID::kNumRarities] = {
+    60000, 15000, 1500, 100, 5, 0.1, 0.0005,
+};
+
+static std::array<std::array<double, RarityID::kNumRarities>, RarityID::kNumRarities>
+_loot_table_gen(double n) {
+    // Capped variant: matches Scripts/drop_constant.py exactly. For
+    // mob_rarity m, only drop_rarities 0..max(1,m) get non-zero mass;
+    // the highest of those gets end=1 so the per-mob row sums to 1.
+    std::array<std::array<double, RarityID::kNumRarities>, RarityID::kNumRarities> table{};
+    for (int mob = 0; mob < (int)RarityID::kNumRarities; ++mob) {
+        int cap = mob == 0 ? 1 : mob;
+        if (cap >= (int)RarityID::kNumRarities) cap = (int)RarityID::kNumRarities - 1;
+        double exponent = 300000.0 / MOBS_DIVISOR[mob];
+        for (int drop = 0; drop <= cap; ++drop) {
+            double start = DROPS_BOUNDS[drop];
+            double end = (drop == cap) ? 1.0 : DROPS_BOUNDS[drop + 1];
+            double base1 = n * start + (1.0 - n);
+            double base2 = n * end + (1.0 - n);
+            table[mob][drop] = std::pow(base2, exponent) - std::pow(base1, exponent);
+        }
+    }
+    return table;
+}
+
+static std::array<std::array<double, RarityID::kNumRarities>, RarityID::kNumRarities>
+_loot_table_gen_br(double n) {
+    // Cap-free variant used on BR maps. Iterates drop_rarity
+    // 0..kNumRarities-1 always; only the highest tier gets end=1. This
+    // matches the wider distribution florr.io's gallery shows (e.g.,
+    // Bee at Common can still drop Rare/Epic/Legendary Stinger with
+    // tiny but non-zero chance). MOBS_DIVISOR_BR and DROPS_BOUNDS_BR
+    // were tuned by .ocr_work/tune_constants.py against the 789
+    // observations transcribed from mob_gallery.mov; the peaks land
+    // closer to each mob's own rarity than the original constants do.
+    static constexpr double DROPS_BOUNDS_BR[8] = {
+        0.0,
+        0.8280141620166028,
+        0.9994213801374269,
+        0.9999959838524433,
+        0.9999999965213968,
+        0.9999999983920225,
+        0.9999999983920242,
+        1.0,
+    };
+    static constexpr double MOBS_DIVISOR_BR[RarityID::kNumRarities] = {
+        24431.83968444404, 37424.40407882193, 530.0317372834454,
+        144.8476629810749, 1.0432580614860787,
+        0.000977177224351313, 0.0006446370750282694,
+    };
+    std::array<std::array<double, RarityID::kNumRarities>, RarityID::kNumRarities> table{};
+    int const last = (int)RarityID::kNumRarities - 1;
+    for (int mob = 0; mob < (int)RarityID::kNumRarities; ++mob) {
+        double exponent = 300000.0 / MOBS_DIVISOR_BR[mob];
+        for (int drop = 0; drop <= last; ++drop) {
+            double start = DROPS_BOUNDS_BR[drop];
+            double end = (drop == last) ? 1.0 : DROPS_BOUNDS_BR[drop + 1];
+            double base1 = n * start + (1.0 - n);
+            double base2 = n * end + (1.0 - n);
+            table[mob][drop] = std::pow(base2, exponent) - std::pow(base1, exponent);
+        }
+    }
+    return table;
+}
+
+// Per-(mob, drop_index) exponent fed to _loot_table_gen. Indexes are
+// into MOB_DATA[id].drops in authored order. Default 0.5; add explicit
+// overrides below for drops that should fall off faster (n→1) or slower
+// (n→0) than the baseline. Use the `n_for` helper to address overrides
+// by PetalID instead of by drop-array index — the index would silently
+// shift if a mob's drop list is reordered.
+static std::array<std::array<float, MAX_DROPS_PER_MOB>, MobID::kNumMobs> const MOB_DROP_N = [](){
+    std::array<std::array<float, MAX_DROPS_PER_MOB>, MobID::kNumMobs> arr;
+    for (auto &row : arr) row.fill(0.5f);
+    auto n_for = [&](MobID::T mob, PetalID::T petal, float n) {
+        for (uint32_t i = 0; i < MOB_DATA[mob].drops.size(); ++i) {
+            if (MOB_DATA[mob].drops[i] == petal) { arr[mob][i] = n; return; }
+        }
+        // If the petal isn't authored on this mob, fail loudly in debug
+        // builds — the override would silently do nothing otherwise.
+        DEBUG_ONLY(assert(!"MOB_DROP_N override: petal not in mob's drops");)
+    };
+    (void)n_for;
+    // Overrides. Petal/mob names referenced in design (Air via Bubble,
+    // Corruption via Gambler) are not yet in this repo; add upstream first.
+    // n_for(MobID::kBubble,  PetalID::kAir,        1.0f);
+    // n_for(MobID::kGambler, PetalID::kCorruption, 1.0f);
+    // n_for(MobID::kBabyAnt, PetalID::kCommonRice, 0.5f); // matches default
+    return arr;
+}();
+
+#include "MobDropChancesBR.inl"
+
+// 3D table: chances[mob_id][view_rarity][drop_idx]. Each row is the
+// distribution florr.io's gallery shows for that mob at that view
+// rarity. Cells with an explicit value in MobDropChancesBR.inl
+// (snapshot entries are tagged with their `view_rarity`) win; missing
+// cells fall back to _loot_table_gen_br evaluated at the view's rarity
+// so post-snapshot petals still drop at all tiers.
+std::array<
+    std::array<StaticArray<float, MAX_DROPS_PER_MOB>, RarityID::kNumRarities>,
+    MobID::kNumMobs> const MOB_DROP_CHANCES_BR = [](){
+    std::array<
+        std::array<StaticArray<float, MAX_DROPS_PER_MOB>, RarityID::kNumRarities>,
+        MobID::kNumMobs> ret;
+    for (MobID::T id = 0; id < MobID::kNumMobs; ++id) {
+        char const *mname = MOB_DATA[id].name;
+        for (uint8_t view = 0; view < RarityID::kNumRarities; ++view) {
+            // Precompute the loot_table_gen_br row for this view (used
+            // when a (mob, view, drop) entry is missing from the snapshot).
+            // n is per-drop, so we recompute inside the inner loop.
+            for (uint32_t i = 0; i < MOB_DATA[id].drops.size(); ++i) {
+                PetalID::T did = MOB_DATA[id].drops[i];
+                char const *pname = PETAL_DATA[did.type][did.rarity].name;
+                float chance = -1.0f; // sentinel for "no snapshot entry"
+                if (mname != nullptr && pname != nullptr) {
+                    for (BRSnapshotEntry const &e : BR_DROP_SNAPSHOT) {
+                        if (e.view_rarity == view
+                            && e.petal_rarity == did.rarity
+                            && std::strcmp(e.mob_name, mname) == 0
+                            && std::strcmp(e.petal_name, pname) == 0) {
+                            chance = e.chance;
+                            break;
+                        }
+                    }
+                }
+                if (chance < 0.0f) {
+                    uint8_t dr = did.rarity;
+                    if (dr >= RarityID::kNumRarities) dr = RarityID::kNumRarities - 1;
+                    double c = _loot_table_gen_br((double)MOB_DROP_N[id][i])[view][dr];
+                    if (c < 0.0) c = 0.0;
+                    if (c > 1.0) c = 1.0;
+                    chance = (float)c;
+                }
+                ret[id][view].push(chance);
+            }
+        }
+    }
+    return ret;
+}();
+
+// Parallel to MOB_DROP_CHANCES, but computed from the ported
+// Scripts/drop_constant.py loot_table_gen() with per-(mob, drop) n from
+// MOB_DROP_N. Used on non-BR maps (anything whose map_path doesn't sit
+// under Map/br/). BR maps use MOB_DROP_CHANCES_BR (above), which is the
+// snapshot of the table the in-game Mob Gallery (mob_gallery.mov) records.
+std::array<StaticArray<float, MAX_DROPS_PER_MOB>, MobID::kNumMobs> const MOB_DROP_CHANCES_NORMAL = [](){
+    std::array<StaticArray<float, MAX_DROPS_PER_MOB>, MobID::kNumMobs> ret;
+    for (MobID::T id = 0; id < MobID::kNumMobs; ++id) {
+        uint8_t mob_rarity = MOB_DATA[id].rarity;
+        if (mob_rarity >= RarityID::kNumRarities) mob_rarity = RarityID::kNumRarities - 1;
+        for (uint32_t i = 0; i < MOB_DATA[id].drops.size(); ++i) {
+            PetalID::T drop = MOB_DATA[id].drops[i];
+            uint8_t dr = drop.rarity;
+            if (dr >= RarityID::kNumRarities) dr = RarityID::kNumRarities - 1;
+            auto table = _loot_table_gen((double)MOB_DROP_N[id][i]);
+            double chance = table[mob_rarity][dr];
+            if (chance < 0.0) chance = 0.0;
+            if (chance > 1.0) chance = 1.0;
+            ret[id].push((float)chance);
         }
     }
     return ret;

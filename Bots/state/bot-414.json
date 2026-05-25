@@ -2,15 +2,15 @@
   "schema": 1,
   "name": "bot-414",
   "first_seen": 1778364745.5698152,
-  "last_seen": 1778543028.565375,
-  "episodes": 26,
-  "score_total": 581,
-  "score_best": 60,
+  "last_seen": 1779652051.1832051,
+  "episodes": 46,
+  "score_total": 6172,
+  "score_best": 2443,
   "best_loadout": [
     0,
-    1,
-    1,
-    1,
+    256,
+    0,
+    0,
     0
   ],
   "killed_by": {
@@ -21,15 +21,36 @@
     "Evil Centipede": 5,
     "Desert Centipede": 1,
     "bot-116": 1,
-    "Wasp": 1
+    "Wasp": 2,
+    "bot-307": 2,
+    "bot-413": 1,
+    "bot-111": 1,
+    "bot-313": 1,
+    "prickly": 1,
+    "bot-302": 1,
+    "bot-310": 1,
+    "bot-401": 1,
+    "bot-205": 1,
+    "bot-410": 1,
+    "bot-207": 1,
+    "bot-121": 1,
+    "bot-320": 1,
+    "bot-202": 1,
+    "bot-203": 1,
+    "bot-124": 1,
+    "petalpop": 1
   },
   "loadout_history": {
-    "0": 20,
+    "0": 39,
     "1": 25,
     "23": 1,
     "29": 1,
     "9": 1,
     "24": 1,
-    "48": 1
+    "48": 1,
+    "2048": 2,
+    "256": 20,
+    "1024": 2,
+    "770": 1
   }
 }

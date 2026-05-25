@@ -147,6 +147,19 @@ std::array const ANTHOLE_SPAWNS = std::to_array<StaticArray<MobID::T, 3>>({
 });
 
 extern std::array<StaticArray<float, MAX_DROPS_PER_MOB>, MobID::kNumMobs> const MOB_DROP_CHANCES;
+// 3D table indexed [mob_id][view_rarity][drop_idx]. Used on BR maps and
+// the in-game Mob Gallery. Each (mob, view_rarity) row stores the
+// chances florr.io's gallery shows for that mob at that rarity tier —
+// so a Bee Rare card has different chances than a Bee Common card.
+// Explicit values come from .ocr_work/florr.csv via build_inl.py;
+// missing cells fall back to _loot_table_gen_br at the view's rarity.
+extern std::array<
+    std::array<StaticArray<float, MAX_DROPS_PER_MOB>, RarityID::kNumRarities>,
+    MobID::kNumMobs> const MOB_DROP_CHANCES_BR;
+// Parallel to MOB_DROP_CHANCES. Used on non-BR maps. Computed from the
+// ported Scripts/drop_constant.py loot_table_gen() with per-(mob, drop)
+// n exponents.
+extern std::array<StaticArray<float, MAX_DROPS_PER_MOB>, MobID::kNumMobs> const MOB_DROP_CHANCES_NORMAL;
 
 extern uint32_t score_to_pass_level(uint32_t);
 extern uint32_t score_to_level(uint32_t);

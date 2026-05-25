@@ -110,6 +110,38 @@ def load_walls(tmj_path: str = DEFAULT_TMJ_PATH) -> Tuple[float, float, List[Rec
             if layer.get("name") != "collision":
                 continue
             for obj in layer.get("objects", []):
+                # Polygon objects (Tiled JSON shape with a `polygon` field
+                # of {x, y} points relative to the object's origin). Until
+                # this branch existed, Python silently dropped every
+                # polygon collision and the bot's wall rays only saw rect
+                # objects + solid-tile cells — which left the trained
+                # model out-of-distribution at deployment time, because
+                # the C++ bundle (TiledMap::collision_polys) sees them.
+                # Most .tmj files in Map/ have at least one polygon
+                # collision (main.tmj has 16, ocean.tmj has 37,
+                # ant_hell.tmj has 41), so the gap was real.
+                # We use the polygon's axis-aligned bbox as the
+                # conservative wall rect — slightly over-estimates the
+                # blocked region but matches the "treat partial shapes as
+                # full cells" approach Python already uses for solid
+                # tiles, so the bot's wall avoidance stays consistent
+                # across both feature sources.
+                poly = obj.get("polygon")
+                if poly:
+                    ox = float(obj.get("x", 0.0))
+                    oy = float(obj.get("y", 0.0))
+                    xs = [ox + float(p.get("x", 0.0)) for p in poly]
+                    ys = [oy + float(p.get("y", 0.0)) for p in poly]
+                    if xs and ys:
+                        min_x, max_x = min(xs), max(xs)
+                        min_y, max_y = min(ys), max(ys)
+                        bbox_w = max_x - min_x
+                        bbox_h = max_y - min_y
+                        if bbox_w > 0 and bbox_h > 0:
+                            walls.append((min_x, min_y, bbox_w, bbox_h))
+                    continue
+                # Rectangular objects (object has width/height, no
+                # polygon field).
                 w = float(obj.get("width", 0))
                 h = float(obj.get("height", 0))
                 if w > 0 and h > 0:

@@ -2,31 +2,41 @@
   "schema": 1,
   "name": "bot-514",
   "first_seen": 1778364745.126762,
-  "last_seen": 1778542895.4114401,
-  "episodes": 22,
-  "score_total": 378,
-  "score_best": 54,
+  "last_seen": 1779651376.743445,
+  "episodes": 32,
+  "score_total": 2617,
+  "score_best": 810,
   "best_loadout": [
+    256,
     0,
-    0,
-    1,
-    0,
-    0
+    256,
+    256,
+    256
   ],
   "killed_by": {
     "Beetle": 3,
     "Hornet": 4,
-    "Cactus": 1,
+    "Cactus": 2,
     "Bee": 2,
     "Soldier Ant": 1,
-    "Wasp": 2,
+    "Wasp": 3,
     "Bush": 2,
-    "Evil Centipede": 1
+    "Evil Centipede": 1,
+    "Mantis": 1,
+    "Ladybug": 1,
+    "bot-521": 1,
+    "bot-507": 1,
+    "rosie": 1,
+    "bot-422": 1,
+    "bot-214": 1
   },
   "loadout_history": {
     "1": 21,
-    "0": 15,
+    "0": 25,
     "18": 1,
-    "116": 1
+    "116": 1,
+    "2048": 1,
+    "256": 9,
+    "3584": 1
   }
 }

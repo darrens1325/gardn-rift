@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "name": "bot-419",
+  "first_seen": 1779650520.6902158,
+  "last_seen": 1779652059.03592,
+  "episodes": 19,
+  "score_total": 2296,
+  "score_best": 229,
+  "best_loadout": [
+    256,
+    256,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-123": 1,
+    "bot-316": 1,
+    "bot-504": 1,
+    "aa": 1,
+    "bot-506": 1,
+    "bot-422": 2,
+    "bot-221": 1,
+    "Cactus": 1,
+    "bot-322": 1,
+    "bot-103": 1,
+    "bot-110": 1,
+    "Wasp": 1,
+    "bot-106": 1,
+    "rosie": 1,
+    "bot-404": 2,
+    "bot-313": 1
+  },
+  "loadout_history": {
+    "0": 17,
+    "256": 18,
+    "9474": 1,
+    "1538": 1
+  }
+}

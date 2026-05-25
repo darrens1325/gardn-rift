@@ -231,6 +231,8 @@ def _spawn_workers(args: argparse.Namespace) -> int:
             cmd += ["--checkpoint", ""]
         if args.fast_start:
             cmd.append("--fast-start")
+        if args.bot_chat:
+            cmd.append("--bot-chat")
         if args.sync:
             cmd.append("--sync")
         if args.frozen_frac > 0:
@@ -715,6 +717,19 @@ def main() -> int:
              "have been launched with GARDN_SYNC=1; otherwise the kStep "
              "opcode is processed but doesn't drive the tick loop.",
     )
+    p.add_argument(
+        "--bot-chat", action="store_true",
+        help="enable bot-side chat broadcasts (position, kill, help, "
+             "respawn quips). Default OFF because chat is server-broadcast "
+             "to every connected client — at N bots, 1 chat per bot fans "
+             "out to N recipients = O(N²) network traffic that saturates "
+             "the server's network stack and the OS. The chat-derived "
+             "peer state is also never read by the obs builder during "
+             "training (peers are read from the in-process blackboard "
+             "instead), so disabling has no learning impact. Enable when "
+             "a human is watching the channel and you want to see bot "
+             "kill/help/position pings.",
+    )
     args = p.parse_args()
     if args.checkpoint == "":
         args.checkpoint = None
@@ -749,6 +764,13 @@ def main() -> int:
         print(
             "[run] --sync: lockstep with server. Bot drives server tick rate "
             "via S_STEP. Make sure the server was launched with GARDN_SYNC=1.",
+            flush=True,
+        )
+    if args.bot_chat:
+        LearningBot.chat_enabled = True
+        print(
+            "[run] --bot-chat: bot chat broadcasts enabled. Watch server "
+            "bandwidth — chat is O(N²) at high bot counts.",
             flush=True,
         )
 

@@ -304,6 +304,10 @@ const PLAYER_WS_ID = 0;
         const ptr = serverMod._malloc(obsByteLen);
         obsBuffers.push({ wsId, ptr });
         serverMod._server_on_connect(wsId);
+        // Seed this bot's peer-view entry with "stay" so its siblings
+        // see it from tick 1 instead of treating it as absent until
+        // its first bot_apply_action call.
+        if (serverMod._bot_seed_peer_view) serverMod._bot_seed_peer_view(wsId);
     }
     const baseStatus = session
         ? `${NUM_BOTS} bots (ONNX policy)`
@@ -396,6 +400,11 @@ const PLAYER_WS_ID = 0;
             return;
         }
 
+        // Snapshot the peer-action map BEFORE iterating bot_make_obs, so
+        // every bot in this tick reads the same peer view regardless of
+        // call order. Without this, peer-comm features for bots later
+        // in the loop could change if obs/apply ever got interleaved.
+        if (serverMod._bot_begin_tick) serverMod._bot_begin_tick();
         // Fill the batched observation tensor from each bot's per-bot
         // scratch buffer (avoids a single huge malloc on the C side).
         for (let i = 0; i < obsBuffers.length; ++i) {

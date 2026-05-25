@@ -89,7 +89,14 @@ void GalleryMob::on_render(Renderer &ctx) {
 static Element *make_mob_drops(MobID::T id, uint8_t rarity) {
     Element *elt = new Ui::HContainer({}, 0, 6, { .h_justify = Style::Left });
     struct MobData const &data = MOB_DATA[id];
-    StaticArray<float, MAX_DROPS_PER_MOB> const &drop_chances = MOB_DROP_CHANCES[id];
+    // Gallery mirrors the BR snapshot (Shared/MobDropChancesBR.inl) so
+    // these percentages match mob_gallery.mov exactly. The 3D table is
+    // indexed [mob][view_rarity][drop_idx]; we use the gallery card's
+    // own `rarity` so each rarity view shows its own distribution
+    // (florr.io changes chances when you click between rarities).
+    uint8_t view = rarity;
+    if (view >= RarityID::kNumRarities) view = RarityID::kNumRarities - 1;
+    StaticArray<float, MAX_DROPS_PER_MOB> const &drop_chances = MOB_DROP_CHANCES_BR[id][view];
     std::vector<uint8_t> order;
     for (uint32_t i = 0; i < data.drops.size(); ++i)
         order.push_back(i);
@@ -100,12 +107,18 @@ static Element *make_mob_drops(MobID::T id, uint8_t rarity) {
 
     for (uint32_t i = 0; i < data.drops.size(); ++i) {
         uint32_t j = order[i];
-        // Show the upgraded drop ID (matches Death.cc's runtime upgrade)
-        // so a Mythic Bee's drops show as Mythic Tringer, not the
-        // authored Common Stinger.
-        PetalID::T upgraded = _gallery_upgrade_drop(data.drops[j], rarity);
+        // Show each drop at its *authored* rarity. The previous code
+        // upgraded the petal to the view's rarity (so a Rare Bee view
+        // collapsed kCommonStinger/kStinger/kRareStinger into three
+        // visually-identical Rare Stinger cells, hiding the lower-tier
+        // versions). The runtime delta-upgrade in Death.cc still bumps
+        // the actual drop at kill-time; this only changes how the
+        // gallery presents the rarity ladder. Matches florr.io's
+        // mob_gallery, which always shows base rarities per cell.
+        (void)rarity;  // intentionally unused for the petal icon
+        PetalID::T drop_id = data.drops[j];
         elt->add_child(new Ui::VContainer({
-            new GalleryPetal(upgraded, 45),
+            new GalleryPetal(drop_id, 45),
             new StaticText(12, format_pct(drop_chances[j] * 100))
         }, 0, 5, { .h_justify = Style::Left }));
     }

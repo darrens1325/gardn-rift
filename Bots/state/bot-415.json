@@ -2,10 +2,10 @@
   "schema": 1,
   "name": "bot-415",
   "first_seen": 1778364745.500248,
-  "last_seen": 1778543009.030032,
-  "episodes": 24,
-  "score_total": 434,
-  "score_best": 80,
+  "last_seen": 1779652027.195694,
+  "episodes": 36,
+  "score_total": 2849,
+  "score_best": 708,
   "best_loadout": [
     0,
     0,
@@ -19,11 +19,26 @@
     "Evil Centipede": 2,
     "Bee": 1,
     "Hornet": 4,
-    "Wasp": 1
+    "Wasp": 1,
+    "thorn": 1,
+    "Ladybug": 1,
+    "flower": 1,
+    "bot-424": 1,
+    "bot-316": 1,
+    "bot-121": 1,
+    "bot-512": 1,
+    "bot-323": 1,
+    "bot-114": 1,
+    "bot-515": 1,
+    "bot-417": 1
   },
   "loadout_history": {
-    "0": 20,
+    "0": 31,
     "1": 23,
-    "5": 1
+    "5": 1,
+    "513": 1,
+    "256": 10,
+    "2048": 1,
+    "9474": 1
   }
 }

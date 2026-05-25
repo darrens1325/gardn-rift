@@ -7,3 +7,4 @@ gardn-client.js
 gardn-client.wasm
 tiles/
 Map/
+.ocr_work/

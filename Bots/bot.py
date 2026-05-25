@@ -247,7 +247,7 @@ W_PETAL_PRESENT = 0.0
 # Without this the petal-present stream was flat — the only way the model
 # could tell rare from common was via downstream damage credit, which is
 # delayed by many ticks and shared with mob damage noise.
-RARITY_PRESENT_SCALE = 0.5
+RARITY_PRESENT_SCALE = 0.8
 # Active *negative* reward per empty primary slot per tick. Combined with
 # W_PETAL_PRESENT this turns the "keep your petals" signal into a two-sided
 # gradient: full loadout pays the positive bonus, deletes immediately incur
@@ -286,7 +286,7 @@ W_PETAL_STORAGE_RATIO = 0.5
 # Scaled by the rarity of the deleted slot — deleting a kUnique is far
 # more punishing than deleting a kCommon. The rank is read from the
 # previous-state loadout column (loadout_feats start at offset 13).
-W_DELETE_COST = 1.5
+W_DELETE_COST = 0.9
 # Slot 0 of the loadout-rank feature column lives here in `_prev_state`
 # (1 hp + 12 hostile = 13). Used to scale W_DELETE_COST by the rarity of
 # whatever lived in the slot we just deleted from.
@@ -350,7 +350,7 @@ W_MOB_KILL_BONUS = 10.0
 # W_PVP_PROXIMITY / W_PVP_APPROACH below — those provide the
 # *gradient* toward players; this provides the *payoff* once you
 # actually land the kill.
-W_PLAYER_KILL_BONUS = 200.0
+W_PLAYER_KILL_BONUS = 400.0
 
 # Player-specific proximity / approach. The existing W_PROXIMITY and
 # W_APPROACH terms don't distinguish mobs from enemy Flowers, so a
@@ -432,8 +432,8 @@ W_ROUND_WIN = 150.0
 # wall pays a couple of damage-points worth of negative reward per tick.
 # Continuous (linear in the closest-ray distance), so the gradient points
 # the policy away from walls smoothly rather than as an on/off step.
-WALL_AVOID_THRESHOLD = 200.0
-W_WALL_AVOID = 0.4
+WALL_AVOID_THRESHOLD = 100.0
+W_WALL_AVOID = 0.6
 
 # Build-target shaping. When the bot is given a target build via
 # `--build`, every per-tick reward includes a bonus = W_BUILD_TARGET ×
@@ -754,6 +754,18 @@ class LearningBot:
     # update before deciding again. The wall-clock `control_hz` pacing
     # is disabled — both sides run as fast as the slower one can manage.
     sync_mode = False
+    # Class-level flag, set by run.py at startup. When False (the
+    # default) the bot suppresses *all* outgoing chat — position,
+    # kill, help, respawn-quip. Chat messages are server-broadcast to
+    # every connected client, so 150 bots × 1 position-broadcast every
+    # 2 s × fan-out to 150 recipients = ~11k packets/sec of pure
+    # bandwidth overhead. Worse, the chat-derived peer state is
+    # written to `episodic.peer_state` but never *read* by the obs
+    # builder (which uses the in-process `agent.read_peers()`
+    # blackboard instead), so the chat is pure waste during training.
+    # Set True if you want a human watching the channel to see kill /
+    # help / position pings (useful for deployment, not for training).
+    chat_enabled = False
 
     def __init__(
         self,
@@ -1085,6 +1097,13 @@ class LearningBot:
         spamming faster than 1/2.5s wall-clock. `kind` is a label (e.g.
         'position', 'kill', 'help', 'text') used for per-kind last-sent
         bookkeeping so callers can throttle each kind independently."""
+        # Class-level kill switch. Default-off because chat is server-
+        # broadcast (one packet per bot fans out to every connected
+        # client → N² traffic) and the chat-derived peer state is never
+        # consumed by the obs builder anyway. Without this gate, 150
+        # bots saturate the OS's network stack and choke the server.
+        if not self.chat_enabled:
+            return
         if not text:
             return
         now = asyncio.get_event_loop().time()

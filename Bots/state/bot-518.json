@@ -2,15 +2,15 @@
   "schema": 1,
   "name": "bot-518",
   "first_seen": 1778364749.102036,
-  "last_seen": 1778543068.502413,
-  "episodes": 20,
-  "score_total": 242,
-  "score_best": 31,
+  "last_seen": 1779651968.178147,
+  "episodes": 39,
+  "score_total": 2305,
+  "score_best": 449,
   "best_loadout": [
-    28,
-    0,
-    0,
-    0,
+    256,
+    256,
+    256,
+    256,
     0
   ],
   "killed_by": {
@@ -18,16 +18,35 @@
     "Beetle": 3,
     "Hornet": 4,
     "Wasp": 2,
-    "Desert Centipede": 1
+    "Desert Centipede": 1,
+    "bot-519": 1,
+    "bot-511": 1,
+    "bot-319": 1,
+    "bot-502": 1,
+    "bot-320": 2,
+    "bot-405": 1,
+    "bot-206": 1,
+    "bot-323": 1,
+    "bot-410": 1,
+    "bot-202": 1,
+    "bot-509": 1,
+    "bot-403": 1,
+    "florrio": 1,
+    "blossom": 1,
+    "bot-309": 2,
+    "bot-507": 1
   },
   "loadout_history": {
-    "0": 12,
+    "0": 28,
     "1": 18,
     "5": 1,
     "19": 1,
     "116": 1,
     "9": 1,
     "14": 1,
-    "28": 1
+    "28": 1,
+    "256": 19,
+    "512": 1,
+    "3585": 1
   }
 }

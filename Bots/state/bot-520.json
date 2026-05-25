@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "name": "bot-520",
+  "first_seen": 1779650535.021719,
+  "last_seen": 1779651854.1833549,
+  "episodes": 9,
+  "score_total": 1974,
+  "score_best": 610,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    256,
+    0
+  ],
+  "killed_by": {
+    "Cactus": 1,
+    "bot-406": 1,
+    "bot-411": 1,
+    "bot-408": 1,
+    "bot-424": 1,
+    "bot-105": 1,
+    "Centipede": 1,
+    "Wasp": 1
+  },
+  "loadout_history": {
+    "0": 9,
+    "256": 6,
+    "1538": 1,
+    "5122": 1
+  }
+}

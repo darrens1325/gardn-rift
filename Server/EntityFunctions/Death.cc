@@ -90,33 +90,61 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
         if (!natural_despawn && !(BIT_AT(ent.flags, EntityFlags::kNoDrops))) {
             struct MobData const &mob_data = MOB_DATA[ent.mob_id];
             std::vector<PetalID::T> success_drops = {};
-            StaticArray<float, MAX_DROPS_PER_MOB> const &drop_chances = MOB_DROP_CHANCES[ent.mob_id];
+            // BR maps look up the per-(mob, view_rarity) row from
+            // MOB_DROP_CHANCES_BR (3D table). The view rarity is the
+            // entity's runtime rolled rarity, so a Mythic-rolled Bee uses
+            // the gallery's "Bee Mythic" distribution directly — no delta
+            // upgrade is needed because the per-view chances already
+            // express what florr's gallery shows at each rarity.
+            //
+            // NORMAL maps stay on the legacy delta-upgrade model: chances
+            // are stored at the authored rarity and runtime-rolled
+            // higher-rarity mobs upgrade their drops by `delta` tiers.
+            bool const is_br = ent.map_path.rfind("Map/br/", 0) == 0;
+            uint8_t view = ent.mob_rarity;
+            if (view >= RarityID::kNumRarities) view = RarityID::kNumRarities - 1;
+            StaticArray<float, MAX_DROPS_PER_MOB> const &drop_chances =
+                is_br ? MOB_DROP_CHANCES_BR[ent.mob_id][view]
+                      : MOB_DROP_CHANCES_NORMAL[ent.mob_id];
 
-            // Drop model: a single outcome per kill drawn from the
-            // distribution { no_drop, drop_0, drop_1, ... } where
-            // P(drop_i) = drop_chances[i] and P(no_drop) = 1 - Σchances.
-            // For delta > 0 (mob rolled higher than authored) the entire
-            // distribution shifts upward by `delta` tiers:
-            //   - "no_drop" becomes a drop at tier `delta`
-            //   - each authored drop's rarity becomes (authored + delta),
-            //     saturating at Unique
-            // Net effect: higher-rarity mobs drop at a higher rate AND at
-            // higher rarities; a Mythic-rolled Common-authored mob (delta=5)
-            // is guaranteed to drop at tier ≥ Mythic.
-            int delta = (int)ent.mob_rarity - (int)mob_data.rarity;
+            // Drop model: one independent roll per *petal type* in the
+            // mob's authored drop list. A mob can drop at most one petal
+            // of any given type, but it can drop multiple petals of the
+            // same rarity (across different types). Within a type, the
+            // authored rarity entries form a distribution: the rarity
+            // actually dropped is sampled in proportion to its chance.
+            //
+            // delta upgrade only applies on NORMAL maps; BR uses the
+            // per-view chances directly.
+            int delta = is_br ? 0 : (int)ent.mob_rarity - (int)mob_data.rarity;
             if (delta < 0) delta = 0;
-            if (mob_data.drops.size() > 0) {
+            uint32_t const r_cap = RarityID::kNumRarities - 1;
+
+            // Group indices into mob_data.drops by petal type, in the
+            // order types first appear. Iteration order in the resulting
+            // vector matches authored order for deterministic rolls.
+            std::vector<PetalType::T> type_order;
+            std::vector<std::vector<uint32_t>> indices_by_type;
+            for (uint32_t i = 0; i < mob_data.drops.size(); ++i) {
+                PetalType::T t = mob_data.drops[i].type;
+                auto it = std::find(type_order.begin(), type_order.end(), t);
+                if (it == type_order.end()) {
+                    type_order.push_back(t);
+                    indices_by_type.push_back({i});
+                } else {
+                    indices_by_type[it - type_order.begin()].push_back(i);
+                }
+            }
+
+            for (size_t k = 0; k < type_order.size(); ++k) {
+                std::vector<uint32_t> const &idxs = indices_by_type[k];
                 float total = 0.0f;
-                for (uint32_t i = 0; i < mob_data.drops.size(); ++i) total += drop_chances[i];
+                for (uint32_t i : idxs) total += drop_chances[i];
                 float no_drop_mass = 1.0f - total;
-                // Saturation: when the per-entry chances (each pre-clamped
-                // to ≤ 1 in StaticData.cc) sum to > 1, the mob always
-                // drops something. Re-normalise so the cumulative-sum
-                // roll picks each entry in proportion to its chance;
-                // without this, the first entry whose chance saturates at
-                // 1.0 short-circuits the roll and is always picked (e.g.
-                // Shiny Ladybug always producing Rare Dahlia and nothing
-                // else).
+                // Same saturation rescue as the legacy single-outcome
+                // model: if the entries for this type sum to >1 we treat
+                // the type as guaranteed-drop and rescale within-type
+                // weights to pick the rarity in proportion to its chance.
                 float norm = 1.0f;
                 if (no_drop_mass < 0) {
                     no_drop_mass = 0;
@@ -125,24 +153,21 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
                 float roll = frand();
                 if (roll < no_drop_mass) {
                     if (delta > 0) {
-                        // Pick the highest-base-chance entry as the carrier
-                        // petal — its name determines which family the
-                        // upgrade lookup walks.
-                        uint32_t best = 0;
-                        for (uint32_t i = 1; i < mob_data.drops.size(); ++i)
-                            if (drop_chances[i] > drop_chances[best]) best = i;
+                        // Carrier within the type: highest-chance entry.
+                        uint32_t best = idxs[0];
+                        for (uint32_t i : idxs) if (drop_chances[i] > drop_chances[best]) best = i;
                         uint32_t r = (uint32_t)delta;
-                        if (r >= RarityID::kNumRarities) r = RarityID::kNumRarities - 1;
+                        if (r > r_cap) r = r_cap;
                         success_drops.push_back(_upgrade_drop(mob_data.drops[best], (uint8_t)r));
                     }
-                    // else: original "no drop" outcome preserved for delta=0.
+                    // else: no drop of this type for this kill.
                 } else {
                     float cum = no_drop_mass;
-                    for (uint32_t i = 0; i < mob_data.drops.size(); ++i) {
+                    for (uint32_t i : idxs) {
                         cum += drop_chances[i] * norm;
                         if (roll < cum) {
                             uint32_t r = (uint32_t)mob_data.drops[i].rarity + (uint32_t)delta;
-                            if (r >= RarityID::kNumRarities) r = RarityID::kNumRarities - 1;
+                            if (r > r_cap) r = r_cap;
                             success_drops.push_back(_upgrade_drop(mob_data.drops[i], (uint8_t)r));
                             break;
                         }
