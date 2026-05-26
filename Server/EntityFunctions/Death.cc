@@ -176,6 +176,20 @@ void entity_on_death(Simulation *sim, Entity const &ent) {
                     }
                 }
             }
+            if (is_br) {
+                // Ultra/Super/Unique tier petals are only obtainable from
+                // spawn_drops zones on BR maps. Mob kills cap at Mythic so
+                // those tiers stay scarce; clamp anything that made it
+                // through the per-view distribution back down to Mythic.
+                for (PetalID::T &id : success_drops) {
+                    if (id.rarity >= RarityID::kUltra)
+                        id = _upgrade_drop({id.type, RarityID::kCommon}, RarityID::kMythic);
+                }
+                success_drops.erase(
+                    std::remove_if(success_drops.begin(), success_drops.end(),
+                        [](PetalID::T id) { return id.rarity >= RarityID::kUltra; }),
+                    success_drops.end());
+            }
             _alloc_drops(sim, success_drops, ent.map_path, ent.x, ent.y);
         }
         if (ent.mob_id == MobID::kAntHole && ent.team == NULL_ENTITY && frand() < DIGGER_SPAWN_CHANCE) {

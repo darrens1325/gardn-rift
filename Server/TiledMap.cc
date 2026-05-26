@@ -7,8 +7,10 @@
 #include <Shared/Map.hh>
 #include <Shared/Simulation.hh>
 #include <Shared/StaticData.hh>
+#include <Shared/StaticDefinitions.hh>
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -27,6 +29,7 @@ namespace TiledMap {
     std::vector<TiledCollisionRect> collision_rects;
     std::vector<TiledCollisionPoly> collision_polys;
     std::vector<TiledSpawnPolygon> spawn_polygons;
+    std::vector<TiledSpawnDrop> spawn_drops;
     std::vector<TiledWarp> warps;
     static std::vector<uint32_t> mob_counts;
     static std::unordered_map<uint32_t, game_tick_t> warp_cooldowns;
@@ -44,6 +47,7 @@ namespace TiledMap {
         std::vector<TiledCollisionRect> collision_rects;
         std::vector<TiledCollisionPoly> collision_polys;
         std::vector<TiledSpawnPolygon> spawn_polygons;
+        std::vector<TiledSpawnDrop> spawn_drops;
         std::vector<TiledWarp> warps;
         std::vector<uint32_t> mob_counts;
         std::unordered_map<std::string, TiledPolyVert> warp_points;
@@ -939,6 +943,138 @@ void parse_collision_layer(Json const &layer) {
     }
 }
 
+// Tiled `spawn_drops` `type` property is "<petal>:<rarity>" (e.g.
+// "basic:super"). Matches case-insensitively against the enum names
+// with the `k` prefix stripped, so "AntEgg", "antegg", "ant_egg" all
+// resolve. Returns PetalID::kNone on lookup failure.
+static std::string _lower_strip(std::string const &s) {
+    std::string out;
+    out.reserve(s.size());
+    for (char c : s) {
+        if (c == '_' || c == ' ' || c == '-') continue;
+        out.push_back((char)std::tolower((unsigned char)c));
+    }
+    return out;
+}
+
+static int8_t _petal_type_from_name(std::string const &name) {
+    static struct { char const *key; PetalType::T value; } const TABLE[] = {
+        {"none", PetalType::kNone},
+        {"basic", PetalType::kBasic},
+        {"light", PetalType::kLight}, {"fast", PetalType::kLight},
+        {"heavy", PetalType::kHeavy},
+        {"stinger", PetalType::kStinger},
+        {"tringer", PetalType::kTringer},
+        {"leaf", PetalType::kLeaf},
+        {"twin", PetalType::kTwin},
+        {"rose", PetalType::kRose},
+        {"azalea", PetalType::kAzalea},
+        {"iris", PetalType::kIris},
+        {"blueiris", PetalType::kBlueIris},
+        {"missile", PetalType::kMissile},
+        {"dandelion", PetalType::kDandelion},
+        {"bubble", PetalType::kBubble},
+        {"faster", PetalType::kFaster},
+        {"rock", PetalType::kRock},
+        {"cactus", PetalType::kCactus},
+        {"poisoncactus", PetalType::kPoisonCactus},
+        {"tricac", PetalType::kTricac},
+        {"web", PetalType::kWeb},
+        {"triweb", PetalType::kTriweb},
+        {"wing", PetalType::kWing},
+        {"peas", PetalType::kPeas},
+        {"poisonpeas", PetalType::kPoisonPeas},
+        {"sand", PetalType::kSand},
+        {"pincer", PetalType::kPincer},
+        {"dahlia", PetalType::kDahlia},
+        {"triplet", PetalType::kTriplet},
+        {"antegg", PetalType::kAntEgg},
+        {"beetleegg", PetalType::kBeetleEgg},
+        {"pollen", PetalType::kPollen},
+        {"stick", PetalType::kStick},
+        {"antennae", PetalType::kAntennae},
+        {"heaviest", PetalType::kHeaviest},
+        {"thirdeye", PetalType::kThirdEye},
+        {"observer", PetalType::kObserver},
+        {"salt", PetalType::kSalt},
+        {"square", PetalType::kSquare},
+        {"moon", PetalType::kMoon},
+        {"lotus", PetalType::kLotus},
+        {"cutter", PetalType::kCutter},
+        {"yinyang", PetalType::kYinYang},
+        {"yggdrasil", PetalType::kYggdrasil},
+        {"rice", PetalType::kRice},
+        {"bone", PetalType::kBone},
+        {"yucca", PetalType::kYucca},
+        {"corn", PetalType::kCorn},
+        {"root", PetalType::kRoot},
+    };
+    std::string key = _lower_strip(name);
+    for (auto const &e : TABLE) if (key == e.key) return (int8_t)e.value;
+    return -1;
+}
+
+static int8_t _rarity_from_name(std::string const &name) {
+    static char const *const NAMES[RarityID::kNumRarities] = {
+        "common", "unusual", "rare", "epic", "legendary",
+        "mythic", "ultra", "super", "unique", "eternal",
+    };
+    std::string key = _lower_strip(name);
+    for (uint8_t r = 0; r < RarityID::kNumRarities; ++r)
+        if (key == NAMES[r]) return (int8_t)r;
+    return -1;
+}
+
+static bool parse_petal_id(std::string const &spec, PetalID::T &out) {
+    size_t colon = spec.find(':');
+    if (colon == std::string::npos) return false;
+    int8_t type = _petal_type_from_name(spec.substr(0, colon));
+    int8_t rarity = _rarity_from_name(spec.substr(colon + 1));
+    if (type < 0 || rarity < 0) return false;
+    if (PETAL_DATA[(uint8_t)type][(uint8_t)rarity].name == nullptr) return false;
+    out = { (PetalType::T)type, (uint8_t)rarity };
+    return true;
+}
+
+void parse_spawn_drops_layer(Json const &layer) {
+    Json const *objs = layer.find("objects");
+    if (!objs || objs->type != Json::kArr) return;
+    for (auto const &o : objs->arr) {
+        if (object_kind(o) != "spawn_drops") continue;
+        TiledSpawnDrop d;
+        d.x = (float)(o.find("x") ? o.find("x")->as_num() : 0);
+        d.y = (float)(o.find("y") ? o.find("y")->as_num() : 0);
+        d.max_interval = 0.f;
+        d.once = false;
+        std::string type_spec;
+        if (Json const *props = o.find("properties")) {
+            if (props->type == Json::kArr) {
+                for (auto const &pr : props->arr) {
+                    Json const *name = pr.find("name");
+                    Json const *val = pr.find("value");
+                    if (!name || !val) continue;
+                    if (name->as_str() == "max_interval")
+                        d.max_interval = (float)val->as_num(0.0);
+                    else if (name->as_str() == "once")
+                        d.once = val->as_bool(false);
+                    else if (name->as_str() == "type")
+                        type_spec = val->as_str();
+                }
+            }
+        }
+        if (!parse_petal_id(type_spec, d.petal)) {
+            std::cerr << "[TiledMap] spawn_drops: unknown type '" << type_spec
+                      << "' (expected '<petal>:<rarity>')\n";
+            continue;
+        }
+        // Stagger the first random interval so periodic drops don't all
+        // fire on tick 0. One-shots ignore this and fire on activation.
+        if (!d.once && d.max_interval > 0)
+            d.tick_until_next = (uint32_t)(frand() * d.max_interval * SIM_RATE);
+        TiledMap::spawn_drops.push_back(d);
+    }
+}
+
 void parse_mobs_layer(Json const &layer) {
     Json const *objs = layer.find("objects");
     if (!objs || objs->type != Json::kArr) return;
@@ -1437,6 +1573,7 @@ bool load(std::string const &path) {
     collision_polys.clear();
     tile_shape_cache.clear();
     spawn_polygons.clear();
+    spawn_drops.clear();
     warps.clear();
     warp_points.clear();
 
@@ -1478,6 +1615,10 @@ bool load(std::string const &path) {
             if (type->as_str() == "objectgroup") {
                 if (name->as_str() == "collision") parse_collision_layer(layer);
                 else if (name->as_str() == "mobs") parse_mobs_layer(layer);
+                // `spawn_drops` objects may live under any objectgroup
+                // (victory.tmj puts one under the `warps` layer); filter
+                // by object_kind rather than by layer name.
+                parse_spawn_drops_layer(layer);
                 // Warp-typed objects and named destination points are
                 // authored across several layers in this map set —
                 // most live under `warps`, some under `checkpoints`,
@@ -1523,6 +1664,7 @@ bool load(std::string const &path) {
     cached.collision_rects = collision_rects;
     cached.collision_polys = collision_polys;
     cached.spawn_polygons = spawn_polygons;
+    cached.spawn_drops = spawn_drops;
     cached.warps = warps;
     cached.mob_counts = mob_counts;
     cached.warp_points = warp_points;
@@ -1530,6 +1672,7 @@ bool load(std::string const &path) {
     std::cout << "[TiledMap] loaded " << path
               << " — arena " << map_width << "x" << map_height << ", "
               << spawn_polygons.size() << " spawn polygons, "
+              << spawn_drops.size() << " spawn drops, "
               << collision_rects.size() << " collision rects, "
               << collision_polys.size() << " collision polygons, "
               << warps.size() << " warps\n";
@@ -1797,10 +1940,16 @@ static void update_bulk_fills(Simulation *sim, std::vector<std::string> const &a
         }
     }
     for (auto it = bulk_filled_maps.begin(); it != bulk_filled_maps.end(); ) {
-        if (std::find(active_maps.begin(), active_maps.end(), *it) == active_maps.end())
+        if (std::find(active_maps.begin(), active_maps.end(), *it) == active_maps.end()) {
+            // Map is leaving the active set. Re-arm its one-shot spawn_drops
+            // so the next activation refills like a fresh load.
+            if (CachedMap *map = map_for_mut(*it)) {
+                for (TiledSpawnDrop &d : map->spawn_drops) d.once_fired = false;
+            }
             it = bulk_filled_maps.erase(it);
-        else
+        } else {
             ++it;
+        }
     }
 }
 
@@ -1833,6 +1982,36 @@ void note_mob_death(std::string const &map_path, uint32_t poly_idx) {
     CachedMap *map = map_for_mut(map_path);
     if (!map || poly_idx >= map->mob_counts.size()) return;
     if (map->mob_counts[poly_idx] > 0) --map->mob_counts[poly_idx];
+}
+
+static void _emit_spawn_drop(Simulation *sim, std::string const &map_path,
+                             TiledSpawnDrop const &d) {
+    Entity &drop = alloc_drop(sim, d.petal);
+    drop.map_path = map_path;
+    drop.set_x(d.x);
+    drop.set_y(d.y);
+}
+
+void tick_spawn_drops(Simulation *sim) {
+    if (!loaded) return;
+    std::vector<std::string> active = active_player_maps(sim);
+    if (active.empty()) return;
+    for (auto const &path : active) {
+        CachedMap *map = map_for_mut(path);
+        if (!map || map->spawn_drops.empty()) continue;
+        for (TiledSpawnDrop &d : map->spawn_drops) {
+            if (d.once) {
+                if (d.once_fired) continue;
+                _emit_spawn_drop(sim, path, d);
+                d.once_fired = true;
+                continue;
+            }
+            if (d.max_interval <= 0) continue;
+            if (d.tick_until_next > 0) { --d.tick_until_next; continue; }
+            _emit_spawn_drop(sim, path, d);
+            d.tick_until_next = (uint32_t)(frand() * d.max_interval * SIM_RATE);
+        }
+    }
 }
 
 } // namespace TiledMap

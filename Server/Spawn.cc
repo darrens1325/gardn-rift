@@ -60,7 +60,10 @@ static constexpr float MOB_RADIUS_MULT[RarityID::kNumRarities] = {
     1.72f,  // Epic
     3.0f,  // Legendary
     5.0f,  // Mythic
-    7.0f,  // Unique  (extrapolation of the +0.2/tier ramp)
+    5.7f,  // Ultra
+    6.3f,  // Super
+    7.0f,  // Unique
+    8.5f,  // Eternal
 };
 
 float mob_radius_mult(uint8_t rarity) {

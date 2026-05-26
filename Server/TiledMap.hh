@@ -60,12 +60,32 @@ struct TiledWarp {
     float x, y, radius;
 };
 
+// A `spawn_drops` object: a fixed point (x, y) that emits a specific
+// `(petal_type, rarity)` drop, either once when the map becomes active
+// (`once == true`) or periodically with a random delay up to
+// `max_interval` game-seconds.
+//
+// `tick_until_next` is runtime state; it counts down each tick and a
+// drop spawns when it hits 0. `once_fired` latches the one-shot case
+// so re-activating the map can refill but a single object never spawns
+// twice in one activation.
+struct TiledSpawnDrop {
+    float x;
+    float y;
+    PetalID::T petal;
+    float max_interval; // seconds; 0 disables periodic spawns
+    bool once;
+    bool once_fired = false;
+    uint32_t tick_until_next = 0;
+};
+
 namespace TiledMap {
     extern bool loaded;
     extern std::string current_map_path;
     extern std::vector<TiledCollisionRect> collision_rects;
     extern std::vector<TiledCollisionPoly> collision_polys;
     extern std::vector<TiledSpawnPolygon> spawn_polygons;
+    extern std::vector<TiledSpawnDrop> spawn_drops;
     extern std::vector<TiledWarp> warps;
 
     // Loads the Tiled JSON map. Returns true on success.
@@ -94,6 +114,11 @@ namespace TiledMap {
     // Spawn one random mob using the Tiled polygons (density-weighted).
     // Returns true if a spawn was attempted (whether it succeeded or not).
     bool spawn_random_mob(Simulation *sim);
+
+    // Tick every `spawn_drops` object on every active map: emit one-shots
+    // for newly-active maps and tick the random-interval timer for the
+    // periodic ones. Called once per game tick from Simulation::tick.
+    void tick_spawn_drops(Simulation *sim);
 
     void apply_warps(Simulation *sim);
 

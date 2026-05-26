@@ -37,6 +37,7 @@ void Simulation::tick() {
     if (frand() < 1.0f / SIM_RATE)
         for (uint32_t i = 0; i < 10; ++i)
             Map::spawn_random_mob(this);
+    TiledMap::tick_spawn_drops(this);
     for_each_entity([](Simulation *sim, Entity &ent) {
         if (ent.has_component(kPhysics))
             sim->spatial_hash.insert(ent);
