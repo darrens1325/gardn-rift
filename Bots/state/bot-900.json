@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-900",
   "first_seen": 1778366118.6051018,
-  "last_seen": 1779643929.7067552,
-  "episodes": 309,
-  "score_total": 156040,
+  "last_seen": 1779834162.298743,
+  "episodes": 315,
+  "score_total": 156223,
   "score_best": 8310,
   "best_loadout": [
     256,
@@ -14,13 +14,13 @@
     256
   ],
   "killed_by": {
-    "Evil Centipede": 1,
+    "Evil Centipede": 2,
     "bot-804": 7,
     "Hornet": 110,
     "Desert Centipede": 2,
     "Beetle": 1,
     "Sandstorm": 1,
-    "Wasp": 2,
+    "Wasp": 3,
     "bot-104": 1,
     "bot-1109": 3,
     "bot-608": 1,
@@ -52,7 +52,7 @@
     "bot-1106": 2,
     "bot-206": 2,
     "bot-309": 1,
-    "bot-305": 2,
+    "bot-305": 3,
     "not bot": 4,
     "bot-209": 2,
     "bot-711": 3,
@@ -73,12 +73,13 @@
     "bot-510": 1,
     "rosie": 1,
     "bot-903": 1,
-    "bot-1008": 1
+    "bot-1008": 1,
+    "Cactus": 1
   },
   "loadout_history": {
     "1": 1,
-    "2048": 5,
-    "256": 308,
+    "2048": 11,
+    "256": 314,
     "0": 54,
     "1024": 2,
     "3584": 2,
@@ -116,6 +117,8 @@
     "516": 1,
     "2049": 2,
     "512": 2,
-    "5123": 3
+    "5123": 3,
+    "3072": 1,
+    "11777": 1
   }
 }
