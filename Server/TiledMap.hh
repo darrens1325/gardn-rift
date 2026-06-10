@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Shared/EntityDef.hh>
 #include <Shared/StaticDefinitions.hh>
 
 #include <cstdint>
@@ -60,6 +61,15 @@ struct TiledWarp {
     float x, y, radius;
 };
 
+// A `respawn_area` object: an axis-aligned rectangle that constrains where
+// players (re)spawn on a given map. When a map has one or more of these,
+// `player_spawn` picks a random point inside a randomly-chosen area
+// instead of sampling from the full arena. Maps without any
+// `respawn_area` fall back to the legacy arena-wide random spawn.
+struct TiledRespawnArea {
+    float x, y, w, h;
+};
+
 // A `spawn_drops` object: a fixed point (x, y) that emits a specific
 // `(petal_type, rarity)` drop, either once when the map becomes active
 // (`once == true`) or periodically with a random delay up to
@@ -77,6 +87,11 @@ struct TiledSpawnDrop {
     bool once;
     bool once_fired = false;
     uint32_t tick_until_next = 0;
+    // Most recent drop entity this object emitted. tick_spawn_drops
+    // suppresses replenishment while this entity is still alive on the
+    // map — otherwise periodic drops pile up indefinitely at a point
+    // nobody is collecting. NULL_ENTITY means "no live drop pending".
+    EntityID last_emitted = NULL_ENTITY;
 };
 
 namespace TiledMap {
@@ -87,6 +102,7 @@ namespace TiledMap {
     extern std::vector<TiledSpawnPolygon> spawn_polygons;
     extern std::vector<TiledSpawnDrop> spawn_drops;
     extern std::vector<TiledWarp> warps;
+    extern std::vector<TiledRespawnArea> respawn_areas;
 
     // Loads the Tiled JSON map. Returns true on success.
     bool load(std::string const &path);
@@ -124,4 +140,10 @@ namespace TiledMap {
 
     void note_mob_death(uint32_t poly_idx);
     void note_mob_death(std::string const &map_path, uint32_t poly_idx);
+
+    // If `path`'s map has any `respawn_area` objects, write a uniformly
+    // random point inside one of them (area-weighted across multiple
+    // areas) to (out_x, out_y) and return true. Returns false otherwise
+    // so the caller can fall back to its own spawn-point selection.
+    bool pick_respawn_point(std::string const &path, float &out_x, float &out_y);
 }

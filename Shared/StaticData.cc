@@ -120,13 +120,13 @@ struct PetalData const PETAL_DATA[PetalType::kNumPetalTypes][RarityID::kNumRarit
     },
     [PetalType::kStinger] = {
         [RarityID::kCommon] = {"Stinger", "It really hurts, but it's really fragile",
-            5.0, 20.0, 7.0, 3.5, 1, {}},
+            5.0, 100.0, 7.0, 3.5, 1, {}},
         [RarityID::kUnusual] = {"Stinger", "It really hurts, but it's really fragile",
-            5.0, 35.0, 7.0, 3.5, 1, {}},
+            5.0, 130.0, 7.0, 3.5, 1, {}},
         [RarityID::kRare] = {"Stinger", "It really hurts, but it's really fragile",
-            5.0, 50.0, 7.0, 3.5, 1, {}},
+            5.0, 180.0, 7.0, 3.5, 1, {}},
         [RarityID::kEpic] = {"Stinger", "It really hurts, but it's really fragile",
-            5.0, 75.0, 7.0, 3.5, 1, {}},
+            5.0, 230.0, 7.0, 3.5, 1, {}},
     },
     [PetalType::kTringer] = {
         [RarityID::kLegendary] = {"Stinger", "It really hurts, but it's really fragile",
@@ -1036,7 +1036,7 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Rock",
         "A rock. It doesn't do much.",
         RarityID::kCommon, {5.0, 15.0}, 10.0, {10.0, 25.0}, 1, {
-        PetalID::kHeavy, PetalID::kUnusualHeavy, PetalID::kRareHeavy, PetalID::kEpicHeavy, PetalID::kLegendaryHeavy, PetalID::kLight, PetalID::kUnusualLight, PetalID::kRareLight, PetalID::kEpicLight, PetalID::kCommonRock, PetalID::kUnusualRock, PetalID::kRock, PetalID::kEpicRock, PetalID::kLegendaryRock
+        PetalID::kCommonRock, PetalID::kUnusualRock, PetalID::kRock, PetalID::kEpicRock, PetalID::kLegendaryRock
     }, { .stationary = 1 }},
     {
         "Boulder",

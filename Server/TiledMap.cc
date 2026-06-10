@@ -31,6 +31,7 @@ namespace TiledMap {
     std::vector<TiledSpawnPolygon> spawn_polygons;
     std::vector<TiledSpawnDrop> spawn_drops;
     std::vector<TiledWarp> warps;
+    std::vector<TiledRespawnArea> respawn_areas;
     static std::vector<uint32_t> mob_counts;
     static std::unordered_map<uint32_t, game_tick_t> warp_cooldowns;
     static std::unordered_map<std::string, TiledPolyVert> warp_points;
@@ -49,6 +50,7 @@ namespace TiledMap {
         std::vector<TiledSpawnPolygon> spawn_polygons;
         std::vector<TiledSpawnDrop> spawn_drops;
         std::vector<TiledWarp> warps;
+        std::vector<TiledRespawnArea> respawn_areas;
         std::vector<uint32_t> mob_counts;
         std::unordered_map<std::string, TiledPolyVert> warp_points;
     };
@@ -1075,6 +1077,25 @@ void parse_spawn_drops_layer(Json const &layer) {
     }
 }
 
+void parse_respawn_areas_layer(Json const &layer) {
+    Json const *objs = layer.find("objects");
+    if (!objs || objs->type != Json::kArr) return;
+    for (auto const &o : objs->arr) {
+        if (object_kind(o) != "respawn_area") continue;
+        // Tiled emits `respawn_area` objects as axis-aligned rects. A
+        // zero-area object can't host a uniform sample, so drop it.
+        float w = (float)(o.find("width") ? o.find("width")->as_num() : 0);
+        float h = (float)(o.find("height") ? o.find("height")->as_num() : 0);
+        if (w <= 0 || h <= 0) continue;
+        TiledRespawnArea r;
+        r.x = (float)(o.find("x") ? o.find("x")->as_num() : 0);
+        r.y = (float)(o.find("y") ? o.find("y")->as_num() : 0);
+        r.w = w;
+        r.h = h;
+        TiledMap::respawn_areas.push_back(r);
+    }
+}
+
 void parse_mobs_layer(Json const &layer) {
     Json const *objs = layer.find("objects");
     if (!objs || objs->type != Json::kArr) return;
@@ -1576,6 +1597,7 @@ bool load(std::string const &path) {
     spawn_drops.clear();
     warps.clear();
     warp_points.clear();
+    respawn_areas.clear();
 
     uint32_t map_width = INITIAL_ARENA_WIDTH;
     uint32_t map_height = INITIAL_ARENA_HEIGHT;
@@ -1633,6 +1655,11 @@ bool load(std::string const &path) {
                 // list and read_warp_points_from_map's scan in sync.
                 parse_warp_points_layer(layer);
                 parse_warps_layer(layer);
+                // `respawn_area` objects live under different objectgroup
+                // names across maps — `respawn` (a.tmj), the warps layer
+                // (garden.tmj), the `mobs` layer (centralia.tmj), etc.
+                // Filter by object_kind rather than by layer name.
+                parse_respawn_areas_layer(layer);
             } else if (type->as_str() == "tilelayer") {
                 // Layers whose tiles act as walls. The authored
                 // `collision` objectgroup only covers a few special
@@ -1666,6 +1693,7 @@ bool load(std::string const &path) {
     cached.spawn_polygons = spawn_polygons;
     cached.spawn_drops = spawn_drops;
     cached.warps = warps;
+    cached.respawn_areas = respawn_areas;
     cached.mob_counts = mob_counts;
     cached.warp_points = warp_points;
     map_cache[path] = std::move(cached);
@@ -1675,7 +1703,8 @@ bool load(std::string const &path) {
               << spawn_drops.size() << " spawn drops, "
               << collision_rects.size() << " collision rects, "
               << collision_polys.size() << " collision polygons, "
-              << warps.size() << " warps\n";
+              << warps.size() << " warps, "
+              << respawn_areas.size() << " respawn areas\n";
     return true;
 }
 
@@ -1698,6 +1727,25 @@ uint32_t arena_width(std::string const &path) {
 uint32_t arena_height(std::string const &path) {
     CachedMap const *map = map_for(path);
     return map ? map->height : ARENA_HEIGHT;
+}
+
+bool pick_respawn_point(std::string const &path, float &out_x, float &out_y) {
+    CachedMap const *map = map_for(path);
+    if (!map || map->respawn_areas.empty()) return false;
+    // Weight by area so a few large boxes don't lose to many small ones.
+    double total = 0.0;
+    for (auto const &r : map->respawn_areas) total += (double)r.w * r.h;
+    if (total <= 0.0) return false;
+    double pick = frand() * total;
+    TiledRespawnArea const *chosen = &map->respawn_areas.front();
+    for (auto const &r : map->respawn_areas) {
+        double a = (double)r.w * r.h;
+        if (pick < a) { chosen = &r; break; }
+        pick -= a;
+    }
+    out_x = chosen->x + frand() * chosen->w;
+    out_y = chosen->y + frand() * chosen->h;
+    return true;
 }
 
 static void update_bulk_fills(Simulation *, std::vector<std::string> const &);
@@ -1984,12 +2032,13 @@ void note_mob_death(std::string const &map_path, uint32_t poly_idx) {
     if (map->mob_counts[poly_idx] > 0) --map->mob_counts[poly_idx];
 }
 
-static void _emit_spawn_drop(Simulation *sim, std::string const &map_path,
-                             TiledSpawnDrop const &d) {
+static EntityID _emit_spawn_drop(Simulation *sim, std::string const &map_path,
+                                 TiledSpawnDrop const &d) {
     Entity &drop = alloc_drop(sim, d.petal);
     drop.map_path = map_path;
     drop.set_x(d.x);
     drop.set_y(d.y);
+    return drop.id;
 }
 
 void tick_spawn_drops(Simulation *sim) {
@@ -2002,13 +2051,21 @@ void tick_spawn_drops(Simulation *sim) {
         for (TiledSpawnDrop &d : map->spawn_drops) {
             if (d.once) {
                 if (d.once_fired) continue;
-                _emit_spawn_drop(sim, path, d);
+                d.last_emitted = _emit_spawn_drop(sim, path, d);
                 d.once_fired = true;
                 continue;
             }
             if (d.max_interval <= 0) continue;
             if (d.tick_until_next > 0) { --d.tick_until_next; continue; }
-            _emit_spawn_drop(sim, path, d);
+            // Hold off replenishing while the previous drop is still
+            // sitting on the ground. Without this check periodic drops
+            // pile up endlessly at any unattended emit point. Reset the
+            // timer so we re-check next interval instead of every tick.
+            if (!d.last_emitted.null() && sim->ent_alive(d.last_emitted)) {
+                d.tick_until_next = (uint32_t)(frand() * d.max_interval * SIM_RATE);
+                continue;
+            }
+            d.last_emitted = _emit_spawn_drop(sim, path, d);
             d.tick_until_next = (uint32_t)(frand() * d.max_interval * SIM_RATE);
         }
     }

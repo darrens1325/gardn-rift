@@ -301,11 +301,23 @@ void player_spawn(Simulation *sim, Entity &camera, Entity &player) {
     // that need any push, falling back to the push-out path if every
     // sample lands in geometry (e.g. a degenerate map config).
     float spawn_x = 0.0f, spawn_y = 0.0f;
+    // If the loaded .tmj defines `respawn_area` rectangles, sample
+    // inside one of those; otherwise fall back to the legacy
+    // arena-wide random spawn. Either way the same collision-aware
+    // retry loop applies so we don't visually spawn inside walls
+    // along the area's edges.
+    bool use_respawn_area = TiledMap::pick_respawn_point(player.map_path, spawn_x, spawn_y);
     for (int attempt = 0; attempt < 30; ++attempt) {
-        uint32_t arena_width = TiledMap::arena_width(player.map_path);
-        uint32_t arena_height = TiledMap::arena_height(player.map_path);
-        spawn_x = lerp(arena_width * 0.1, arena_width * 0.9, frand());
-        spawn_y = lerp(arena_height * 0.1, arena_height * 0.9, frand());
+        if (use_respawn_area) {
+            // pick_respawn_point already populated spawn_x/y on attempt 0.
+            // Re-roll inside the area on subsequent attempts.
+            if (attempt > 0) TiledMap::pick_respawn_point(player.map_path, spawn_x, spawn_y);
+        } else {
+            uint32_t arena_width = TiledMap::arena_width(player.map_path);
+            uint32_t arena_height = TiledMap::arena_height(player.map_path);
+            spawn_x = lerp(arena_width * 0.1, arena_width * 0.9, frand());
+            spawn_y = lerp(arena_height * 0.1, arena_height * 0.9, frand());
+        }
         float orig_x = spawn_x, orig_y = spawn_y;
         TiledMap::resolve_collision(player.map_path, spawn_x, spawn_y, BASE_FLOWER_RADIUS);
         // No push needed → position was free.
