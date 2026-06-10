@@ -2312,6 +2312,381 @@ void draw_static_mob(MobID::T mob_id, Renderer &ctx, MobRenderAttributes attr) {
             ctx.qcurve_to(14.782, 5.305, 7.842, 2.992);
             ctx.fill();
             break;
+        // ----- Ocean mobs (ported from ~/flooooio) -----
+        case MobID::kStarfish: {
+            RenderContext _c(&ctx);
+            ctx.scale(radius / 120.0f);
+            ctx.round_line_cap();
+            ctx.round_line_join();
+            float const D = 175.0f;
+            ctx.begin_path();
+            for (int i = 0; i < 5; ++i) {
+                float midAngle = (i + 0.5f) / 5.0f * (2 * M_PI);
+                float endAngle = (i + 1.0f) / 5.0f * (2 * M_PI);
+                if (i == 0) ctx.move_to(D, 0);
+                ctx.qcurve_to(cosf(midAngle) * 15, sinf(midAngle) * 15, cosf(endAngle) * D, sinf(endAngle) * D);
+            }
+            ctx.set_line_width(52);
+            ctx.set_stroke(Renderer::HSV(0xffd0504e, 0.8125f));
+            ctx.stroke();
+            ctx.set_line_width(26);
+            ctx.set_fill(0xffd0504e);
+            ctx.set_stroke(0xffd0504e);
+            ctx.fill(1);
+            ctx.stroke();
+            ctx.set_fill(0xffd3756b);
+            for (int i = 0; i < 5; ++i) {
+                RenderContext sc(&ctx);
+                ctx.rotate(i / 5.0f * (2 * M_PI));
+                float spotPosition = 52;
+                for (int j = 0; j < 3; ++j) {
+                    float spotSize = (1 - j / 3.0f * 0.8f) * 24;
+                    ctx.begin_path();
+                    ctx.arc(spotPosition, 0, spotSize);
+                    ctx.fill(1);
+                    spotPosition += spotSize * 2 + 5;
+                }
+            }
+            break;
+        }
+        case MobID::kJellyfish: {
+            RenderContext _c(&ctx);
+            ctx.scale(radius / 20.0f);
+            ctx.set_fill(0xffffffff);
+            ctx.set_stroke(0xffffffff);
+            ctx.set_global_alpha(0.6f);
+            ctx.round_line_cap();
+            ctx.set_line_width(2.3f);
+            ctx.begin_path();
+            for (int i = 0; i < 10; ++i) {
+                float tentacleAngle = i / 10.0f * (2 * M_PI);
+                float wave = sinf(tentacleAngle + attr.animation);
+                RenderContext tc(&ctx);
+                ctx.rotate(tentacleAngle);
+                ctx.translate(17.5f, 0);
+                ctx.move_to(0, 0);
+                ctx.rotate(wave * 0.5f);
+                ctx.qcurve_to(4, wave * -2, 14, 0);
+            }
+            ctx.stroke();
+            ctx.set_global_alpha(0.5f);
+            ctx.begin_path();
+            ctx.arc(0, 0, 20);
+            ctx.fill(1);
+            ctx.set_line_width(3);
+            ctx.stroke();
+            break;
+        }
+        case MobID::kBubble: {
+            RenderContext _c(&ctx);
+            ctx.scale(radius / 20.0f);
+            ctx.round_line_cap();
+            ctx.round_line_join();
+            ctx.set_fill(0xffffffff);
+            ctx.set_stroke(0xffffffff);
+            ctx.begin_path();
+            ctx.arc(10, 0, 2);
+            ctx.set_global_alpha(0.4f);
+            ctx.set_line_width(5);
+            ctx.stroke();
+            ctx.begin_path();
+            ctx.arc(0, 0, 20);
+            ctx.set_global_alpha(0.5f);
+            ctx.fill(1);
+            ctx.set_line_width(3);
+            ctx.stroke();
+            break;
+        }
+        case MobID::kSponge: {
+            RenderContext _c(&ctx);
+            ctx.scale(radius / 25.0f);
+            uint32_t const bodyColors[3] = {0xffefc99a, 0xffa7829c, 0xff8d6ca5};
+            uint32_t bodyColor = bodyColors[attr.seed % 3];
+            ctx.round_line_join();
+            ctx.begin_path();
+            ctx.move_to(30, 0);
+            ctx.qcurve_to(32.53, 0.54, 33.93, 2.7);
+            ctx.qcurve_to(35.34, 4.87, 34.8, 7.4);
+            ctx.qcurve_to(34.27, 9.93, 32.1, 11.33);
+            ctx.qcurve_to(29.93, 12.74, 27.41, 12.2);
+            ctx.qcurve_to(29.5, 13.72, 29.9, 16.27);
+            ctx.qcurve_to(30.3, 18.82, 28.79, 20.91);
+            ctx.qcurve_to(27.27, 23, 24.72, 23.41);
+            ctx.qcurve_to(22.16, 23.81, 20.07, 22.29);
+            ctx.qcurve_to(21.37, 24.53, 20.7, 27.03);
+            ctx.qcurve_to(20.03, 29.52, 17.79, 30.81);
+            ctx.qcurve_to(15.55, 32.11, 13.06, 31.44);
+            ctx.qcurve_to(10.56, 30.77, 9.27, 28.53);
+            ctx.qcurve_to(9.54, 31.1, 7.91, 33.11);
+            ctx.qcurve_to(6.29, 35.12, 3.72, 35.39);
+            ctx.qcurve_to(1.15, 35.66, -0.86, 34.03);
+            ctx.qcurve_to(-2.87, 32.41, -3.14, 29.84);
+            ctx.qcurve_to(-3.93, 32.29, -6.24, 33.47);
+            ctx.qcurve_to(-8.54, 34.64, -11, 33.84);
+            ctx.qcurve_to(-13.45, 33.04, -14.63, 30.74);
+            ctx.qcurve_to(-15.8, 28.44, -15, 25.98);
+            ctx.qcurve_to(-16.73, 27.9, -19.31, 28.04);
+            ctx.qcurve_to(-21.89, 28.17, -23.81, 26.44);
+            ctx.qcurve_to(-25.73, 24.71, -25.86, 22.13);
+            ctx.qcurve_to(-26, 19.55, -24.27, 17.63);
+            ctx.qcurve_to(-26.63, 18.68, -29.04, 17.76);
+            ctx.qcurve_to(-31.45, 16.83, -32.51, 14.47);
+            ctx.qcurve_to(-33.56, 12.11, -32.63, 9.7);
+            ctx.qcurve_to(-31.7, 7.29, -29.34, 6.24);
+            ctx.qcurve_to(-31.93, 6.24, -33.75, 4.41);
+            ctx.qcurve_to(-35.58, 2.58, -35.58, 0);
+            ctx.qcurve_to(-35.58, -2.58, -33.75, -4.41);
+            ctx.qcurve_to(-31.93, -6.24, -29.34, -6.24);
+            ctx.qcurve_to(-31.7, -7.29, -32.63, -9.7);
+            ctx.qcurve_to(-33.56, -12.11, -32.51, -14.47);
+            ctx.qcurve_to(-31.45, -16.83, -29.04, -17.76);
+            ctx.qcurve_to(-26.63, -18.68, -24.27, -17.63);
+            ctx.qcurve_to(-26, -19.55, -25.86, -22.13);
+            ctx.qcurve_to(-25.73, -24.71, -23.81, -26.44);
+            ctx.qcurve_to(-21.89, -28.17, -19.31, -28.04);
+            ctx.qcurve_to(-16.73, -27.9, -15, -25.98);
+            ctx.qcurve_to(-15.8, -28.44, -14.63, -30.74);
+            ctx.qcurve_to(-13.45, -33.04, -11, -33.84);
+            ctx.qcurve_to(-8.54, -34.64, -6.24, -33.47);
+            ctx.qcurve_to(-3.93, -32.29, -3.14, -29.84);
+            ctx.qcurve_to(-2.87, -32.41, -0.86, -34.03);
+            ctx.qcurve_to(1.15, -35.66, 3.72, -35.39);
+            ctx.qcurve_to(6.29, -35.12, 7.91, -33.11);
+            ctx.qcurve_to(9.54, -31.1, 9.27, -28.53);
+            ctx.qcurve_to(10.56, -30.77, 13.06, -31.44);
+            ctx.qcurve_to(15.55, -32.11, 17.79, -30.81);
+            ctx.qcurve_to(20.03, -29.52, 20.7, -27.03);
+            ctx.qcurve_to(21.37, -24.53, 20.07, -22.29);
+            ctx.qcurve_to(22.16, -23.81, 24.72, -23.41);
+            ctx.qcurve_to(27.27, -23, 28.79, -20.91);
+            ctx.qcurve_to(30.3, -18.82, 29.9, -16.27);
+            ctx.qcurve_to(29.5, -13.72, 27.41, -12.2);
+            ctx.qcurve_to(29.93, -12.74, 32.1, -11.33);
+            ctx.qcurve_to(34.27, -9.92, 34.8, -7.4);
+            ctx.qcurve_to(35.34, -4.87, 33.93, -2.7);
+            ctx.qcurve_to(32.53, -0.54, 30, 0);
+            ctx.set_fill(bodyColor);
+            ctx.fill(1);
+            ctx.set_stroke(Renderer::HSV(bodyColor, 0.8125f));
+            ctx.set_line_width(2);
+            ctx.stroke();
+            ctx.set_fill(Renderer::HSV(bodyColor, 0.8125f));
+            ctx.begin_path();
+            ctx.move_to(5, 0); ctx.line_to(8, 0);
+            ctx.qcurve_to(8, 1.24, 7.12, 2.12); ctx.qcurve_to(6.24, 3, 5, 3);
+            ctx.qcurve_to(3.76, 3, 2.88, 2.12); ctx.qcurve_to(2, 1.24, 2, 0);
+            ctx.qcurve_to(2, -1.24, 2.88, -2.12); ctx.qcurve_to(3.76, -3, 5, -3);
+            ctx.qcurve_to(6.24, -3, 7.12, -2.12); ctx.qcurve_to(8, -1.24, 8, 0);
+            ctx.move_to(12, 0); ctx.line_to(16, 0);
+            ctx.qcurve_to(16, 1.66, 14.83, 2.83); ctx.qcurve_to(13.66, 4, 12, 4);
+            ctx.qcurve_to(10.34, 4, 9.17, 2.83); ctx.qcurve_to(8, 1.66, 8, 0);
+            ctx.qcurve_to(8, -1.66, 9.17, -2.83); ctx.qcurve_to(10.34, -4, 12, -4);
+            ctx.qcurve_to(13.66, -4, 14.83, -2.83); ctx.qcurve_to(16, -1.66, 16, 0);
+            ctx.move_to(22, 0); ctx.line_to(27, 0);
+            ctx.qcurve_to(27, 2.07, 25.54, 3.54); ctx.qcurve_to(24.07, 5, 22, 5);
+            ctx.qcurve_to(19.93, 5, 18.46, 3.54); ctx.qcurve_to(17, 2.07, 17, 0);
+            ctx.qcurve_to(17, -2.07, 18.46, -3.54); ctx.qcurve_to(19.93, -5, 22, -5);
+            ctx.qcurve_to(24.07, -5, 25.54, -3.54); ctx.qcurve_to(27, -2.07, 27, 0);
+            ctx.move_to(1.55, 4.76); ctx.line_to(4.55, 4.76);
+            ctx.qcurve_to(4.55, 6, 3.67, 6.88); ctx.qcurve_to(2.79, 7.76, 1.55, 7.76);
+            ctx.qcurve_to(0.3, 7.76, -0.58, 6.88); ctx.qcurve_to(-1.45, 6, -1.45, 4.76);
+            ctx.qcurve_to(-1.45, 3.51, -0.58, 2.63); ctx.qcurve_to(0.3, 1.76, 1.55, 1.76);
+            ctx.qcurve_to(2.79, 1.76, 3.67, 2.63); ctx.qcurve_to(4.55, 3.51, 4.55, 4.76);
+            ctx.move_to(3.71, 11.41); ctx.line_to(7.71, 11.41);
+            ctx.qcurve_to(7.71, 13.07, 6.54, 14.24); ctx.qcurve_to(5.37, 15.41, 3.71, 15.41);
+            ctx.qcurve_to(2.05, 15.41, 0.88, 14.24); ctx.qcurve_to(-0.29, 13.07, -0.29, 11.41);
+            ctx.qcurve_to(-0.29, 9.76, 0.88, 8.58); ctx.qcurve_to(2.05, 7.41, 3.71, 7.41);
+            ctx.qcurve_to(5.37, 7.41, 6.54, 8.58); ctx.qcurve_to(7.71, 9.76, 7.71, 11.41);
+            ctx.move_to(6.8, 20.92); ctx.line_to(11.8, 20.92);
+            ctx.qcurve_to(11.8, 22.99, 10.33, 24.46); ctx.qcurve_to(8.87, 25.92, 6.8, 25.92);
+            ctx.qcurve_to(4.73, 25.92, 3.26, 24.46); ctx.qcurve_to(1.8, 22.99, 1.8, 20.92);
+            ctx.qcurve_to(1.8, 18.85, 3.26, 17.39); ctx.qcurve_to(4.73, 15.92, 6.8, 15.92);
+            ctx.qcurve_to(8.87, 15.92, 10.33, 17.39); ctx.qcurve_to(11.8, 18.85, 11.8, 20.92);
+            ctx.move_to(-4.05, 2.94); ctx.line_to(-1.05, 2.94);
+            ctx.qcurve_to(-1.05, 4.18, -1.92, 5.06); ctx.qcurve_to(-2.8, 5.94, -4.05, 5.94);
+            ctx.qcurve_to(-5.29, 5.94, -6.17, 5.06); ctx.qcurve_to(-7.05, 4.18, -7.05, 2.94);
+            ctx.qcurve_to(-7.05, 1.7, -6.17, 0.82); ctx.qcurve_to(-5.29, -0.06, -4.05, -0.06);
+            ctx.qcurve_to(-2.8, -0.06, -1.92, 0.82); ctx.qcurve_to(-1.05, 1.7, -1.05, 2.94);
+            ctx.move_to(-9.71, 7.05); ctx.line_to(-5.71, 7.05);
+            ctx.qcurve_to(-5.71, 8.71, -6.88, 9.88); ctx.qcurve_to(-8.05, 11.05, -9.71, 11.05);
+            ctx.qcurve_to(-11.37, 11.05, -12.54, 9.88); ctx.qcurve_to(-13.71, 8.71, -13.71, 7.05);
+            ctx.qcurve_to(-13.71, 5.4, -12.54, 4.22); ctx.qcurve_to(-11.37, 3.05, -9.71, 3.05);
+            ctx.qcurve_to(-8.05, 3.05, -6.88, 4.22); ctx.qcurve_to(-5.71, 5.4, -5.71, 7.05);
+            ctx.move_to(-17.8, 12.93); ctx.line_to(-12.8, 12.93);
+            ctx.qcurve_to(-12.8, 15, -14.26, 16.47); ctx.qcurve_to(-15.73, 17.93, -17.8, 17.93);
+            ctx.qcurve_to(-19.87, 17.93, -21.33, 16.47); ctx.qcurve_to(-22.8, 15, -22.8, 12.93);
+            ctx.qcurve_to(-22.8, 10.86, -21.33, 9.4); ctx.qcurve_to(-19.87, 7.93, -17.8, 7.93);
+            ctx.qcurve_to(-15.73, 7.93, -14.26, 9.4); ctx.qcurve_to(-12.8, 10.86, -12.8, 12.93);
+            ctx.move_to(-4.05, -2.94); ctx.line_to(-1.05, -2.94);
+            ctx.qcurve_to(-1.05, -1.7, -1.92, -0.82); ctx.qcurve_to(-2.8, 0.06, -4.05, 0.06);
+            ctx.qcurve_to(-5.29, 0.06, -6.17, -0.82); ctx.qcurve_to(-7.05, -1.7, -7.05, -2.94);
+            ctx.qcurve_to(-7.05, -4.18, -6.17, -5.06); ctx.qcurve_to(-5.29, -5.94, -4.05, -5.94);
+            ctx.qcurve_to(-2.8, -5.94, -1.92, -5.06); ctx.qcurve_to(-1.05, -4.18, -1.05, -2.94);
+            ctx.move_to(-9.71, -7.05); ctx.line_to(-5.71, -7.05);
+            ctx.qcurve_to(-5.71, -5.4, -6.88, -4.22); ctx.qcurve_to(-8.05, -3.05, -9.71, -3.05);
+            ctx.qcurve_to(-11.37, -3.05, -12.54, -4.22); ctx.qcurve_to(-13.71, -5.4, -13.71, -7.05);
+            ctx.qcurve_to(-13.71, -8.71, -12.54, -9.88); ctx.qcurve_to(-11.37, -11.05, -9.71, -11.05);
+            ctx.qcurve_to(-8.05, -11.05, -6.88, -9.88); ctx.qcurve_to(-5.71, -8.71, -5.71, -7.05);
+            ctx.move_to(-17.8, -12.93); ctx.line_to(-12.8, -12.93);
+            ctx.qcurve_to(-12.8, -10.86, -14.26, -9.4); ctx.qcurve_to(-15.73, -7.93, -17.8, -7.93);
+            ctx.qcurve_to(-19.87, -7.93, -21.33, -9.4); ctx.qcurve_to(-22.8, -10.86, -22.8, -12.93);
+            ctx.qcurve_to(-22.8, -15, -21.33, -16.47); ctx.qcurve_to(-19.87, -17.93, -17.8, -17.93);
+            ctx.qcurve_to(-15.73, -17.93, -14.26, -16.47); ctx.qcurve_to(-12.8, -15, -12.8, -12.93);
+            ctx.move_to(1.55, -4.76); ctx.line_to(4.55, -4.76);
+            ctx.qcurve_to(4.55, -3.51, 3.67, -2.63); ctx.qcurve_to(2.79, -1.76, 1.55, -1.76);
+            ctx.qcurve_to(0.3, -1.76, -0.58, -2.63); ctx.qcurve_to(-1.45, -3.51, -1.45, -4.76);
+            ctx.qcurve_to(-1.45, -6, -0.58, -6.88); ctx.qcurve_to(0.3, -7.76, 1.55, -7.76);
+            ctx.qcurve_to(2.79, -7.76, 3.67, -6.88); ctx.qcurve_to(4.55, -6, 4.55, -4.76);
+            ctx.move_to(3.71, -11.41); ctx.line_to(7.71, -11.41);
+            ctx.qcurve_to(7.71, -9.76, 6.54, -8.58); ctx.qcurve_to(5.37, -7.41, 3.71, -7.41);
+            ctx.qcurve_to(2.05, -7.41, 0.88, -8.58); ctx.qcurve_to(-0.29, -9.76, -0.29, -11.41);
+            ctx.qcurve_to(-0.29, -13.07, 0.88, -14.24); ctx.qcurve_to(2.05, -15.41, 3.71, -15.41);
+            ctx.qcurve_to(5.37, -15.41, 6.54, -14.24); ctx.qcurve_to(7.71, -13.07, 7.71, -11.41);
+            ctx.move_to(6.8, -20.92); ctx.line_to(11.8, -20.92);
+            ctx.qcurve_to(11.8, -18.85, 10.33, -17.39); ctx.qcurve_to(8.87, -15.92, 6.8, -15.92);
+            ctx.qcurve_to(4.73, -15.92, 3.26, -17.39); ctx.qcurve_to(1.8, -18.85, 1.8, -20.92);
+            ctx.qcurve_to(1.8, -22.99, 3.26, -24.46); ctx.qcurve_to(4.73, -25.92, 6.8, -25.92);
+            ctx.qcurve_to(8.87, -25.92, 10.33, -24.46); ctx.qcurve_to(11.8, -22.99, 11.8, -20.92);
+            ctx.fill(1);
+            break;
+        }
+        case MobID::kShell: {
+            RenderContext _c(&ctx);
+            ctx.scale(radius / 20.0f);
+            ctx.set_line_width(5);
+            ctx.round_line_join();
+            ctx.round_line_cap();
+            // Auricle (hinge).
+            ctx.set_fill(0xffccb36d);
+            ctx.set_stroke(0xffccb36d);
+            ctx.begin_path();
+            ctx.move_to(-20, -15);
+            ctx.qcurve_to(-15, 0, -20, 15);
+            ctx.line_to(0, 3);
+            ctx.line_to(0, -3);
+            ctx.fill(1);
+            ctx.stroke();
+            // Body.
+            ctx.begin_path();
+            ctx.partial_arc(0, 0, 30, -1.2566371f, 1.2566371f, 0);
+            ctx.qcurve_to(0, 20, -15, 8);
+            ctx.qcurve_to(-20, 0, -15, -8);
+            ctx.qcurve_to(0, -20, 9.27f, -28.53f);
+            ctx.set_fill(0xfffcdd86);
+            ctx.fill(1);
+            ctx.set_stroke(0xffccb36d);
+            ctx.stroke();
+            // Wrinkles.
+            ctx.set_line_width(4);
+            for (int dir = -1; dir <= 1; dir += 2) {
+                ctx.begin_path();
+                ctx.move_to(12, 15.0f * dir);
+                ctx.qcurve_to(0, 8.0f * dir, -8, 5.0f * dir);
+                ctx.stroke();
+                ctx.begin_path();
+                ctx.move_to(17.4f, 6.0f * dir);
+                ctx.qcurve_to(0, 3.2f * dir, -6.2f, 2.0f * dir);
+                ctx.stroke();
+            }
+            break;
+        }
+        case MobID::kCrab: {
+            RenderContext _c(&ctx);
+            ctx.scale(radius / 25.0f);
+            float mc = attr.animation;
+            ctx.round_line_cap();
+            ctx.round_line_join();
+            // Legs.
+            ctx.set_line_width(5);
+            ctx.set_stroke(0xff4d2621);
+            ctx.begin_path();
+            for (int dir = -1; dir <= 1; dir += 2)
+                for (int i = 0; i < 4; ++i) {
+                    float legRotation = 0.15f * sinf(mc + dir + 2 * i) + 0.15f;
+                    int legDir = i < 2 ? 1 : -1;
+                    RenderContext lc(&ctx);
+                    ctx.scale(1, (float)dir);
+                    ctx.translate(i / 5.0f * 20 - 5, 0);
+                    ctx.rotate(legRotation * legDir);
+                    ctx.move_to(0, 0);
+                    ctx.translate(0, 25);
+                    ctx.line_to(0, 0);
+                    ctx.rotate(legDir * 0.7f * (legRotation + 0.3f));
+                    ctx.line_to(0, 10);
+                }
+            ctx.stroke();
+            // Claws.
+            ctx.set_fill(0xff4d2621);
+            ctx.set_stroke(0xff4d2621);
+            ctx.set_line_width(2);
+            float clawAngle = 0.15f * sinf(mc * 2) + 0.15f;
+            for (int dir = -1; dir <= 1; dir += 2) {
+                RenderContext hc(&ctx);
+                ctx.translate(12, 2.0f * dir);
+                ctx.scale(1, (float)(-dir));
+                ctx.rotate(clawAngle);
+                ctx.begin_path();
+                ctx.move_to(0, -14);
+                ctx.qcurve_to(11, -20, 16, -9);
+                ctx.line_to(11, -12);
+                ctx.line_to(13, -7);
+                ctx.qcurve_to(6, -13, 0, -10);
+                ctx.line_to(0, -14);
+                ctx.fill(1);
+                ctx.stroke();
+            }
+            // Body.
+            ctx.set_fill(0xffdb6f4b);
+            ctx.begin_path();
+            ctx.move_to(0, -23);
+            ctx.qcurve_to(-7.46, -23, -12.73, -16.26);
+            ctx.qcurve_to(-18, -9.53, -18, 0);
+            ctx.qcurve_to(-18, 9.53, -12.73, 16.26);
+            ctx.qcurve_to(-7.46, 23, 0, 23);
+            ctx.qcurve_to(7.46, 23, 12.73, 16.26);
+            ctx.qcurve_to(18, 9.53, 18, 0);
+            ctx.qcurve_to(18, -9.53, 12.73, -16.26);
+            ctx.qcurve_to(7.46, -23, 0, -23);
+            ctx.fill(1);
+            ctx.set_stroke(0xffb15a3d);
+            ctx.set_line_width(4);
+            ctx.stroke();
+            // Body wrinkles.
+            ctx.begin_path();
+            ctx.move_to(-10, 8); ctx.qcurve_to(0, 3, 10, 8); ctx.stroke();
+            ctx.begin_path();
+            ctx.move_to(-10, -8); ctx.qcurve_to(0, -3, 10, -8); ctx.stroke();
+            break;
+        }
+        case MobID::kLeech: {
+            // One dark body circle per segment; the chained segments form the
+            // long leech body. Each segment draws itself.
+            ctx.set_fill(0xff292929);
+            ctx.begin_path();
+            ctx.arc(0, 0, radius);
+            ctx.fill();
+            ctx.set_fill(0xff333333);
+            ctx.begin_path();
+            ctx.arc(0, 0, radius * 0.82f);
+            ctx.fill();
+            // Head segment (is_tail == 0) also draws the beak.
+            if (!BIT_AT(flags, 1)) {
+                RenderContext _c(&ctx);
+                ctx.scale(radius / 20.0f);
+                ctx.round_line_cap();
+                ctx.set_stroke(0xff292929);
+                ctx.set_line_width(4);
+                ctx.begin_path();
+                ctx.move_to(0, 10);
+                ctx.qcurve_to(11, 10, 22, 5);
+                ctx.stroke();
+                ctx.begin_path();
+                ctx.move_to(0, -10);
+                ctx.qcurve_to(11, -10, 22, -5);
+                ctx.stroke();
+            }
+            break;
+        }
         default:
             assert(!"Didn't cover mob render");
             break;

@@ -94,6 +94,11 @@ namespace PetalType {
         kYucca,
         kCorn,
         kRoot,
+        kBloodStinger,
+        kLightning,
+        kClaw,
+        kFang,
+        kMagnet,
         kNumPetalTypes
     };
 };
@@ -162,6 +167,10 @@ namespace PetalID {
     inline constexpr Petal kTringer          = { PetalType::kTringer,       RarityID::kLegendary };
     inline constexpr Petal kMythicTringer    = { PetalType::kTringer,       RarityID::kMythic    };
     inline constexpr Petal kUniqueStinger    = { PetalType::kTringer,       RarityID::kUnique    };
+    inline constexpr Petal kCommonBloodStinger = { PetalType::kBloodStinger,  RarityID::kCommon    };
+    inline constexpr Petal kBloodStinger       = { PetalType::kBloodStinger,  RarityID::kUnusual   };
+    inline constexpr Petal kRareBloodStinger   = { PetalType::kBloodStinger,  RarityID::kRare      };
+    inline constexpr Petal kEpicBloodStinger   = { PetalType::kBloodStinger,  RarityID::kEpic      };
     inline constexpr Petal kCommonLeaf       = { PetalType::kLeaf,          RarityID::kCommon    };
     inline constexpr Petal kLeaf             = { PetalType::kLeaf,          RarityID::kUnusual   };
     inline constexpr Petal kRareLeaf         = { PetalType::kLeaf,          RarityID::kRare      };
@@ -351,6 +360,31 @@ namespace PetalID {
     inline constexpr Petal kLegendaryRoot    = { PetalType::kRoot,          RarityID::kLegendary };
     inline constexpr Petal kMythicRoot       = { PetalType::kRoot,          RarityID::kMythic    };
     inline constexpr Petal kUniqueRoot       = { PetalType::kRoot,          RarityID::kUnique    };
+    // Ocean petals (ported from ~/flooooio)
+    inline constexpr Petal kCommonLightning  = { PetalType::kLightning,     RarityID::kCommon    };
+    inline constexpr Petal kUnusualLightning = { PetalType::kLightning,     RarityID::kUnusual   };
+    inline constexpr Petal kRareLightning    = { PetalType::kLightning,     RarityID::kRare      };
+    inline constexpr Petal kLightning        = { PetalType::kLightning,     RarityID::kEpic      };
+    inline constexpr Petal kLegendaryLightning={ PetalType::kLightning,     RarityID::kLegendary };
+    inline constexpr Petal kMythicLightning  = { PetalType::kLightning,     RarityID::kMythic    };
+    inline constexpr Petal kCommonClaw       = { PetalType::kClaw,          RarityID::kCommon    };
+    inline constexpr Petal kUnusualClaw      = { PetalType::kClaw,          RarityID::kUnusual   };
+    inline constexpr Petal kClaw             = { PetalType::kClaw,          RarityID::kRare      };
+    inline constexpr Petal kEpicClaw         = { PetalType::kClaw,          RarityID::kEpic      };
+    inline constexpr Petal kLegendaryClaw    = { PetalType::kClaw,          RarityID::kLegendary };
+    inline constexpr Petal kMythicClaw       = { PetalType::kClaw,          RarityID::kMythic    };
+    inline constexpr Petal kCommonFang       = { PetalType::kFang,          RarityID::kCommon    };
+    inline constexpr Petal kUnusualFang      = { PetalType::kFang,          RarityID::kUnusual   };
+    inline constexpr Petal kFang             = { PetalType::kFang,          RarityID::kRare      };
+    inline constexpr Petal kEpicFang         = { PetalType::kFang,          RarityID::kEpic      };
+    inline constexpr Petal kLegendaryFang    = { PetalType::kFang,          RarityID::kLegendary };
+    inline constexpr Petal kMythicFang       = { PetalType::kFang,          RarityID::kMythic    };
+    inline constexpr Petal kCommonMagnet     = { PetalType::kMagnet,        RarityID::kCommon    };
+    inline constexpr Petal kUnusualMagnet    = { PetalType::kMagnet,        RarityID::kUnusual   };
+    inline constexpr Petal kMagnet           = { PetalType::kMagnet,        RarityID::kRare      };
+    inline constexpr Petal kEpicMagnet       = { PetalType::kMagnet,        RarityID::kEpic      };
+    inline constexpr Petal kLegendaryMagnet  = { PetalType::kMagnet,        RarityID::kLegendary };
+    inline constexpr Petal kMythicMagnet     = { PetalType::kMagnet,        RarityID::kMythic    };
 };
 
 namespace MobID {
@@ -384,6 +418,13 @@ namespace MobID {
         kBush,
         kMantis,
         kWasp,
+        kStarfish,
+        kJellyfish,
+        kBubble,
+        kSponge,
+        kShell,
+        kCrab,
+        kLeech,
         kNumMobs
     };
 };
@@ -454,6 +495,23 @@ struct PetalAttributes {
     float secondary_reload = 0;
     float constant_heal = 0;
     float burst_heal = 0;
+    // HP the flower loses each time one of these petals spawns. Scales with
+    // rarity alongside the petal's damage; applied non-lethally (floored at 1).
+    float self_damage = 0;
+    // --- Ocean petal effects (ported from ~/flooooio) ---
+    // Lightning: on contact the petal deals `lightning` damage that chains to
+    // up to `lightning_bounces` further nearby enemies.
+    float lightning = 0;
+    uint8_t lightning_bounces = 0;
+    // Fang: heals the owning flower for `lifesteal` percent of the damage this
+    // petal deals (100 = full heal-for-damage).
+    float lifesteal = 0;
+    // Claw: if the victim is above 80% HP, adds bonus damage equal to
+    // `claw_bonus` percent of the victim's max HP, capped at `claw_limit`.
+    float claw_bonus = 0;
+    float claw_limit = 0;
+    // Magnet: collects loot within `pickup_range` of the flower.
+    float pickup_range = 0;
     float mass = 0.1;
     uint8_t defend_only = 0;
     float icon_angle = 0;
@@ -484,6 +542,12 @@ struct MobAttributes {
     uint8_t segments = 1;
     uint8_t stationary;
     struct PoisonDamage poison_damage;
+    // Jellyfish: periodically zaps its target for `lightning` damage, chaining
+    // to up to `lightning_bounces` further enemies (ported from ~/flooooio).
+    float lightning = 0;
+    uint8_t lightning_bounces = 0;
+    // Leech: heals itself by `lifesteal` HP each time it damages a flower.
+    float lifesteal = 0;
 };
 
 struct MobData {

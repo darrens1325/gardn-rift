@@ -4,6 +4,7 @@
 #include <Shared/Entity.hh>
 #include <Shared/Simulation.hh>
 #include <Shared/Helpers.hh>
+#include <Shared/Vector.hh>
 
 #include <cmath>
 
@@ -90,4 +91,37 @@ void inflict_heal(Simulation *sim, Entity &ent, float amt) {
     if (ent.pending_delete || ent.health <= 0) return;
     if (ent.dandy_ticks > 0) return;
     ent.health = fclamp(ent.health + amt, 0, ent.max_health);
+}
+
+// Chain lightning, ported from ~/flooooio. Deals `damage` to `first_target`,
+// then arcs to the nearest not-yet-struck enemy of `source`'s team, repeating
+// until `max_hits` entities have been hit or no target remains in range.
+// Used by the Jellyfish mob and the Lightning petal.
+void chain_lightning(Simulation *sim, Entity &source, EntityID first_target, float damage, uint32_t max_hits) {
+    if (damage <= 0 || max_hits == 0) return;
+    float const BOUNCE_RADIUS = 350.0f;
+    EntityID hit_ids[32];
+    uint32_t hit_count = 0;
+    EntityID current = first_target;
+    while (hit_count < max_hits && hit_count < 32 && sim->ent_alive(current)) {
+        Entity &cur = sim->get_ent(current);
+        float cx = cur.x, cy = cur.y;
+        inflict_damage(sim, source.id, current, damage, DamageType::kContact);
+        hit_ids[hit_count++] = current;
+
+        EntityID next = NULL_ENTITY;
+        float min_dist = BOUNCE_RADIUS;
+        sim->spatial_hash.query(cx, cy, BOUNCE_RADIUS, BOUNCE_RADIUS, [&](Simulation *s, Entity &e){
+            if (!s->ent_alive(e.id)) return;
+            if (e.map_path != source.map_path) return;
+            if (e.team == source.team) return;
+            if (e.immunity_ticks > 0) return;
+            if (!e.has_component(kMob) && !e.has_component(kFlower)) return;
+            for (uint32_t i = 0; i < hit_count; ++i) if (e.id == hit_ids[i]) return;
+            float d = Vector(e.x - cx, e.y - cy).magnitude();
+            if (d >= min_dist) return;
+            min_dist = d; next = e.id;
+        });
+        current = next;
+    }
 }

@@ -16,6 +16,10 @@ void tick_petal_behavior(Simulation *sim, Entity &petal) {
     }
     Entity &player = sim->get_ent(petal.parent);
     struct PetalData const &petal_data = PETAL_DATA[petal.petal_id.type][petal.petal_id.rarity];
+    // Lightning petal reuses secondary_reload as its on-contact chain cooldown
+    // (set when it fires in Collision.cc); tick it down here.
+    if (petal.petal_id.type == PetalType::kLightning && petal.secondary_reload > 0)
+        --petal.secondary_reload;
     if (petal_data.attributes.rotation_style == PetalAttributes::kPassiveRot) {
         //simulate on clientside
         float rot_amt = petal.petal_id == PetalID::kWing ? 10.0 : 1.0;

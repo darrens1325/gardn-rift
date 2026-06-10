@@ -2,9 +2,11 @@
 
 #include <Shared/Simulation.hh>
 #include <Shared/Entity.hh>
+#include <Shared/StaticData.hh>
 
 void tick_segment_behavior(Simulation *sim, Entity &ent) {
-    if (ent.is_tail && sim->ent_alive(ent.seg_head)) {
+    if (!ent.is_tail) return;
+    if (sim->ent_alive(ent.seg_head)) {
         Entity &par = sim->get_ent(ent.seg_head);
         Vector diff(ent.x - par.x, ent.y - par.y);
         diff.set_magnitude(ent.radius + par.radius + 0.01);
@@ -13,5 +15,11 @@ void tick_segment_behavior(Simulation *sim, Entity &ent) {
         ent.set_angle(diff.angle() + M_PI);
         if (sim->ent_alive(par.target))
             ent.target = par.target;
+    } else if (ent.mob_id == MobID::kLeech) {
+        // The whole leech dies with its head (flooooio: "kill all bodies when
+        // head dies"). A body whose predecessor is gone deletes itself, which
+        // cascades down the chain — and avoids a headless, unrendered leech
+        // (the head is what draws the entire body).
+        sim->request_delete(ent.id);
     }
 }

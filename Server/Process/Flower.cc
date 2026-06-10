@@ -184,7 +184,13 @@ void tick_player_behavior(Simulation *sim, Entity &player) {
                     petal_slot.ent_id = alloc_petal(sim, slot_petal_id, player).id;
                     petal_slot.reload = 0;
                     slot.already_spawned = 1;
-                } 
+                    // Self-damaging petals (Blood Stinger) bleed the flower on
+                    // spawn. Non-lethal: floored at 1 HP so it can never kill.
+                    if (petal_data.attributes.self_damage > 0 && player.health > 1) {
+                        player.health = fclamp(player.health - petal_data.attributes.self_damage, 1, player.health);
+                        player.set_damaged(1);
+                    }
+                }
                 else
                     ++petal_slot.reload;
             }
@@ -256,7 +262,28 @@ void tick_player_behavior(Simulation *sim, Entity &player) {
         if (petal_data.attributes.clump_radius > 0) ++rot_pos;
         player.set_loadout_reloads(i, min_reload * 255);
     };
-    if (BIT_AT(player.input, InputFlags::kAttacking)) 
+    // Magnet (ocean petal): pull nearby uncollected drops toward the flower.
+    // Collection itself still happens via the normal drop/flower collision.
+    float pickup_range = 0;
+    for (uint32_t i = 0; i < player.loadout_count; ++i) {
+        PetalID::T pid = player.loadout[i].get_petal_id();
+        float pr = PETAL_DATA[pid.type][pid.rarity].attributes.pickup_range;
+        if (pr > pickup_range) pickup_range = pr;
+    }
+    if (pickup_range > 0) {
+        sim->spatial_hash.query(player.x, player.y, pickup_range, pickup_range, [&](Simulation *s, Entity &drop){
+            if (!drop.has_component(kDrop) || drop.pending_delete) return;
+            if (drop.immunity_ticks > 0) return;
+            if (drop.map_path != player.map_path) return;
+            Vector d(player.x - drop.x, player.y - drop.y);
+            float dist = d.magnitude();
+            if (dist > pickup_range || dist < 1.0f) return;
+            d.set_magnitude(fminf(dist, 12.0f));
+            drop.set_x(drop.x + d.x);
+            drop.set_y(drop.y + d.y);
+        });
+    }
+    if (BIT_AT(player.input, InputFlags::kAttacking))
         player.set_face_flags(player.face_flags | (1 << FaceFlags::kAttacking));
     else if (BIT_AT(player.input, InputFlags::kDefending))
         player.set_face_flags(player.face_flags | (1 << FaceFlags::kDefending));

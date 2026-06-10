@@ -2,6 +2,7 @@
 
 #include <Shared/Simulation.hh>
 #include <Shared/Entity.hh>
+#include <Shared/StaticData.hh>
 
 #include <cmath>
 #include <iostream>
@@ -60,6 +61,42 @@ static void _cancel_movement(Entity &ent, Vector dir, Vector add) {
     ent.collision_velocity += push * (0.5 * PLAYER_ACCELERATION);
 }
 
+// Contact damage from `atk` to `def`, plus any ocean on-hit effects keyed on
+// the attacker (Claw bonus, Lightning chain, Fang/Leech lifesteal).
+static void _attack(Simulation *sim, Entity &atk, Entity &def) {
+    if (atk.health <= 0 || def.health <= 0) return;
+    struct PetalAttributes const *pa = atk.has_component(kPetal)
+        ? &PETAL_DATA[atk.petal_id.type][atk.petal_id.rarity].attributes : nullptr;
+
+    float amt = atk.damage;
+    // Claw: bonus damage versus targets still above 80% health.
+    if (pa && pa->claw_bonus > 0 && def.max_health > 0 && def.health > 0.8f * def.max_health) {
+        float bonus = pa->claw_bonus / 100.0f * def.max_health;
+        if (bonus > pa->claw_limit) bonus = pa->claw_limit;
+        amt += bonus;
+    }
+
+    float before = def.health;
+    inflict_damage(sim, atk.id, def.id, amt, DamageType::kContact);
+    float dealt = before - def.health;
+
+    // Lightning petal: chain to nearby enemies (rate-limited via secondary_reload).
+    if (pa && pa->lightning > 0 && atk.secondary_reload == 0) {
+        chain_lightning(sim, atk, def.id, pa->lightning, pa->lightning_bounces);
+        atk.secondary_reload = SIM_RATE / 2;
+    }
+    // Fang petal: heal the owning flower for a fraction of damage dealt.
+    if (pa && pa->lifesteal > 0 && dealt > 0 && sim->ent_alive(atk.parent)) {
+        Entity &owner = sim->get_ent(atk.parent);
+        if (owner.has_component(kHealth)) inflict_heal(sim, owner, dealt * pa->lifesteal / 100.0f);
+    }
+    // Leech mob: heal itself when it damages a flower.
+    if (atk.has_component(kMob) && def.has_component(kFlower) && dealt > 0) {
+        struct MobAttributes const &ma = MOB_DATA[atk.mob_id].attributes;
+        if (ma.lifesteal > 0) inflict_heal(sim, atk, ma.lifesteal);
+    }
+}
+
 void on_collide(Simulation *sim, Entity &ent1, Entity &ent2) {
     //do a distance dependent check first (it's faster)
     float min_dist = ent1.radius + ent2.radius;
@@ -92,8 +129,8 @@ void on_collide(Simulation *sim, Entity &ent1, Entity &ent2) {
 
     if (BOTH(kHealth) && !(ent1.team == ent2.team)) {
         if (ent1.health > 0 && ent2.health > 0) {
-            inflict_damage(sim, ent1.id, ent2.id, ent1.damage, DamageType::kContact);
-            inflict_damage(sim, ent2.id, ent1.id, ent2.damage, DamageType::kContact);
+            _attack(sim, ent1, ent2);
+            _attack(sim, ent2, ent1);
         }
     }
 

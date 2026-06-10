@@ -587,6 +587,34 @@ void tick_ai_behavior(Simulation *sim, Entity &ent) {
         case MobID::kMantis:
             tick_mantis_aggro(sim, ent);
             break;
+        case MobID::kStarfish:
+            tick_default_aggro(sim, ent, 0.95);
+            break;
+        case MobID::kCrab:
+            tick_default_aggro(sim, ent, 1.2);
+            break;
+        case MobID::kLeech:
+            tick_default_aggro(sim, ent, 1.5);
+            break;
+        case MobID::kJellyfish: {
+            // Jellyfish drift very slowly (flooooio speed 1 vs bee 2.8).
+            tick_default_aggro(sim, ent, 0.3);
+            // Periodically zap the current target, chaining to nearby enemies.
+            struct MobAttributes const &ja = MOB_DATA[MobID::kJellyfish].attributes;
+            if (ja.lightning > 0 && sim->ent_alive(ent.target)
+                && ent.lifetime % SIM_RATE == 0) {
+                Entity &tgt = sim->get_ent(ent.target);
+                if (Vector(tgt.x - ent.x, tgt.y - ent.y).magnitude() < 400.0f)
+                    chain_lightning(sim, ent, ent.target, ja.lightning, ja.lightning_bounces);
+            }
+            break;
+        }
+        // Bubble/Sponge/Shell don't move (flooooio speed 0); they just sit and
+        // deal contact damage.
+        case MobID::kBubble:
+        case MobID::kSponge:
+        case MobID::kShell:
+            break;
         default:
             break;
     }

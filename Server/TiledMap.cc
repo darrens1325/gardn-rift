@@ -256,6 +256,13 @@ MobID::T mob_id_from_name(std::string const &n) {
         {"bush", MobID::kBush},
         {"mantis", MobID::kMantis},
         {"wasp", MobID::kWasp},
+        {"starfish", MobID::kStarfish},
+        {"jellyfish", MobID::kJellyfish},
+        {"bubble", MobID::kBubble},
+        {"sponge", MobID::kSponge},
+        {"shell", MobID::kShell},
+        {"crab", MobID::kCrab},
+        {"leech", MobID::kLeech},
     };
     auto it = map.find(n);
     return it == map.end() ? MobID::kNumMobs : it->second;
@@ -275,8 +282,8 @@ std::vector<PresetEntry> const *preset(std::string const &n) {
         {"bee", 1}, {"ladybug", 0.5f}, {"centipede_desert", 0.3f},
     };
     static std::vector<PresetEntry> const ocean = {
-        {"rock", 5}, {"boulder", 2}, {"hornet", 2}, {"spider", 2},
-        {"ladybug", 1},
+        {"starfish", 3}, {"jellyfish", 3}, {"crab", 2}, {"leech", 4},
+        {"bubble", 1}, {"sponge", 1}, {"shell", 1},
     };
     static std::vector<PresetEntry> const jungle = {
         {"ladybug_dark", 5}, {"leafbug", 2}, {"wasp", 2}, {"mantis", 1},
@@ -967,6 +974,7 @@ static int8_t _petal_type_from_name(std::string const &name) {
         {"heavy", PetalType::kHeavy},
         {"stinger", PetalType::kStinger},
         {"tringer", PetalType::kTringer},
+        {"bloodstinger", PetalType::kBloodStinger},
         {"leaf", PetalType::kLeaf},
         {"twin", PetalType::kTwin},
         {"rose", PetalType::kRose},

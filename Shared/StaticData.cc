@@ -144,6 +144,16 @@ struct PetalData const PETAL_DATA[PetalType::kNumPetalTypes][RarityID::kNumRarit
         [RarityID::kUnique] = {"Stinger", "It really hurts, but it's really fragile",
             scale_hp(5.0, 1), scale_dmg(50.0, 1), 7.0, 4.5, 3, {.clump_radius = 10}},
     },
+    [PetalType::kBloodStinger] = {
+        [RarityID::kCommon] = {"Blood Stinger", "It hurts even more, but bleeds you when it spawns",
+            5.0, 100.0, 7.0, 7.5, 1, {.self_damage = 5.0}},
+        [RarityID::kUnusual] = {"Blood Stinger", "It hurts even more, but bleeds you when it spawns",
+            5.0, 130.0, 7.0, 7.5, 1, {.self_damage = 6.5}},
+        [RarityID::kRare] = {"Blood Stinger", "It hurts even more, but bleeds you when it spawns",
+            5.0, 180.0, 7.0, 7.5, 1, {.self_damage = 9.0}},
+        [RarityID::kEpic] = {"Blood Stinger", "It hurts even more, but bleeds you when it spawns",
+            5.0, 230.0, 7.0, 7.5, 1, {.self_damage = 11.5}},
+    },
     [PetalType::kLeaf] = {
         [RarityID::kCommon] = {"Leaf", "Gathers energy from the sun to passively heal your flower",
             6.0, 6.0, 10.0, 1.0, 1, {
@@ -346,41 +356,41 @@ struct PetalData const PETAL_DATA[PetalType::kNumPetalTypes][RarityID::kNumRarit
     },
     [PetalType::kBubble] = {
         [RarityID::kCommon] = {"Bubble", "You can right click to pop it and propel your flower",
-            0.5, 0.0, 12.0, 3.0, 1, {
-            .secondary_reload = 0.5,
+            0.5, 0.0, 12.0, 2.0, 1, {
+            .secondary_reload = 0.7,
             .defend_only = 1,
         }},
         [RarityID::kUnusual] = {"Bubble", "You can right click to pop it and propel your flower",
-            0.7, 0.0, 12.0, 2.5, 1, {
-            .secondary_reload = 0.5,
+            0.7, 0.0, 12.0, 1.75, 1, {
+            .secondary_reload = 0.6,
             .defend_only = 1,
         }},
         [RarityID::kRare] = {"Bubble", "You can right click to pop it and propel your flower",
-            1.0, 0.0, 12.0, 2.0, 1, {
+            1.0, 0.0, 12.0, 1.5, 1, {
             .secondary_reload = 0.5,
             .defend_only = 1,
         }},
         [RarityID::kEpic] = {"Bubble", "You can right click to pop it and propel your flower",
-            1.5, 0.0, 12.0, 1.5, 1, {
-            .secondary_reload = 0.5,
+            1.5, 0.0, 12.0, 1.25, 1, {
+            .secondary_reload = 0.4,
             .defend_only = 1,
         }},
         [RarityID::kLegendary] = {"Bubble", "You can right click to pop it and propel your flower",
             2.0, 0.0, 12.0, 1.0, 1, {
-            .secondary_reload = 0.5,
+            .secondary_reload = 0.3,
             .defend_only = 1,
         }},
         [RarityID::kMythic] = {"Bubble", "You can right click to pop it and propel your flower",
-            scale_hp(2.0, 1), 0.0, 12.0, 1.0, 1,
-            {.secondary_reload = 0.5, .defend_only = 1}},
+            scale_hp(2.0, 1), 0.0, 12.0, 0.75, 1,
+            {.secondary_reload = 0.2, .defend_only = 1}},
         [RarityID::kUltra] = {"Bubble", "You can right click to pop it and propel your flower",
-            scale_hp(2.0, 2), 0.0, 12.0, 1.0, 1,
-            {.secondary_reload = 0.5, .defend_only = 1}},
+            scale_hp(2.0, 2), 0.0, 12.0, 0.5, 1,
+            {.secondary_reload = 0.1, .defend_only = 1}},
         [RarityID::kSuper] = {"Bubble", "You can right click to pop it and propel your flower",
-            scale_hp(2.0, 2), 0.0, 12.0, 1.0, 1,
+            scale_hp(2.0, 2), 0.0, 12.0, 2.0, 1,
             {.secondary_reload = 0.5, .defend_only = 1}},
         [RarityID::kUnique] = {"Bubble", "You can right click to pop it and propel your flower",
-            scale_hp(2.0, 2), 0.0, 12.0, 1.0, 1,
+            scale_hp(2.0, 2), 0.0, 12.0, 2.0, 1,
             {.secondary_reload = 0.5, .defend_only = 1}},
     },
     [PetalType::kFaster] = {
@@ -963,6 +973,66 @@ struct PetalData const PETAL_DATA[PetalType::kNumPetalTypes][RarityID::kNumRarit
                 .defend_only = 1
         }},
     },
+    // -------------------------------------------------------------------------
+    // Ocean petals, ported from ~/flooooio (petal_profiles.go). Stats are the
+    // source's Common..Mythic tiers.
+    // -------------------------------------------------------------------------
+    [PetalType::kLightning] = {
+        [RarityID::kCommon] = {"Lightning", "Strikes several nearby enemies",
+            10.0, 0.0, 8.0, 2.5, 1, {.lightning = 12.0, .lightning_bounces = 2}},
+        [RarityID::kUnusual] = {"Lightning", "Strikes several nearby enemies",
+            12.0, 0.0, 8.0, 2.5, 1, {.lightning = 15.6, .lightning_bounces = 3}},
+        [RarityID::kRare] = {"Lightning", "Strikes several nearby enemies",
+            14.0, 0.0, 8.0, 2.5, 1, {.lightning = 21.6, .lightning_bounces = 4}},
+        [RarityID::kEpic] = {"Lightning", "Strikes several nearby enemies",
+            17.0, 0.0, 8.0, 2.5, 1, {.lightning = 28.8, .lightning_bounces = 5}},
+        [RarityID::kLegendary] = {"Lightning", "Strikes several nearby enemies",
+            21.0, 0.0, 8.0, 2.5, 1, {.lightning = 38.4, .lightning_bounces = 6}},
+        [RarityID::kMythic] = {"Lightning", "Strikes several nearby enemies",
+            25.0, 0.0, 8.0, 2.5, 1, {.lightning = 48.0, .lightning_bounces = 15}},
+    },
+    [PetalType::kClaw] = {
+        [RarityID::kCommon] = {"Claw", "Deals extra damage to targets above 80% health",
+            10.0, 10.0, 9.0, 3.5, 1, {.claw_bonus = 9.0, .claw_limit = 100.0}},
+        [RarityID::kUnusual] = {"Claw", "Deals extra damage to targets above 80% health",
+            12.0, 13.0, 9.0, 3.5, 1, {.claw_bonus = 11.7, .claw_limit = 130.0}},
+        [RarityID::kRare] = {"Claw", "Deals extra damage to targets above 80% health",
+            14.0, 18.0, 9.0, 3.5, 1, {.claw_bonus = 16.2, .claw_limit = 180.0}},
+        [RarityID::kEpic] = {"Claw", "Deals extra damage to targets above 80% health",
+            17.0, 24.0, 9.0, 3.5, 1, {.claw_bonus = 21.6, .claw_limit = 240.0}},
+        [RarityID::kLegendary] = {"Claw", "Deals extra damage to targets above 80% health",
+            21.0, 32.0, 9.0, 3.5, 1, {.claw_bonus = 28.8, .claw_limit = 320.0}},
+        [RarityID::kMythic] = {"Claw", "Deals extra damage to targets above 80% health",
+            25.0, 40.0, 9.0, 3.5, 1, {.claw_bonus = 36.0, .claw_limit = 1200.0}},
+    },
+    [PetalType::kFang] = {
+        [RarityID::kCommon] = {"Fangs", "Heals you based on the damage it deals",
+            10.0, 10.0, 8.0, 3.5, 1, {.lifesteal = 100.0}},
+        [RarityID::kUnusual] = {"Fangs", "Heals you based on the damage it deals",
+            12.0, 13.0, 8.0, 3.5, 1, {.lifesteal = 100.0}},
+        [RarityID::kRare] = {"Fangs", "Heals you based on the damage it deals",
+            14.0, 18.0, 8.0, 3.5, 1, {.lifesteal = 100.0}},
+        [RarityID::kEpic] = {"Fangs", "Heals you based on the damage it deals",
+            17.0, 24.0, 8.0, 3.5, 1, {.lifesteal = 100.0}},
+        [RarityID::kLegendary] = {"Fangs", "Heals you based on the damage it deals",
+            21.0, 32.0, 8.0, 3.5, 1, {.lifesteal = 100.0}},
+        [RarityID::kMythic] = {"Fangs", "Heals you based on the damage it deals",
+            25.0, 40.0, 8.0, 3.5, 1, {.lifesteal = 300.0}},
+    },
+    [PetalType::kMagnet] = {
+        [RarityID::kCommon] = {"Magnet", "Collects loot from a distance",
+            15.0, 5.0, 12.0, 1.5, 1, {.pickup_range = 150.0}},
+        [RarityID::kUnusual] = {"Magnet", "Collects loot from a distance",
+            19.5, 6.0, 12.0, 1.5, 1, {.pickup_range = 195.0}},
+        [RarityID::kRare] = {"Magnet", "Collects loot from a distance",
+            27.0, 7.0, 12.0, 1.5, 1, {.pickup_range = 270.0}},
+        [RarityID::kEpic] = {"Magnet", "Collects loot from a distance",
+            36.0, 8.5, 12.0, 1.5, 1, {.pickup_range = 360.0}},
+        [RarityID::kLegendary] = {"Magnet", "Collects loot from a distance",
+            48.0, 10.5, 12.0, 1.5, 1, {.pickup_range = 480.0}},
+        [RarityID::kMythic] = {"Magnet", "Collects loot from a distance",
+            60.0, 12.5, 12.0, 1.5, 1, {.pickup_range = 800.0}},
+    },
 };
 
 struct MobData const MOB_DATA[MobID::kNumMobs] = {
@@ -1133,8 +1203,64 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Wasp",
         "It's aggressive and it stings. Watch out.",
         RarityID::kCommon, {40.0}, 40.0, {40.0}, 12, {
-            PetalID::kCommonMissile, PetalID::kUnusualMissile, PetalID::kMissile, PetalID::kEpicMissile, PetalID::kLegendaryMissile, PetalID::kCommonBubble, PetalID::kUnusualBubble, PetalID::kBubble, PetalID::kEpicBubble, PetalID::kLegendaryBubble, PetalID::kAntennae
+            PetalID::kCommonMissile, PetalID::kUnusualMissile, PetalID::kMissile, PetalID::kEpicMissile, PetalID::kLegendaryMissile, PetalID::kCommonBubble, PetalID::kUnusualBubble, PetalID::kBubble, PetalID::kEpicBubble, PetalID::kLegendaryBubble, PetalID::kAntennae, PetalID::kCommonBloodStinger, PetalID::kBloodStinger, PetalID::kRareBloodStinger, PetalID::kEpicBloodStinger
     }, {}
+    },
+    // -------------------------------------------------------------------------
+    // Ocean mobs, ported from ~/flooooio (Sources/server/internal/wave/florr/
+    // native/mob_profiles.go). Base stats are the source's Common tier; the
+    // wave system scales HP/damage/radius up by rolled rarity. Radius uses the
+    // source BaseSize. Jellyfish's lightning/bounces and Leech's lifesteal have
+    // no engine equivalent yet, so those mobs currently deal only body damage.
+    // -------------------------------------------------------------------------
+    {
+        "Starfish",
+        "His name is Patrick",
+        RarityID::kCommon, {60.0}, 20.0, {20.0}, 8, {
+            PetalID::kCommonLightning, PetalID::kUnusualLightning
+        }, {}
+    },
+    {
+        "Jellyfish",
+        "Makes the most delicious jam.",
+        RarityID::kCommon, {50.0}, 25.0, {30.0}, 10, {
+            PetalID::kCommonLightning, PetalID::kUnusualLightning, PetalID::kRareLightning, PetalID::kLightning
+        }, { .lightning = 9.0, .lightning_bounces = 3 }
+    },
+    {
+        "Bubble",
+        "Pop",
+        RarityID::kCommon, {5.0}, 5.0, {40.0}, 2, {
+            PetalID::kCommonBubble, PetalID::kUnusualBubble, PetalID::kBubble
+        }, {}
+    },
+    {
+        "Sponge",
+        "Bob",
+        RarityID::kCommon, {40.0}, 10.0, {30.0}, 5, {
+            PetalID::kCommonMagnet, PetalID::kUnusualMagnet
+        }, {}
+    },
+    {
+        "Shell",
+        "Not an advertisement.",
+        RarityID::kCommon, {90.0}, 10.0, {30.0}, 10, {
+            PetalID::kCommonMagnet, PetalID::kUnusualMagnet, PetalID::kMagnet, PetalID::kEpicMagnet
+        }, {}
+    },
+    {
+        "Crab",
+        "Mr. Crab",
+        RarityID::kCommon, {80.0}, 25.0, {30.0}, 10, {
+            PetalID::kCommonClaw, PetalID::kUnusualClaw, PetalID::kClaw, PetalID::kEpicClaw
+        }, {}
+    },
+    {
+        "Leech",
+        "Slurp slurp.",
+        RarityID::kCommon, {70.0}, 10.0, {12.5}, 8, {
+            PetalID::kCommonFang, PetalID::kUnusualFang, PetalID::kFang, PetalID::kEpicFang
+        }, { .segments = 9, .lifesteal = 7.0 }
     }
 };
 
@@ -1165,7 +1291,12 @@ std::array<StaticArray<float, MAX_DROPS_PER_MOB>, MobID::kNumMobs> const MOB_DRO
     if (BASE_NUM <= 0) assert(!"Square mob must spawn in at least one zone");
 
     for (MobID::T id = 0; id < MobID::kNumMobs; ++id) {
+        // Mobs that don't spawn in any hardcoded MAP zone (e.g. ocean mobs,
+        // which live only in the tmj ocean biome) have a zero spawn rate;
+        // this BR/gallery table doesn't apply to them, so emit 0 rather than
+        // dividing by zero.
         for (PetalID::T const drop_id : MOB_DATA[id].drops) {
+            if (MOB_SPAWN_RATES[id] <= 0) { ret[id].push(0); continue; }
             float chance = fclamp((BASE_NUM * RARITY_MULT[drop_id.rarity]) / (PETAL_AGGREGATE_DROPS[drop_id.type][drop_id.rarity] * MOB_SPAWN_RATES[id] * MOB_DATA[id].attributes.segments), 0, 1);
             ret[id].push(chance);
         }
