@@ -350,7 +350,7 @@ W_MOB_KILL_BONUS = 10.0
 # W_PVP_PROXIMITY / W_PVP_APPROACH below — those provide the
 # *gradient* toward players; this provides the *payoff* once you
 # actually land the kill.
-W_PLAYER_KILL_BONUS = 400.0
+W_PLAYER_KILL_BONUS = 800.0
 
 # Player-specific proximity / approach. The existing W_PROXIMITY and
 # W_APPROACH terms don't distinguish mobs from enemy Flowers, so a
