@@ -8,10 +8,61 @@
 
 #include <cmath>
 
+static bool _flower_has_sponge(Entity const &flower) {
+    for (uint32_t i = 0; i < flower.loadout_count; ++i)
+        if (flower.loadout_ids[i].type == PetalType::kSponge) return true;
+    return false;
+}
+
+// The flower's first live Cotton petal, if any.
+static EntityID _find_cotton(Simulation *sim, Entity &flower) {
+    for (uint32_t i = 0; i < flower.loadout_count; ++i) {
+        LoadoutSlot &slot = flower.loadout[i];
+        if (slot.get_petal_id().type != PetalType::kCotton) continue;
+        for (uint32_t j = 0; j < slot.size(); ++j)
+            if (sim->ent_alive(slot.petals[j].ent_id)) return slot.petals[j].ent_id;
+    }
+    return NULL_ENTITY;
+}
+
 void inflict_damage(Simulation *sim, EntityID const atk_id, EntityID const def_id, float amt, uint8_t type) {
     if (amt <= 0) return;
     if (!sim->ent_alive(def_id)) return;
     Entity &defender = sim->get_ent(def_id);
+    // The leech is a single creature whose body segments form its hitbox: any
+    // damage to a body segment is dealt to the head, which holds the shared HP.
+    if (defender.has_component(kMob) && defender.mob_id == MobID::kLeech && defender.is_tail) {
+        Entity *h = &defender;
+        for (int g = 0; g < 64 && h->is_tail && sim->ent_alive(h->seg_head); ++g)
+            h = &sim->get_ent(h->seg_head);
+        if (!(h->id == def_id)) { inflict_damage(sim, atk_id, h->id, amt, type); return; }
+    }
+    // Cotton: diverts incoming flower damage to the equipped Cotton petal,
+    // which takes the hit in the flower's place. Only damage beyond the
+    // cotton's current HP overflows back to the flower. Absorbs every damage
+    // type (contact, lightning, poison, even Sponge's returned damage).
+    if (defender.has_component(kFlower) && defender.immunity_ticks == 0) {
+        EntityID cid = _find_cotton(sim, defender);
+        if (sim->ent_alive(cid)) {
+            float cotton_hp = sim->get_ent(cid).health;
+            float absorbed = amt < cotton_hp ? amt : cotton_hp;
+            if (absorbed > 0) inflict_damage(sim, atk_id, cid, absorbed, type);
+            amt -= absorbed;
+            if (amt <= 0) return;
+        }
+    }
+    // Sponge: a flower carrying a Sponge absorbs incoming (non-DoT) damage and
+    // bleeds it back gradually rather than all at once, modelled as a DoT.
+    if (type != DamageType::kPoison && defender.has_component(kFlower)
+        && defender.immunity_ticks == 0 && _flower_has_sponge(defender)) {
+        float const SPONGE_RETURN_SECONDS = 2.5f;
+        game_tick_t const ticks = (game_tick_t)(SPONGE_RETURN_SECONDS * SIM_RATE);
+        defender.poison_inflicted += amt / ticks;
+        if (defender.poison_ticks < ticks) defender.poison_ticks = ticks;
+        defender.poison_dealer = atk_id;  // poison tick assigns kill credit
+        defender.set_damaged(1);
+        return;
+    }
     if (!defender.has_component(kHealth)) return;
     DEBUG_ONLY(assert(!defender.pending_delete);)
     DEBUG_ONLY(assert(defender.has_component(kHealth));)

@@ -16,10 +16,11 @@ void tick_segment_behavior(Simulation *sim, Entity &ent) {
         if (sim->ent_alive(par.target))
             ent.target = par.target;
     } else if (ent.mob_id == MobID::kLeech) {
-        // The whole leech dies with its head (flooooio: "kill all bodies when
-        // head dies"). A body whose predecessor is gone deletes itself, which
-        // cascades down the chain — and avoids a headless, unrendered leech
-        // (the head is what draws the entire body).
+        // The leech is one creature: damage to any segment is redirected to the
+        // head (see inflict_damage), so a body only dies once the head is gone.
+        // When that happens the body deletes itself, cascading down the chain.
+        // It drops nothing — the head already rolled the leech's single drop.
+        BIT_SET(ent.flags, EntityFlags::kNoDrops)
         sim->request_delete(ent.id);
     }
 }

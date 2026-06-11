@@ -29,7 +29,8 @@ static void render_leech_body(Renderer &ctx, Entity const &head) {
     for (size_t i = 0; i < segs.size(); ++i)
         if (segs[i] == &head) { used[i] = 1; break; }
     float R = head.radius;
-    float maxStep2 = (4.0f * R) * (4.0f * R);
+    float nearLimit2 = (3.0f * R) * (3.0f * R);
+    float pointTol2 = (1.5f * R) * (1.5f * R);
     std::vector<std::pair<float, float>> lp;
     float ca = cosf(head.angle), sa = sinf(head.angle);
     Entity const *cur = &head;
@@ -38,12 +39,19 @@ static void render_leech_body(Renderer &ctx, Entity const &head) {
         // rotated by head.angle, so undo that to place each segment in world).
         float dx = cur->x - head.x, dy = cur->y - head.y;
         lp.push_back({dx * ca + dy * sa, -dx * sa + dy * ca});
-        int best = -1; float bestd = maxStep2;
+        // The next segment is the one that *follows* `cur`: it sits ~2*R away
+        // and its angle points back at `cur` (Segment.cc orients each tail
+        // toward its predecessor). Matching on that pointing direction — not
+        // just proximity — keeps two overlapping leeches from cross-linking.
+        int best = -1; float bestScore = pointTol2;
         for (size_t i = 0; i < segs.size(); ++i) {
             if (used[i]) continue;
             float ex = segs[i]->x - cur->x, ey = segs[i]->y - cur->y;
-            float d = ex * ex + ey * ey;
-            if (d < bestd) { bestd = d; best = (int)i; }
+            if (ex * ex + ey * ey > nearLimit2) continue;
+            float px = segs[i]->x + 2.0f * R * cosf(segs[i]->angle) - cur->x;
+            float py = segs[i]->y + 2.0f * R * sinf(segs[i]->angle) - cur->y;
+            float score = px * px + py * py;
+            if (score < bestScore) { bestScore = score; best = (int)i; }
         }
         if (best < 0) break;
         used[best] = 1; cur = segs[best];

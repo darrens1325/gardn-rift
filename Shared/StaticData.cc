@@ -1033,6 +1033,51 @@ struct PetalData const PETAL_DATA[PetalType::kNumPetalTypes][RarityID::kNumRarit
         [RarityID::kMythic] = {"Magnet", "Collects loot from a distance",
             60.0, 12.5, 12.0, 1.5, 1, {.pickup_range = 800.0}},
     },
+    // Starfish & Sponge petals, stats from florr's wave_entity_data.xlsx.
+    [PetalType::kStarfish] = {
+        [RarityID::kCommon] = {"Starfish", "Heals you while you are below 75% health",
+            7.0, 0.0, 8.0, 1.5, 1, {.constant_heal = 2.4}},
+        [RarityID::kUnusual] = {"Starfish", "Heals you while you are below 75% health",
+            9.1, 0.0, 8.0, 1.5, 1, {.constant_heal = 3.12}},
+        [RarityID::kRare] = {"Starfish", "Heals you while you are below 75% health",
+            12.6, 0.0, 8.0, 1.5, 1, {.constant_heal = 4.32}},
+        [RarityID::kEpic] = {"Starfish", "Heals you while you are below 75% health",
+            16.8, 0.0, 8.0, 1.5, 1, {.constant_heal = 5.76}},
+        [RarityID::kLegendary] = {"Starfish", "Heals you while you are below 75% health",
+            22.4, 0.0, 8.0, 1.5, 1, {.constant_heal = 7.68}},
+        [RarityID::kMythic] = {"Starfish", "Heals you while you are below 75% health",
+            28.0, 0.0, 8.0, 1.5, 1, {.constant_heal = 19.2}},
+    },
+    [PetalType::kSponge] = {
+        [RarityID::kCommon] = {"Sponge", "Absorbs incoming damage and bleeds it back slowly",
+            50.0, 0.0, 10.0, 2.5, 1, {}},
+        [RarityID::kUnusual] = {"Sponge", "Absorbs incoming damage and bleeds it back slowly",
+            65.0, 0.0, 10.0, 2.5, 1, {}},
+        [RarityID::kRare] = {"Sponge", "Absorbs incoming damage and bleeds it back slowly",
+            90.0, 0.0, 10.0, 2.5, 1, {}},
+        [RarityID::kEpic] = {"Sponge", "Absorbs incoming damage and bleeds it back slowly",
+            120.0, 0.0, 10.0, 2.5, 1, {}},
+        [RarityID::kLegendary] = {"Sponge", "Absorbs incoming damage and bleeds it back slowly",
+            160.0, 0.0, 10.0, 2.5, 1, {}},
+        [RarityID::kMythic] = {"Sponge", "Absorbs incoming damage and bleeds it back slowly",
+            200.0, 0.0, 10.0, 2.5, 1, {}},
+    },
+    // Cotton: a high-HP petal that takes the flower's hits for it (florr stats
+    // from the wave_entity_data.xlsx "Sponge" row, which predates the rename).
+    [PetalType::kCotton] = {
+        [RarityID::kCommon] = {"Cotton", "Takes damage in your place; overflow passes through",
+            50.0, 0.0, 10.0, 2.5, 1, {}},
+        [RarityID::kUnusual] = {"Cotton", "Takes damage in your place; overflow passes through",
+            65.0, 0.0, 10.0, 2.5, 1, {}},
+        [RarityID::kRare] = {"Cotton", "Takes damage in your place; overflow passes through",
+            90.0, 0.0, 10.0, 2.5, 1, {}},
+        [RarityID::kEpic] = {"Cotton", "Takes damage in your place; overflow passes through",
+            120.0, 0.0, 10.0, 2.5, 1, {}},
+        [RarityID::kLegendary] = {"Cotton", "Takes damage in your place; overflow passes through",
+            160.0, 0.0, 10.0, 2.5, 1, {}},
+        [RarityID::kMythic] = {"Cotton", "Takes damage in your place; overflow passes through",
+            200.0, 0.0, 10.0, 2.5, 1, {}},
+    },
 };
 
 struct MobData const MOB_DATA[MobID::kNumMobs] = {
@@ -1217,7 +1262,7 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Starfish",
         "His name is Patrick",
         RarityID::kCommon, {60.0}, 20.0, {20.0}, 8, {
-            PetalID::kCommonLightning, PetalID::kUnusualLightning
+            PetalID::kCommonStarfish, PetalID::kUnusualStarfish, PetalID::kStarfish, PetalID::kEpicStarfish
         }, {}
     },
     {
@@ -1238,7 +1283,7 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Sponge",
         "Bob",
         RarityID::kCommon, {40.0}, 10.0, {30.0}, 5, {
-            PetalID::kCommonMagnet, PetalID::kUnusualMagnet
+            PetalID::kCommonSponge, PetalID::kUnusualSponge, PetalID::kSponge, PetalID::kEpicSponge
         }, {}
     },
     {

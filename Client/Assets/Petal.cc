@@ -1252,6 +1252,70 @@ void draw_static_petal_single(PetalID::T id, Renderer &ctx) {
             ctx.stroke();
             break;
         }
+        case PetalType::kStarfish: {
+            // Same 5-arm shape as the Starfish mob, scaled to the petal and
+            // without the body spots.
+            RenderContext _c(&ctx);
+            ctx.scale(r / 120.0f);
+            ctx.round_line_cap();
+            ctx.round_line_join();
+            float const D = 175.0f;
+            ctx.begin_path();
+            for (int i = 0; i < 5; ++i) {
+                float mid = (i + 0.5f) / 5.0f * (2 * M_PI);
+                float end = (i + 1.0f) / 5.0f * (2 * M_PI);
+                if (i == 0) ctx.move_to(D, 0);
+                ctx.qcurve_to(cosf(mid) * 15, sinf(mid) * 15, cosf(end) * D, sinf(end) * D);
+            }
+            ctx.set_line_width(52);
+            ctx.set_stroke(Renderer::HSV(0xffd0504e, 0.8125f));
+            ctx.stroke();
+            ctx.set_line_width(26);
+            ctx.set_fill(0xffd0504e);
+            ctx.set_stroke(0xffd0504e);
+            ctx.fill(1);
+            ctx.stroke();
+            break;
+        }
+        case PetalType::kSponge: {
+            ctx.set_fill(0xffefc99a);
+            ctx.set_stroke(Renderer::HSV(0xffefc99a, 0.8125f));
+            ctx.set_line_width(0.14f * r);
+            ctx.round_line_join();
+            ctx.begin_path();
+            ctx.arc(0, 0, r);
+            ctx.fill(1);
+            ctx.stroke();
+            ctx.set_fill(Renderer::HSV(0xffefc99a, 0.8125f));
+            float pores[5][2] = {{-0.3f, -0.3f}, {0.35f, -0.1f}, {0.1f, 0.35f}, {-0.4f, 0.25f}, {0.4f, 0.4f}};
+            for (int i = 0; i < 5; ++i) {
+                ctx.begin_path();
+                ctx.arc(pores[i][0] * r, pores[i][1] * r, 0.13f * r);
+                ctx.fill(1);
+            }
+            break;
+        }
+        case PetalType::kCotton: {
+            // Fluffy scalloped cotton ball.
+            ctx.set_fill(0xfff5f0e8);
+            ctx.set_stroke(0xffcfc9bd);
+            ctx.set_line_width(0.12f * r);
+            ctx.round_line_join();
+            ctx.round_line_cap();
+            int const n = 8;
+            ctx.begin_path();
+            for (int i = 0; i < n; ++i) {
+                float a = (float)i / n * (2 * M_PI);
+                float na = (float)(i + 1) / n * (2 * M_PI);
+                float ma = (a + na) / 2;
+                if (i == 0) ctx.move_to(r * 0.78f * cosf(a), r * 0.78f * sinf(a));
+                ctx.qcurve_to(r * 1.05f * cosf(ma), r * 1.05f * sinf(ma),
+                              r * 0.78f * cosf(na), r * 0.78f * sinf(na));
+            }
+            ctx.fill(1);
+            ctx.stroke();
+            break;
+        }
         default: {
             // Every PetalType is now explicitly cased above. Rarity
             // variants of a given type share a case, so no per-rarity

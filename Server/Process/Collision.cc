@@ -61,10 +61,24 @@ static void _cancel_movement(Entity &ent, Vector dir, Vector add) {
     ent.collision_velocity += push * (0.5 * PLAYER_ACCELERATION);
 }
 
+// A leech's body segments share one HP pool on the head; resolve any segment
+// to the head so damage and lifesteal act on the single creature.
+static Entity &_damage_target(Simulation *sim, Entity &e) {
+    Entity *h = &e;
+    for (int g = 0; g < 64 && h->has_component(kMob) && h->mob_id == MobID::kLeech
+                 && h->is_tail && sim->ent_alive(h->seg_head); ++g)
+        h = &sim->get_ent(h->seg_head);
+    return *h;
+}
+
 // Contact damage from `atk` to `def`, plus any ocean on-hit effects keyed on
 // the attacker (Claw bonus, Lightning chain, Fang/Leech lifesteal).
-static void _attack(Simulation *sim, Entity &atk, Entity &def) {
-    if (atk.health <= 0 || def.health <= 0) return;
+static void _attack(Simulation *sim, Entity &atk, Entity &def_seg) {
+    // NOTE: do not bail on atk.health here. on_collide already verified both
+    // entities were alive before either side struck; re-checking the attacker
+    // would drop a petal's blow whenever the mob's hit broke it the same frame
+    // (a contact trade is meant to be mutual).
+    Entity &def = _damage_target(sim, def_seg);  // leech body -> shared head
     struct PetalAttributes const *pa = atk.has_component(kPetal)
         ? &PETAL_DATA[atk.petal_id.type][atk.petal_id.rarity].attributes : nullptr;
 
@@ -82,7 +96,7 @@ static void _attack(Simulation *sim, Entity &atk, Entity &def) {
 
     // Lightning petal: chain to nearby enemies (rate-limited via secondary_reload).
     if (pa && pa->lightning > 0 && atk.secondary_reload == 0) {
-        chain_lightning(sim, atk, def.id, pa->lightning, pa->lightning_bounces);
+        chain_lightning(sim, atk, def_seg.id, pa->lightning, pa->lightning_bounces);
         atk.secondary_reload = SIM_RATE / 2;
     }
     // Fang petal: heal the owning flower for a fraction of damage dealt.
@@ -90,10 +104,10 @@ static void _attack(Simulation *sim, Entity &atk, Entity &def) {
         Entity &owner = sim->get_ent(atk.parent);
         if (owner.has_component(kHealth)) inflict_heal(sim, owner, dealt * pa->lifesteal / 100.0f);
     }
-    // Leech mob: heal itself when it damages a flower.
-    if (atk.has_component(kMob) && def.has_component(kFlower) && dealt > 0) {
+    // Leech mob: heal the shared head when any segment damages a flower.
+    if (atk.has_component(kMob) && def_seg.has_component(kFlower) && dealt > 0) {
         struct MobAttributes const &ma = MOB_DATA[atk.mob_id].attributes;
-        if (ma.lifesteal > 0) inflict_heal(sim, atk, ma.lifesteal);
+        if (ma.lifesteal > 0) inflict_heal(sim, _damage_target(sim, atk), ma.lifesteal);
     }
 }
 

@@ -99,6 +99,9 @@ namespace PetalType {
         kClaw,
         kFang,
         kMagnet,
+        kStarfish,
+        kSponge,
+        kCotton,
         kNumPetalTypes
     };
 };
@@ -385,6 +388,24 @@ namespace PetalID {
     inline constexpr Petal kEpicMagnet       = { PetalType::kMagnet,        RarityID::kEpic      };
     inline constexpr Petal kLegendaryMagnet  = { PetalType::kMagnet,        RarityID::kLegendary };
     inline constexpr Petal kMythicMagnet     = { PetalType::kMagnet,        RarityID::kMythic    };
+    inline constexpr Petal kCommonStarfish   = { PetalType::kStarfish,      RarityID::kCommon    };
+    inline constexpr Petal kUnusualStarfish  = { PetalType::kStarfish,      RarityID::kUnusual   };
+    inline constexpr Petal kStarfish         = { PetalType::kStarfish,      RarityID::kRare      };
+    inline constexpr Petal kEpicStarfish     = { PetalType::kStarfish,      RarityID::kEpic      };
+    inline constexpr Petal kLegendaryStarfish= { PetalType::kStarfish,      RarityID::kLegendary };
+    inline constexpr Petal kMythicStarfish   = { PetalType::kStarfish,      RarityID::kMythic    };
+    inline constexpr Petal kCommonSponge     = { PetalType::kSponge,        RarityID::kCommon    };
+    inline constexpr Petal kUnusualSponge    = { PetalType::kSponge,        RarityID::kUnusual   };
+    inline constexpr Petal kSponge           = { PetalType::kSponge,        RarityID::kRare      };
+    inline constexpr Petal kEpicSponge       = { PetalType::kSponge,        RarityID::kEpic      };
+    inline constexpr Petal kLegendarySponge  = { PetalType::kSponge,        RarityID::kLegendary };
+    inline constexpr Petal kMythicSponge     = { PetalType::kSponge,        RarityID::kMythic    };
+    inline constexpr Petal kCommonCotton     = { PetalType::kCotton,        RarityID::kCommon    };
+    inline constexpr Petal kUnusualCotton    = { PetalType::kCotton,        RarityID::kUnusual   };
+    inline constexpr Petal kCotton           = { PetalType::kCotton,        RarityID::kRare      };
+    inline constexpr Petal kEpicCotton       = { PetalType::kCotton,        RarityID::kEpic      };
+    inline constexpr Petal kLegendaryCotton  = { PetalType::kCotton,        RarityID::kLegendary };
+    inline constexpr Petal kMythicCotton     = { PetalType::kCotton,        RarityID::kMythic    };
 };
 
 namespace MobID {

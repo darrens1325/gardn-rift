@@ -63,7 +63,9 @@ static struct PlayerBuffs _get_petal_passive_buffs(Simulation *sim, Entity &play
         if (!player.loadout[i].already_spawned) continue;
         if (slot_petal_id == PetalID::kCommonLeaf || slot_petal_id == PetalID::kLeaf || slot_petal_id == PetalID::kRareLeaf || slot_petal_id == PetalID::kEpicLeaf || slot_petal_id == PetalID::kLegendaryLeaf)
             buffs.heal += petal_data.attributes.constant_heal / SIM_RATE;
-        else if (slot_petal_id == PetalID::kYucca && BIT_AT(player.input, InputFlags::kDefending) && !BIT_AT(player.input, InputFlags::kAttacking)) 
+        else if (slot_petal_id == PetalID::kYucca && BIT_AT(player.input, InputFlags::kDefending) && !BIT_AT(player.input, InputFlags::kAttacking))
+            buffs.heal += petal_data.attributes.constant_heal / SIM_RATE;
+        else if (slot_petal_id.type == PetalType::kStarfish && player.health < 0.75f * player.max_health)
             buffs.heal += petal_data.attributes.constant_heal / SIM_RATE;
         if (slot_petal_id == PetalID::kFaster) 
             buffs.extra_rot += 1.0;
