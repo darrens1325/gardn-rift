@@ -122,7 +122,7 @@ DEFAULT_CONTROL_HZ = 20   # sane default for stock TPS=20; bump when server runs
 NEAREST_K = 3             # number of hostiles encoded in the observation
 
 # Reward weights
-W_SCORE = 1.2
+W_SCORE = 0.5
 # Per-tick reward proportional to `cur_hp - prev_hp`. Bumped from 10 to
 # 15 because deployment captures (Bundle obs-dump 2026-05-22) showed
 # bots ignoring sustained HP loss — at slow drain rates (~0.005 HP/tick
@@ -350,7 +350,7 @@ W_MOB_KILL_BONUS = 10.0
 # W_PVP_PROXIMITY / W_PVP_APPROACH below — those provide the
 # *gradient* toward players; this provides the *payoff* once you
 # actually land the kill.
-W_PLAYER_KILL_BONUS = 800.0
+W_PLAYER_KILL_BONUS = 600.0
 
 # Player-specific proximity / approach. The existing W_PROXIMITY and
 # W_APPROACH terms don't distinguish mobs from enemy Flowers, so a

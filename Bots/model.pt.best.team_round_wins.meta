@@ -1,1 +1,1 @@
-{"value": 1.085, "metric": "team_round_wins", "saved_at": 1779894364.677268, "worker_id": 9, "env_steps": 157426616, "train_steps": 13849746}
+{"value": 0.25, "metric": "team_round_wins", "saved_at": 1781211536.2255287, "worker_id": 0, "env_steps": 159428305, "train_steps": 13884071}
