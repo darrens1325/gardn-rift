@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "name": "bot-168",
+  "first_seen": 1781214081.880799,
+  "last_seen": 1781214578.772042,
+  "episodes": 3,
+  "score_total": 87,
+  "score_best": 62,
+  "best_loadout": [
+    256,
+    256,
+    0,
+    256,
+    0
+  ],
+  "killed_by": {
+    "bot-135": 1,
+    "thorn": 1
+  },
+  "loadout_history": {
+    "2048": 1,
+    "256": 3,
+    "0": 2
+  }
+}

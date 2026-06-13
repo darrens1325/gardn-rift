@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "name": "bot-171",
+  "first_seen": 1781214285.4046268,
+  "last_seen": 1781216194.2511082,
+  "episodes": 27,
+  "score_total": 7863,
+  "score_best": 1542,
+  "best_loadout": [
+    0,
+    0,
+    256,
+    256,
+    0,
+    4611,
+    1025,
+    0
+  ],
+  "killed_by": {
+    "Hornet": 1,
+    "Wasp": 4,
+    "bot-172": 2,
+    "petalpop": 1,
+    "bot-135": 1,
+    "bot-52": 1,
+    "bot-150": 1,
+    "bot-136": 1,
+    "bot-50": 1,
+    "bot-153": 1,
+    "Scorpion": 1,
+    "bot-43": 1,
+    "bot-70": 1,
+    "bot-174": 1,
+    "bot-60": 1,
+    "bot-130": 1,
+    "Centipede": 1,
+    "bot-46": 1,
+    "thornbloom": 1,
+    "bot-141": 1,
+    "bot-36": 2
+  },
+  "loadout_history": {
+    "0": 25,
+    "2048": 1,
+    "256": 23,
+    "3585": 2,
+    "4611": 1,
+    "1025": 1
+  }
+}

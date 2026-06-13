@@ -41,14 +41,17 @@ def main():
     args = ap.parse_args()
 
     print(f"[export] STATE_DIM={STATE_DIM} NUM_ACTIONS={NUM_ACTIONS}")
+    # device="cpu": the agent's default ("auto") would place the net on
+    # MPS/CUDA when available, but the ONNX tracer feeds a CPU dummy
+    # tensor — and the exported graph is device-agnostic anyway.
     if not os.path.exists(args.checkpoint):
         print(f"[export] no checkpoint at {args.checkpoint}; exporting a random-init network",
               file=sys.stderr)
-        agent = DQNAgent(checkpoint_path=None)
+        agent = DQNAgent(checkpoint_path=None, device="cpu")
     else:
         # DQNAgent.__init__ pad-loads automatically; we go through it so the
         # behavior matches run.py exactly.
-        agent = DQNAgent(checkpoint_path=args.checkpoint)
+        agent = DQNAgent(checkpoint_path=args.checkpoint, device="cpu")
 
     # Pull the live Q-network. Eval mode + no_grad ensures the exported
     # graph has no training-only ops (e.g. Dropout, BatchNorm running stats).

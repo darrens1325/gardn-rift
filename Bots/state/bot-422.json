@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-422",
   "first_seen": 1779650517.2266722,
-  "last_seen": 1781203529.255889,
-  "episodes": 285,
-  "score_total": 95072,
+  "last_seen": 1781204075.013639,
+  "episodes": 287,
+  "score_total": 95129,
   "score_best": 6088,
   "best_loadout": [
     0,
@@ -67,7 +67,7 @@
     "bot-305": 1,
     "bot-322": 1,
     "Hornet": 24,
-    "Bee": 13,
+    "Bee": 14,
     "not bot": 1,
     "hello": 1,
     "bot-519": 1,
@@ -114,8 +114,8 @@
     "Soldier Ant": 2
   },
   "loadout_history": {
-    "0": 207,
-    "256": 256,
+    "0": 208,
+    "256": 257,
     "2048": 3,
     "513": 1,
     "12289": 1,

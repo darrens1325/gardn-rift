@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "name": "bot-160",
+  "first_seen": 1781214053.999431,
+  "last_seen": 1781216090.9986749,
+  "episodes": 11,
+  "score_total": 2901,
+  "score_best": 1100,
+  "best_loadout": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-127": 1,
+    "bot-141": 1,
+    "bot-155": 1,
+    "bot-132": 1,
+    "bot-121": 1,
+    "bot-128": 1,
+    "bot-65": 1,
+    "bot-74": 1,
+    "bot-41": 1,
+    "bot-26": 1
+  },
+  "loadout_history": {
+    "0": 10,
+    "256": 7,
+    "1793": 1
+  }
+}

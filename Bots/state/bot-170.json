@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "name": "bot-170",
+  "first_seen": 1781214113.75543,
+  "last_seen": 1781216030.541014,
+  "episodes": 34,
+  "score_total": 2947,
+  "score_best": 235,
+  "best_loadout": [
+    256,
+    256,
+    256,
+    256,
+    0
+  ],
+  "killed_by": {
+    "bot-125": 1,
+    "bot-106": 1,
+    "bot-112": 1,
+    "bot-137": 1,
+    "bot-116": 1,
+    "gardn": 1,
+    "Leafbug": 1,
+    "bot-161": 1,
+    "bot-50": 1,
+    "bot-55": 1,
+    "bot-53": 2,
+    "rosie": 1,
+    "bot-121": 1,
+    "bot-166": 1,
+    "bot-155": 1,
+    "67": 1,
+    "bot-163": 1,
+    "bot-51": 1,
+    "petalpop": 1,
+    "Crab": 4,
+    "bot-58": 1,
+    "Starfish": 2,
+    "Jellyfish": 3,
+    "Leech": 2,
+    "bloom": 1
+  },
+  "loadout_history": {
+    "0": 28,
+    "256": 31,
+    "13312": 1
+  }
+}
