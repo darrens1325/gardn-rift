@@ -1,1 +1,1 @@
-{"value": 0.5, "metric": "pvp_kills", "saved_at": 1781213236.741865, "worker_id": 0, "env_steps": 159133989, "train_steps": 13838490}
+{"value": 1.0, "metric": "pvp_kills", "saved_at": 1781211631.6031334, "worker_id": 15, "env_steps": 159425253, "train_steps": 13884299}
