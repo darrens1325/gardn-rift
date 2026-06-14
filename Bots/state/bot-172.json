@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "name": "bot-172",
+  "first_seen": 1781214043.109598,
+  "last_seen": 1781216259.6115599,
+  "episodes": 29,
+  "score_total": 9770,
+  "score_best": 2067,
+  "best_loadout": [
+    0,
+    0,
+    256,
+    0,
+    0
+  ],
+  "killed_by": {
+    "bot-57": 2,
+    "Cactus": 1,
+    "thorny": 1,
+    "bot-72": 1,
+    "bot-132": 1,
+    "bot-154": 1,
+    "bot-161": 3,
+    "bot-71": 1,
+    "bot-116": 1,
+    "bot": 1,
+    "flower": 1,
+    "bot-163": 1,
+    "bot-133": 1,
+    "bot-141": 1,
+    "Ladybug": 1,
+    "bot-115": 1,
+    "bot-148": 1,
+    "bot-138": 1,
+    "bot-56": 1,
+    "Wasp": 1,
+    "bot-112": 1,
+    "bot-100": 1,
+    "Hornet": 1,
+    "Beetle": 1,
+    "bot-27": 1
+  },
+  "loadout_history": {
+    "2048": 1,
+    "256": 26,
+    "1793": 1,
+    "0": 27,
+    "12289": 1,
+    "1025": 1,
+    "1536": 1
+  }
+}

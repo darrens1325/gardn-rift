@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "bot-165",
+  "first_seen": 1781214129.864456,
+  "last_seen": 1781215197.602591,
+  "episodes": 12,
+  "score_total": 1020,
+  "score_best": 249,
+  "best_loadout": [
+    512,
+    256,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {
+    "Scorpion": 1,
+    "bot-104": 1,
+    "bot-52": 1,
+    "bot-119": 1,
+    "bot-156": 1,
+    "hello": 1,
+    "bot-35": 1,
+    "bot-57": 1,
+    "bot-32": 1,
+    "bot-134": 1,
+    "bot-147": 1
+  },
+  "loadout_history": {
+    "2048": 1,
+    "0": 11,
+    "256": 11,
+    "512": 1
+  }
+}

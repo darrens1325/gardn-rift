@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "name": "bot-156",
+  "first_seen": 1781213989.0005991,
+  "last_seen": 1781215348.69682,
+  "episodes": 15,
+  "score_total": 551,
+  "score_best": 70,
+  "best_loadout": [
+    256,
+    256,
+    0,
+    512,
+    256
+  ],
+  "killed_by": {
+    "bot-110": 1,
+    "bot-49": 1,
+    "bot-158": 1,
+    "Wasp": 1,
+    "bot-40": 1,
+    "bot-116": 1,
+    "bot-119": 1,
+    "bot": 2,
+    "bot-34": 1,
+    "bot-114": 1,
+    "thornbloom": 1,
+    "bot-106": 1,
+    "hello": 1
+  },
+  "loadout_history": {
+    "0": 12,
+    "256": 14,
+    "1025": 1,
+    "512": 2,
+    "2048": 1
+  }
+}

@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-219",
   "first_seen": 1779582642.2639802,
-  "last_seen": 1781203547.383306,
-  "episodes": 3517,
-  "score_total": 472565,
+  "last_seen": 1781204127.425249,
+  "episodes": 3522,
+  "score_total": 472866,
   "score_best": 13297,
   "best_loadout": [
     0,
@@ -14,7 +14,7 @@
     256
   ],
   "killed_by": {
-    "Mantis": 20,
+    "Mantis": 21,
     "Hornet": 39,
     "Spider": 17,
     "Boulder": 1,
@@ -122,7 +122,7 @@
     "bot-206": 25,
     "bot-235": 59,
     "Desert Centipede": 1,
-    "Evil Centipede": 10,
+    "Evil Centipede": 11,
     "bot-213": 11,
     "bot-108": 9,
     "bot-218": 45,
@@ -160,7 +160,7 @@
     "bot-417": 2,
     "bot-503": 3,
     "bot-317": 1,
-    "bot-422": 1,
+    "bot-422": 2,
     "bot-403": 1,
     "bot-505": 1,
     "bot-501": 2,
@@ -196,12 +196,12 @@
     "bot-500": 1,
     "bot-117": 1,
     "bot-515": 1,
-    "leafy": 1
+    "leafy": 2
   },
   "loadout_history": {
-    "0": 2836,
-    "2048": 21,
-    "256": 3322,
+    "0": 2841,
+    "2048": 22,
+    "256": 3327,
     "4096": 10,
     "768": 4,
     "4097": 3,

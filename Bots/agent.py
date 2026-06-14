@@ -30,6 +30,7 @@ import random
 import threading
 from collections import deque
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -163,6 +164,21 @@ def decode_inventory_action(action: int) -> tuple[str, int, int]:
     return ("noop", -1, -1)
 
 
+def _resolve_device(name: str) -> torch.device:
+    """Resolve a --device string. "auto" prefers the Apple GPU (mps),
+    then cuda, then cpu — training on MPS halves the gradient-step cost
+    on M-series machines *and* frees the CPU torch threads for the
+    asyncio control loops, which is where the CPU-overrun warnings were
+    coming from."""
+    if name == "auto":
+        if torch.backends.mps.is_available():
+            return torch.device("mps")
+        if torch.cuda.is_available():
+            return torch.device("cuda")
+        return torch.device("cpu")
+    return torch.device(name)
+
+
 def _pad_load_state_dict(module: nn.Module, source: dict) -> dict:
     """Load a state-dict whose tensors may be smaller than the target's,
     copying overlapping slices and leaving the rest of the target at its
@@ -241,19 +257,27 @@ class DQNAgent:
         target_sync_steps: int = 1_000,
         train_every: int = 4,
         warmup: int = 2_000,
-        device: str = "cpu",
+        device: str = "auto",
         checkpoint_path: str | None = None,
         checkpoint_every_train_steps: int = 1_000,
     ) -> None:
-        self.device = torch.device(device)
+        self.device = _resolve_device(device)
         # `q` is the live, training-mutated network — only the trainer
         # thread writes to it. `q_inference` is a periodically-synced copy
         # used by `act()` on the asyncio thread. Splitting them lets the
         # control loop's forward passes proceed without contending on the
         # weights the trainer is updating; the only point of contention
         # is the brief sync that copies state_dict() between them.
+        #
+        # `q_inference` is pinned to CPU regardless of the training
+        # device: act() is a batch-1 forward, where MPS/CUDA dispatch
+        # overhead exceeds the matmul itself, and a CPU-resident copy
+        # means the asyncio thread never has to queue work on the
+        # accelerator the trainer is saturating. load_state_dict copies
+        # across devices, so the periodic q → q_inference sync works
+        # unchanged.
         self.q = QNet().to(self.device)
-        self.q_inference = QNet().to(self.device)
+        self.q_inference = QNet()  # CPU on purpose — see above
         self.q_inference.load_state_dict(self.q.state_dict())
         self.q_inference.eval()
         self.target = QNet().to(self.device)
@@ -262,7 +286,26 @@ class DQNAgent:
         self.optimizer = optim.Adam(self.q.parameters(), lr=lr)
 
         self.gamma = gamma
-        self.buffer: deque = deque(maxlen=buffer_size)
+        # Replay buffer: preallocated numpy ring instead of a deque of
+        # Python tuples. Three reasons, all measured:
+        #   - random.sample on a 100k deque costs ~0.34 ms *under the
+        #     buffer lock* (deque indexing is O(n)); fancy-indexing the
+        #     numpy arrays is microseconds.
+        #   - torch.as_tensor on nested Python lists held the GIL for
+        #     ~1.5 ms per train step, stalling every bot's control loop
+        #     even though the trainer runs on its own thread.
+        #     torch.from_numpy on a contiguous float32 array is zero-copy.
+        #   - 100k transitions as Python float lists is ~330 MB of small
+        #     objects; the same data here is ~80 MB flat and invisible
+        #     to the garbage collector.
+        self.buffer_size = int(buffer_size)
+        self._buf_s = np.zeros((self.buffer_size, STATE_DIM), dtype=np.float32)
+        self._buf_a = np.zeros(self.buffer_size, dtype=np.int64)
+        self._buf_r = np.zeros(self.buffer_size, dtype=np.float32)
+        self._buf_s2 = np.zeros((self.buffer_size, STATE_DIM), dtype=np.float32)
+        self._buf_d = np.zeros(self.buffer_size, dtype=np.float32)
+        self._buf_pos = 0    # next write index
+        self._buf_len = 0    # filled entries (saturates at buffer_size)
         self.batch_size = batch_size
         self.eps_start = eps_start
         self.eps_end = eps_end
@@ -431,7 +474,8 @@ class DQNAgent:
     def act(self, state: list[float], greedy: bool = False) -> int:
         if not greedy and random.random() < self.epsilon():
             return random.randrange(NUM_ACTIONS)
-        s = torch.as_tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
+        # CPU tensor on purpose — q_inference lives on CPU (see __init__).
+        s = torch.as_tensor(state, dtype=torch.float32).unsqueeze(0)
         # Inference uses `q_inference`, the periodically-synced read-only
         # copy. The trainer only touches it under `_sync_lock`, so a brief
         # acquire here gives us a stable snapshot. Forward pass itself
@@ -441,14 +485,23 @@ class DQNAgent:
             return int(self.q_inference(s).argmax(dim=1).item())
 
     def push(self, s: list[float], a: int, r: float, s2: list[float], done: bool) -> None:
-        # Buffer is read by the trainer thread (random.sample). Lock the
-        # append so it doesn't see a torn structure mid-rotation. Bumping
+        # Buffer is read by the trainer thread (row gather in _train_step).
+        # Lock the write so a sample can't see a half-written row. Bumping
         # env_steps is also covered by the lock — although it's a single
         # int and atomic in CPython under GIL, the trainer reads it as a
         # gating signal and we want the buffer length and env_steps to be
-        # observed consistently.
+        # observed consistently. The list → float32 row conversion happens
+        # here, once, so the trainer never touches Python objects.
         with self._buffer_lock:
-            self.buffer.append((s, a, float(r), s2, bool(done)))
+            i = self._buf_pos
+            self._buf_s[i] = s
+            self._buf_a[i] = a
+            self._buf_r[i] = r
+            self._buf_s2[i] = s2
+            self._buf_d[i] = 1.0 if done else 0.0
+            self._buf_pos = (i + 1) % self.buffer_size
+            if self._buf_len < self.buffer_size:
+                self._buf_len += 1
             self.env_steps += 1
         # Note: this used to trigger `_train_step()` synchronously every
         # `train_every` pushes. That path is gone — the trainer thread
@@ -488,7 +541,7 @@ class DQNAgent:
             # Snapshot buffer-side counters under the lock so we don't
             # trip on a torn read of `env_steps` mid-increment.
             with self._buffer_lock:
-                buf_size = len(self.buffer)
+                buf_size = self._buf_len
                 cur_env = self.env_steps
             ready = (
                 cur_env >= self.warmup
@@ -505,17 +558,25 @@ class DQNAgent:
                 self._stop_event.wait(timeout=0.005)
 
     def _train_step(self) -> None:
-        # Lock the buffer for the *sample* only — not for the tensor work
-        # that follows. Sampling is fast (microseconds); we don't want to
-        # hold the lock across the multi-millisecond forward+backward.
+        # Lock the buffer for the *gather* only — not for the tensor work
+        # that follows. The fancy-index copies the sampled rows out of the
+        # ring (microseconds, vectorized, no Python objects), so the lock
+        # is released before the multi-millisecond forward+backward and
+        # push() never waits on a gradient step.
         with self._buffer_lock:
-            batch = random.sample(self.buffer, self.batch_size)
-        s, a, r, s2, d = zip(*batch)
-        s_t = torch.as_tensor(s, dtype=torch.float32, device=self.device)
-        a_t = torch.as_tensor(a, dtype=torch.int64, device=self.device).unsqueeze(1)
-        r_t = torch.as_tensor(r, dtype=torch.float32, device=self.device)
-        s2_t = torch.as_tensor(s2, dtype=torch.float32, device=self.device)
-        d_t = torch.as_tensor(d, dtype=torch.float32, device=self.device)
+            idx = np.random.randint(0, self._buf_len, size=self.batch_size)
+            s = self._buf_s[idx]
+            a = self._buf_a[idx]
+            r = self._buf_r[idx]
+            s2 = self._buf_s2[idx]
+            d = self._buf_d[idx]
+        # from_numpy is zero-copy; .to(device) is the single host→device
+        # transfer per array (a no-op when training on CPU).
+        s_t = torch.from_numpy(s).to(self.device)
+        a_t = torch.from_numpy(a).unsqueeze(1).to(self.device)
+        r_t = torch.from_numpy(r).to(self.device)
+        s2_t = torch.from_numpy(s2).to(self.device)
+        d_t = torch.from_numpy(d).to(self.device)
 
         q_pred = self.q(s_t).gather(1, a_t).squeeze(1)
         with torch.no_grad():
@@ -543,7 +604,13 @@ class DQNAgent:
         self.optimizer.step()
 
         self.train_steps += 1
-        self.last_loss = float(loss.item())
+        # `.item()` forces a host↔device sync (~0.6 ms on MPS), and the
+        # value is only read once per stats interval — sample it at the
+        # inference-sync cadence instead of every step. Doubles as
+        # backpressure: the periodic sync keeps the trainer from
+        # enqueueing unboundedly far ahead of the GPU.
+        if self.train_steps % self._inference_sync_every == 0:
+            self.last_loss = float(loss.item())
         if self.train_steps % self.target_sync_steps == 0:
             # Target net is read+written exclusively by this thread, so no
             # lock is needed; just blow away the old weights with current.

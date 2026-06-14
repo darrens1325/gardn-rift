@@ -633,7 +633,13 @@ def main() -> int:
     p.add_argument("--gamma", type=float, default=0.97, help="discount factor")
     p.add_argument("--eps-decay", type=int, default=30_000, help="env steps over which ε decays from 1.0 to 0.05")
     p.add_argument("--warmup", type=int, default=2_000, help="env steps to collect before starting training")
-    p.add_argument("--device", default="cpu", help="torch device (cpu / cuda / mps)")
+    p.add_argument(
+        "--device", default="auto",
+        help="torch device for *training* (auto / cpu / cuda / mps). auto prefers "
+             "mps, then cuda, then cpu. Batch-1 action inference always runs on "
+             "CPU regardless — accelerator dispatch overhead exceeds the matmul "
+             "at batch size 1.",
+    )
     p.add_argument(
         "--checkpoint",
         default=os.path.join(os.path.dirname(__file__), "model.pt"),

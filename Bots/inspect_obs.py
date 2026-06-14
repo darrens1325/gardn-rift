@@ -81,7 +81,9 @@ def main() -> None:
     if len(obs) != STATE_DIM:
         sys.exit(f"obs has {len(obs)} floats, expected {STATE_DIM}")
 
-    agent = DQNAgent(checkpoint_path=args.checkpoint)
+    # device="cpu": one-shot offline inference — no point spinning up the
+    # GPU backend the "auto" default would otherwise select.
+    agent = DQNAgent(checkpoint_path=args.checkpoint, device="cpu")
     with torch.no_grad():
         s = torch.as_tensor(obs, dtype=torch.float32).unsqueeze(0)
         logits = agent.q_inference(s)[0]
