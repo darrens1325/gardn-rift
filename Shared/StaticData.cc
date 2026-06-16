@@ -1085,7 +1085,7 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Baby Ant",
         "Weak and defenseless, but big dreams.",
         RarityID::kCommon, {10.0}, 10.0, {14.0}, 1, {
-        PetalID::kLight, PetalID::kUnusualLight, PetalID::kRareLight, PetalID::kEpicLight, PetalID::kCommonLeaf, PetalID::kLeaf, PetalID::kRareLeaf, PetalID::kEpicLeaf, PetalID::kLegendaryLeaf, PetalID::kTwin, PetalID::kRice, PetalID::kTriplet
+        PetalID::kLight, PetalID::kUnusualLight, PetalID::kRareLight, PetalID::kEpicLight, PetalID::kCommonLeaf, PetalID::kLeaf, PetalID::kRareLeaf, PetalID::kEpicLeaf, PetalID::kLegendaryLeaf, PetalID::kTwin, PetalID::kCommonRice, PetalID::kUnusualRice, PetalID::kRareRice, PetalID::kRice, PetalID::kLegendaryRice, PetalID::kMythicRice
     }, {}},
     {
         "Worker Ant",
@@ -1109,7 +1109,7 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Ladybug",
         "Cute and harmless.",
         RarityID::kCommon, {25.0}, 10.0, {30.0}, 3, {
-        PetalID::kLight, PetalID::kUnusualLight, PetalID::kRareLight, PetalID::kEpicLight, PetalID::kCommonRose, PetalID::kRose, PetalID::kRareRose, PetalID::kLegendaryRose, PetalID::kTwin, PetalID::kCommonBubble, PetalID::kUnusualBubble, PetalID::kBubble, PetalID::kEpicBubble, PetalID::kLegendaryBubble
+        PetalID::kLight, PetalID::kUnusualLight, PetalID::kRareLight, PetalID::kEpicLight, PetalID::kCommonRose, PetalID::kRose, PetalID::kRareRose, PetalID::kLegendaryRose, PetalID::kTwin
     }, {}},
     {
         "Beetle",
@@ -1133,13 +1133,13 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Ladybug",
         "Cute and harmless... if left unprovoked.",
         RarityID::kUnusual, {35.0}, 10.0, {30.0}, 5, {
-        PetalID::kDahlia, PetalID::kWing, PetalID::kYinYang
+        PetalID::kCommonDahlia, PetalID::kUnusualDahlia, PetalID::kDahlia, PetalID::kEpicDahlia, PetalID::kLegendaryDahlia, PetalID::kMythicDahlia, PetalID::kYinYang
     }, {}},
     {
         "Hornet",
         "These aren't quite as nice as the little bees.",
         RarityID::kUnusual, {40.0}, 40.0, {40.0}, 12, {
-        PetalID::kDandelion, PetalID::kMissile, PetalID::kWing, PetalID::kCommonBubble, PetalID::kUnusualBubble, PetalID::kBubble, PetalID::kEpicBubble, PetalID::kLegendaryBubble, PetalID::kAntennae
+        PetalID::kMissile
     }, { .aggro_radius = 600 }},
     {
         "Cactus",
@@ -1193,7 +1193,7 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Spider",
         "Spooky.",
         RarityID::kUnusual, {35.0}, 10.0, {15.0}, 8, {
-        PetalID::kStinger, PetalID::kWeb, PetalID::kFaster, PetalID::kTriweb
+        PetalID::kUnusualWeb, PetalID::kWeb, PetalID::kEpicWeb, PetalID::kMythicWeb, PetalID::kCommonFaster, PetalID::kUnusualFaster, PetalID::kFaster, PetalID::kEpicFaster, PetalID::kLegendaryFaster, PetalID::kMythicFaster, PetalID::kTriweb
     }, { .poison_damage = { 5.0, 3.0 } }},
     {
         "Ant Hole",
@@ -1211,7 +1211,7 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Ladybug",
         "This one is shiny... I wonder what it could mean...",
         RarityID::kEpic, {25.0}, 10.0, {30.0}, 3, {
-        PetalID::kDahlia, PetalID::kWing, PetalID::kCommonBubble, PetalID::kUnusualBubble, PetalID::kBubble, PetalID::kEpicBubble, PetalID::kLegendaryBubble, PetalID::kCommonYggdrasil, PetalID::kUnusualYggdrasil, PetalID::kRareYggdrasil, PetalID::kEpicYggdrasil, PetalID::kLegendaryYggdrasil, PetalID::kMythicYggdrasil, PetalID::kYggdrasil
+        PetalID::kUnusualDahlia, PetalID::kDahlia, PetalID::kEpicDahlia, PetalID::kLegendaryDahlia, PetalID::kMythicDahlia, PetalID::kCommonYggdrasil, PetalID::kUnusualYggdrasil, PetalID::kRareYggdrasil, PetalID::kEpicYggdrasil, PetalID::kLegendaryYggdrasil, PetalID::kMythicYggdrasil, PetalID::kYggdrasil
     }, {}},
     {
         "Square",
@@ -1235,7 +1235,7 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Bush",
         "It's a bush. It doesn't do much.",
         RarityID::kCommon, {20, 70.0}, 10.0, {20, 70.0}, 1, {
-        PetalID::kCommonLeaf, PetalID::kLeaf, PetalID::kRareLeaf, PetalID::kEpicLeaf, PetalID::kLegendaryLeaf
+        PetalID::kCommonCotton, PetalID::kUnusualCotton, PetalID::kCotton, PetalID::kEpicCotton, PetalID::kLegendaryCotton, PetalID::kMythicCotton
     }, { .stationary = 1 }},
     {
         "Mantis",
@@ -1248,7 +1248,7 @@ struct MobData const MOB_DATA[MobID::kNumMobs] = {
         "Wasp",
         "It's aggressive and it stings. Watch out.",
         RarityID::kCommon, {40.0}, 40.0, {40.0}, 12, {
-            PetalID::kCommonMissile, PetalID::kUnusualMissile, PetalID::kMissile, PetalID::kEpicMissile, PetalID::kLegendaryMissile, PetalID::kCommonBubble, PetalID::kUnusualBubble, PetalID::kBubble, PetalID::kEpicBubble, PetalID::kLegendaryBubble, PetalID::kAntennae, PetalID::kCommonBloodStinger, PetalID::kBloodStinger, PetalID::kRareBloodStinger, PetalID::kEpicBloodStinger
+            PetalID::kCommonMissile, PetalID::kUnusualMissile, PetalID::kMissile, PetalID::kEpicMissile, PetalID::kLegendaryMissile, PetalID::kAntennae, PetalID::kCommonBloodStinger, PetalID::kBloodStinger, PetalID::kRareBloodStinger, PetalID::kEpicBloodStinger
     }, {}
     },
     // -------------------------------------------------------------------------
