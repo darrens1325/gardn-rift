@@ -465,7 +465,9 @@ namespace AIState {
         kIdle,
         kIdleMoving,
         kReturning,
-        kBasicAggro
+        kBasicAggro,
+        kCrabStrafe,
+        kCrabCharge
     };
 };
 

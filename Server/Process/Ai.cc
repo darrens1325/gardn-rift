@@ -489,6 +489,81 @@ static void tick_digger(Simulation *sim, Entity &ent) {
     }
 }
 
+static void tick_crab_aggro(Simulation *sim, Entity &ent) {
+    // A crab sidles. While it has a target it strafes sideways (left, right,
+    // left, ...) a touch faster than the player, holding roughly
+    // CRAB_STRAFE_DIST away. After three strafe segments it commits to a
+    // charge: it locks the heading toward the player at that instant and
+    // barrels straight ahead for CRAB_CHARGE_TICKS — it does NOT re-aim at the
+    // player mid-charge — then drops back into the sideways strafe.
+    static constexpr float CRAB_STRAFE_DIST  = 250.0f;            // ring radius
+    static constexpr float CRAB_STRAFE_SPEED = 1.25f;            // > player speed
+    static constexpr float CRAB_CHARGE_SPEED = 2.2f;             // fast lunge
+    game_tick_t const CRAB_SEGMENT      = 4 * SIM_RATE / 5; // 0.8s per side
+    game_tick_t const CRAB_STRAFE_TICKS = 3 * CRAB_SEGMENT; // left, right, left
+    game_tick_t const CRAB_CHARGE_TICKS = 3 * SIM_RATE / 2; // 1.5s straight charge
+
+    if (!sim->ent_alive(ent.target)) {
+        if (!(ent.target == NULL_ENTITY)) {
+            ent.ai_state = AIState::kIdle;
+            ent.ai_tick = 0;
+        }
+        ent.target = find_nearest_enemy(sim, ent, ent.detection_radius + ent.radius);
+        tick_default_passive(sim, ent);
+        return;
+    }
+
+    Entity &target = sim->get_ent(ent.target);
+    Vector to_player(target.x - ent.x, target.y - ent.y);
+    _focus_lose_clause(sim, ent, to_player);
+    // _focus_lose_clause may have dropped the target (out of range / no LoS);
+    // coast this tick rather than steering toward a stale entity.
+    if (!sim->ent_alive(ent.target)) { ent.acceleration.set(0, 0); return; }
+
+    // Just acquired a target from a passive state — begin sidling.
+    if (ent.ai_state != AIState::kCrabStrafe && ent.ai_state != AIState::kCrabCharge) {
+        ent.ai_state = AIState::kCrabStrafe;
+        ent.ai_tick = 0;
+    }
+
+    float dist = to_player.magnitude();
+
+    if (ent.ai_state == AIState::kCrabCharge) {
+        // Locked-in lunge: keep travelling along the heading chosen at commit
+        // time, ignoring where the player has moved since.
+        ent.set_angle(ent.heading_angle);
+        ent.acceleration.unit_normal(ent.heading_angle)
+            .set_magnitude(PLAYER_ACCELERATION * CRAB_CHARGE_SPEED);
+        if (ent.ai_tick >= CRAB_CHARGE_TICKS) {
+            ent.ai_tick = 0;
+            ent.ai_state = AIState::kCrabStrafe;
+        }
+        return;
+    }
+
+    // kCrabStrafe: walk sideways relative to the player, flipping direction
+    // each segment, while a radial term holds the crab near CRAB_STRAFE_DIST.
+    ent.set_angle(to_player.angle());  // face the player while moving sideways
+    float inv = (dist > 0.001f) ? 1.0f / dist : 0.0f;
+    float tx = to_player.x * inv, ty = to_player.y * inv;  // unit toward player
+    float sign = ((ent.ai_tick / CRAB_SEGMENT) % 2 == 0) ? 1.0f : -1.0f;
+    float sx = -ty * sign, sy = tx * sign;  // perpendicular: the sideways walk
+    // Radial term: positive closes the gap, negative backs off. Clamped so the
+    // sideways component always survives once we're anywhere near the ring.
+    float radial = (dist - CRAB_STRAFE_DIST) / 120.0f;
+    if (radial >  1.5f) radial =  1.5f;
+    if (radial < -1.5f) radial = -1.5f;
+    ent.acceleration.set(sx + tx * radial, sy + ty * radial);
+    ent.acceleration.set_magnitude(PLAYER_ACCELERATION * CRAB_STRAFE_SPEED);
+
+    if (ent.ai_tick >= CRAB_STRAFE_TICKS) {
+        // Commit to the charge: lock the heading toward the player right now.
+        ent.ai_tick = 0;
+        ent.ai_state = AIState::kCrabCharge;
+        ent.heading_angle = to_player.angle();
+    }
+}
+
 void tick_ai_behavior(Simulation *sim, Entity &ent) {
     if (ent.pending_delete) return;
     if (sim->ent_alive(ent.seg_head)) return;
@@ -591,7 +666,7 @@ void tick_ai_behavior(Simulation *sim, Entity &ent) {
             tick_default_aggro(sim, ent, 0.95);
             break;
         case MobID::kCrab:
-            tick_default_aggro(sim, ent, 1.2);
+            tick_crab_aggro(sim, ent);
             break;
         case MobID::kLeech:
             tick_default_aggro(sim, ent, 1.5);
