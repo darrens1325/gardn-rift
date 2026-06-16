@@ -113,6 +113,9 @@ void Game::init() {
         Ui::make_settings_panel()
     );
     title_ui_window.add_child(
+        Ui::make_multiplayer_panel()
+    );
+    title_ui_window.add_child(
         Ui::make_petal_gallery()
     );
     title_ui_window.add_child(

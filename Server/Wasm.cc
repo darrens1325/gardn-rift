@@ -19,7 +19,16 @@ std::unordered_map<int, WebSocket *> WS_MAP;
 size_t const MAX_BUFFER_LEN = 1024;
 static uint8_t INCOMING_BUFFER[MAX_BUFFER_LEN] = {0};
 
+// Bundle-only: the lowest ws_id assigned to a *remote human* peer that joins
+// over WebRTC (see index.html's host signaling). ws_id 0 is the local player;
+// ids 1..(base-1) are local AI bots whose server→client packets are dropped
+// (the bot driver reads sim state directly — see WebSocket::send). Remote
+// humans get ids at or above this base and DO need their kClientUpdate packets
+// relayed over the bridge to their DataChannel. Must match REMOTE_WS_ID_BASE
+// in index.html.
 #ifdef GARDN_BUNDLE
+static int const REMOTE_WS_ID_BASE = 1000000;
+
 // In the bundle build these are *plain* in-namespace functions because the
 // surrounding TU lives inside `namespace gardn::server`. Bundle/Bridge.cc
 // re-exports them as `server_on_connect` / `server_tick` / etc. via an
@@ -104,14 +113,17 @@ WebSocket::WebSocket(int id) : ws_id(id) {
 
 void WebSocket::send(uint8_t const *packet, size_t size) {
     // Server → client routing through the JS bridge. The bridge dispatches:
-    //   ws_id == 0       → main player: blit into client's INCOMING_PACKET
-    //                      and call _client_on_message(1, size).
-    //   ws_id >= 1       → bot: short-circuited here. The bot driver reads
-    //                      Simulation state directly via C++ pointers, so
-    //                      bots don't need kClientUpdate packets. Skipping
-    //                      the JS↔WASM crossing for ~150 bots/tick is a
-    //                      meaningful perf win.
-    if (ws_id != 0) return;
+    //   ws_id == 0                 → main player: blit into client's
+    //                                INCOMING_PACKET and call
+    //                                _client_on_message(1, size).
+    //   1..(REMOTE_WS_ID_BASE-1)   → bot: short-circuited here. The bot driver
+    //                                reads Simulation state directly via C++
+    //                                pointers, so bots don't need kClientUpdate
+    //                                packets. Skipping the JS↔WASM crossing for
+    //                                ~150 bots/tick is a meaningful perf win.
+    //   >= REMOTE_WS_ID_BASE       → remote human peer (WebRTC): relayed by the
+    //                                bridge to that peer's DataChannel.
+    if (ws_id != 0 && ws_id < REMOTE_WS_ID_BASE) return;
     EM_ASM({
         if (Module._gardn_send_from_server) {
             Module._gardn_send_from_server($0, $1, $2);

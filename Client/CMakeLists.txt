@@ -89,6 +89,7 @@ set(SRCS
     Ui/TitleScreen/DeathScreen.cc
     Ui/TitleScreen/MainScreen.cc
     Ui/TitleScreen/MobGallery.cc
+    Ui/TitleScreen/Multiplayer.cc
     Ui/TitleScreen/PetalGallery.cc
     Ui/TitleScreen/Settings.cc
     Ui/TitleScreen/StatScreen.cc

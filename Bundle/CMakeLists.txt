@@ -114,6 +114,7 @@ set(CLIENT_SRCS
     Client/Ui/TitleScreen/DeathScreen.cc
     Client/Ui/TitleScreen/MainScreen.cc
     Client/Ui/TitleScreen/MobGallery.cc
+    Client/Ui/TitleScreen/Multiplayer.cc
     Client/Ui/TitleScreen/PetalGallery.cc
     Client/Ui/TitleScreen/Settings.cc
     Client/Ui/TitleScreen/StatScreen.cc
@@ -323,6 +324,7 @@ target_link_options(gardn-bundle PRIVATE
     # no policy is exported, the staged file is empty (0 bytes) and the
     # bots fall back to uniform-random movement actions.
     "SHELL:--embed-file ${STAGED_MODEL}@/model.onnx"
+    --extern-pre-js ${REPO_ROOT}/Bundle/pre-run.js
 )
 if(USE_MEMORY64)
     add_link_options("-sMEMORY64=1")

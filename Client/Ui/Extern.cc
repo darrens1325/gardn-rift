@@ -8,6 +8,7 @@ namespace Ui {
         Element *petal_gallery = nullptr;
         Element *mob_gallery = nullptr;
         Element *changelog = nullptr;
+        Element *multiplayer = nullptr;
     }
     double dt = 0;
     double window_width = 1920;

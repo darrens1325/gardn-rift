@@ -77,6 +77,78 @@ const TPS = 20;
 // ws_id 0 = the local player. Bots use ids 1..NUM_BOTS.
 const PLAYER_WS_ID = 0;
 
+// ---- Multiplayer (WebRTC peer-to-peer, copy-paste signaling) ----------------
+// `?join` boots this page as a GUEST: no local server/bots — it connects to a
+// remote host's authoritative simulation over a WebRTC DataChannel. Without it
+// the page is a HOST (the default single-player-vs-bots experience) that can
+// additionally accept remote friends.
+const JOIN_MODE = new URLSearchParams(location.search).has("join");
+// Remote human peers are assigned ws_ids at or above this base so the C++
+// server (Server/Wasm.cc) can tell them apart from AI bots (ids 1..N) and
+// relay their state updates over the bridge. MUST match REMOTE_WS_ID_BASE in
+// Server/Wasm.cc.
+const REMOTE_WS_ID_BASE = 1000000;
+
+// Public STUN so peers behind NAT can discover routable candidates. There is
+// no TURN relay (that would need a server), so two peers both behind strict
+// symmetric NATs may fail to connect — an inherent limit of serverless P2P.
+const RTC_CONFIG = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+function newPeerConnection() { return new RTCPeerConnection(RTC_CONFIG); }
+
+// Non-trickle ICE: wait until candidate gathering finishes so the single
+// copy-paste code carries every candidate. Capped so a NAT that never reports
+// "complete" still yields a usable code with whatever was gathered.
+function waitForIce(pc) {
+    return new Promise((resolve) => {
+        if (pc.iceGatheringState === "complete") return resolve();
+        const finish = () => {
+            pc.removeEventListener("icegatheringstatechange", check);
+            clearTimeout(timer);
+            resolve();
+        };
+        const check = () => { if (pc.iceGatheringState === "complete") finish(); };
+        pc.addEventListener("icegatheringstatechange", check);
+        const timer = setTimeout(finish, 3000);
+    });
+}
+function encodeSignal(desc) {
+    return btoa(JSON.stringify({ type: desc.type, sdp: desc.sdp }));
+}
+function decodeSignal(code) {
+    let obj;
+    try { obj = JSON.parse(atob((code || "").trim())); }
+    catch (e) { throw new Error("that doesn't look like a valid code"); }
+    if (!obj || !obj.type || !obj.sdp) throw new Error("that doesn't look like a valid code");
+    return obj;
+}
+
+// The multiplayer UI lives in the C++ title screen (Client/Ui/TitleScreen/
+// Multiplayer.cc). Its buttons call the methods on window.gardnMp (installed
+// by boot() below), and a status DynamicText polls window.gardnMp.status each
+// frame. The codes themselves move through the clipboard so nothing has to be
+// rendered/edited as canvas text:
+
+// Read a code from the clipboard, falling back to a native prompt() — Firefox
+// blocks programmatic clipboard reads, and prompt() works everywhere on a user
+// gesture. Returns "" if the user cancels / provides nothing.
+async function mpReadCode(promptMsg) {
+    try {
+        const t = await navigator.clipboard.readText();
+        if (t && t.trim()) return t.trim();
+    } catch (e) { /* not permitted — fall through to prompt */ }
+    const p = window.prompt(promptMsg);
+    return p ? p.trim() : "";
+}
+// Put a code on the clipboard, falling back to a prompt() the user can copy
+// from. Returns true if it reached the clipboard automatically.
+async function mpWriteCode(text) {
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch (e) {
+        window.prompt("Copy this code and send it to your friend:", text);
+        return false;
+    }
+}
+
 (async function boot() {
     setStatus("instantiating WASM…");
     // Two instances of the same factory: one acts as "client", the other as
@@ -86,7 +158,9 @@ const PLAYER_WS_ID = 0;
         canvas: document.getElementById("canvas"),
         printErr: (e) => console.warn("[client]", e),
     });
-    const serverMod = await GardnBundle({
+    // The guest has no local server — it plays on the host's authoritative
+    // simulation over WebRTC — so it skips the second (server) WASM instance.
+    const serverMod = JOIN_MODE ? null : await GardnBundle({
         printErr: (e) => console.warn("[server]", e),
     });
 
@@ -151,21 +225,138 @@ const PLAYER_WS_ID = 0;
         return origFetch(input, init);
     };
 
-    // Wire the bridge BEFORE invoking _bundle_main on either side.
-    // -------------------------------------------------------------
-    //
-    // Client → Server: clientMod._gardn_send_from_client(ptr, len) blits
-    // bytes from client HEAPU8 into the server's INCOMING_BUFFER (via
+    // Render loop + DOM input wiring. Shared by host and guest: the guest
+    // renders the host's authoritative world for its own camera exactly as
+    // the local player does. (Replaces what Client/Setup.cc does standalone.)
+    function installRenderLoop() {
+        function renderTick(t) {
+            const canvas = document.getElementById("canvas");
+            canvas.width = innerWidth * devicePixelRatio;
+            canvas.height = innerHeight * devicePixelRatio;
+            clientMod._client_loop(t, canvas.width, canvas.height);
+            requestAnimationFrame(renderTick);
+        }
+        requestAnimationFrame(renderTick);
+    }
+    function installInput() {
+        window.addEventListener("keydown", (e) => {
+            if (!e.repeat) clientMod._client_key_event(e.which, 0);
+        });
+        window.addEventListener("keyup", (e) => {
+            if (!e.repeat) clientMod._client_key_event(e.which, 1);
+        });
+        function mouse(type, e) {
+            clientMod._client_mouse_event(
+                e.clientX * devicePixelRatio,
+                e.clientY * devicePixelRatio,
+                type, +!!e.button);
+        }
+        window.addEventListener("mousedown", (e) => mouse(0, e));
+        window.addEventListener("mousemove", (e) => mouse(1, e));
+        window.addEventListener("mouseup",   (e) => mouse(2, e));
+        window.addEventListener("wheel", (e) => clientMod._client_wheel_event(e.deltaY));
+        window.addEventListener("touchstart", (e) => { const t = e.changedTouches[0]; mouse(0, t); });
+        window.addEventListener("touchmove",  (e) => { const t = e.changedTouches[0]; mouse(1, t); });
+        window.addEventListener("touchend",   (e) => { const t = e.changedTouches[0]; mouse(2, t); });
+    }
+
+    // ============================================================
+    // GUEST MODE — connect to a remote host over WebRTC, no local server.
+    // ============================================================
+    if (JOIN_MODE) {
+        setStatus("join mode — open the Multiplayer panel and paste an invite code");
+        // Boot the client WITHOUT marking the bridge ready: Socket::connect
+        // registers _gardn_on_client_ready, which we fire once the DataChannel
+        // to the host opens (see setupGuestChannel) so kVerify rides the DC.
+        clientMod._bundle_main();
+        installRenderLoop();
+        installInput();
+
+        const mpStatus = (s) => { if (window.gardnMp) window.gardnMp.status = s; };
+        let guestPc = null;
+        function setupGuestChannel(pc, dc) {
+            dc.binaryType = "arraybuffer";
+            dc.onopen = () => {
+                // Route client → server over the DataChannel, then release the
+                // deferred handshake (kVerify) the client is holding.
+                clientMod._gardn_send_from_client = (ptr, len) => {
+                    if (dc.readyState !== "open") return;
+                    dc.send(clientMod.HEAPU8.slice(ptr, ptr + len));
+                };
+                if (clientMod._gardn_on_client_ready) clientMod._gardn_on_client_ready();
+                else clientMod._client_on_message(0, 0);
+                mpStatus("Connected! Entering the host's world…");
+                setStatus("connected to host — playing online");
+                console.log("[mp] connected to host");
+            };
+            dc.onmessage = (e) => {
+                const clientPtr = clientMod._gardn_client_incoming_ptr;
+                if (!clientPtr) return;
+                const src = new Uint8Array(e.data);
+                clientMod.HEAPU8.set(src, clientPtr);
+                clientMod._client_on_message(1, src.length);
+            };
+            dc.onclose = () => {
+                clientMod._client_on_message(2, 0);
+                mpStatus("Disconnected from host.");
+                setStatus("disconnected from host");
+            };
+        }
+        async function onGuestAcceptInvite(code) {
+            const offer = decodeSignal(code);
+            if (offer.type !== "offer") throw new Error("that's a reply code, not an invite code");
+            if (guestPc) { try { guestPc.close(); } catch (e) {} }
+            const pc = newPeerConnection();
+            guestPc = pc;
+            pc.ondatachannel = (e) => setupGuestChannel(pc, e.channel);
+            pc.addEventListener("connectionstatechange", () => {
+                if (pc.connectionState === "failed")
+                    mpStatus("Connection failed — ask the host for a fresh invite code.");
+            });
+            await pc.setRemoteDescription(offer);
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            await waitForIce(pc);
+            return encodeSignal(pc.localDescription);
+        }
+        // Title-screen Multiplayer panel (Client/Ui/TitleScreen/Multiplayer.cc)
+        // calls these. Codes ride the clipboard (prompt() fallback).
+        window.gardnMp = {
+            mode: "guest",
+            status: "Paste your friend's invite code to join their game.",
+            async guestJoin() {
+                const code = await mpReadCode("Paste the host's invite code:");
+                if (!code) { this.status = "No invite code provided."; return; }
+                this.status = "Generating reply code…";
+                try {
+                    const reply = await onGuestAcceptInvite(code);
+                    const auto = await mpWriteCode(reply);
+                    this.status = auto
+                        ? "Reply code copied! Send it back to the host, then wait to connect."
+                        : "Send the reply code back to the host, then wait to connect.";
+                } catch (e) { this.status = "error: " + e.message; }
+            },
+            goHost() { location.search = ""; },
+        };
+        return;
+    }
+
+    // ============================================================
+    // HOST MODE — local player (ws_id 0) + AI bots + remote friends.
+    // ============================================================
+    // Client → Server: clientMod._gardn_send_from_client(ptr, len) blits bytes
+    // from client HEAPU8 into the server's INCOMING_BUFFER (via
     // _server_incoming_buffer_ptr) and calls _server_on_message(0, len).
     //
-    // Server → Client (ws_id 0): serverMod._gardn_send_from_server blits
-    // bytes from server HEAPU8 into client INCOMING_PACKET and calls
-    // _client_on_message(1, len). For bot ws_ids (>= 1) the server's
-    // outbound packet feeds the bot driver instead — but in this MVP we
-    // just ignore those (they're the server's state updates which the
-    // C++ bot encoder reads directly from sim, not from the wire).
+    // Server → Client: serverMod._gardn_send_from_server routes by ws_id —
+    // ws_id 0 → the local client's INCOMING_PACKET; ws_id >= REMOTE_WS_ID_BASE
+    // → that remote friend's DataChannel. Bot ws_ids (1..) never reach here
+    // (Server/Wasm.cc's WebSocket::send short-circuits them — the bot encoder
+    // reads sim state directly).
     const serverIncomingPtr = serverMod._server_incoming_buffer_ptr();
     const serverIncomingCap = serverMod._server_incoming_buffer_cap();
+    const peers = new Map();              // remote ws_id -> RTCDataChannel
+    let nextRemoteWsId = REMOTE_WS_ID_BASE;
 
     clientMod._gardn_send_from_client = function(ptr, len) {
         if (len > serverIncomingCap) {
@@ -177,21 +368,25 @@ const PLAYER_WS_ID = 0;
         serverMod._server_on_message(PLAYER_WS_ID, len);
     };
 
-    // Where the client expects S→C packets to land (set by Socket.cc).
-    // It's the address of INCOMING_PACKET inside the client's linear
-    // memory. The client stashes it on Module._gardn_client_incoming_ptr
-    // when it first hits Socket::connect().
     serverMod._gardn_send_from_server = function(ws_id, ptr, len) {
-        if (ws_id !== PLAYER_WS_ID) return;  // bot traffic — see below
-        const clientPtr = clientMod._gardn_client_incoming_ptr;
-        if (!clientPtr) return;
-        const src = serverMod.HEAPU8.subarray(ptr, ptr + len);
-        clientMod.HEAPU8.set(src, clientPtr);
-        clientMod._client_on_message(1, len);
+        if (ws_id === PLAYER_WS_ID) {
+            // Where the client expects S→C packets to land (set by Socket.cc
+            // on Module._gardn_client_incoming_ptr at Socket::connect()).
+            const clientPtr = clientMod._gardn_client_incoming_ptr;
+            if (!clientPtr) return;
+            const src = serverMod.HEAPU8.subarray(ptr, ptr + len);
+            clientMod.HEAPU8.set(src, clientPtr);
+            clientMod._client_on_message(1, len);
+            return;
+        }
+        const dc = peers.get(ws_id);
+        if (dc && dc.readyState === "open")
+            dc.send(serverMod.HEAPU8.slice(ptr, ptr + len));
     };
     serverMod._gardn_close_from_server = function(ws_id) {
-        if (ws_id !== PLAYER_WS_ID) return;
-        clientMod._client_on_message(2, 0);
+        if (ws_id === PLAYER_WS_ID) { clientMod._client_on_message(2, 0); return; }
+        const dc = peers.get(ws_id);
+        if (dc) { try { dc.close(); } catch (e) {} }
     };
 
     // Mark the bridge ready so Socket::connect()'s deferred handshake fires
@@ -212,38 +407,130 @@ const PLAYER_WS_ID = 0;
     serverMod._server_on_connect(PLAYER_WS_ID);
 
     // ---- main loops -----------------------------------------------------
+    // The authoritative server tick is driven by a Web Worker heartbeat, NOT a
+    // main-thread setInterval. Chrome (and other browsers) throttle
+    // setInterval/setTimeout/requestAnimationFrame in a backgrounded or
+    // occluded tab down to ~1 Hz — so the instant the host's tab loses focus
+    // (the host alt-tabs away, or you test host+guest in two tabs of one
+    // window), the simulation, and therefore the remote guest's ENTIRE update
+    // stream, drops to a ~1 fps slideshow even though each tick costs ~0.1 ms.
+    // Worker timers are exempt from that throttling, and the messages a worker
+    // posts are delivered to the main thread even while it's backgrounded, so
+    // the sim holds true TPS regardless of host tab focus.
+    //
+    // On each beat we run a fixed-timestep accumulator: step the sim by however
+    // much real time actually elapsed so it stays real-time (no slow-motion, no
+    // bursts), with catch-up capped so a long stall sheds backlog instead of
+    // spiralling.
     const tickMs = 1000 / TPS;
-    setInterval(() => serverMod._server_tick(), tickMs);
-
-    function renderTick(t) {
-        const canvas = document.getElementById("canvas");
-        canvas.width = innerWidth * devicePixelRatio;
-        canvas.height = innerHeight * devicePixelRatio;
-        clientMod._client_loop(t, canvas.width, canvas.height);
-        requestAnimationFrame(renderTick);
+    let tickAcc = 0, lastTickPoll = performance.now();
+    function pumpTicks() {
+        const now = performance.now();
+        tickAcc += now - lastTickPoll;
+        lastTickPoll = now;
+        let steps = Math.floor(tickAcc / tickMs);
+        if (steps > 5) steps = 5;          // cap catch-up; drop the excess
+        tickAcc -= steps * tickMs;
+        for (let i = 0; i < steps; ++i) serverMod._server_tick();
     }
-    requestAnimationFrame(renderTick);
-
-    // DOM input wiring (replaces what Client/Setup.cc does in standalone mode).
-    window.addEventListener("keydown", (e) => {
-        if (!e.repeat) clientMod._client_key_event(e.which, 0);
-    });
-    window.addEventListener("keyup", (e) => {
-        if (!e.repeat) clientMod._client_key_event(e.which, 1);
-    });
-    function mouse(type, e) {
-        clientMod._client_mouse_event(
-            e.clientX * devicePixelRatio,
-            e.clientY * devicePixelRatio,
-            type, +!!e.button);
+    const pollMs = Math.max(8, tickMs / 3);
+    try {
+        // Inline worker: an unthrottled heartbeat that pokes the main thread.
+        const workerSrc = "setInterval(function(){postMessage(0);}, " + pollMs + ");";
+        const tickWorker = new Worker(URL.createObjectURL(new Blob([workerSrc], { type: "application/javascript" })));
+        tickWorker.onmessage = pumpTicks;
+        // Belt-and-suspenders: if the worker beat ever pauses, a main-thread
+        // interval (throttled when backgrounded, but fine when focused) still
+        // advances the accumulator.
+        setInterval(pumpTicks, pollMs);
+    } catch (e) {
+        console.warn("[bundle] tick worker unavailable; falling back to main-thread interval", e);
+        setInterval(pumpTicks, pollMs);
     }
-    window.addEventListener("mousedown", (e) => mouse(0, e));
-    window.addEventListener("mousemove", (e) => mouse(1, e));
-    window.addEventListener("mouseup",   (e) => mouse(2, e));
-    window.addEventListener("wheel", (e) => clientMod._client_wheel_event(e.deltaY));
-    window.addEventListener("touchstart", (e) => { const t = e.changedTouches[0]; mouse(0, t); });
-    window.addEventListener("touchmove",  (e) => { const t = e.changedTouches[0]; mouse(1, t); });
-    window.addEventListener("touchend",   (e) => { const t = e.changedTouches[0]; mouse(2, t); });
+
+    installRenderLoop();
+    installInput();
+
+    // ---- WebRTC host signaling (copy-paste codes) ----------------------
+    // One invite is "pending" at a time: create a code, paste the friend's
+    // reply, they connect — then create another for the next friend.
+    const mpStatus = (s) => { if (window.gardnMp) window.gardnMp.status = s; };
+    let pendingHostPc = null;
+    function setupHostChannel(pc, dc, wsId) {
+        dc.binaryType = "arraybuffer";
+        const drop = () => {
+            if (!peers.has(wsId)) return;
+            peers.delete(wsId);
+            serverMod._server_on_disconnect(wsId, 0);
+            mpStatus("A friend disconnected.");
+            console.log("[mp] peer disconnected ws_id", wsId);
+        };
+        dc.onopen = () => {
+            // Register the peer BEFORE _server_on_connect so any immediate
+            // server→peer packet finds the channel. _server_on_connect creates
+            // the server-side Client/WebSocket(wsId) the guest's kVerify needs.
+            peers.set(wsId, dc);
+            serverMod._server_on_connect(wsId);
+            mpStatus("A friend connected! Create another code to invite more.");
+            console.log("[mp] peer connected ws_id", wsId);
+        };
+        dc.onmessage = (e) => {
+            let src = new Uint8Array(e.data);
+            let len = src.length;
+            if (len > serverIncomingCap) len = serverIncomingCap;
+            serverMod.HEAPU8.set(src.subarray(0, len), serverIncomingPtr);
+            serverMod._server_on_message(wsId, len);
+        };
+        dc.onclose = drop;
+        pc.addEventListener("connectionstatechange", () => {
+            if (pc.connectionState === "failed" || pc.connectionState === "closed") drop();
+        });
+    }
+    async function onHostCreateInvite() {
+        if (pendingHostPc) { try { pendingHostPc.close(); } catch (e) {} }
+        const pc = newPeerConnection();
+        pendingHostPc = pc;
+        const wsId = nextRemoteWsId++;
+        const dc = pc.createDataChannel("gardn", { ordered: true });
+        setupHostChannel(pc, dc, wsId);
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        await waitForIce(pc);
+        return encodeSignal(pc.localDescription);
+    }
+    async function onHostAcceptReply(code) {
+        if (!pendingHostPc) throw new Error("create an invite code first");
+        const answer = decodeSignal(code);
+        if (answer.type !== "answer") throw new Error("that's an invite code, not a reply code");
+        await pendingHostPc.setRemoteDescription(answer);
+        pendingHostPc = null;  // ready to invite the next friend
+    }
+    // Title-screen Multiplayer panel (Client/Ui/TitleScreen/Multiplayer.cc)
+    // calls these. Codes ride the clipboard (prompt() fallback).
+    window.gardnMp = {
+        mode: "host",
+        status: "Create an invite code and send it to a friend to play together.",
+        async hostCreate() {
+            this.status = "Creating invite code…";
+            try {
+                const code = await onHostCreateInvite();
+                const auto = await mpWriteCode(code);
+                this.status = auto
+                    ? "Invite code copied! Send it to your friend, then paste their reply."
+                    : "Send your friend the invite code, then paste their reply.";
+            } catch (e) { this.status = "error: " + e.message; }
+        },
+        async hostAccept() {
+            const code = await mpReadCode("Paste your friend's reply code:");
+            if (!code) { this.status = "No reply code provided."; return; }
+            this.status = "Connecting…";
+            try {
+                await onHostAcceptReply(code);
+                this.status = "Reply accepted — your friend should appear shortly. Create another code to invite more.";
+            } catch (e) { this.status = "error: " + e.message; }
+        },
+        goJoin() { location.search = "?join"; },
+    };
 
     // ---- bots: onnxruntime-web inference --------------------------------
     //

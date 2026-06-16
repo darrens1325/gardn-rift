@@ -103,8 +103,24 @@ Element *Ui::make_title_info_box() {
 
 Element *Ui::make_panel_buttons() {
    Element *elt = new Ui::HContainer({
-        new Ui::Button(100, 35, 
-            new Ui::StaticText(16, "Settings"), 
+        new Ui::Button(120, 35,
+            new Ui::StaticText(16, "Multiplayer"),
+            [](Element *elt, uint8_t e){ if (e == Ui::kClick) {
+                if (Ui::panel_open != Panel::kMultiplayer) {
+                    Ui::panel_open = Panel::kMultiplayer;
+                    Element *pg = Ui::Panel::multiplayer;
+                    pg->x = elt->screen_x / Ui::scale - pg->width / 2;
+                    pg->y = -(elt->height + 20);
+                    if (pg->x < 10)
+                        pg->x = 10;
+                }
+                else Ui::panel_open = Panel::kNone;
+            } },
+            [](){ return Ui::panel_open == Panel::kMultiplayer; },
+            { .fill = 0xffdb6a1d, .line_width = 5, .round_radius = 3 }
+        ),
+        new Ui::Button(100, 35,
+            new Ui::StaticText(16, "Settings"),
             [](Element *elt, uint8_t e){ if (e == Ui::kClick) {
                 if (Ui::panel_open != Panel::kSettings) {
                     Ui::panel_open = Panel::kSettings;

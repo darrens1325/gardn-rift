@@ -10,12 +10,14 @@ namespace Ui {
             kSettings,
             kPetals,
             kMobs,
-            kChangelog
+            kChangelog,
+            kMultiplayer
         };
         extern Element *settings;
         extern Element *petal_gallery;
         extern Element *mob_gallery;
         extern Element *changelog;
+        extern Element *multiplayer;
     }
     extern double dt;
     extern double window_width;
