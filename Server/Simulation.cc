@@ -34,9 +34,12 @@ static void calculate_leaderboard(Simulation *sim) {
 void Simulation::tick() {
     pre_tick();
     spatial_hash.refresh(ARENA_WIDTH, ARENA_HEIGHT);
-    if (frand() < 1.0f / SIM_RATE)
-        for (uint32_t i = 0; i < 10; ++i)
-            Map::spawn_random_mob(this);
+    // Refill toward each map's density cap every tick. spawn_random_mob places
+    // at most this many and stops early at any polygon already at cap, so a
+    // full world costs almost nothing (O(polygons) per attempt) while a
+    // depleted one — e.g. a swarm of bots farming mobs faster than the old
+    // ~10/sec trickle could replace — repopulates within a couple of seconds.
+    Map::spawn_random_mob(this, 25);
     TiledMap::tick_spawn_drops(this);
     for_each_entity([](Simulation *sim, Entity &ent) {
         if (ent.has_component(kPhysics))

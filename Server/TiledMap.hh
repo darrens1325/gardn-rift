@@ -129,7 +129,7 @@ namespace TiledMap {
 
     // Spawn one random mob using the Tiled polygons (density-weighted).
     // Returns true if a spawn was attempted (whether it succeeded or not).
-    bool spawn_random_mob(Simulation *sim);
+    bool spawn_random_mob(Simulation *sim, uint32_t count = 1);
 
     // Tick every `spawn_drops` object on every active map: emit one-shots
     // for newly-active maps and tick the random-interval timer for the

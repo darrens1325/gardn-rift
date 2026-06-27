@@ -15,6 +15,6 @@ namespace Map {
     extern uint32_t get_suitable_difficulty_zone(uint32_t);
     #ifdef SERVERSIDE
     extern void remove_mob(Simulation *, uint32_t);
-    extern void spawn_random_mob(Simulation *);
+    extern void spawn_random_mob(Simulation *, uint32_t count = 1);
     #endif
 }

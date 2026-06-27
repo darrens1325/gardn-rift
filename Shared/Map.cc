@@ -46,29 +46,31 @@ void Map::remove_mob(Simulation *sim, uint32_t zone) {
     --sim->zone_mob_counts[zone];
 }
 
-void Map::spawn_random_mob(Simulation *sim) {
+void Map::spawn_random_mob(Simulation *sim, uint32_t count) {
     if (TiledMap::loaded) {
-        TiledMap::spawn_random_mob(sim);
+        TiledMap::spawn_random_mob(sim, count);
         return;
     }
-    float x = frand() * ARENA_WIDTH;
-    float y = frand() * ARENA_HEIGHT;
-    uint32_t zone_id = Map::get_zone_from_pos(x, y);
-    struct ZoneDefinition const &zone = MAP[zone_id];
-    if (zone.density * (zone.right - zone.left) * (zone.bottom - zone.top) / (500 * 500) < sim->zone_mob_counts[zone_id]) return;
-    float sum = 0;
-    for (SpawnChance const &s : zone.spawns)
-        sum += s.chance;
-    sum *= frand();
-    for (SpawnChance const &s : zone.spawns) {
-        sum -= s.chance;
-        if (sum <= 0) {
-            Entity &ent = alloc_mob(sim, s.id, x, y, NULL_ENTITY);
-            ent.zone = zone_id;
-            ent.immunity_ticks = SIM_RATE;
-            BIT_SET(ent.flags, EntityFlags::kSpawnedFromZone);
-            sim->zone_mob_counts[zone_id]++;
-            return;
+    for (uint32_t n = 0; n < count; ++n) {
+        float x = frand() * ARENA_WIDTH;
+        float y = frand() * ARENA_HEIGHT;
+        uint32_t zone_id = Map::get_zone_from_pos(x, y);
+        struct ZoneDefinition const &zone = MAP[zone_id];
+        if (zone.density * (zone.right - zone.left) * (zone.bottom - zone.top) / (500 * 500) < sim->zone_mob_counts[zone_id]) continue;
+        float sum = 0;
+        for (SpawnChance const &s : zone.spawns)
+            sum += s.chance;
+        sum *= frand();
+        for (SpawnChance const &s : zone.spawns) {
+            sum -= s.chance;
+            if (sum <= 0) {
+                Entity &ent = alloc_mob(sim, s.id, x, y, NULL_ENTITY);
+                ent.zone = zone_id;
+                ent.immunity_ticks = SIM_RATE;
+                BIT_SET(ent.flags, EntityFlags::kSpawnedFromZone);
+                sim->zone_mob_counts[zone_id]++;
+                break;
+            }
         }
     }
 }

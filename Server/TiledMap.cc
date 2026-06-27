@@ -1896,26 +1896,30 @@ static bool spawn_one_on_map(Simulation *sim, CachedMap *map) {
     if (idx >= map->spawn_polygons.size()) return false;
     auto const &p = map->spawn_polygons[idx];
 
-    // Rejection sampling for a point inside the polygon. The bounding box
-    // is the worst case here; for very thin polygons we may need many
-    // tries — cap at 16 attempts and give up if it fails.
+    // Rejection sampling for a point inside the polygon AND clear of walls.
+    // The bounding box is the worst case here; for very thin polygons we may
+    // need many tries — cap at 16 attempts and give up if it fails.
+    //
+    // A point that lands in (or within a body radius of) a wall is *rejected
+    // and resampled*, not shoved to the nearest wall edge. The old push-out
+    // piled every wall-overlapping sample onto the polygon's wall boundaries,
+    // producing dense lines of mobs hugging the geometry — heavily-walled
+    // spawn polygons dumped almost their whole quota onto the edges. Resampling
+    // keeps the distribution uniform across the open part of the polygon.
+    float const r = 30;
     float x = 0, y = 0;
     bool ok = false;
     for (int tries = 0; tries < 16; ++tries) {
         x = p.min_x + frand() * (p.max_x - p.min_x);
         y = p.min_y + frand() * (p.max_y - p.min_y);
-        if (point_in_polygon(p, x, y)) { ok = true; break; }
+        if (!point_in_polygon(p, x, y)) continue;
+        float cx = x, cy = y;
+        resolve_collision_in(*map, cx, cy, r);
+        if (cx != x || cy != y) continue; // in / near a wall → resample
+        ok = true;
+        break;
     }
     if (!ok) return false;
-
-    // Avoid spawning inside a wall.
-    float r = 30;
-    float ox = x, oy = y;
-    resolve_collision_in(*map, x, y, r);
-    if (x != ox || y != oy) {
-        // If collision shoved us out of the polygon, skip this tick.
-        if (!point_in_polygon(p, x, y)) return false;
-    }
 
     // Weighted roll over mob entries.
     double sum = 0;
@@ -2009,9 +2013,16 @@ static void update_bulk_fills(Simulation *sim, std::vector<std::string> const &a
     }
 }
 
-bool spawn_random_mob(Simulation *sim) {
+bool spawn_random_mob(Simulation *sim, uint32_t count) {
     if (!loaded) return false;
 
+    // The active-map scan and inactive-entity cleanup are O(entities), so do
+    // them ONCE and then place `count` mobs. Each spawn_one_on_map already
+    // no-ops cheaply (O(polygons)) once a map is at its density cap, so the
+    // batch is self-limiting to the actual deficit — when the world is full
+    // the extra attempts cost almost nothing, and when it's been depleted
+    // (e.g. a swarm of bots farming) it refills quickly instead of trickling
+    // in at one-per-call.
     std::vector<std::string> active_maps = active_player_maps(sim);
     if (active_maps.empty()) {
         // No flowers exist yet (e.g. GameInstance::init's initial fill, or
@@ -2024,9 +2035,36 @@ bool spawn_random_mob(Simulation *sim) {
     }
     update_bulk_fills(sim, active_maps);
 
-    std::string const map_path = active_maps[(uint32_t)(frand() * active_maps.size()) % active_maps.size()];
-    CachedMap *map = map_for_mut(map_path);
-    spawn_one_on_map(sim, map);
+    for (uint32_t n = 0; n < count; ++n) {
+        std::string const &map_path = active_maps[(uint32_t)(frand() * active_maps.size()) % active_maps.size()];
+        CachedMap *map = map_for_mut(map_path);
+        spawn_one_on_map(sim, map);
+    }
+
+    // TEMP DIAGNOSTIC: every ~5s, print how full each active map is relative to
+    // its density caps. If TOTAL is at/near cap, density is correct and the
+    // issue is measurement/coverage; if it sits well below, the world isn't
+    // reaching cap and we have a fill/refill bug to chase. Remove once solved.
+    static uint32_t dbg_tick = 0;
+    if ((++dbg_tick % (SIM_RATE * 5)) == 0) {
+        for (auto const &m : active_maps) {
+            CachedMap *cm = map_for_mut(m);
+            if (!cm) continue;
+            double have = 0, cap_sum = 0;
+            int starved = 0;
+            for (size_t i = 0; i < cm->spawn_polygons.size(); ++i) {
+                auto const &p = cm->spawn_polygons[i];
+                double cap = (double)p.density * p.area / (500.0 * 500.0);
+                have += (double)cm->mob_counts[i];
+                cap_sum += cap;
+                if (cap > 1 && (double)cm->mob_counts[i] < 0.5 * cap) ++starved;
+            }
+            std::cout << "[spawn-dbg] " << m << "  mobs " << (int)have << "/"
+                      << (int)cap_sum << "  (" << (cap_sum > 0 ? (int)(100 * have / cap_sum) : 0)
+                      << "% of cap)  polys<50%: " << starved << "/"
+                      << cm->spawn_polygons.size() << "\n";
+        }
+    }
     return true;
 }
 
