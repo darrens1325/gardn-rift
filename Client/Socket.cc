@@ -19,6 +19,7 @@ void on_message(uint8_t type, uint32_t len) {
         Writer w(INCOMING_PACKET);
         w.write<uint8_t>(Serverbound::kVerify);
         w.write<uint64_t>(VERSION_HASH);
+        w.write<uint8_t>(Game::spectator); // 1 = join as spectator (see Game.hh)
         Game::reset();
         Game::socket.ready = 1; //force send
         Game::socket.send(w.packet, w.at - w.packet);
@@ -40,6 +41,7 @@ extern "C" {
             Writer w(INCOMING_PACKET);
             w.write<uint8_t>(Serverbound::kVerify);
             w.write<uint64_t>(VERSION_HASH);
+            w.write<uint8_t>(Game::spectator); // 1 = join as spectator (see Game.hh)
             Game::reset();
             Game::socket.ready = 1; //force send
             Game::socket.send(w.packet, w.at - w.packet);

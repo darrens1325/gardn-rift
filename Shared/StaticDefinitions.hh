@@ -479,7 +479,10 @@ namespace EntityFlags {
         kSpawnedFromZone,
         kNoDrops,
         kHasCulling,
-        kIsCulled
+        kIsCulled,
+        // Camera entity belonging to a spectator client. Its camera follows
+        // the live leader instead of a player it owns. See Server/Process/Camera.cc.
+        kIsSpectator
     };
 };
 

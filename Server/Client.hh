@@ -24,6 +24,12 @@ public:
     WebSocket *ws;
     uint8_t verified = 0;
     uint8_t seen_arena = 0;
+    // Spectator clients watch the game but never drive the simulation.
+    // In sync (lockstep) mode they are kept OUT of the kStep barrier — a
+    // spectator never sends kStep, so counting it would deadlock the tick.
+    // Set from the optional trailing byte of the kVerify handshake; mirrors
+    // override-simulator's OVR_SPECTATE. See Server/Game.cc and Client.cc.
+    uint8_t spectator = 0;
     // Lifetime tick (game ticks since GameInstance start) at which this
     // client most recently sent a chat message. Used for per-client rate
     // limiting; 0 means "never sent before".

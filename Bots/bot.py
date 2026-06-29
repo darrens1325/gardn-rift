@@ -142,7 +142,7 @@ W_HP = 15.0
 # +0.18/tick net (W_PROXIMITY + W_APPROACH - IDLE), preserving the
 # positive incentive to seek targets.
 IDLE_PENALTY = 0.10
-DEATH_PENALTY = 18.0
+DEATH_PENALTY = 22.0
 
 # PvP reward shaping. Encourages the policy to seek out other bots rather
 # than only farming mobs.
@@ -157,7 +157,7 @@ DEATH_PENALTY = 18.0
 #  - W_PROXIMITY / PROXIMITY_RANGE: small per-tick bonus while at least one
 #    hostile (mob or player) is within range. Continuous gradient toward
 #    "be near a fight" even before a kill lands. Tiny per tick.
-W_PVP_BONUS = 5.0
+W_PVP_BONUS = 33.0
 # Per-tick reward while *any* hostile is within PROXIMITY_RANGE units.
 # Bumped from 0.05 → 0.2 alongside the W_APPROACH change — the policy
 # needs a clearer "be near the fight" signal vs the safer
@@ -174,7 +174,7 @@ PROXIMITY_RANGE = 600.0
 # us when a mob attacks the same target simultaneously, but the gradient
 # direction (be in petal-overlap range + attack + enemy HP drops → reward)
 # is exactly what we want the policy to learn.
-W_DAMAGE = 10.0         # per HP-ratio point of damage attributed to us
+W_DAMAGE = 2.0         # per HP-ratio point of damage attributed to us
 # Additional reward stacked on top of W_DAMAGE for damage dealt by *our
 # petals*. Every credited damage point in `_decide_and_learn` already comes
 # from a confirmed petal-vs-enemy overlap (mob or player), so this bonus
@@ -185,7 +185,7 @@ W_DAMAGE = 10.0         # per HP-ratio point of damage attributed to us
 # The PvP multiplier still only multiplies the W_DAMAGE component so the
 # new bonus doesn't compound with it; tune the bonus alone to control
 # "how much do we want to encourage *any* petal-on-flesh contact."
-W_PETAL_DAMAGE_BONUS = 8.0
+W_PETAL_DAMAGE_BONUS = 30.0
 
 # Approach shaping. The proximity / damage / kill rewards only pay out when
 # bots are already *engaging*; if a bot spawns far from anything it gets no
@@ -210,7 +210,7 @@ W_PETAL_DAMAGE_BONUS = 8.0
 # per tick. The approach signal needs to be the same order of
 # magnitude as the petal-having stream so the policy treats "walk
 # toward the fight" as a genuine alternative to "camp my spawn."
-W_APPROACH = 8.0
+W_APPROACH = 13.0
 APPROACH_CAP = 50.0    # max distance-units of closing rewarded per tick
 
 # Petal-having shaping. With 24 inventory actions out of 42, a uniform-
@@ -238,7 +238,7 @@ APPROACH_CAP = 50.0    # max distance-units of closing rewarded per tick
 # still discourage *losing* petals via W_EMPTY_PRIMARY_PENALTY and
 # W_DELETE_COST below — the gradient toward "keep your loadout" is
 # preserved on the cost side, just not on the bonus side.
-W_PETAL_PRESENT = 0.0
+W_PETAL_PRESENT = 0.08
 # Per-tick bonus is scaled by `1 + RARITY_PRESENT_SCALE * rank` so a slot
 # holding kUnique pays more than a slot holding kCommon. With scale=0.5:
 # common=1.0×, unusual=1.5×, rare=2.0×, ..., unique=4.0×. Gives the policy
@@ -286,7 +286,7 @@ W_PETAL_STORAGE_RATIO = 0.5
 # Scaled by the rarity of the deleted slot — deleting a kUnique is far
 # more punishing than deleting a kCommon. The rank is read from the
 # previous-state loadout column (loadout_feats start at offset 13).
-W_DELETE_COST = 0.9
+W_DELETE_COST = 4.4
 # Slot 0 of the loadout-rank feature column lives here in `_prev_state`
 # (1 hp + 12 hostile = 13). Used to scale W_DELETE_COST by the rarity of
 # whatever lived in the slot we just deleted from.
@@ -308,7 +308,7 @@ LOADOUT_RANK_OFFSET = 13
 # Captures the specific "self-sabotage swap" the trained policy fell
 # into without forbidding legitimate swaps (drop pickup → storage,
 # storage → primary upgrade).
-W_SWAP_COST = 0.5
+W_SWAP_COST = 0.3
 W_SWAP_BAD_MULT = 3.0
 
 # Low-HP per-tick survival pressure. W_HP scales `d_hp` (per-tick HP
@@ -341,7 +341,7 @@ W_LOW_HP_PENALTY = 0.3
 # overlapping its last-known position) — measured, not predicted. The
 # asymmetry encodes "killing another bot is worth a lot more than killing
 # a mob," because mobs are everywhere and players are scarce.
-W_MOB_KILL_BONUS = 10.0
+W_MOB_KILL_BONUS = 6.0
 # Bumped from 50 → 200 because pvp_kills rolling-mean was barely
 # advancing — bots were happy to farm mobs (W_MOB_KILL_BONUS=10)
 # safely and avoid players. At 200, a single PvP kill is worth 20
@@ -396,6 +396,23 @@ W_CAMP_PENALTY = 0.3             # per-tick — larger than IDLE_PENALTY
                                  # with IDLE_PENALTY) without crushing
                                  # the Q-targets across the board.
 
+# Endgame anti-camp. When only a handful of players remain, the per-tick
+# engagement rewards (proximity / approach / damage) usually read zero —
+# the survivors are spread across the map and out of each other's view —
+# so the round drags to its WAVE_TICKS_PER_ROUND timeout with everyone
+# sitting still. Worse, the normal camp grace resets on *any* kill, so the
+# last bots can farm mobs in a corner and dodge the penalty entirely while
+# never seeking each other. Below this live-player count we (a) reset the
+# no-kill grace only on *player* damage/kills (mob farming no longer
+# excuses camping), and (b) charge a larger per-tick camp penalty so
+# sitting still in the endgame is clearly net-negative and the policy is
+# pushed to roam — which is what brings the last survivors into view of one
+# another so the existing PvP approach/kill rewards can take over. The
+# penalty only bites these rare low-population ticks, so it doesn't drag
+# down whole-episode returns the way a global bump (the old 0.6) did.
+ENDGAME_PLAYER_COUNT = 15         # "barely any left" threshold (live players)
+W_CAMP_PENALTY_ENDGAME = 1.0     # per-tick, replaces W_CAMP_PENALTY in endgame
+
 # Kill-of-camper / kill-of-weaker bonuses. Stack additively on top of
 # W_PLAYER_KILL_BONUS. Identifies the victim's "weaker than us" status
 # by counting visible orbiting Petal entities with parent=victim_eid
@@ -419,7 +436,7 @@ W_PVP_CAMP_KILL_BONUS = 100.0
 # Sized to outweigh the death penalty by a clear margin so the policy
 # can learn "max score by tick 72000" as a top-level objective without
 # the death cost cancelling the win.
-W_ROUND_WIN = 150.0
+W_ROUND_WIN = 2500.0
 
 # Wall-avoidance shaping. The 4 cardinal wall-ray features in the state
 # vector tell the network "there's a wall N units away" but nothing in
@@ -838,6 +855,19 @@ class LearningBot:
             "colors": [0] * 10,
         }
 
+        # Frame-stacking window. The model may be recurrent / transformer
+        # (see agent.build_qnet); those consume a length-`seq_len` window of
+        # raw frames. We keep the per-life history here and hand the agent a
+        # flattened window as the *observation*, while `_prev_state` stays
+        # the single raw frame the reward shaping indexes into (delete/swap
+        # rarity lookups at LOADOUT_RANK_OFFSET assume one STATE_DIM frame).
+        # seq_len=1 (the MLP default) makes the observation == the frame, so
+        # this is a no-op for the historical model.
+        self._seq_len: int = max(1, int(getattr(self.agent, "seq_len", 1)))
+        self._frame_hist: deque[list[float]] = deque(maxlen=self._seq_len)
+        self._prev_obs: list[float] | None = None
+        self._zero_obs: list[float] = [0.0] * (self._seq_len * STATE_DIM)
+
         # Episode tracking
         self._prev_state: list[float] | None = None
         self._prev_action: int | None = None
@@ -1163,8 +1193,10 @@ class LearningBot:
             terminal_reward = -DEATH_PENALTY + self._round_win_pending
             self._round_win_pending = 0.0
             self.episode_reward += terminal_reward
-            self.agent.push(self._prev_state, self._prev_action, terminal_reward,
-                            terminal_state, True)
+            # Terminal s2 is never bootstrapped (done=True), so its window
+            # content is irrelevant — pass a correctly-shaped zero obs.
+            self.agent.push(self._prev_obs, self._prev_action, terminal_reward,
+                            self._zero_obs, True)
         # NOTE: _can_respawn is *not* touched here. It is True at boot, set
         # False only after a successful spawn, and re-armed True only by a
         # kRoundEnd packet. Mid-round deaths leave the bot dead-without-
@@ -1237,6 +1269,8 @@ class LearningBot:
         self.episode_reward = 0.0
         self.episode_len = 0
         self._prev_state = None
+        self._prev_obs = None
+        self._frame_hist.clear()
         self._prev_action = None
         self._prev_player_id = None
         self._prev_score = 0
@@ -1271,6 +1305,23 @@ class LearningBot:
         self.camp_penalty_total = 0.0
         self.camper_kills_this_life = 0
         self.weak_kills_this_life = 0
+
+    def _observe(self, frame: list[float]) -> list[float]:
+        """Append a raw STATE_DIM frame to the rolling window and return the
+        flat (seq_len * STATE_DIM) observation the agent's model consumes.
+        Early in a life the window is left-padded by repeating the oldest
+        frame so the observation is always full length. With seq_len=1 this
+        returns the frame unchanged (the MLP single-frame path)."""
+        self._frame_hist.append(frame)
+        if self._seq_len == 1:
+            return frame
+        hist = list(self._frame_hist)
+        if len(hist) < self._seq_len:
+            hist = [hist[0]] * (self._seq_len - len(hist)) + hist
+        obs: list[float] = []
+        for f in hist:
+            obs.extend(f)
+        return obs
 
     def _decide_and_learn(self) -> tuple[float, float, int] | None:
         """Returns (ax, ay, flags) or None if we have nothing to do this tick."""
@@ -1396,6 +1447,9 @@ class LearningBot:
             warp_feats,
             minimap_feats,
         )
+        # Flattened frame-stack the model actually consumes (== `state` when
+        # seq_len=1). `state` stays the raw frame for reward indexing below.
+        obs = self._observe(state)
 
         cur_score = int(player.get("score", 0))
         cur_hp = float(player.get("health_ratio", 1.0))
@@ -1419,14 +1473,21 @@ class LearningBot:
             # the penalty during the first ~5s of a life, so a bot
             # that just spawned isn't immediately punished for being
             # "stationary" against an unset baseline.
+            # "Barely any left": a low live-player count flips us into the
+            # endgame regime — a heavier camp penalty whose grace only
+            # player engagement (not mob farming) can reset. player_count
+            # of 0 only happens pre-spawn, so the `> 0` guard keeps the
+            # regime off until the round is actually populated.
+            endgame = 0 < self.arena["player_count"] <= ENDGAME_PLAYER_COUNT
             if (len(self._self_pos_history) >= CAMP_WINDOW_TICKS
                     and self._ticks_since_kill > CAMP_KILL_GRACE_TICKS):
                 ox, oy = self._self_pos_history[0][1], self._self_pos_history[0][2]
                 dxs = px - ox
                 dys = py - oy
                 if dxs * dxs + dys * dys < CAMP_MOVE_RADIUS * CAMP_MOVE_RADIUS:
-                    reward -= W_CAMP_PENALTY
-                    self.camp_penalty_total += W_CAMP_PENALTY
+                    camp_pen = W_CAMP_PENALTY_ENDGAME if endgame else W_CAMP_PENALTY
+                    reward -= camp_pen
+                    self.camp_penalty_total += camp_pen
             # One-shot cost on the *action* that caused a delete this tick.
             # Credit-assigned to the delete action directly, so the QNet
             # learns "delete = expensive" without waiting for the empty-slot
@@ -1733,7 +1794,17 @@ class LearningBot:
             # enemy" counts as not-camping, even if the kill itself is
             # still seconds away. The camp penalty still fires for a
             # bot that genuinely sits doing nothing.
-            if damage_credited > 0.0 or confirmed_mob_kills or confirmed_pvp_kills:
+            # In the endgame regime, only *player* engagement resets the
+            # camp grace — farming mobs in a corner while two players are
+            # left should still read as camping. Outside it, any hostile
+            # damage/kill counts (so a long mob fight isn't mistaken for
+            # camping). `endgame` was computed above from player_count.
+            if endgame:
+                engaged = player_damage > 0.0 or confirmed_pvp_kills
+            else:
+                engaged = (damage_credited > 0.0
+                           or confirmed_mob_kills or confirmed_pvp_kills)
+            if engaged:
                 self._ticks_since_kill = 0
             self.pvp_kills += confirmed_pvp_kills
             self.pvp_kills_this_life += confirmed_pvp_kills
@@ -1845,7 +1916,7 @@ class LearningBot:
                 if empty_primary > 0:
                     reward -= W_EMPTY_PRIMARY_PENALTY * empty_primary
             self.episode_reward += reward
-            self.agent.push(self._prev_state, self._prev_action, reward, state, False)
+            self.agent.push(self._prev_obs, self._prev_action, reward, obs, False)
             # Episodic memory: log positive score deltas so chat triggers can
             # detect "big kill" events. Mob kills are typically +1..+5; a
             # sudden +20+ usually means we killed (or crit-hit) a player.
@@ -1929,7 +2000,7 @@ class LearningBot:
         # are one-shot so the model can't accidentally hold a delete for
         # several ticks and trash multiple petals.
         if self._held_action is None or self._repeat_left <= 0:
-            self._held_action = self.agent.act(state)
+            self._held_action = self.agent.act(obs)
             self._repeat_left = (
                 self.action_repeat
                 if is_movement_action(self._held_action)
@@ -1964,6 +2035,7 @@ class LearningBot:
         })
 
         self._prev_state = state
+        self._prev_obs = obs
         self._prev_action = action
         self._prev_score = cur_score
         self._prev_hp = cur_hp

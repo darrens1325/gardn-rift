@@ -49,16 +49,25 @@ def main():
               file=sys.stderr)
         agent = DQNAgent(checkpoint_path=None, device="cpu")
     else:
+        # Peek the checkpoint's backbone so we build a matching agent (the
+        # __init__ loader rejects an arch/seq_len mismatch). Defaults keep
+        # pre-arch checkpoints exporting as the single-frame MLP.
+        _ck = torch.load(args.checkpoint, map_location="cpu")
+        _arch = _ck.get("arch", "mlp")
+        _seq = int(_ck.get("seq_len", 1))
         # DQNAgent.__init__ pad-loads automatically; we go through it so the
         # behavior matches run.py exactly.
-        agent = DQNAgent(checkpoint_path=args.checkpoint, device="cpu")
+        agent = DQNAgent(checkpoint_path=args.checkpoint, device="cpu",
+                         arch=_arch, seq_len=_seq)
 
     # Pull the live Q-network. Eval mode + no_grad ensures the exported
     # graph has no training-only ops (e.g. Dropout, BatchNorm running stats).
     net = agent.q
     net.eval()
 
-    dummy = torch.zeros(1, STATE_DIM, dtype=torch.float32)
+    # Input width is seq_len * STATE_DIM (frame-stacked window); == STATE_DIM
+    # for the default single-frame model.
+    dummy = torch.zeros(1, agent.input_dim, dtype=torch.float32)
     # dynamo=False forces the legacy tracer-based exporter. The new
     # dynamo path (default in PyTorch 2.5+) emits ops that onnxruntime-web
     # 1.18 hasn't shipped kernels for — the bundle's session.run() fails

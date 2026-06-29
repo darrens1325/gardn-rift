@@ -91,11 +91,13 @@ UiLoadoutPetal::UiLoadoutPetal(uint8_t pos) : Element(60, 60),
 {
     reload = 1;
     style.should_render = [&](){
-        if (!Game::alive()) return false;
+        // Renders for spectators too: viewing_loadout() is true while the
+        // spectator camera follows a live player (player_id points at it).
+        if (!Game::viewing_loadout()) return false;
         //coincidentally also works for trashing
         if (static_pos >= MAX_SLOT_COUNT + Game::loadout_count) return false;
         if (curr_pos == 2 * MAX_SLOT_COUNT) return false;
-        if (Game::alive()) {
+        if (Game::viewing_loadout()) {
             Entity const &player = Game::simulation.get_ent(Game::player_id);
             if (no_change_ticks == 0 || player.get_state_loadout_ids(static_pos)) {
                 no_change_ticks = 0;
@@ -106,7 +108,7 @@ UiLoadoutPetal::UiLoadoutPetal(uint8_t pos) : Element(60, 60),
                     last_id = petal_id;
             } else --no_change_ticks;
         }
-        if (static_pos < Game::loadout_count && Game::alive()) {
+        if (static_pos < Game::loadout_count && Game::viewing_loadout()) {
             Entity const &player = Game::simulation.get_ent(Game::player_id);
             if (player.get_state_loadout_reloads(static_pos)) {
                 float old = player.loadout_reloads[static_pos] / 255.0f;

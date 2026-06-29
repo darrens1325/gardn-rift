@@ -214,8 +214,20 @@ def _pad_load_state_dict(module: nn.Module, source: dict) -> dict:
     return {"padded": padded, "skipped": skipped}
 
 
+# Supported model backbones (see `build_qnet`). All consume a flat
+# (B, seq_len * STATE_DIM) observation and emit (B, NUM_ACTIONS); the
+# recurrent / transformer variants reshape internally to (B, seq_len,
+# STATE_DIM) and read the frame-stacked window the bot assembles in
+# bot.py. "mlp" with seq_len=1 is the historical default and is
+# checkpoint-compatible with every model.pt trained before this change.
+ARCHITECTURES = ("mlp", "gru", "lstm", "transformer")
+
+
 class QNet(nn.Module):
-    def __init__(self) -> None:
+    """Feed-forward backbone. With seq_len > 1 the stacked frames are just
+    concatenated into a wider input vector (classic frame-stacking)."""
+
+    def __init__(self, input_dim: int = STATE_DIM, num_actions: int = NUM_ACTIONS) -> None:
         super().__init__()
         # Widened from 128/128/256/128 → 512/512/1024/512 (~100K → ~1.4M
         # parameters, ~14×). The narrower net plateaued at pvp_kills ≈
@@ -225,21 +237,104 @@ class QNet(nn.Module):
         # Old checkpoints still load via `_pad_load_state_dict` — the
         # legacy 128 hidden units occupy the first 128 positions of each
         # new wider layer, and the remaining positions train from
-        # random init.
+        # random init. Growing input_dim (frame-stacking) likewise pad-loads.
         self.net = nn.Sequential(
-            nn.Linear(STATE_DIM, 512),
+            nn.Linear(input_dim, 512),
             nn.ReLU(),
             nn.Linear(512, 512),
             nn.ReLU(),
             nn.Linear(512, 1024),
             nn.ReLU(),
+            nn.Linear(1024, 1024),
+            nn.ReLU(),
             nn.Linear(1024, 512),
             nn.ReLU(),
-            nn.Linear(512, NUM_ACTIONS),
+            nn.Linear(512, num_actions),
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.net(x)
+
+
+class RecurrentQNet(nn.Module):
+    """GRU / LSTM backbone. Reads the frame-stacked window as a length-
+    seq_len sequence of per-frame feature vectors and uses the final
+    timestep's hidden output to produce Q-values — so it can learn
+    temporal cues (velocities, reload cadence, "this enemy has been
+    sitting still") instead of the hand-engineered history features in
+    bot.py. `kind` is 'gru' or 'lstm'."""
+
+    def __init__(self, kind: str, seq_len: int, feat_dim: int = STATE_DIM,
+                 num_actions: int = NUM_ACTIONS, hidden: int = 512,
+                 layers: int = 2) -> None:
+        super().__init__()
+        self.seq_len = int(seq_len)
+        self.feat_dim = int(feat_dim)
+        rnn_cls = nn.LSTM if kind == "lstm" else nn.GRU
+        self.rnn = rnn_cls(self.feat_dim, hidden, num_layers=layers, batch_first=True)
+        self.head = nn.Sequential(
+            nn.Linear(hidden, 512),
+            nn.ReLU(),
+            nn.Linear(512, num_actions),
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = x.view(x.shape[0], self.seq_len, self.feat_dim)
+        out, _ = self.rnn(x)
+        return self.head(out[:, -1])
+
+
+class TransformerQNet(nn.Module):
+    """Transformer-encoder backbone. Projects each frame to d_model, adds a
+    learned positional embedding over the seq_len window, runs a stack of
+    self-attention layers, and reads the last position for Q-values.
+    Heaviest to run (attention over the window every forward) but the only
+    backbone whose attention could later be extended over the entity slots
+    within a frame, not just over time."""
+
+    def __init__(self, seq_len: int, feat_dim: int = STATE_DIM,
+                 num_actions: int = NUM_ACTIONS, d_model: int = 256,
+                 nhead: int = 8, layers: int = 3, dim_ff: int = 512) -> None:
+        super().__init__()
+        self.seq_len = int(seq_len)
+        self.feat_dim = int(feat_dim)
+        self.input_proj = nn.Linear(self.feat_dim, d_model)
+        # Learned positional embedding (one row per window position).
+        self.pos = nn.Parameter(torch.zeros(1, self.seq_len, d_model))
+        enc_layer = nn.TransformerEncoderLayer(
+            d_model=d_model, nhead=nhead, dim_feedforward=dim_ff,
+            batch_first=True, activation="gelu",
+        )
+        self.encoder = nn.TransformerEncoder(enc_layer, num_layers=layers)
+        self.head = nn.Sequential(
+            nn.Linear(d_model, 512),
+            nn.ReLU(),
+            nn.Linear(512, 512),
+            nn.ReLU(),
+            nn.Linear(512, 512),
+            nn.ReLU(),
+            nn.Linear(512, num_actions),
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = x.view(x.shape[0], self.seq_len, self.feat_dim)
+        h = self.input_proj(x) + self.pos
+        h = self.encoder(h)
+        return self.head(h[:, -1])
+
+
+def build_qnet(arch: str, seq_len: int) -> nn.Module:
+    """Construct the Q-network backbone selected by `arch`. All variants
+    take a flat (B, seq_len * STATE_DIM) observation; see the class
+    docstrings above."""
+    seq_len = max(1, int(seq_len))
+    if arch == "mlp":
+        return QNet(input_dim=seq_len * STATE_DIM)
+    if arch in ("gru", "lstm"):
+        return RecurrentQNet(arch, seq_len)
+    if arch == "transformer":
+        return TransformerQNet(seq_len)
+    raise ValueError(f"unknown arch {arch!r}; expected one of {ARCHITECTURES}")
 
 
 class DQNAgent:
@@ -260,8 +355,24 @@ class DQNAgent:
         device: str = "auto",
         checkpoint_path: str | None = None,
         checkpoint_every_train_steps: int = 1_000,
+        arch: str = "mlp",
+        seq_len: int = 1,
     ) -> None:
         self.device = _resolve_device(device)
+        # Model backbone + frame-stacking window. `seq_len` frames of
+        # STATE_DIM features are concatenated by the bot (bot.py::_observe)
+        # into each observation; the buffer therefore stores rows of
+        # INPUT_DIM = seq_len * STATE_DIM. mlp/seq_len=1 reproduces the
+        # historical single-frame model exactly. Recurrent / transformer
+        # backbones need seq_len > 1 to have any temporal context.
+        if arch not in ARCHITECTURES:
+            raise ValueError(f"unknown arch {arch!r}; expected one of {ARCHITECTURES}")
+        self.arch = arch
+        self.seq_len = max(1, int(seq_len))
+        if arch != "mlp" and self.seq_len == 1:
+            print(f"[agent] WARNING: arch={arch} with seq_len=1 has no temporal "
+                  f"context — it sees a single frame. Pass --seq-len > 1.")
+        self.input_dim = self.seq_len * STATE_DIM
         # `q` is the live, training-mutated network — only the trainer
         # thread writes to it. `q_inference` is a periodically-synced copy
         # used by `act()` on the asyncio thread. Splitting them lets the
@@ -276,11 +387,11 @@ class DQNAgent:
         # accelerator the trainer is saturating. load_state_dict copies
         # across devices, so the periodic q → q_inference sync works
         # unchanged.
-        self.q = QNet().to(self.device)
-        self.q_inference = QNet()  # CPU on purpose — see above
+        self.q = build_qnet(self.arch, self.seq_len).to(self.device)
+        self.q_inference = build_qnet(self.arch, self.seq_len)  # CPU — see above
         self.q_inference.load_state_dict(self.q.state_dict())
         self.q_inference.eval()
-        self.target = QNet().to(self.device)
+        self.target = build_qnet(self.arch, self.seq_len).to(self.device)
         self.target.load_state_dict(self.q.state_dict())
         self.target.eval()
         self.optimizer = optim.Adam(self.q.parameters(), lr=lr)
@@ -299,10 +410,10 @@ class DQNAgent:
         #     objects; the same data here is ~80 MB flat and invisible
         #     to the garbage collector.
         self.buffer_size = int(buffer_size)
-        self._buf_s = np.zeros((self.buffer_size, STATE_DIM), dtype=np.float32)
+        self._buf_s = np.zeros((self.buffer_size, self.input_dim), dtype=np.float32)
         self._buf_a = np.zeros(self.buffer_size, dtype=np.int64)
         self._buf_r = np.zeros(self.buffer_size, dtype=np.float32)
-        self._buf_s2 = np.zeros((self.buffer_size, STATE_DIM), dtype=np.float32)
+        self._buf_s2 = np.zeros((self.buffer_size, self.input_dim), dtype=np.float32)
         self._buf_d = np.zeros(self.buffer_size, dtype=np.float32)
         self._buf_pos = 0    # next write index
         self._buf_len = 0    # filled entries (saturates at buffer_size)
@@ -376,6 +487,16 @@ class DQNAgent:
         if checkpoint_path and os.path.exists(checkpoint_path):
             try:
                 state = torch.load(checkpoint_path, map_location=self.device)
+                # Weights only transfer within the same backbone + window.
+                # A checkpoint from a different arch/seq_len has incompatible
+                # layer shapes and names, so pad-loading it would be noise —
+                # start fresh and say so rather than silently mangling.
+                ckpt_arch = state.get("arch", "mlp")
+                ckpt_seq = int(state.get("seq_len", 1))
+                if ckpt_arch != self.arch or ckpt_seq != self.seq_len:
+                    raise ValueError(
+                        f"checkpoint arch/seq_len ({ckpt_arch}/{ckpt_seq}) "
+                        f"!= requested ({self.arch}/{self.seq_len})")
                 pad_report = _pad_load_state_dict(self.q, state["q"])
                 # Mirror into the target *and* inference nets so they all
                 # start in sync with the loaded weights.
@@ -473,7 +594,16 @@ class DQNAgent:
     @torch.no_grad()
     def act(self, state: list[float], greedy: bool = False) -> int:
         if not greedy and random.random() < self.epsilon():
-            return random.randrange(NUM_ACTIONS)
+            # Explore over movement + swap actions only, never the 16 delete
+            # actions. Uniform exploration over all NUM_ACTIONS made deletes
+            # ~38% of every exploratory tick (16/42), which strips a bot's
+            # loadout to kNone within seconds — see the W_DELETE_COST /
+            # W_PETAL_PRESENT shaping in bot.py that exists purely to fight
+            # this. Deletes are permanent and almost never the right random
+            # move, so we keep them out of exploration entirely; the greedy
+            # policy can still choose one when its Q-value genuinely warrants
+            # it (e.g. trashing a common to make room for a rare drop).
+            return random.randrange(NUM_MOVEMENT_ACTIONS + NUM_SWAP_ACTIONS)
         # CPU tensor on purpose — q_inference lives on CPU (see __init__).
         s = torch.as_tensor(state, dtype=torch.float32).unsqueeze(0)
         # Inference uses `q_inference`, the periodically-synced read-only
@@ -666,7 +796,8 @@ class DQNAgent:
             env_steps = self.env_steps
             train_steps = self.train_steps
         torch.save(
-            {"q": sd, "env_steps": env_steps, "train_steps": train_steps},
+            {"q": sd, "env_steps": env_steps, "train_steps": train_steps,
+             "arch": self.arch, "seq_len": self.seq_len},
             path,
         )
 

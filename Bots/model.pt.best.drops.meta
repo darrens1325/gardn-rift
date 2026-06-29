@@ -1,1 +1,1 @@
-{"value": 10.0, "metric": "drops", "saved_at": 1781401908.570763, "worker_id": 8, "env_steps": 160621220, "train_steps": 14008804}
+{"value": 10.205, "metric": "drops", "saved_at": 1782625403.709085, "worker_id": 7, "env_steps": 392081, "train_steps": 51657}

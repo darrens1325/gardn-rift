@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "bot-1209",
+  "first_seen": 1782603626.9039152,
+  "last_seen": 1782603649.8830285,
+  "episodes": 3,
+  "score_total": 187,
+  "score_best": 75,
+  "best_loadout": [
+    2048,
+    256,
+    256,
+    256,
+    0,
+    3841
+  ],
+  "killed_by": {
+    "Hornet": 1,
+    "bot-100": 1
+  },
+  "loadout_history": {
+    "0": 2,
+    "3841": 2,
+    "2048": 1,
+    "256": 2,
+    "5121": 1
+  }
+}

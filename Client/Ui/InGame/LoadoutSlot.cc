@@ -69,7 +69,7 @@ Element *Ui::make_loadout_backgrounds() {
             )),
             new Ui::InputFreeze(),
             new Ui::Element(0,34,{ .should_render = [](){ return Input::keyboard_movement || Game::is_mobile; }})
-        }, 0, 0, { .should_render = [](){ return Game::alive(); } }
+        }, 0, 0, { .should_render = [](){ return Game::viewing_loadout(); } }
     );
     base->style.v_justify = Style::Bottom;
     base->style.animate = [](Element *elt, Renderer &ctx){

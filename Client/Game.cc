@@ -31,6 +31,7 @@ namespace Game {
     EntityID player_id;
     std::string nickname;
     std::string spawn_map_path;
+    uint8_t spectator = 0;
     std::array<std::array<uint8_t, RarityID::kNumRarities>, PetalType::kNumPetalTypes> seen_petals;
     std::array<std::array<uint8_t, RarityID::kNumRarities>, MobID::kNumMobs> seen_mobs;
 
@@ -87,10 +88,25 @@ static std::string read_url_spawn_param() {
     return out;
 }
 
+// Read the `?gardn_spectate=...` query parameter. Returns 1 for any
+// truthy value ("1", "true", "yes"), 0 otherwise (including absent).
+// Spectator clients watch training without gating the server's sync-mode
+// lockstep barrier — see Game::spectator and Client/Socket.cc.
+static uint8_t read_url_spectate_param() {
+    return (uint8_t) EM_ASM_INT({
+        try {
+            const v = (new URLSearchParams(window.location.search)
+                .get("gardn_spectate") || "").toLowerCase();
+            return (v === "1" || v === "true" || v === "yes") ? 1 : 0;
+        } catch (e) { return 0; }
+    });
+}
+
 void Game::init() {
     Storage::retrieve();
     reset();
     spawn_map_path = read_url_spawn_param();
+    spectator = read_url_spectate_param();
     TiledMapRender::init();
     title_ui_window.add_child(
         [](){ 
@@ -183,6 +199,11 @@ uint8_t Game::alive() {
     && simulation.ent_alive(simulation.get_ent(camera_id).player);
 }
 
+uint8_t Game::viewing_loadout() {
+    return alive() || (spectator && simulation_ready
+        && player_id != NULL_ENTITY && simulation.ent_exists(player_id));
+}
+
 uint8_t Game::in_game() {
     return simulation_ready && on_game_screen
     && simulation.ent_exists(camera_id);
@@ -220,6 +241,12 @@ void Game::tick(double time) {
     double a = Ui::window_width / 1920;
     double b = Ui::window_height / 1080;
     Ui::scale = std::max({a, b});
+    // A spectator never spawns a player of its own, so alive() stays
+    // false. Drop it straight onto the game screen once the simulation is
+    // ready so it can watch the (server-driven) spectator camera follow
+    // the action instead of sitting on the title screen.
+    if (spectator && simulation_ready && simulation.ent_exists(camera_id))
+        on_game_screen = 1;
     if (alive()) {
         on_game_screen = 1;
         player_id = simulation.get_ent(camera_id).player;
@@ -231,6 +258,32 @@ void Game::tick(double time) {
         }
         score = player.score;
         overlevel_timer = player.overlevel_timer;
+    } else if (spectator && simulation_ready) {
+        // Mirror the loadout of the flower the server camera is following
+        // (the highest-scoring player on the map — see
+        // Server/Process/Camera.cc). Its loadout/score are networked, so
+        // we read them straight off the in-view entity. Every entity the
+        // client receives is already on the camera's map.
+        EntityID lead = NULL_ENTITY;
+        uint32_t best_score = 0;
+        simulation.for_each<kFlower>([&](Simulation *, Entity const &ent){
+            if (!ent.has_component(kScore)) return;
+            if (lead == NULL_ENTITY || ent.score > best_score) {
+                best_score = ent.score;
+                lead = ent.id;
+            }
+        });
+        player_id = lead;
+        if (simulation.ent_exists(player_id)) {
+            Entity const &player = simulation.get_ent(player_id);
+            Game::loadout_count = player.loadout_count;
+            for (uint32_t i = 0; i < MAX_SLOT_COUNT + Game::loadout_count; ++i) {
+                cached_loadout[i] = player.loadout_ids[i];
+                Game::seen_petals[cached_loadout[i].type][cached_loadout[i].rarity] = 1;
+            }
+            score = player.score;
+            overlevel_timer = player.overlevel_timer;
+        } else overlevel_timer = 0;
     } else {
         player_id = NULL_ENTITY;
         overlevel_timer = 0;

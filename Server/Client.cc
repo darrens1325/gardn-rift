@@ -90,6 +90,12 @@ void Client::on_message(WebSocket *ws, std::string_view message, uint64_t code) 
             return;
         }
         client->verified = 1;
+        // Optional trailing spectator byte. Old clients omit it, leaving
+        // spectator = 0. A spectator is admitted like any other client
+        // (it still receives broadcasts and sees the arena) but is kept
+        // out of the sync-mode kStep barrier — see Game::add_client.
+        if (validator.validate_uint8())
+            client->spectator = reader.read<uint8_t>() ? 1 : 0;
         client->init();
         return;
     }

@@ -20,6 +20,11 @@ enum Clientbound {
 };
 
 enum Serverbound {
+    // { u8: kVerify, u64: VERSION_HASH, u8: spectator? } — the trailing
+    // spectator byte is optional (1 = join as a spectator). Old clients
+    // omit it and are treated as normal players. Spectators receive
+    // broadcasts but are excluded from the sync-mode kStep barrier so they
+    // can watch training while GARDN_SYNC=1 is on (see Server/Game.cc).
     kVerify,
     kClientInput,
     // { u8: kClientSpawn, string: name, string: map_path } — map_path is

@@ -120,21 +120,21 @@ struct PetalData const PETAL_DATA[PetalType::kNumPetalTypes][RarityID::kNumRarit
     },
     [PetalType::kStinger] = {
         [RarityID::kCommon] = {"Stinger", "It really hurts, but it's really fragile",
-            5.0, 100.0, 7.0, 3.5, 1, {}},
+            1.0, 100.0, 7.0, 10.0, 1, {}},
         [RarityID::kUnusual] = {"Stinger", "It really hurts, but it's really fragile",
-            5.0, 130.0, 7.0, 3.5, 1, {}},
+            1.0, 130.0, 7.0, 10.0, 1, {}},
         [RarityID::kRare] = {"Stinger", "It really hurts, but it's really fragile",
-            5.0, 180.0, 7.0, 3.5, 1, {}},
+            1.0, 180.0, 7.0, 10.0, 1, {}},
         [RarityID::kEpic] = {"Stinger", "It really hurts, but it's really fragile",
-            5.0, 230.0, 7.0, 3.5, 1, {}},
+            1.0, 230.0, 7.0, 10.0, 1, {}},
     },
     [PetalType::kTringer] = {
         [RarityID::kLegendary] = {"Stinger", "It really hurts, but it's really fragile",
-            5.0, 35.0, 7.0, 4.5, 3, {
+            1.0, 280.0, 7.0, 10.0, 1, {
             .clump_radius = 10
         }},
         [RarityID::kMythic] = {"Stinger", "It really hurts, but it's really fragile",
-            5.0, 50.0, 7.0, 4.5, 3, {
+            1.0, 280.0, 7.0, 10.0, 3, {
             .clump_radius = 10
         }},
         [RarityID::kUltra] = {"Stinger", "It really hurts, but it's really fragile",

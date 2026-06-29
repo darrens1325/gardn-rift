@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-1404",
   "first_seen": 1781204643.3240368,
-  "last_seen": 1781545339.5918622,
-  "episodes": 1635,
-  "score_total": 227502,
+  "last_seen": 1782603596.159114,
+  "episodes": 1636,
+  "score_total": 227526,
   "score_best": 14392,
   "best_loadout": [
     0,
@@ -170,7 +170,7 @@
     "bot-1201": 1
   },
   "loadout_history": {
-    "0": 1334,
+    "0": 1335,
     "256": 1223,
     "2049": 3,
     "1537": 5,

@@ -221,6 +221,8 @@ def _spawn_workers(args: argparse.Namespace) -> int:
             "--eps-decay", str(args.eps_decay),
             "--warmup", str(args.warmup),
             "--device", args.device,
+            "--arch", args.arch,
+            "--seq-len", str(args.seq_len),
             "--stats-interval", str(args.stats_interval),
             "--peer-sync-every", str(args.peer_sync_every),
             "--peer-sync-my-weight", str(args.peer_sync_my_weight),
@@ -418,6 +420,8 @@ async def _amain(args: argparse.Namespace) -> None:
         warmup=args.warmup,
         device=args.device,
         checkpoint_path=save_path,
+        arch=args.arch,
+        seq_len=args.seq_len,
     )
     # Manually trigger a load from `load_path` if it differs from the
     # save_path the agent was constructed with. The agent's own loader
@@ -427,6 +431,13 @@ async def _amain(args: argparse.Namespace) -> None:
         try:
             import torch as _torch
             state = _torch.load(load_path, map_location=agent.device)
+            # Weights only transfer within the same backbone + window.
+            _ck_arch = state.get("arch", "mlp")
+            _ck_seq = int(state.get("seq_len", 1))
+            if _ck_arch != agent.arch or _ck_seq != agent.seq_len:
+                raise ValueError(
+                    f"checkpoint arch/seq_len ({_ck_arch}/{_ck_seq}) != "
+                    f"requested ({agent.arch}/{agent.seq_len})")
             _pad_load_state_dict(agent.q, state.get("q", {}))
             agent.target.load_state_dict(agent.q.state_dict())
             agent.q_inference.load_state_dict(agent.q.state_dict())
@@ -489,13 +500,21 @@ async def _amain(args: argparse.Namespace) -> None:
         if frozen_path and os.path.exists(frozen_path):
             try:
                 import torch as _torch
+                # Peek the frozen checkpoint's backbone so the frozen agent's
+                # model matches its weights — a frozen opponent may use a
+                # different arch/seq_len than the net we're currently training
+                # (e.g. freeze an old MLP while training a GRU).
+                fstate = _torch.load(frozen_path, map_location="cpu")
+                _frozen_arch = fstate.get("arch", "mlp")
+                _frozen_seq = int(fstate.get("seq_len", 1))
                 frozen_agent = DQNAgent(
                     device=args.device,
                     checkpoint_path=None,
                     eps_start=0.0,
                     eps_end=0.0,
+                    arch=_frozen_arch,
+                    seq_len=_frozen_seq,
                 )
-                fstate = _torch.load(frozen_path, map_location=frozen_agent.device)
                 _pad_load_state_dict(frozen_agent.q, fstate.get("q", {}))
                 frozen_agent.target.load_state_dict(frozen_agent.q.state_dict())
                 frozen_agent.q_inference.load_state_dict(frozen_agent.q.state_dict())
@@ -633,6 +652,19 @@ def main() -> int:
     p.add_argument("--gamma", type=float, default=0.97, help="discount factor")
     p.add_argument("--eps-decay", type=int, default=30_000, help="env steps over which ε decays from 1.0 to 0.05")
     p.add_argument("--warmup", type=int, default=2_000, help="env steps to collect before starting training")
+    p.add_argument(
+        "--arch", default="mlp", choices=["mlp", "gru", "lstm", "transformer"],
+        help="Q-network backbone (default: mlp). gru/lstm/transformer read a "
+             "frame-stacked window — set --seq-len > 1 for them to have any "
+             "temporal context. Checkpoints only load into a matching "
+             "arch/seq-len; switching arch starts fresh.",
+    )
+    p.add_argument(
+        "--seq-len", type=int, default=1,
+        help="number of past frames stacked into each observation (default: 1). "
+             "1 = the historical single-frame model. Try 4-8 for recurrent / "
+             "transformer backbones.",
+    )
     p.add_argument(
         "--device", default="auto",
         help="torch device for *training* (auto / cpu / cuda / mps). auto prefers "

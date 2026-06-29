@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-1006",
   "first_seen": 1779588830.7762122,
-  "last_seen": 1781545356.8139873,
-  "episodes": 3700,
-  "score_total": 871940,
+  "last_seen": 1782603641.493758,
+  "episodes": 3701,
+  "score_total": 871972,
   "score_best": 20113,
   "best_loadout": [
     256,
@@ -212,7 +212,7 @@
     "bot-1504": 3
   },
   "loadout_history": {
-    "0": 2745,
+    "0": 2746,
     "256": 3146,
     "2560": 15,
     "3074": 1,

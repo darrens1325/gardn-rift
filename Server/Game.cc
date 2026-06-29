@@ -7,7 +7,9 @@
 
 #include <Shared/Binary.hh>
 #include <Shared/Entity.hh>
+#include <Shared/Helpers.hh>
 #include <Shared/Map.hh>
+#include <Shared/StaticDefinitions.hh>
 
 #include <cstdlib>
 #include <iostream>
@@ -209,6 +211,9 @@ void GameInstance::broadcast(uint8_t const *packet, size_t len) {
 void GameInstance::client_requested_step(Client *client) {
     if (!sync_mode) return;
     if (!client->verified) return;
+    // Spectators don't gate the barrier and aren't in pending_step; ignore
+    // any stray kStep from them so they can't perturb the tick count.
+    if (client->spectator) return;
     pending_step.erase(client);
     // Tick when every verified client has stepped. Disconnected /
     // unverified clients don't block — they were removed from
@@ -218,9 +223,10 @@ void GameInstance::client_requested_step(Client *client) {
         tick();
         // Re-arm: every verified client must step again before the
         // next tick. New clients joining mid-stride get added to the
-        // pending set inside add_client below.
+        // pending set inside add_client below. Spectators never send
+        // kStep, so they're excluded from the barrier (they'd deadlock it).
         for (Client *c : clients) {
-            if (c->verified) pending_step.insert(c);
+            if (c->verified && !c->spectator) pending_step.insert(c);
         }
     }
 }
@@ -235,6 +241,9 @@ void GameInstance::add_client(Client *client) {
     ent.map_path = TiledMap::default_map_path();
     ent.add_component(kCamera);
     ent.add_component(kRelations);
+    // Mark a spectator's camera so tick_camera_behavior pans it to the
+    // live leader (the client never spawns a player of its own).
+    if (client->spectator) BIT_SET(ent.flags, EntityFlags::kIsSpectator);
     #ifdef GAMEMODE_TDM
     EntityID team = team_manager.get_random_team();
     ent.set_team(team);
@@ -258,7 +267,9 @@ void GameInstance::add_client(Client *client) {
     // In sync mode, every verified client must step before the next
     // tick can fire. Brand-new clients are added to pending_step so
     // they're counted in the barrier from their first tick onward.
-    if (sync_mode) pending_step.insert(client);
+    // Spectators are excluded — they never send kStep, so including one
+    // would stall the lockstep barrier forever.
+    if (sync_mode && !client->spectator) pending_step.insert(client);
 }
 
 void GameInstance::remove_client(Client *client) {

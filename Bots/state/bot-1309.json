@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "name": "bot-1309",
+  "first_seen": 1782603668.020834,
+  "last_seen": 1782603668.020834,
+  "episodes": 1,
+  "score_total": 48,
+  "score_best": 48,
+  "best_loadout": [
+    4096,
+    0,
+    0,
+    0,
+    0
+  ],
+  "killed_by": {},
+  "loadout_history": {
+    "4096": 1,
+    "0": 1
+  }
+}

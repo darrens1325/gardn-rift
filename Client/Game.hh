@@ -27,6 +27,13 @@ namespace Game {
     // against its own whitelist (Server/Client.cc::is_safe_user_map_path)
     // and silently falls back on rejection.
     extern std::string spawn_map_path;
+    // Set from the `?gardn_spectate=1` URL query parameter at page load.
+    // When nonzero the client sends a spectator byte in its kVerify
+    // handshake; the server then admits it as a watch-only client that
+    // does not gate the sync-mode (GARDN_SYNC=1) lockstep barrier, so it
+    // can spectate training in progress. Mirrors override-simulator's
+    // OVR_SPECTATE. See Client/Socket.cc and Server/Game.cc.
+    extern uint8_t spectator;
     // Indexed [petal_type][rarity]: nonzero once we've seen this exact
     // (type, rarity) petal in our own loadout. Empty cells in PETAL_DATA
     // (e.g. PETAL_DATA[kBasic][kRare] before a Rare Basic existed) just
@@ -69,6 +76,11 @@ namespace Game {
     void init();
     void reset();
     uint8_t alive();
+    // True when there's a loadout worth showing: either we're alive with
+    // our own player, or we're a spectator whose camera is following a
+    // live player (player_id then points at that flower). Used to drive the
+    // in-game loadout UI for spectators. See Game::tick.
+    uint8_t viewing_loadout();
     uint8_t in_game();
     uint8_t should_render_title_ui();
     uint8_t should_render_game_ui();

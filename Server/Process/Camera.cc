@@ -28,6 +28,23 @@ void tick_camera_behavior(Simulation *sim, Entity &ent) {
         //         player.set_overlevel_timer(player.overlevel_timer - 0.1);
         //     else player.set_overlevel_timer(0);
         // }
+    } else if (BIT_AT(ent.flags, EntityFlags::kIsSpectator)) {
+        // Spectator camera (no owned player): follow the highest-scoring
+        // live player on the same map so there's always action on screen
+        // — e.g. watching bots while training runs under GARDN_SYNC. When
+        // the arena is empty the camera just holds its last position.
+        ent.set_fov(BASE_FOV * 0.9);
+        Entity const *lead = nullptr;
+        sim->for_each<kCamera>([&](Simulation *s, Entity &cam){
+            if (!s->ent_alive(cam.player)) return;
+            Entity const &p = s->get_ent(cam.player);
+            if (p.map_path != ent.map_path) return;
+            if (lead == nullptr || p.score > lead->score) lead = &p;
+        });
+        if (lead != nullptr) {
+            ent.set_camera_x(lead->x);
+            ent.set_camera_y(lead->y);
+        }
     } else {
         ent.set_fov(BASE_FOV * 0.9);
         if (sim->ent_exists(ent.last_damaged_by)){

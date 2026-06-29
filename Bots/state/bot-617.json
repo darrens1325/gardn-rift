@@ -2,9 +2,9 @@
   "schema": 1,
   "name": "bot-617",
   "first_seen": 1778364747.596433,
-  "last_seen": 1778542988.157061,
-  "episodes": 21,
-  "score_total": 296,
+  "last_seen": 1782696797.0343902,
+  "episodes": 22,
+  "score_total": 311,
   "score_best": 61,
   "best_loadout": [
     0,
@@ -25,11 +25,12 @@
   },
   "loadout_history": {
     "1": 18,
-    "0": 15,
+    "0": 16,
     "15": 1,
     "9": 1,
     "18": 1,
     "19": 1,
-    "14": 2
+    "14": 2,
+    "256": 1
   }
 }
