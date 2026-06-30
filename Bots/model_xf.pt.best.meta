@@ -1,1 +1,1 @@
-{"value": 34.0, "metric": "score_mean", "saved_at": 1782697860.52201, "worker_id": 4, "env_steps": 9217, "train_steps": 149, "score_mean": 34.0}
+{"value": 69.95652173913044, "metric": "score_mean", "saved_at": 1782784120.777243, "worker_id": 2, "env_steps": 83063, "train_steps": 1357, "score_mean": 69.95652173913044}
