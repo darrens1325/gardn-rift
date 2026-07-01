@@ -573,12 +573,45 @@ async function mpWriteCode(text) {
         console.warn("[bundle] model load failed; bots will use random actions", e);
     }
 
-    const obsDim = serverMod._bot_obs_dim();
+    const obsDimRaw = serverMod._bot_obs_dim();
     const numActions = serverMod._bot_num_actions();
+
+    // Detect the model's actual input width. Transformer models trained with
+    // seq_len > 1 expect (batch, seq_len * obsDimRaw) rather than (batch, obsDimRaw).
+    // Probe with a [1, obsDimRaw] tensor; if ORT rejects it the error message
+    // carries the expected dim ("Expected: 12800") which we parse to compute
+    // seqLen. MLP / seq_len=1 models succeed immediately and seqLen stays 1.
+    let seqLen = 1;
+    let modelInputDim = obsDimRaw;
+    if (session) {
+        try {
+            const probe = new ort.Tensor("float32", new Float32Array(obsDimRaw), [1, obsDimRaw]);
+            await session.run({ state: probe });
+        } catch (e) {
+            const m = /Expected:\s*(\d+)/i.exec(e.message || String(e));
+            if (m) {
+                const expectedDim = parseInt(m[1], 10);
+                if (expectedDim > obsDimRaw && expectedDim % obsDimRaw === 0) {
+                    seqLen = expectedDim / obsDimRaw;
+                    modelInputDim = expectedDim;
+                    console.log(`[bundle] transformer seq_len=${seqLen} detected; enabling frame stacking`);
+                }
+            }
+        }
+    }
+
+    // Per-bot observation history for frame stacking (seqLen > 1 models only).
+    // Layout: bot i owns rows [i*seqLen .. (i+1)*seqLen-1], each row is obsDimRaw floats.
+    // On each tick we shift the window left by one frame and append the newest frame
+    // at the end, then copy the full window into batchedObs.
+    const botFrameHistory = seqLen > 1
+        ? new Float32Array(NUM_BOTS * seqLen * obsDimRaw)
+        : null;
+
     // Reusable HEAP scratch for observations — one buffer per bot, allocated
     // once. Bots/_bot_make_obs writes into HEAPF32; we pass the same byte
     // pointer to ORT each tick via Tensor.fromBufferView.
-    const obsByteLen = obsDim * 4;
+    const obsByteLen = obsDimRaw * 4;
     const obsBuffers = [];
 
     // Spawn bots regardless of whether the ONNX model loaded. With a model
@@ -644,7 +677,7 @@ async function mpWriteCode(text) {
     // tensor and dispatching ONE session.run is much faster, and the
     // model was exported with dynamic_axes={"state": {0: "batch"}} for
     // exactly this purpose.
-    const batchedObs = new Float32Array(NUM_BOTS * obsDim);
+    const batchedObs = new Float32Array(NUM_BOTS * modelInputDim);
 
     // Bot tick at TPS — matches the agent's training-time control_hz.
     // The loop is async (ORT.run returns a Promise) but we deliberately
@@ -692,18 +725,27 @@ async function mpWriteCode(text) {
         // call order. Without this, peer-comm features for bots later
         // in the loop could change if obs/apply ever got interleaved.
         if (serverMod._bot_begin_tick) serverMod._bot_begin_tick();
-        // Fill the batched observation tensor from each bot's per-bot
-        // scratch buffer (avoids a single huge malloc on the C side).
+        // Fill the batched observation tensor. For seq_len=1 MLP models we
+        // write the 100-float obs directly. For transformer models (seq_len>1)
+        // we maintain a per-bot ring buffer in botFrameHistory and concatenate
+        // the last seqLen frames so the tensor shape is [N, seqLen*obsDimRaw].
         for (let i = 0; i < obsBuffers.length; ++i) {
             const { wsId, ptr } = obsBuffers[i];
             serverMod._bot_make_obs(wsId, ptr);
-            batchedObs.set(
-                new Float32Array(serverMod.HEAPF32.buffer, ptr, obsDim),
-                i * obsDim
-            );
+            const frame = new Float32Array(serverMod.HEAPF32.buffer, ptr, obsDimRaw);
+            if (seqLen === 1) {
+                batchedObs.set(frame, i * obsDimRaw);
+            } else {
+                // Shift the ring buffer for bot i left by one frame, then
+                // write the newest frame at the end of the window.
+                const base = i * seqLen * obsDimRaw;
+                botFrameHistory.copyWithin(base, base + obsDimRaw, base + seqLen * obsDimRaw);
+                botFrameHistory.set(frame, base + (seqLen - 1) * obsDimRaw);
+                batchedObs.set(botFrameHistory.subarray(base, base + modelInputDim), i * modelInputDim);
+            }
         }
         const tensor = new ort.Tensor("float32", batchedObs.slice(),
-                                      [obsBuffers.length, obsDim]);
+                                      [obsBuffers.length, modelInputDim]);
         inflight = true;
         const inferStart = performance.now();
         let out;
@@ -753,7 +795,7 @@ async function mpWriteCode(text) {
         const now = performance.now();
         if (now - dumpLastT > 1000) {
             dumpLastT = now;
-            const obs = Array.from(batchedObs.subarray(0, obsDim));
+            const obs = Array.from(batchedObs.subarray(0, obsDimRaw));
             const off = 0;  // bot index 0
             const ranked = [];
             for (let a = 0; a < numActions; ++a) {
